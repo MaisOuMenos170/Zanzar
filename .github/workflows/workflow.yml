@@ -1,0 +1,45 @@
+name: Zanzar CI
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+  
+jobs:
+  test:
+    name: Test iOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout to main
+        uses: actions/checkout@v7
+
+      - name: Install dependencies
+        run: |
+          brew install swiftlint
+          brew install xcbeautify
+
+      - name: Run SwiftLint
+        run: swiftlint lint
+
+      - name: Show project info
+        run: |
+          xcodebuild -version
+          xcodebuild -project ./ZanzarProject/ZanzarProject.xcodeproj -list
+          xcodebuild -project ./ZanzarProject/ZanzarProject.xcodeproj -scheme ZanzarProject -showdestinations
+
+      # Precisa adicionar o secret no repositório antes de rodas
+      # - shell: bash
+      #   name: Create Config.xcconfig with Action Secrets
+      #   env:
+      #     <KEY_NAME>: ${{ secrets.<SECRET_NAME> }}
+      #   run: |
+      #     echo "<KEY_NAME>: ${{ secrets.<SECRET_NAME> }}" > Config.xcconfig
+
+      - name: Run and test project
+        run: |
+          set -0 pipefail && xcodebuild -project ./ZanzarProject/ZanzarProject.xcodeproj -scheme ZanzarProject -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest,arch=arm64' test | xcbeautify
