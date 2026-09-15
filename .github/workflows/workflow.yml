@@ -42,4 +42,4 @@ jobs:
 
       - name: Run and test project
         run: |
-          set -o pipefail && xcodebuild -project ./ZanzarProject/ZanzarProject.xcodeproj -scheme ZanzarProject -destination 'platform=iOS Simulator,id:dvtdevice-DVTiOSDeviceSimulatorPlaceholder-iphonesimulator:placeholder,name=Any iOS Simulator Device' test | xcbeautify
+          set -o pipefail && xcodebuild -project ./ZanzarProject/ZanzarProject.xcodeproj -scheme ZanzarProject -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest,arch=arm64' test | xcbeautify
