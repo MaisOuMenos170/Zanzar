@@ -24,6 +24,7 @@ final class LocationMapService: LocationMapServicing {
                 throw LocationMapError.authorizationDenied
             }
             if let location = update.location {
+                print("hey")
                 return UserCoordinate(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
             }
         }
