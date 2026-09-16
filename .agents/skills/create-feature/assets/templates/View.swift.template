@@ -1,0 +1,16 @@
+import SwiftUI
+
+struct __FEATURE__View: View {
+    @State private var viewModel = __FEATURE__ViewModel()
+    @Environment(AppCoordinator.self) private var coordinator
+
+    var body: some View {
+        // TODO: build the UI. Extract reusable pieces into Views/Components/.
+        Text("__FEATURE__")
+    }
+}
+
+#Preview {
+    __FEATURE__View()
+        .environment(AppCoordinator())
+}

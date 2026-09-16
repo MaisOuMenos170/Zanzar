@@ -1,0 +1,27 @@
+import Foundation
+
+protocol __FEATURE__Servicing: Sendable {
+    // TODO: rename and adjust for the actual endpoint(s) this feature needs.
+    func submit__FEATURE__(_ request: __FEATURE__Request) async throws -> __FEATURE__Response
+}
+
+struct __FEATURE__Request: Encodable {
+    // TODO: add the fields sent to the API
+}
+
+struct __FEATURE__Response: Decodable {
+    // TODO: add the fields returned by the API
+}
+
+final class __FEATURE__Service: __FEATURE__Servicing {
+    private let client: NetworkClient
+
+    init(client: NetworkClient = URLSessionNetworkClient.shared) {
+        self.client = client
+    }
+
+    func submit__FEATURE__(_ request: __FEATURE__Request) async throws -> __FEATURE__Response {
+        // TODO: replace with the real path
+        try await client.send(path: "/__feature__", method: .post, body: request)
+    }
+}

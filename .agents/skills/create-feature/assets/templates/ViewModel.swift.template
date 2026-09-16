@@ -1,0 +1,24 @@
+import Observation
+
+@Observable
+final class __FEATURE__ViewModel {
+    private let service: __FEATURE__Servicing
+
+    var isLoading = false
+    var errorMessage: String?
+
+    init(service: __FEATURE__Servicing = __FEATURE__Service()) {
+        self.service = service
+    }
+
+    // TODO: implement the feature's actions, e.g.:
+    // func submit() async {
+    //     isLoading = true
+    //     defer { isLoading = false }
+    //     do {
+    //         _ = try await service.submit__FEATURE__(__FEATURE__Request())
+    //     } catch {
+    //         errorMessage = error.localizedDescription
+    //     }
+    // }
+}

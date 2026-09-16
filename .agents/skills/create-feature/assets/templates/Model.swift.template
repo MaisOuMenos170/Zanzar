@@ -1,0 +1,8 @@
+import Foundation
+
+// TODO: this is the domain model the ViewModel/View work with — distinct from
+// the wire-format Request/Response structs in API/__FEATURE__Service.swift.
+// Map __FEATURE__Response -> __FEATURE__ inside the ViewModel or Service.
+struct __FEATURE__: Identifiable, Hashable {
+    let id: UUID
+}

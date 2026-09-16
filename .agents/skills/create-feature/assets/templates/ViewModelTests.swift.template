@@ -1,0 +1,22 @@
+import Testing
+@testable import ZanzarProject
+
+@Suite("__FEATURE__ViewModel")
+struct __FEATURE__ViewModelTests {
+    @Test("TODO: describe the expected behavior")
+    func example() async throws {
+        let viewModel = __FEATURE__ViewModel(service: Mock__FEATURE__Service())
+        // TODO: exercise viewModel and #expect(...) on the result
+    }
+}
+
+final class Mock__FEATURE__Service: __FEATURE__Servicing {
+    var submit__FEATURE__Result: Result<__FEATURE__Response, Error>?
+
+    func submit__FEATURE__(_ request: __FEATURE__Request) async throws -> __FEATURE__Response {
+        guard let result = submit__FEATURE__Result else {
+            fatalError("Mock__FEATURE__Service.submit__FEATURE__Result not configured")
+        }
+        return try result.get()
+    }
+}
