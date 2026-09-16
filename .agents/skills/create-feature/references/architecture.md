@@ -32,6 +32,9 @@ ZanzarProject/ZanzarProject/
   Extensions/                    cross-feature Swift/SwiftUI extensions
   Utils/
     NetworkClient.swift          the one shared network client
+  Resources/
+    Assets.xcassets               images, colors, icons
+    Localizable.xcstrings         all user-facing strings, en + pt-BR
 ZanzarProjectTests/<FeatureName>/
   <FeatureName>ViewModelTests.swift
 ```
@@ -48,3 +51,11 @@ Ask: if the API contract changes, does the View need to change? It shouldn't —
 - `API/<FeatureName>Service.swift`'s `Request`/`Response` structs — exactly what the wire format needs (`Codable` keys, optional fields the backend sends, etc). These can be uglier than the domain model; that ugliness is exactly what the Service/mapping layer exists to hide.
 
 If a feature's response maps 1:1 to what the View needs, it's still worth keeping both — the domain model is what stays stable when the backend changes a field name.
+
+## Strings are never hardcoded
+
+Every string a View or Component renders is a lookup key into
+`Resources/Localizable.xcstrings`, translated into English (US) and Brazilian
+Portuguese — not a string literal typed straight into the view. See
+references/localization.md for the key convention and the script that
+maintains the catalog.

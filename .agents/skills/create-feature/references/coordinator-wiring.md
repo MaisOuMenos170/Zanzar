@@ -32,10 +32,15 @@ If the destination needs data (e.g. an id), carry it as an associated value:
 case issueReport(contextID: UUID)
 ```
 
+`Sheet` and `FullScreenCover` compute `id` with `switch self {}` — valid only
+while the enum has zero cases. Adding the first case there will fail to
+compile until you also handle it in that switch (returning `self` for the new
+case is enough); do this in the same edit, not as an afterthought.
+
 ## 3. Add the case to AppCoordinator's view builder
 
 Open `Coordinator/AppCoordinator.swift` and add the matching case to the
-corresponding `@ViewBuilder func view(for:)`:
+corresponding `@ViewBuilder func view(for:)`, **above** its `default:`:
 
 ```swift
 @ViewBuilder
@@ -43,9 +48,16 @@ func view(for route: Route) -> some View {
     switch route {
     case .issueReport:
         IssueReportView()
+    default:
+        EmptyView()
     }
 }
 ```
+
+The `default: EmptyView()` means the compiler will NOT catch a route you
+forget to wire here — it silently renders blank instead of failing to build.
+After adding the case, double-check by eye (or search the file for the route
+name) that it's actually handled, since nothing else will catch the mistake.
 
 ## 4. Trigger the navigation from the calling site
 

@@ -41,6 +41,8 @@ final class AppCoordinator {
         // TODO: add a case per feature route, e.g.:
         // case .issueReport:
         //     IssueReportView()
+        default:
+            EmptyView()
         }
     }
 
@@ -48,6 +50,8 @@ final class AppCoordinator {
     func view(for sheet: Sheet) -> some View {
         switch sheet {
         // TODO: add a case per feature sheet
+        default:
+            EmptyView()
         }
     }
 
@@ -55,6 +59,8 @@ final class AppCoordinator {
     func view(for fullScreenCover: FullScreenCover) -> some View {
         switch fullScreenCover {
         // TODO: add a case per feature full-screen cover
+        default:
+            EmptyView()
         }
     }
 }

@@ -6,7 +6,9 @@ struct __FEATURE__View: View {
 
     var body: some View {
         // TODO: build the UI. Extract reusable pieces into Views/Components/.
-        Text("__FEATURE__")
+        // Every string here is a Localizable.xcstrings key, e.g.:
+        // Text("__feature__.header.title")
+        Text("__feature__.placeholder.title")
     }
 }
 

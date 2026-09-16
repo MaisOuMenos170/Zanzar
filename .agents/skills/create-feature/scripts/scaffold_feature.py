@@ -89,6 +89,18 @@ def bootstrap_root_structure(app_root: Path, report: list) -> None:
 
     (app_root / "Extensions").mkdir(parents=True, exist_ok=True)
 
+    resources_dir = app_root / "Resources"
+    loose_assets = app_root / "Assets.xcassets"
+    target_assets = resources_dir / "Assets.xcassets"
+    if loose_assets.exists() and not target_assets.exists():
+        resources_dir.mkdir(parents=True, exist_ok=True)
+        loose_assets.rename(target_assets)
+        report.append(f"  moved: {loose_assets} -> {target_assets}")
+    elif target_assets.exists():
+        report.append(f"  skipped (exists): {target_assets}")
+
+    write_if_missing(resources_dir / "Localizable.xcstrings", render("Localizable.xcstrings.template", ""), report)
+
 
 def scaffold_feature(app_root: Path, tests_root: Path, feature: str, report: list) -> None:
     feature_dir = app_root / "Features" / feature
