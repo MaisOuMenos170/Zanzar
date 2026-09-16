@@ -1,0 +1,3 @@
+# Pede review automaticamente para o time reviewers.
+# O GitHub ignora o autor do PR, então o outro membro é notificado.
+* @MaisOuMenos170/reviewers
