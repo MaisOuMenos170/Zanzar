@@ -1,0 +1,3 @@
+# Pede review automaticamente para quem não abriu o PR.
+# O GitHub ignora o autor, então o outro admin é notificado.
+* @DalPra0 @bptiago
