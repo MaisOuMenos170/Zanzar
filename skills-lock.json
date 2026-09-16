@@ -1,6 +1,18 @@
 {
   "version": 1,
   "skills": {
+    "skill-forge": {
+      "source": "sanyuan0704/sanyuan-skills",
+      "sourceType": "github",
+      "skillPath": "skills/skill-forge/SKILL.md",
+      "computedHash": "63785e2efb35dcee3588e9cd8428aab25b2a8f1e5eb67b380bdbdbeb420e5ecf"
+    },
+    "skill-review": {
+      "source": "sanyuan0704/sanyuan-skills",
+      "sourceType": "github",
+      "skillPath": "skills/skill-review/SKILL.md",
+      "computedHash": "8d786d13179c6bd1e0b9ff05c3db72768349ab36c43ad431638fd9eef0f21137"
+    },
     "swift-concurrency": {
       "source": "avdlee/swift-concurrency-agent-skill",
       "sourceType": "github",
