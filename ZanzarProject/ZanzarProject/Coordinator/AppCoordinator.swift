@@ -1,0 +1,66 @@
+import SwiftUI
+
+@Observable
+final class AppCoordinator {
+    var path = NavigationPath()
+    var presentedSheet: Sheet?
+    var presentedFullScreenCover: FullScreenCover?
+
+    func push(_ route: Route) {
+        path.append(route)
+    }
+
+    func pop() {
+        guard !path.isEmpty else { return }
+        path.removeLast()
+    }
+
+    func popToRoot() {
+        path.removeLast(path.count)
+    }
+
+    func present(sheet: Sheet) {
+        presentedSheet = sheet
+    }
+
+    func present(fullScreenCover: FullScreenCover) {
+        presentedFullScreenCover = fullScreenCover
+    }
+
+    func dismissSheet() {
+        presentedSheet = nil
+    }
+
+    func dismissFullScreenCover() {
+        presentedFullScreenCover = nil
+    }
+
+    @ViewBuilder
+    func view(for route: Route) -> some View {
+        switch route {
+        // TODO: add a case per feature route, e.g.:
+        // case .issueReport:
+        //     IssueReportView()
+        default:
+            EmptyView()
+        }
+    }
+
+    @ViewBuilder
+    func view(for sheet: Sheet) -> some View {
+        switch sheet {
+        // TODO: add a case per feature sheet
+        default:
+            EmptyView()
+        }
+    }
+
+    @ViewBuilder
+    func view(for fullScreenCover: FullScreenCover) -> some View {
+        switch fullScreenCover {
+        // TODO: add a case per feature full-screen cover
+        default:
+            EmptyView()
+        }
+    }
+}
