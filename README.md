@@ -1,24 +1,32 @@
 # Zanzar
 
-"""swift
-/ZanzarProject (parent folder)
-	/ZanzarProject (app folder)
-		/App (contains ContentView and main file)
-			- ContentView
-			- AppFile 
-		/Features (each feature gets a dedicated folder)
-			/<Descriptive-Feature-Name>
-				/API (contains a service file and request and response models for API)
-					<Descriptive-Feature-Name>Service.swift
-				/Models (contains important view models)
-				/Views (contains SwiftUI views and related components)
-					/Components (contains SwiftUI components for the views)
-					<Descriptive-Feature-Name>View.swift
-				/ViewModels
-					<Descriptive-Feature-Name>ViewModel.swift
-		/Coordinator (contains a coordinator for path related actions)
-			AppCoordinator.swift
-		/Extensions (custom extensions to native Swift and SwiftUI)
-		/Utils (contains utilitarian functions)
-	/ZanzarProjectTests (testing folder)
-"""
+App Structure
+
+```swift
+ZanzarProject/ZanzarProject/
+  App/                          ContentView.swift, MyApp.swift (@main)
+  Features/<FeatureName>/
+    API/
+      <FeatureName>Service.swift     protocol + impl + Request/Response
+    Models/
+      <FeatureName>.swift            domain model(s) the View/ViewModel use
+    Views/
+      <FeatureName>View.swift
+      Components/                   extracted subviews for this feature only
+    ViewModels/
+      <FeatureName>ViewModel.swift
+  Coordinator/
+    AppCoordinator.swift         @Observable, owns NavigationPath + sheet/cover state
+    Routes.swift                 Route / Sheet / FullScreenCover enums
+  Extensions/                    cross-feature Swift/SwiftUI extensions
+  Utils/
+    NetworkClient.swift          the one shared network client
+  Resources/
+    Assets.xcassets               images, colors, icons
+    Localizable.xcstrings         all user-facing strings, en + pt-BR
+ZanzarProjectTests/<FeatureName>/
+  <FeatureName>ViewModelTests.swift
+```
+
+Database
+<img width="4394" height="3461" alt="Database" src="https://github.com/user-attachments/assets/a43711c3-a14e-4cfe-bc80-4c60740045f2" />
