@@ -9,10 +9,7 @@ struct LocationMapView: View {
         Map(position: $viewModel.cameraPosition) {
             UserAnnotation()
         }
-        .mapControls {
-            MapUserLocationButton()
-            MapCompass()
-        }
+        .mapStyle(.standard(elevation: .realistic))
         .overlay(alignment: .top) {
             if let errorMessage = viewModel.errorMessage {
                 LocationMapErrorBanner(message: errorMessage)
@@ -21,7 +18,7 @@ struct LocationMapView: View {
         }
         .overlay {
             if viewModel.isLoading && viewModel.userCoordinate == nil {
-                ProgressView("Finding your location…")
+                ProgressView("locationMap.loadingIndicator.title")
                     .padding()
                     .background(.regularMaterial, in: .rect(cornerRadius: 12))
             }
