@@ -19,7 +19,7 @@ extension NetworkClient {
 }
 
 final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
-    static let shared = URLSessionNetworkClient(baseURL: URL(string: "https://api.example.com")!)
+    static let shared = URLSessionNetworkClient(baseURL: BackendConfiguration.baseURL)
 
     private let baseURL: URL
     private let session: URLSession
@@ -32,7 +32,7 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
     }
 
     func get<Response: Decodable>(path: String, queryItems: [URLQueryItem]) async throws -> Response {
-        var components = URLComponents(url: baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false)
+        var components = URLComponents(url: baseURL.appending(path: path), resolvingAgainstBaseURL: false)
         components?.queryItems = queryItems.isEmpty ? nil : queryItems
         guard let url = components?.url else { throw URLError(.badURL) }
 
@@ -42,7 +42,7 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
     }
 
     func send<Body: Encodable, Response: Decodable>(path: String, method: HTTPMethod, body: Body) async throws -> Response {
-        let url = baseURL.appendingPathComponent(path)
+        let url = baseURL.appending(path: path)
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

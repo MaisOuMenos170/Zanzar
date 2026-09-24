@@ -26,6 +26,13 @@ struct LocationMapView: View {
                     .background(.regularMaterial, in: .rect(cornerRadius: 12))
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("locationMap.backendProbeButton.title", systemImage: "network") {
+                    coordinator.push(.backendProbe)
+                }
+            }
+        }
         .task {
             await viewModel.loadUserLocation()
         }
