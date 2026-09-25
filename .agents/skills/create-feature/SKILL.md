@@ -27,7 +27,8 @@ Create Feature Progress:
 - [ ] Step 5: Implement ViewModel ⚠️ REQUIRED — invoke swift-concurrency skill
   - [ ] State + actions, Servicing protocol only
 - [ ] Step 6: Implement View ⚠️ REQUIRED — invoke swiftui-pro skill
-  - [ ] UI + Components for extracted subviews
+  - [ ] UI + Components for extracted subviews (feature-local only)
+  - [ ] Cross-feature UI goes in Features/Shared/Views/Components/<Domain>/ — not App/Components/
   - [ ] Every string is a lookup key, never a hardcoded literal
 - [ ] Step 7: Localize strings ⚠️ REQUIRED
   - [ ] Load references/localization.md
@@ -60,7 +61,7 @@ python3 scripts/scaffold_feature.py <FeatureName>
 
 `<FeatureName>` must be PascalCase. The script:
 - Auto-detects the repo root by locating `ZanzarProject/ZanzarProject.xcodeproj` (override with `--repo-root` if run from elsewhere)
-- On the very first run in this repo, bootstraps `App/`, `Coordinator/` (`AppCoordinator.swift`, `Routes.swift`), `Utils/NetworkClient.swift`, and `Resources/` (moves `Assets.xcassets` in, creates an empty `Localizable.xcstrings`), and moves the existing `ContentView.swift`/`MyApp.swift` into `App/`
+- On the very first run in this repo, bootstraps `App/`, `Coordinator/` (`AppCoordinator.swift`, `Routes.swift`), `Utils/NetworkClient.swift`, `Features/Shared/{Views/Components,Utils}`, and `Resources/` (moves `Assets.xcassets` in, creates an empty `Localizable.xcstrings`), and moves the existing `ContentView.swift`/`MyApp.swift` into `App/`
 - Creates `Features/<FeatureName>/{API,Models,ViewModels,Views,Views/Components}` with boilerplate files
 - Creates `ZanzarProjectTests/<FeatureName>/<FeatureName>ViewModelTests.swift`
 - Never overwrites a file that already exists — reruns are safe, existing work is never clobbered
@@ -132,6 +133,7 @@ action against the mock — don't hand-write the test from general knowledge.
 - Do NOT leave the test stub as a no-op — write a real `@Test` before calling the feature done.
 - Do NOT hardcode a user-facing string in a View/Component — every string is a `Localizable.xcstrings` key with both `en` and `pt-BR` values.
 - Do NOT add a string in only one language — a key with just English is half-done, not done.
+- Do NOT put cross-feature UI in `App/Components/` — use `Features/Shared/Views/Components/<Domain>/` instead. Reserve `App/Components/` for app-shell UI (tabs, placeholders).
 
 ## Pre-Delivery Checklist
 
@@ -144,6 +146,8 @@ action against the mock — don't hand-write the test from general knowledge.
 
 ### Architecture
 - [ ] Every file is in its correct layer folder (API / Models / ViewModels / Views / Views/Components)
+- [ ] Cross-feature UI lives in `Features/Shared/Views/Components/<Domain>/`, not `App/Components/`
+- [ ] Cross-feature helpers live in `Features/Shared/Utils/`, not mixed into feature folders or root `Utils/` (root `Utils/` is app infrastructure only)
 - [ ] Domain Model (`Models/`) is distinct from the wire-format Request/Response (`API/`)
 - [ ] `<FeatureName>` is PascalCase and identical across every generated type and file
 

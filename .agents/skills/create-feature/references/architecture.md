@@ -16,22 +16,29 @@ View <-> ViewModel <-> Service (protocol) <-> NetworkClient (protocol, shared)
 ```
 ZanzarProject/ZanzarProject/
   App/                          ContentView.swift, MyApp.swift (@main)
-  Features/<FeatureName>/
-    API/
-      <FeatureName>Service.swift     protocol + impl + Request/Response
-    Models/
-      <FeatureName>.swift            domain model(s) the View/ViewModel use
-    Views/
-      <FeatureName>View.swift
-      Components/                   extracted subviews for this feature only
-    ViewModels/
-      <FeatureName>ViewModel.swift
+                                Components/         app-shell UI only (tabs, placeholders)
+  Features/
+    Shared/                     cross-feature code — NOT a navigable feature
+      Views/
+        Components/
+          <Domain>/             e.g. Auth/ — UI reused by 2+ features
+      Utils/                    domain helpers shared across features
+    <FeatureName>/
+      API/
+        <FeatureName>Service.swift     protocol + impl + Request/Response
+      Models/
+        <FeatureName>.swift            domain model(s) the View/ViewModel use
+      Views/
+        <FeatureName>View.swift
+        Components/                   subviews used by this feature only
+      ViewModels/
+        <FeatureName>ViewModel.swift
   Coordinator/
     AppCoordinator.swift         @Observable, owns NavigationPath + sheet/cover state
     Routes.swift                 Route / Sheet / FullScreenCover enums
   Extensions/                    cross-feature Swift/SwiftUI extensions
   Utils/
-    NetworkClient.swift          the one shared network client
+    NetworkClient.swift          app-wide infrastructure (not feature-domain code)
   Resources/
     Assets.xcassets               images, colors, icons
     Localizable.xcstrings         all user-facing strings, en + pt-BR
@@ -40,6 +47,18 @@ ZanzarProjectTests/<FeatureName>/
 ```
 
 `<FeatureName>` is always PascalCase and descriptive (`IssueReport`, not `Issue` or `Report1`). It names the folder, the View, the ViewModel, the Service, and the domain Model consistently — grep for the feature name and every layer should show up.
+
+## When to use Shared vs feature Components
+
+| Location | Use when |
+|----------|----------|
+| `Features/<Feature>/Views/Components/` | The subview is used **only** inside that feature |
+| `Features/Shared/Views/Components/<Domain>/` | The subview is reused by **two or more** features (e.g. `Auth/` for SignUp + Login) |
+| `Features/Shared/Utils/` | Validation, formatting, or mapping logic shared across features in the same domain |
+| `App/Components/` | App **shell** UI only — tab placeholders, root chrome — never feature-flow screens |
+| `Utils/` (root) | App-wide infrastructure (`NetworkClient`, `AppLanguage`) — not feature-domain code |
+
+`Features/Shared/` is a transversal folder, not a feature: it has no Service, ViewModel, Route, or API layer.
 
 ## Why the layers don't collapse
 

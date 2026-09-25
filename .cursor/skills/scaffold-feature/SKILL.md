@@ -48,7 +48,7 @@ python3 .agents/skills/create-feature/scripts/scaffold_feature.py <FeatureName>
 `<FeatureName>` must be PascalCase. The script:
 
 - Auto-detects the repo root via `ZanzarProject/ZanzarProject.xcodeproj`
-- On first run, bootstraps shared infrastructure (`App/`, `Coordinator/`, `Utils/`, `Resources/`)
+- On first run, bootstraps shared infrastructure (`App/`, `Coordinator/`, `Utils/`, `Features/Shared/`, `Resources/`)
 - Creates the feature folders and boilerplate files (see Step 3)
 - Creates the test stub at `ZanzarProjectTests/<FeatureName>/`
 - Never overwrites existing files — reruns are safe
@@ -64,6 +64,9 @@ After the script runs, report what was **created** vs **skipped (exists)**.
 Show this expected tree (adjust `<FeatureName>`):
 
 ```
+ZanzarProject/ZanzarProject/Features/Shared/   ← created on bootstrap (cross-feature UI/helpers)
+  Views/Components/                            ← e.g. Auth/
+  Utils/
 ZanzarProject/ZanzarProject/Features/<FeatureName>/
   API/
     <FeatureName>Service.swift       ← protocol + impl stub
