@@ -5,19 +5,23 @@ struct MainTabView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            Tab("mainTab.discoverTab.title", systemImage: "map", value: .discover) {
-                LocationMapView()
-            }
-
-            Tab("mainTab.checkInTab.title", systemImage: "mappin", value: .checkIn) {
-                TabPlaceholderView(tab: .checkIn)
-            }
-
-            Tab("mainTab.profileTab.title", systemImage: "person", value: .profile) {
-                TabPlaceholderView(tab: .profile)
+            ForEach(MainTab.allCases, id: \.self) { tab in
+                Tab(tab.titleKey, systemImage: tab.systemImage, value: tab) {
+                    tabContent(for: tab)
+                }
             }
         }
         .tint(Color("TabBarSelected"))
+    }
+
+    @ViewBuilder
+    private func tabContent(for tab: MainTab) -> some View {
+        switch tab {
+        case .discover:
+            LocationMapView()
+        case .checkIn, .profile:
+            TabPlaceholderView(tab: tab)
+        }
     }
 }
 

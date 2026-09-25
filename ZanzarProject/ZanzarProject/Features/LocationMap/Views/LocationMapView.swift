@@ -10,6 +10,10 @@ struct LocationMapView: View {
             UserAnnotation()
         }
         .mapStyle(.standard(elevation: .realistic))
+        .mapControls {
+            MapUserLocationButton()
+            MapCompass()
+        }
         .overlay(alignment: .top) {
             if let errorMessage = viewModel.errorMessage {
                 LocationMapErrorBanner(message: errorMessage)
