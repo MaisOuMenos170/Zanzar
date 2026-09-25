@@ -45,7 +45,9 @@ struct LoginView: View {
             Spacer()
 
             Button("login.submitButton.title") {
-                viewModel.submitTapped()
+                if viewModel.submitTapped() {
+                    coordinator.completeAuth()
+                }
             }
             .buttonStyle(AuthPrimaryButtonStyle())
             .padding(.horizontal, 19)

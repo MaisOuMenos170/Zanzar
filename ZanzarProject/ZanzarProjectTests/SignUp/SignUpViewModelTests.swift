@@ -3,15 +3,44 @@ import Testing
 
 @Suite("SignUpViewModel")
 struct SignUpViewModelTests {
-    @Test("submit with empty fields sets validation errors")
+    @Test("submit with empty fields explains each missing field")
     func submitWithEmptyFieldsSetsErrors() {
         let viewModel = SignUpViewModel(service: MockSignUpService())
 
-        viewModel.submitTapped()
+        let didSubmit = viewModel.submitTapped()
 
-        #expect(viewModel.usernameError == "signUp.usernameField.errorRequired")
-        #expect(viewModel.emailError == "signUp.emailField.errorRequired")
-        #expect(viewModel.passwordError == "signUp.passwordField.errorRequired")
+        #expect(didSubmit == false)
+        #expect(viewModel.usernameError == "signUp.usernameField.errorEmpty")
+        #expect(viewModel.emailError == "signUp.emailField.errorEmpty")
+        #expect(viewModel.passwordError == "signUp.passwordField.errorEmpty")
+    }
+
+    @Test("submit with invalid email explains the format problem")
+    func submitWithInvalidEmailSetsInvalidError() {
+        let viewModel = SignUpViewModel(service: MockSignUpService())
+        viewModel.username = "zanzar"
+        viewModel.email = "email-invalido"
+        viewModel.password = "secret123"
+
+        let didSubmit = viewModel.submitTapped()
+
+        #expect(didSubmit == false)
+        #expect(viewModel.usernameError == nil)
+        #expect(viewModel.emailError == "signUp.emailField.errorInvalid")
+        #expect(viewModel.passwordError == nil)
+    }
+
+    @Test("submit with short password explains the length requirement")
+    func submitWithShortPasswordSetsTooShortError() {
+        let viewModel = SignUpViewModel(service: MockSignUpService())
+        viewModel.username = "zanzar"
+        viewModel.email = "user@example.com"
+        viewModel.password = "123"
+
+        let didSubmit = viewModel.submitTapped()
+
+        #expect(didSubmit == false)
+        #expect(viewModel.passwordError == "signUp.passwordField.errorTooShort")
     }
 
     @Test("submit with valid fields clears validation errors")
@@ -19,10 +48,11 @@ struct SignUpViewModelTests {
         let viewModel = SignUpViewModel(service: MockSignUpService())
         viewModel.username = "zanzar"
         viewModel.email = "user@example.com"
-        viewModel.password = "secret"
+        viewModel.password = "secret123"
 
-        viewModel.submitTapped()
+        let didSubmit = viewModel.submitTapped()
 
+        #expect(didSubmit == true)
         #expect(viewModel.usernameError == nil)
         #expect(viewModel.emailError == nil)
         #expect(viewModel.passwordError == nil)

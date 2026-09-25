@@ -53,7 +53,9 @@ struct SignUpView: View {
             Spacer()
 
             Button("signUp.submitButton.title") {
-                viewModel.submitTapped()
+                if viewModel.submitTapped() {
+                    coordinator.completeAuth()
+                }
             }
             .buttonStyle(AuthPrimaryButtonStyle())
             .padding(.horizontal, 19)

@@ -21,22 +21,9 @@
 		B9A3FCA73059BF17003386A8 /* ZanzarProjectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZanzarProjectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B98940153066EE8E001AF248 /* Exceptions for "ZanzarProject" folder in "ZanzarProjectTests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Features/Welcome/Views/WelcomeView.swift,
-			);
-			target = B9A3FCA63059BF17003386A8 /* ZanzarProjectTests */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		000000000000000000000010 /* ZanzarProject */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				B98940153066EE8E001AF248 /* Exceptions for "ZanzarProject" folder in "ZanzarProjectTests" target */,
-			);
 			path = ZanzarProject;
 			sourceTree = "<group>";
 		};

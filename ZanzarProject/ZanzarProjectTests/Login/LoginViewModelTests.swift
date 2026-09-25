@@ -3,24 +3,39 @@ import Testing
 
 @Suite("LoginViewModel")
 struct LoginViewModelTests {
-    @Test("submit with empty fields sets validation errors")
+    @Test("submit with empty fields explains each missing field")
     func submitWithEmptyFieldsSetsErrors() {
         let viewModel = LoginViewModel(service: MockLoginService())
 
-        viewModel.submitTapped()
+        let didSubmit = viewModel.submitTapped()
 
-        #expect(viewModel.emailError == "login.emailField.errorInvalid")
-        #expect(viewModel.passwordError == "login.passwordField.errorInvalid")
+        #expect(didSubmit == false)
+        #expect(viewModel.emailError == "login.emailField.errorEmpty")
+        #expect(viewModel.passwordError == "login.passwordField.errorEmpty")
     }
 
-    @Test("submit with valid fields clears validation errors")
-    func submitWithValidFieldsClearsErrors() {
+    @Test("submit with invalid email explains the format problem")
+    func submitWithInvalidEmailSetsInvalidError() {
+        let viewModel = LoginViewModel(service: MockLoginService())
+        viewModel.email = "email-invalido"
+        viewModel.password = "secret"
+
+        let didSubmit = viewModel.submitTapped()
+
+        #expect(didSubmit == false)
+        #expect(viewModel.emailError == "login.emailField.errorInvalid")
+        #expect(viewModel.passwordError == nil)
+    }
+
+    @Test("submit with valid fields succeeds")
+    func submitWithValidFieldsSucceeds() {
         let viewModel = LoginViewModel(service: MockLoginService())
         viewModel.email = "user@example.com"
         viewModel.password = "secret"
 
-        viewModel.submitTapped()
+        let didSubmit = viewModel.submitTapped()
 
+        #expect(didSubmit == true)
         #expect(viewModel.emailError == nil)
         #expect(viewModel.passwordError == nil)
     }

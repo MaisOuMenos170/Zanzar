@@ -15,18 +15,22 @@ final class LoginViewModel {
         self.service = service
     }
 
-    func submitTapped() {
-        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        emailError = trimmedEmail.isEmpty || !trimmedEmail.contains("@")
-            ? "login.emailField.errorInvalid"
-            : nil
+    @discardableResult
+    func submitTapped() -> Bool {
+        emailError = AuthValidation.emailError(
+            for: email,
+            emptyKey: "login.emailField.errorEmpty",
+            invalidKey: "login.emailField.errorInvalid"
+        )
         passwordError = password.isEmpty
-            ? "login.passwordField.errorInvalid"
+            ? "login.passwordField.errorEmpty"
             : nil
 
-        guard emailError == nil, passwordError == nil else { return }
+        guard emailError == nil, passwordError == nil else {
+            return false
+        }
 
         // TODO: call service when backend is implemented
+        return true
     }
 }

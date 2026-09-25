@@ -5,6 +5,12 @@ final class AppCoordinator {
     var path = NavigationPath()
     var presentedSheet: Sheet?
     var presentedFullScreenCover: FullScreenCover?
+    var isAuthenticated = false
+
+    func completeAuth() {
+        isAuthenticated = true
+        popToRoot()
+    }
 
     func push(_ route: Route) {
         path.append(route)

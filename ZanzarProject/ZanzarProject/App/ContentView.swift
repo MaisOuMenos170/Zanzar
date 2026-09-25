@@ -5,8 +5,14 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack(path: $coordinator.path) {
-            WelcomeView()
-                .navigationDestination(for: Route.self) { coordinator.view(for: $0) }
+            Group {
+                if coordinator.isAuthenticated {
+                    MainTabView()
+                } else {
+                    WelcomeView()
+                }
+            }
+            .navigationDestination(for: Route.self) { coordinator.view(for: $0) }
         }
         .sheet(item: $coordinator.presentedSheet) { coordinator.view(for: $0) }
         .fullScreenCover(item: $coordinator.presentedFullScreenCover) { coordinator.view(for: $0) }

@@ -16,7 +16,7 @@ struct AuthFormField: View {
                 .foregroundStyle(.primary)
 
             if let errorMessageKey {
-                Text(errorMessageKey)
+                Text(LocalizedStringKey(errorMessageKey))
                     .font(.caption)
                     .foregroundStyle(Color("AuthError"))
             }
