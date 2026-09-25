@@ -9,6 +9,7 @@ struct LocationMapView: View {
         Map(position: $viewModel.cameraPosition) {
             UserAnnotation()
         }
+        .mapStyle(.standard(elevation: .realistic))
         .mapControls {
             MapUserLocationButton()
             MapCompass()
@@ -21,7 +22,7 @@ struct LocationMapView: View {
         }
         .overlay {
             if viewModel.isLoading && viewModel.userCoordinate == nil {
-                ProgressView("Finding your location…")
+                ProgressView("locationMap.loadingIndicator.title")
                     .padding()
                     .background(.regularMaterial, in: .rect(cornerRadius: 12))
             }

@@ -1,0 +1,48 @@
+<svg width="294" height="265" viewBox="0 0 294 265" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_g_354_3461)">
+<path d="M144.039 0.899902C211.292 0.899902 266.751 51.387 274.588 116.528C285.937 127.115 293.005 142.297 292.899 159.122C292.722 187.25 272.555 210.534 246.076 215.352C221.964 244.975 185.212 263.9 144.039 263.9C106.838 263.9 73.2472 248.451 49.3269 223.622C21.7648 219.431 0.71879 195.348 0.901077 166.404C0.982756 153.442 5.30836 141.509 12.5407 131.937C12.7903 59.5245 71.5678 0.900009 144.039 0.899902Z" fill="#73E033"/>
+<ellipse cx="99.0391" cy="106.9" rx="31.5" ry="31" fill="white"/>
+<ellipse cx="189.039" cy="98.8999" rx="31.5" ry="31" fill="white"/>
+<ellipse cx="181.039" cy="95.8999" rx="22.5" ry="22" fill="#013001"/>
+<ellipse cx="92.0391" cy="101.9" rx="22.5" ry="22" fill="#013001"/>
+<ellipse cx="96.7333" cy="139.258" rx="57" ry="31" transform="rotate(0.360835 96.7333 139.258)" fill="#73E033"/>
+<ellipse cx="57" cy="31" rx="57" ry="31" transform="matrix(-0.994313 0.106497 0.106497 0.994313 251.89 94.8999)" fill="#73E033"/>
+<path d="M60.5389 82.0687C83.0042 88.9848 109.723 62.6101 101.945 51.1371" stroke="#005B00" stroke-width="11" stroke-linecap="round"/>
+<path d="M225.094 72.9928C205.12 79.5989 180.991 62.9941 176.792 48.2817" stroke="#005B00" stroke-width="11" stroke-linecap="round"/>
+<mask id="mask0_354_3461" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="293" height="264">
+<path d="M144.039 0.899902C211.292 0.899902 266.751 51.387 274.588 116.528C285.938 127.115 293.005 142.297 292.899 159.122C292.722 187.25 272.556 210.534 246.076 215.352C221.964 244.975 185.212 263.9 144.039 263.9C106.839 263.9 73.2475 248.451 49.3271 223.622C21.7651 219.431 0.719035 195.348 0.901322 166.404C0.983 153.442 5.3086 141.509 12.541 131.937C12.7905 59.5245 71.568 0.900009 144.039 0.899902Z" fill="#73E033"/>
+</mask>
+<g mask="url(#mask0_354_3461)">
+<g filter="url(#filter1_f_354_3461)">
+<ellipse cx="73.0388" cy="168.4" rx="39.5" ry="38.5" fill="#005B00" fill-opacity="0.6"/>
+</g>
+<g filter="url(#filter2_f_354_3461)">
+<ellipse cx="219.039" cy="162.4" rx="39.5" ry="38.5" fill="#005B00" fill-opacity="0.6"/>
+</g>
+</g>
+<path d="M188.958 150.366C165.183 134.241 124.078 141.208 108.835 151.136" stroke="#005B00" stroke-width="11" stroke-linecap="round"/>
+<path d="M194.824 165.286C182.913 157.649 190.238 125.6 201.324 125.787" stroke="#005B00" stroke-width="11" stroke-linecap="round"/>
+<path d="M99.3808 169.286C111.292 161.649 103.966 129.6 92.881 129.787" stroke="#005B00" stroke-width="11" stroke-linecap="round"/>
+</g>
+<defs>
+<filter id="filter0_g_354_3461" x="-0.361182" y="-9.76324e-05" width="294.8" height="264.8" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feTurbulence type="fractalNoise" baseFrequency="0.29411762952804565 0.29411762952804565" numOctaves="3" seed="5053" />
+<feDisplacementMap in="shape" scale="1.7999999523162842" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%" />
+<feMerge result="effect1_texture_354_3461">
+<feMergeNode in="displacedImage"/>
+</feMerge>
+</filter>
+<filter id="filter1_f_354_3461" x="3.53882" y="99.8999" width="139" height="137" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="15" result="effect1_foregroundBlur_354_3461"/>
+</filter>
+<filter id="filter2_f_354_3461" x="149.539" y="93.8999" width="139" height="137" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="15" result="effect1_foregroundBlur_354_3461"/>
+</filter>
+</defs>
+</svg>

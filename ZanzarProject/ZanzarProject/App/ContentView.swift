@@ -6,7 +6,7 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack(path: $coordinator.path) {
-            LocationMapView()
+            MainTabView()
                 .navigationDestination(for: Route.self) { coordinator.view(for: $0) }
         }
         .sheet(item: $coordinator.presentedSheet) { coordinator.view(for: $0) }
