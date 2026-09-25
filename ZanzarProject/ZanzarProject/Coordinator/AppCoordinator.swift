@@ -38,9 +38,10 @@ final class AppCoordinator {
     @ViewBuilder
     func view(for route: Route) -> some View {
         switch route {
-        // TODO: add a case per feature route, e.g.:
-        // case .issueReport:
-        //     IssueReportView()
+        case .signUp:
+            SignUpView()
+        case .login:
+            LoginView()
         default:
             EmptyView()
         }

@@ -1,7 +1,8 @@
 import Foundation
 
 enum Route: Hashable {
-    // TODO: add one case per pushed destination, e.g. `case issueReport`
+    case signUp
+    case login
 }
 
 enum Sheet: Identifiable, Hashable {
