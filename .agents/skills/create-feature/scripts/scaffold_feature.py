@@ -101,6 +101,17 @@ def bootstrap_root_structure(app_root: Path, report: list) -> None:
 
     write_if_missing(resources_dir / "Localizable.xcstrings", render("Localizable.xcstrings.template", ""), report)
 
+    shared_dir = app_root / "Features" / "Shared"
+    shared_components = shared_dir / "Views" / "Components"
+    shared_utils = shared_dir / "Utils"
+    if shared_components.exists() and shared_utils.exists():
+        report.append(f"  skipped (exists): {shared_dir}")
+    else:
+        shared_components.mkdir(parents=True, exist_ok=True)
+        shared_utils.mkdir(parents=True, exist_ok=True)
+        report.append(f"  created: {shared_dir}/Views/Components")
+        report.append(f"  created: {shared_dir}/Utils")
+
 
 def scaffold_feature(app_root: Path, tests_root: Path, feature: str, report: list) -> None:
     feature_dir = app_root / "Features" / feature

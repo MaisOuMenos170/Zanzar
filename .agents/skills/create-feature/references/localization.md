@@ -26,10 +26,16 @@ issueReport.submissionFailedAlert.message
 ```
 
 `featureName` matches the feature's folder name (lowerCamelCase of the
-PascalCase `<FeatureName>`). `componentName` is the specific control/section
-the string belongs to, not the whole screen. `action` is what the string
-does: `title`, `placeholder`, `message`, `label`, `subtitle`, `buttonTitle` if
-`componentName` alone is ambiguous, etc.
+PascalCase `<FeatureName>`). For cross-feature UI in `Features/Shared/`, use
+`shared` as the feature segment, optionally followed by a domain segment:
+`shared.auth.backButton.accessibilityLabel`. `componentName` is the specific
+control/section the string belongs to, not the whole screen. `action` is what
+the string does: `title`, `placeholder`, `message`, `label`, `subtitle`,
+`buttonTitle` if `componentName` alone is ambiguous, etc.
+
+Legacy keys using a domain prefix without `shared.` (e.g. `auth.backButton.*`)
+may exist in older screens — prefer `shared.<domain>.*` for new Shared
+components.
 
 ## Workflow
 
