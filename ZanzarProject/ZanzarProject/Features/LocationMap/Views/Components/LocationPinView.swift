@@ -33,8 +33,7 @@ struct LocationPinView: View {
                 .offset(y: Metrics.innerCircleCenterYOffset)
         }
         .frame(width: Metrics.width, height: Metrics.height)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("locationMap.pin.accessibilityLabel")
+        .accessibilityHidden(true)
     }
 }
 

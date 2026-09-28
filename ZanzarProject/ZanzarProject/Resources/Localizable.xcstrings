@@ -35,7 +35,7 @@
         }
       }
     },
-    "locationMap.pin.accessibilityLabel": {
+    "locationMap.userLocation.accessibilityLabel": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -48,6 +48,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sua localização"
+          }
+        }
+      }
+    },
+    "locationMap.placesLoadError": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't load places. Try again later."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível carregar os lugares. Tente novamente."
           }
         }
       }

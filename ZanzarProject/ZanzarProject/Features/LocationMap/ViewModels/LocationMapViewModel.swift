@@ -8,6 +8,7 @@ final class LocationMapViewModel {
 
     var cameraPosition: MapCameraPosition = .automatic
     var userCoordinate: UserCoordinate?
+    var places: [MapPlace] = []
     var isLoading = false
     var errorMessage: String?
 
@@ -15,9 +16,11 @@ final class LocationMapViewModel {
         self.service = service
     }
 
-    func loadUserLocation() async {
+    func load() async {
         isLoading = true
+        errorMessage = nil
         defer { isLoading = false }
+
         do {
             let coordinate = try await service.currentUserLocation()
             userCoordinate = coordinate
@@ -29,7 +32,19 @@ final class LocationMapViewModel {
                 )
             )
         } catch {
+            userCoordinate = nil
+            places = []
             errorMessage = error.localizedDescription
+            return
+        }
+
+        guard let userCoordinate else { return }
+
+        do {
+            places = try await service.fetchNearbyPlaces(from: userCoordinate)
+        } catch {
+            places = []
+            errorMessage = String(localized: "locationMap.placesLoadError")
         }
     }
 }
