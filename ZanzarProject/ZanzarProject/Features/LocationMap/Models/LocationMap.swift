@@ -67,11 +67,19 @@ struct MapPlace: Identifiable, Hashable, Sendable {
 }
 
 struct PlaceAPIResponse: Decodable, Sendable {
-    let place_id: String
+    let placeId: String
     let name: String
     let geometry: Geometry
     let zanzar: Zanzar
     let distanceMeters: Double
+
+    enum CodingKeys: String, CodingKey {
+        case placeId = "place_id"
+        case name
+        case geometry
+        case zanzar
+        case distanceMeters
+    }
 
     struct Geometry: Decodable, Sendable {
         let location: Location
@@ -89,7 +97,7 @@ struct PlaceAPIResponse: Decodable, Sendable {
 
 extension MapPlace {
     init(response: PlaceAPIResponse) {
-        id = response.place_id
+        id = response.placeId
         name = response.name
         latitude = response.geometry.location.lat
         longitude = response.geometry.location.lng

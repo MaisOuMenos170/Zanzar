@@ -78,4 +78,3 @@ struct SignUpView: View {
             .environment(AppCoordinator())
     }
 }
-

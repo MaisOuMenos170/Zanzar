@@ -70,4 +70,3 @@ struct LoginView: View {
             .environment(AppCoordinator())
     }
 }
-

@@ -60,7 +60,7 @@ final class LocationMapService: LocationMapServicing {
             path: "places",
             queryItems: [
                 URLQueryItem(name: "lat", value: String(coordinate.latitude)),
-                URLQueryItem(name: "lng", value: String(coordinate.longitude)),
+                URLQueryItem(name: "lng", value: String(coordinate.longitude))
             ]
         )
         return responses.map(MapPlace.init(response:))

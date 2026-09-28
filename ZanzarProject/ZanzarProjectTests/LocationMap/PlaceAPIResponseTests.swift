@@ -6,7 +6,7 @@ import Testing
 struct PlaceAPIResponseTests {
     @Test("Decodes backend payload into MapPlace")
     func decodesMapPlace() throws {
-        let json = """
+        let jsonString = """
         {
           "place_id": "ChIJFWlvqB_k3JQR7jsyAF9M8vU",
           "name": "Museu Oscar Niemeyer | MON",
@@ -21,7 +21,8 @@ struct PlaceAPIResponseTests {
           },
           "distanceMeters": 123.4
         }
-        """.data(using: .utf8)!
+        """
+        let json = Data(jsonString.utf8)
 
         let response = try JSONDecoder().decode(PlaceAPIResponse.self, from: json)
         let place = MapPlace(response: response)
@@ -37,7 +38,7 @@ struct PlaceAPIResponseTests {
 
     @Test("Unknown category maps to mappin icon")
     func unknownCategory() throws {
-        let json = """
+        let jsonString = """
         {
           "place_id": "abc",
           "name": "Mystery Spot",
@@ -45,7 +46,8 @@ struct PlaceAPIResponseTests {
           "zanzar": { "category": "unknown_type" },
           "distanceMeters": 0
         }
-        """.data(using: .utf8)!
+        """
+        let json = Data(jsonString.utf8)
 
         let response = try JSONDecoder().decode(PlaceAPIResponse.self, from: json)
         let place = MapPlace(response: response)

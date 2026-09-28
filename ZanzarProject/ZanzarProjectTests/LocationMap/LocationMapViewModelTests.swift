@@ -17,7 +17,7 @@ struct LocationMapViewModelTests {
                 longitude: -49.2670599,
                 category: .museum,
                 distanceMeters: 0
-            ),
+            )
         ]
         let service = MockLocationMapService()
         service.locationResult = .success(coordinate)
