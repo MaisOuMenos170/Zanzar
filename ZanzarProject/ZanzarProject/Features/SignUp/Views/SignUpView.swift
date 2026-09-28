@@ -53,9 +53,14 @@ struct SignUpView: View {
             Spacer()
 
             Button("signUp.submitButton.title") {
+                #if DEBUG
+                // Bypass auth until sign-up API is wired.
+                coordinator.completeAuth()
+                #else
                 if viewModel.submitTapped() {
                     coordinator.completeAuth()
                 }
+                #endif
             }
             .buttonStyle(AuthPrimaryButtonStyle())
             .padding(.horizontal, 19)
@@ -73,4 +78,3 @@ struct SignUpView: View {
             .environment(AppCoordinator())
     }
 }
-

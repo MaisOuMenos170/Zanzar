@@ -19,7 +19,7 @@ extension NetworkClient {
 }
 
 final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
-    static let shared = URLSessionNetworkClient(baseURL: URL(string: "https://api.example.com")!)
+    static let shared = URLSessionNetworkClient(baseURL: APIConfiguration.baseURL)
 
     private let baseURL: URL
     private let session: URLSession

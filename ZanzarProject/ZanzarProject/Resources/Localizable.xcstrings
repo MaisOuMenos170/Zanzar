@@ -41,6 +41,23 @@
         "en": {
           "stringUnit": {
             "state": "translated",
+            "value": "Place"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lugar"
+          }
+        }
+      }
+    },
+    "locationMap.userLocation.accessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
             "value": "Your location"
           }
         },
@@ -48,6 +65,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sua localização"
+          }
+        }
+      }
+    },
+    "locationMap.placesLoadError": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't load places. Try again later."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível carregar os lugares. Tente novamente."
+          }
+        }
+      }
+    },
+    "locationMap.locationAccessDenied": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location access was denied. Enable it in Settings to see nearby places."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acesso à localização negado. Ative nas Configurações para ver lugares próximos."
+          }
+        }
+      }
+    },
+    "locationMap.locationUnavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't determine your location. Try again."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível obter sua localização. Tente novamente."
           }
         }
       }

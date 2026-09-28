@@ -7,11 +7,19 @@ struct LocationMapView: View {
 
     var body: some View {
         Map(position: $viewModel.cameraPosition) {
-            UserAnnotation()
+            userLocationContent
+            ForEach(viewModel.places) { place in
+                Annotation(place.name, coordinate: place.coordinate) {
+                    LocationPinView(iconName: place.pinIconName)
+                        .accessibilityLabel(place.name)
+                }
+            }
         }
         .mapStyle(.standard(elevation: .realistic))
         .mapControls {
+            #if !(DEBUG && targetEnvironment(simulator))
             MapUserLocationButton()
+            #endif
             MapCompass()
         }
         .overlay(alignment: .top) {
@@ -28,9 +36,23 @@ struct LocationMapView: View {
             }
         }
         .task {
-            await viewModel.loadUserLocation()
+            await viewModel.load()
         }
         .ignoresSafeArea()
+    }
+
+    @MapContentBuilder
+    private var userLocationContent: some MapContent {
+        #if DEBUG && targetEnvironment(simulator)
+        if let coordinate = viewModel.userCoordinate {
+            Annotation("", coordinate: coordinate.clLocationCoordinate2D) {
+                SimulatorUserLocationMarker()
+                    .accessibilityLabel("locationMap.userLocation.accessibilityLabel")
+            }
+        }
+        #else
+        UserAnnotation()
+        #endif
     }
 }
 

@@ -1,11 +1,11 @@
-import Foundation
+import SwiftUI
 
 enum MainTab: CaseIterable, Hashable {
     case discover
     case checkIn
     case profile
 
-    var titleKey: String {
+    var titleKey: LocalizedStringKey {
         switch self {
         case .discover:
             "mainTab.discoverTab.title"
