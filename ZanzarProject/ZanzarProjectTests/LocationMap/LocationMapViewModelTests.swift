@@ -47,7 +47,19 @@ struct LocationMapViewModelTests {
         #expect(viewModel.userCoordinate == nil)
         #expect(viewModel.places.isEmpty)
         #expect(viewModel.isLoading == false)
-        #expect(viewModel.errorMessage != nil)
+        #expect(viewModel.errorMessage == String(localized: "locationMap.locationAccessDenied"))
+    }
+
+    @Test("Cancelled load does not surface an error message")
+    func cancelledLoad() async {
+        let service = MockLocationMapService()
+        service.locationResult = .success(UserCoordinate(latitude: -25.4098994, longitude: -49.2670599))
+        service.placesResult = .failure(CancellationError())
+        let viewModel = LocationMapViewModel(service: service)
+
+        await viewModel.load()
+
+        #expect(viewModel.errorMessage == nil)
     }
 
     @Test("Failed places fetch keeps the user coordinate and shows an error")

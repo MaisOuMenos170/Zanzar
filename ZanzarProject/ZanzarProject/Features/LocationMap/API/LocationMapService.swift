@@ -6,6 +6,17 @@ enum LocationMapError: Error, Sendable {
     case locationUnavailable
 }
 
+extension LocationMapError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .authorizationDenied:
+            String(localized: "locationMap.locationAccessDenied")
+        case .locationUnavailable:
+            String(localized: "locationMap.locationUnavailable")
+        }
+    }
+}
+
 protocol LocationMapServicing: Sendable {
     func currentUserLocation() async throws -> UserCoordinate
     func fetchNearbyPlaces(from coordinate: UserCoordinate) async throws -> [MapPlace]

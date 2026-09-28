@@ -53,8 +53,14 @@ struct SignUpView: View {
             Spacer()
 
             Button("signUp.submitButton.title") {
-                // DEV: bypass auth until sign-up API is wired — any tap enters the app.
+                #if DEBUG
+                // Bypass auth until sign-up API is wired.
                 coordinator.completeAuth()
+                #else
+                if viewModel.submitTapped() {
+                    coordinator.completeAuth()
+                }
+                #endif
             }
             .buttonStyle(AuthPrimaryButtonStyle())
             .padding(.horizontal, 19)

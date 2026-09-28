@@ -86,6 +86,40 @@
         }
       }
     },
+    "locationMap.locationAccessDenied": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location access was denied. Enable it in Settings to see nearby places."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acesso à localização negado. Ative nas Configurações para ver lugares próximos."
+          }
+        }
+      }
+    },
+    "locationMap.locationUnavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't determine your location. Try again."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível obter sua localização. Tente novamente."
+          }
+        }
+      }
+    },
     "login.emailField.errorEmpty": {
       "extractionState": "manual",
       "localizations": {

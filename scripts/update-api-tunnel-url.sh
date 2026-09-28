@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Updates the Cloudflare Tunnel API URL used by the iOS app.
+# Updates the Cloudflare Tunnel API URL used by the iOS app (Debug build only).
 # Usage: ./scripts/update-api-tunnel-url.sh https://your-subdomain.trycloudflare.com
 set -euo pipefail
 
@@ -11,22 +11,18 @@ fi
 
 URL="${1%/}"
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-SWIFT="$ROOT_DIR/ZanzarProject/ZanzarProject/Utils/APIConfiguration.swift"
+PBXPROJ="$ROOT_DIR/ZanzarProject/ZanzarProject.xcodeproj/project.pbxproj"
 
-python3 - "$URL" "$SWIFT" <<'PY'
+python3 - "$URL" "$PBXPROJ" <<'PY'
 import re
 import sys
 
 url, path = sys.argv[1], sys.argv[2]
 text = open(path).read()
-updated, count = re.subn(
-    r'URL\(string: "https?://[^"]+"\)!',
-    f'URL(string: "{url}")!',
-    text,
-    count=1,
-)
+pattern = r'(INFOPLIST_KEY_ZanzarAPIBaseURL = ")[^"]+(";)'
+updated, count = re.subn(pattern, rf'\g<1>{url}\2', text, count=1)
 if count == 0:
-    raise SystemExit("defaultBaseURL not found in APIConfiguration.swift")
+    raise SystemExit("INFOPLIST_KEY_ZanzarAPIBaseURL not found in project.pbxproj")
 open(path, "w").write(updated)
-print(f"Updated ZanzarAPIBaseURL -> {url}")
+print(f"Updated ZanzarAPIBaseURL (Debug) -> {url}")
 PY

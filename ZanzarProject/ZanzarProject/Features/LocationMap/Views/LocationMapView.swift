@@ -17,7 +17,9 @@ struct LocationMapView: View {
         }
         .mapStyle(.standard(elevation: .realistic))
         .mapControls {
+            #if !(DEBUG && targetEnvironment(simulator))
             MapUserLocationButton()
+            #endif
             MapCompass()
         }
         .overlay(alignment: .top) {
