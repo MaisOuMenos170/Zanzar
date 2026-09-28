@@ -35,6 +35,23 @@
         }
       }
     },
+    "locationMap.pin.accessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Place"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lugar"
+          }
+        }
+      }
+    },
     "locationMap.userLocation.accessibilityLabel": {
       "extractionState": "manual",
       "localizations": {

@@ -43,8 +43,9 @@ struct LocationMapView: View {
     private var userLocationContent: some MapContent {
         #if DEBUG && targetEnvironment(simulator)
         if let coordinate = viewModel.userCoordinate {
-            Annotation("locationMap.userLocation.accessibilityLabel", coordinate: coordinate.clLocationCoordinate2D) {
+            Annotation("", coordinate: coordinate.clLocationCoordinate2D) {
                 SimulatorUserLocationMarker()
+                    .accessibilityLabel("locationMap.userLocation.accessibilityLabel")
             }
         }
         #else

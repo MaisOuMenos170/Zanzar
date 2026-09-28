@@ -6,7 +6,7 @@ struct TabPlaceholderView: View {
     var body: some View {
         Color(.systemBackground)
             .overlay {
-                Text(LocalizedStringKey(tab.titleKey))
+                Text(tab.titleKey)
                     .foregroundStyle(.secondary)
             }
             .ignoresSafeArea()
