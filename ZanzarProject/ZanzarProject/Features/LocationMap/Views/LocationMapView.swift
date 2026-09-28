@@ -7,7 +7,15 @@ struct LocationMapView: View {
 
     var body: some View {
         Map(position: $viewModel.cameraPosition) {
-            UserAnnotation()
+            if let userCoordinate = viewModel.userCoordinate {
+                Annotation(
+                    "locationMap.pin.accessibilityLabel",
+                    coordinate: userCoordinate.clLocationCoordinate2D,
+                    anchor: .bottom
+                ) {
+                    LocationPinView()
+                }
+            }
         }
         .mapStyle(.standard(elevation: .realistic))
         .mapControls {

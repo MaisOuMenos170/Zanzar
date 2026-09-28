@@ -35,6 +35,23 @@
         }
       }
     },
+    "locationMap.pin.accessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your location"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sua localização"
+          }
+        }
+      }
+    },
     "login.emailField.errorEmpty": {
       "extractionState": "manual",
       "localizations": {
