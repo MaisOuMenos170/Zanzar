@@ -44,12 +44,9 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
 
     func get<Response: Decodable>(path: String, queryItems: [URLQueryItem]) async throws -> Response {
         let normalizedPath = normalizedPath(path)
-        var components = URLComponents(
-            url: baseURL.appendingPathComponent(normalizedPath),
-            resolvingAgainstBaseURL: false
-        )
-        components?.queryItems = queryItems.isEmpty ? nil : queryItems
-        guard let url = components?.url else { throw APIError.invalidResponse }
+        guard let url = buildURL(path: normalizedPath, queryItems: queryItems) else {
+            throw APIError.invalidResponse
+        }
 
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.get.rawValue
@@ -62,7 +59,9 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         body: Body
     ) async throws -> Response {
         let normalizedPath = normalizedPath(path)
-        let url = baseURL.appendingPathComponent(normalizedPath)
+        guard let url = buildURL(path: normalizedPath, queryItems: []) else {
+            throw APIError.invalidResponse
+        }
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -72,6 +71,16 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
 
     private func normalizedPath(_ path: String) -> String {
         path.hasPrefix("/") ? String(path.dropFirst()) : path
+    }
+
+    private func buildURL(path: String, queryItems: [URLQueryItem]) -> URL? {
+        var url = baseURL
+        for component in path.split(separator: "/") {
+            url = url.appendingPathComponent(String(component))
+        }
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        components?.queryItems = queryItems.isEmpty ? nil : queryItems
+        return components?.url
     }
 
     private func authorizedRequest(from request: URLRequest, path: String) -> URLRequest {
