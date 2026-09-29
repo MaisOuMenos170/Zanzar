@@ -48,6 +48,8 @@ final class AppCoordinator {
             SignUpView()
         case .login:
             LoginView()
+        case .placeDetail(let place):
+            PlaceDetailView(place: place)
         default:
             EmptyView()
         }

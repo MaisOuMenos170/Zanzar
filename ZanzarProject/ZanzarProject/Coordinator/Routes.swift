@@ -3,6 +3,7 @@ import Foundation
 enum Route: Hashable {
     case signUp
     case login
+    case placeDetail(MapPlace)
 }
 
 enum Sheet: Identifiable, Hashable {
