@@ -1,6 +1,10 @@
 import Foundation
 
 enum AuthValidation {
+    static let minimumUsernameLength = 3
+    static let minimumPasswordLength = 8
+    private static let passwordPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/
+
     static func emailError(
         for email: String,
         emptyKey: String,
@@ -13,6 +17,45 @@ enum AuthValidation {
         }
 
         if !isValidEmail(trimmed) {
+            return invalidKey
+        }
+
+        return nil
+    }
+
+    static func usernameError(
+        for username: String,
+        emptyKey: String,
+        tooShortKey: String
+    ) -> String? {
+        let trimmed = username.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if trimmed.isEmpty {
+            return emptyKey
+        }
+
+        if trimmed.count < minimumUsernameLength {
+            return tooShortKey
+        }
+
+        return nil
+    }
+
+    static func passwordError(
+        for password: String,
+        emptyKey: String,
+        tooShortKey: String,
+        invalidKey: String
+    ) -> String? {
+        if password.isEmpty {
+            return emptyKey
+        }
+
+        if password.count < minimumPasswordLength {
+            return tooShortKey
+        }
+
+        if password.wholeMatch(of: passwordPattern) == nil {
             return invalidKey
         }
 

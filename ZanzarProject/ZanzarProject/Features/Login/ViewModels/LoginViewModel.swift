@@ -10,13 +10,15 @@ final class LoginViewModel {
 
     var emailError: String?
     var passwordError: String?
+    var isLoading = false
+    var submitError: String?
 
     init(service: LoginServicing = LoginService()) {
         self.service = service
     }
 
     @discardableResult
-    func submitTapped() -> Bool {
+    func validateFields() -> Bool {
         emailError = AuthValidation.emailError(
             for: email,
             emptyKey: "login.emailField.errorEmpty",
@@ -26,11 +28,43 @@ final class LoginViewModel {
             ? "login.passwordField.errorEmpty"
             : nil
 
-        guard emailError == nil, passwordError == nil else {
+        return emailError == nil && passwordError == nil
+    }
+
+    func submit(using authSession: AuthSession) async -> Bool {
+        submitError = nil
+        guard validateFields() else { return false }
+
+        isLoading = true
+        defer { isLoading = false }
+
+        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        do {
+            let response = try await service.submitLogin(
+                LoginRequest(email: trimmedEmail, password: password)
+            )
+            try authSession.signIn(token: response.token)
+            return true
+        } catch let error as APIError {
+            submitError = Self.errorMessage(for: error)
+            return false
+        } catch {
+            submitError = String(localized: "login.submitError.generic")
             return false
         }
+    }
 
-        // TODO: call service when backend is implemented
-        return true
+    private static func errorMessage(for error: APIError) -> String {
+        switch error {
+        case .httpStatus(401, _):
+            String(localized: "login.submitError.invalidCredentials")
+        case .httpStatus(_, let message) where message?.isEmpty == false:
+            message!
+        case .decodingFailed, .invalidResponse:
+            String(localized: "login.submitError.generic")
+        case .httpStatus:
+            String(localized: "login.submitError.generic")
+        }
     }
 }

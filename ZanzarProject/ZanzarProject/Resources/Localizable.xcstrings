@@ -290,6 +290,40 @@
         }
       }
     },
+    "login.submitError.generic": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not sign in. Try again."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível entrar. Tente novamente."
+          }
+        }
+      }
+    },
+    "login.submitError.invalidCredentials": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incorrect email or password."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email ou senha incorretos."
+          }
+        }
+      }
+    },
     "mainTab.checkInTab.title": {
       "extractionState": "manual",
       "localizations": {
@@ -477,19 +511,36 @@
         }
       }
     },
+    "signUp.passwordField.errorInvalid": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password must be at least 8 characters and include a letter and a number."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A senha deve ter pelo menos 8 caracteres e incluir uma letra e um número."
+          }
+        }
+      }
+    },
     "signUp.passwordField.errorTooShort": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Password must be at least 6 characters."
+            "value": "Password must be at least 8 characters."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "A senha deve ter pelo menos 6 caracteres."
+            "value": "A senha deve ter pelo menos 8 caracteres."
           }
         }
       }
@@ -545,6 +596,40 @@
         }
       }
     },
+    "signUp.submitError.emailInUse": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already registered."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este email já está cadastrado."
+          }
+        }
+      }
+    },
+    "signUp.submitError.generic": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not create your account. Try again."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível criar sua conta. Tente novamente."
+          }
+        }
+      }
+    },
     "signUp.usernameField.errorEmpty": {
       "extractionState": "manual",
       "localizations": {
@@ -585,13 +670,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Username must be at least 2 characters."
+            "value": "Username must be at least 3 characters."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O nome deve ter pelo menos 2 caracteres."
+            "value": "O nome deve ter pelo menos 3 caracteres."
           }
         }
       }

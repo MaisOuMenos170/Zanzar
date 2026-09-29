@@ -1,43 +1,78 @@
+import Foundation
 import Testing
 @testable import ZanzarProject
 
 @Suite("LoginViewModel")
 struct LoginViewModelTests {
-    @Test("submit with empty fields explains each missing field")
-    func submitWithEmptyFieldsSetsErrors() {
+    @Test("validate with empty fields explains each missing field")
+    func validateWithEmptyFieldsSetsErrors() {
         let viewModel = LoginViewModel(service: MockLoginService())
 
-        let didSubmit = viewModel.submitTapped()
+        let isValid = viewModel.validateFields()
 
-        #expect(didSubmit == false)
+        #expect(isValid == false)
         #expect(viewModel.emailError == "login.emailField.errorEmpty")
         #expect(viewModel.passwordError == "login.passwordField.errorEmpty")
     }
 
-    @Test("submit with invalid email explains the format problem")
-    func submitWithInvalidEmailSetsInvalidError() {
+    @Test("validate with invalid email explains the format problem")
+    func validateWithInvalidEmailSetsInvalidError() {
         let viewModel = LoginViewModel(service: MockLoginService())
         viewModel.email = "email-invalido"
-        viewModel.password = "secret"
+        viewModel.password = "secret12"
 
-        let didSubmit = viewModel.submitTapped()
+        let isValid = viewModel.validateFields()
 
-        #expect(didSubmit == false)
+        #expect(isValid == false)
         #expect(viewModel.emailError == "login.emailField.errorInvalid")
         #expect(viewModel.passwordError == nil)
     }
 
-    @Test("submit with valid fields succeeds")
-    func submitWithValidFieldsSucceeds() {
+    @Test("validate with valid fields succeeds")
+    func validateWithValidFieldsSucceeds() {
         let viewModel = LoginViewModel(service: MockLoginService())
         viewModel.email = "user@example.com"
-        viewModel.password = "secret"
+        viewModel.password = "secret12"
 
-        let didSubmit = viewModel.submitTapped()
+        let isValid = viewModel.validateFields()
 
-        #expect(didSubmit == true)
+        #expect(isValid == true)
         #expect(viewModel.emailError == nil)
         #expect(viewModel.passwordError == nil)
+    }
+
+    @Test("submit signs in when login succeeds")
+    @MainActor
+    func submitSignsInWhenLoginSucceeds() async {
+        let mockService = MockLoginService()
+        mockService.submitLoginResult = .success(LoginResponse(token: "jwt-token"))
+        let authSession = AuthSession(keychain: KeychainStore())
+        let viewModel = LoginViewModel(service: mockService)
+        viewModel.email = "user@example.com"
+        viewModel.password = "secret12"
+
+        let didSubmit = await viewModel.submit(using: authSession)
+
+        #expect(didSubmit == true)
+        #expect(authSession.isAuthenticated == true)
+        #expect(viewModel.submitError == nil)
+    }
+
+    @Test("submit maps invalid credentials error")
+    @MainActor
+    func submitMapsInvalidCredentialsError() async {
+        let mockService = MockLoginService()
+        mockService.submitLoginResult = .failure(APIError.httpStatus(401, message: "Invalid credentials"))
+        let authSession = AuthSession(keychain: KeychainStore())
+        let viewModel = LoginViewModel(service: mockService)
+        viewModel.email = "user@example.com"
+        viewModel.password = "secret12"
+
+        let didSubmit = await viewModel.submit(using: authSession)
+
+        #expect(didSubmit == false)
+        #expect(authSession.isAuthenticated == false)
+        #expect(viewModel.submitError == String(localized: "login.submitError.invalidCredentials"))
     }
 }
 

@@ -3,10 +3,8 @@ import Observation
 
 @Observable
 final class SignUpViewModel {
-    private let service: SignUpServicing
-
-    private static let minimumUsernameLength = 2
-    private static let minimumPasswordLength = 6
+    private let signUpService: SignUpServicing
+    private let loginService: LoginServicing
 
     var username = ""
     var email = ""
@@ -15,57 +13,81 @@ final class SignUpViewModel {
     var usernameError: String?
     var emailError: String?
     var passwordError: String?
+    var isLoading = false
+    var submitError: String?
 
-    init(service: SignUpServicing = SignUpService()) {
-        self.service = service
+    init(
+        signUpService: SignUpServicing = SignUpService(),
+        loginService: LoginServicing = LoginService()
+    ) {
+        self.signUpService = signUpService
+        self.loginService = loginService
     }
 
     @discardableResult
-    func submitTapped() -> Bool {
-        usernameError = validateUsername()
-        emailError = validateEmail()
-        passwordError = validatePassword()
-
-        guard usernameError == nil, emailError == nil, passwordError == nil else {
-            return false
-        }
-
-        // TODO: call service when backend is implemented
-        return true
-    }
-
-    private func validateUsername() -> String? {
-        let trimmed = username.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        if trimmed.isEmpty {
-            return "signUp.usernameField.errorEmpty"
-        }
-
-        if trimmed.count < Self.minimumUsernameLength {
-            return "signUp.usernameField.errorTooShort"
-        }
-
-        return nil
-    }
-
-    private func validateEmail() -> String? {
-        AuthValidation.emailError(
+    func validateFields() -> Bool {
+        usernameError = AuthValidation.usernameError(
+            for: username,
+            emptyKey: "signUp.usernameField.errorEmpty",
+            tooShortKey: "signUp.usernameField.errorTooShort"
+        )
+        emailError = AuthValidation.emailError(
             for: email,
             emptyKey: "signUp.emailField.errorEmpty",
             invalidKey: "signUp.emailField.errorInvalid"
         )
+        passwordError = AuthValidation.passwordError(
+            for: password,
+            emptyKey: "signUp.passwordField.errorEmpty",
+            tooShortKey: "signUp.passwordField.errorTooShort",
+            invalidKey: "signUp.passwordField.errorInvalid"
+        )
+
+        return usernameError == nil && emailError == nil && passwordError == nil
     }
 
-    private func validatePassword() -> String? {
-        if password.isEmpty {
-            return "signUp.passwordField.errorEmpty"
-        }
+    func submit(using authSession: AuthSession) async -> Bool {
+        submitError = nil
+        guard validateFields() else { return false }
 
-        if password.count < Self.minimumPasswordLength {
-            return "signUp.passwordField.errorTooShort"
-        }
+        isLoading = true
+        defer { isLoading = false }
 
-        return nil
+        let trimmedUsername = username.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        do {
+            _ = try await signUpService.submitSignUp(
+                SignUpRequest(
+                    email: trimmedEmail,
+                    username: trimmedUsername,
+                    password: password
+                )
+            )
+            let loginResponse = try await loginService.submitLogin(
+                LoginRequest(email: trimmedEmail, password: password)
+            )
+            try authSession.signIn(token: loginResponse.token)
+            return true
+        } catch let error as APIError {
+            submitError = Self.errorMessage(for: error)
+            return false
+        } catch {
+            submitError = String(localized: "signUp.submitError.generic")
+            return false
+        }
     }
 
+    private static func errorMessage(for error: APIError) -> String {
+        switch error {
+        case .httpStatus(409, _):
+            String(localized: "signUp.submitError.emailInUse")
+        case .httpStatus(_, let message) where message?.isEmpty == false:
+            message!
+        case .decodingFailed, .invalidResponse:
+            String(localized: "signUp.submitError.generic")
+        case .httpStatus:
+            String(localized: "signUp.submitError.generic")
+        }
+    }
 }
