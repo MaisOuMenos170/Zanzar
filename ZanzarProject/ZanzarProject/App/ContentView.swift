@@ -19,9 +19,6 @@ struct ContentView: View {
         .fullScreenCover(item: $coordinator.presentedFullScreenCover) { coordinator.view(for: $0) }
         .environment(coordinator)
         .environment(authSession)
-        .task {
-            authSession.restore()
-        }
     }
 }
 

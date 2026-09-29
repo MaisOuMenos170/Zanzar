@@ -1,6 +1,10 @@
 import Foundation
 import Observation
 
+enum AuthSessionError: Error, Sendable {
+    case invalidToken
+}
+
 @MainActor
 @Observable
 final class AuthSession {
@@ -10,19 +14,20 @@ final class AuthSession {
         token != nil
     }
 
-    private let keychain: KeychainStore
+    private let keychain: AuthTokenPersisting
     private let tokenStore: AuthTokenStore
 
     init(
-        keychain: KeychainStore = KeychainStore(),
+        keychain: AuthTokenPersisting = KeychainStore(),
         tokenStore: AuthTokenStore = .shared
     ) {
         self.keychain = keychain
         self.tokenStore = tokenStore
+        restore()
     }
 
     func restore() {
-        guard let storedToken = keychain.readToken() else {
+        guard let storedToken = keychain.readToken(), !storedToken.isEmpty else {
             return
         }
         token = storedToken
@@ -30,13 +35,17 @@ final class AuthSession {
     }
 
     func signIn(token: String) throws {
-        try keychain.saveToken(token)
-        self.token = token
-        tokenStore.setToken(token)
+        let trimmedToken = token.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedToken.isEmpty else {
+            throw AuthSessionError.invalidToken
+        }
+        try keychain.saveToken(trimmedToken)
+        self.token = trimmedToken
+        tokenStore.setToken(trimmedToken)
     }
 
-    func signOut() {
-        keychain.deleteToken()
+    func signOut() throws {
+        try keychain.deleteToken()
         token = nil
         tokenStore.setToken(nil)
     }

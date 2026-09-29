@@ -32,6 +32,8 @@ final class LoginViewModel {
     }
 
     func submit(using authSession: AuthSession) async -> Bool {
+        guard !isLoading else { return false }
+
         submitError = nil
         guard validateFields() else { return false }
 
@@ -47,24 +49,11 @@ final class LoginViewModel {
             try authSession.signIn(token: response.token)
             return true
         } catch let error as APIError {
-            submitError = Self.errorMessage(for: error)
+            submitError = AuthErrorMapper.loginMessage(for: error)
             return false
         } catch {
             submitError = String(localized: "login.submitError.generic")
             return false
-        }
-    }
-
-    private static func errorMessage(for error: APIError) -> String {
-        switch error {
-        case .httpStatus(401, _):
-            String(localized: "login.submitError.invalidCredentials")
-        case .httpStatus(_, let message) where message?.isEmpty == false:
-            message!
-        case .decodingFailed, .invalidResponse:
-            String(localized: "login.submitError.generic")
-        case .httpStatus:
-            String(localized: "login.submitError.generic")
         }
     }
 }

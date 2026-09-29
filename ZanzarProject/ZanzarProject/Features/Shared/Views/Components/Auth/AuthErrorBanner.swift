@@ -9,6 +9,8 @@ struct AuthErrorBanner: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .background(.regularMaterial, in: .rect(cornerRadius: 12))
+            .accessibilityLabel(message)
+            .accessibilityAddTraits(.isStaticText)
     }
 }
 

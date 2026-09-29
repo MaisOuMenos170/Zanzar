@@ -15,6 +15,7 @@ final class SignUpViewModel {
     var passwordError: String?
     var isLoading = false
     var submitError: String?
+    var shouldNavigateToLogin = false
 
     init(
         signUpService: SignUpServicing = SignUpService(),
@@ -47,7 +48,10 @@ final class SignUpViewModel {
     }
 
     func submit(using authSession: AuthSession) async -> Bool {
+        guard !isLoading else { return false }
+
         submitError = nil
+        shouldNavigateToLogin = false
         guard validateFields() else { return false }
 
         isLoading = true
@@ -64,30 +68,24 @@ final class SignUpViewModel {
                     password: password
                 )
             )
-            let loginResponse = try await loginService.submitLogin(
-                LoginRequest(email: trimmedEmail, password: password)
-            )
-            try authSession.signIn(token: loginResponse.token)
-            return true
         } catch let error as APIError {
-            submitError = Self.errorMessage(for: error)
+            submitError = AuthErrorMapper.signUpMessage(for: error)
             return false
         } catch {
             submitError = String(localized: "signUp.submitError.generic")
             return false
         }
-    }
 
-    private static func errorMessage(for error: APIError) -> String {
-        switch error {
-        case .httpStatus(409, _):
-            String(localized: "signUp.submitError.emailInUse")
-        case .httpStatus(_, let message) where message?.isEmpty == false:
-            message!
-        case .decodingFailed, .invalidResponse:
-            String(localized: "signUp.submitError.generic")
-        case .httpStatus:
-            String(localized: "signUp.submitError.generic")
+        do {
+            let loginResponse = try await loginService.submitLogin(
+                LoginRequest(email: trimmedEmail, password: password)
+            )
+            try authSession.signIn(token: loginResponse.token)
+            return true
+        } catch {
+            submitError = String(localized: "signUp.submitError.accountCreatedLoginRequired")
+            shouldNavigateToLogin = true
+            return false
         }
     }
 }

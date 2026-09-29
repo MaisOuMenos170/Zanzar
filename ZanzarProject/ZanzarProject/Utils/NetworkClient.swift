@@ -24,6 +24,8 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         authTokenProvider: { AuthTokenStore.shared.getToken() }
     )
 
+    private static let publicPaths: Set<String> = ["login", "register", "places", "health"]
+
     private let baseURL: URL
     private let session: URLSession
     private let decoder = JSONDecoder()
@@ -41,8 +43,9 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
     }
 
     func get<Response: Decodable>(path: String, queryItems: [URLQueryItem]) async throws -> Response {
+        let normalizedPath = normalizedPath(path)
         var components = URLComponents(
-            url: baseURL.appendingPathComponent(normalizedPath(path)),
+            url: baseURL.appendingPathComponent(normalizedPath),
             resolvingAgainstBaseURL: false
         )
         components?.queryItems = queryItems.isEmpty ? nil : queryItems
@@ -50,7 +53,7 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
 
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.get.rawValue
-        return try await perform(authorizedRequest(from: request))
+        return try await perform(authorizedRequest(from: request, path: normalizedPath))
     }
 
     func send<Body: Encodable, Response: Decodable>(
@@ -58,20 +61,22 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         method: HTTPMethod,
         body: Body
     ) async throws -> Response {
-        let url = baseURL.appendingPathComponent(normalizedPath(path))
+        let normalizedPath = normalizedPath(path)
+        let url = baseURL.appendingPathComponent(normalizedPath)
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try encoder.encode(body)
-        return try await perform(authorizedRequest(from: request))
+        return try await perform(authorizedRequest(from: request, path: normalizedPath))
     }
 
     private func normalizedPath(_ path: String) -> String {
         path.hasPrefix("/") ? String(path.dropFirst()) : path
     }
 
-    private func authorizedRequest(from request: URLRequest) -> URLRequest {
+    private func authorizedRequest(from request: URLRequest, path: String) -> URLRequest {
         var request = request
+        guard !Self.publicPaths.contains(path) else { return request }
         if let token = authTokenProvider() {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }

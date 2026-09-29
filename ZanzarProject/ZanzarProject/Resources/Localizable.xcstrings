@@ -596,6 +596,23 @@
         }
       }
     },
+    "signUp.submitError.accountCreatedLoginRequired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account created. Please log in to continue."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conta criada. Faça login para continuar."
+          }
+        }
+      }
+    },
     "signUp.submitError.emailInUse": {
       "extractionState": "manual",
       "localizations": {

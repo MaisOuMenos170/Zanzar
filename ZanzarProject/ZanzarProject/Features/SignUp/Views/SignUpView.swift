@@ -57,6 +57,9 @@ struct SignUpView: View {
                 Task {
                     if await viewModel.submit(using: authSession) {
                         coordinator.finishAuthFlow()
+                    } else if viewModel.shouldNavigateToLogin {
+                        coordinator.pop()
+                        coordinator.push(.login)
                     }
                 }
             }

@@ -110,7 +110,7 @@ struct SignUpViewModelTests {
         signUpService.submitSignUpResult = .success(SignUpResponse(id: "user-id"))
         let loginService = MockLoginService()
         loginService.submitLoginResult = .success(LoginResponse(token: "jwt-token"))
-        let authSession = AuthSession(keychain: KeychainStore())
+        let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
         let viewModel = SignUpViewModel(
             signUpService: signUpService,
             loginService: loginService
@@ -139,10 +139,32 @@ struct SignUpViewModelTests {
         viewModel.email = "user@example.com"
         viewModel.password = "secret123"
 
-        let didSubmit = await viewModel.submit(using: AuthSession(keychain: KeychainStore()))
+        let didSubmit = await viewModel.submit(using: AuthSession(keychain: InMemoryAuthTokenStore()))
 
         #expect(didSubmit == false)
         #expect(viewModel.submitError == String(localized: "signUp.submitError.emailInUse"))
+    }
+
+    @Test("submit prompts login when register succeeds but login fails")
+    @MainActor
+    func submitPromptsLoginWhenRegisterSucceedsButLoginFails() async {
+        let signUpService = MockSignUpService()
+        signUpService.submitSignUpResult = .success(SignUpResponse(id: "user-id"))
+        let loginService = MockLoginService()
+        loginService.submitLoginResult = .failure(APIError.httpStatus(500, message: "Internal Server Error"))
+        let viewModel = SignUpViewModel(
+            signUpService: signUpService,
+            loginService: loginService
+        )
+        viewModel.username = "zanzar"
+        viewModel.email = "user@example.com"
+        viewModel.password = "secret123"
+
+        let didSubmit = await viewModel.submit(using: AuthSession(keychain: InMemoryAuthTokenStore()))
+
+        #expect(didSubmit == false)
+        #expect(viewModel.shouldNavigateToLogin == true)
+        #expect(viewModel.submitError == String(localized: "signUp.submitError.accountCreatedLoginRequired"))
     }
 }
 

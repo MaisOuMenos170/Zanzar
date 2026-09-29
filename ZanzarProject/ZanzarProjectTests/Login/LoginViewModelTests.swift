@@ -46,7 +46,7 @@ struct LoginViewModelTests {
     func submitSignsInWhenLoginSucceeds() async {
         let mockService = MockLoginService()
         mockService.submitLoginResult = .success(LoginResponse(token: "jwt-token"))
-        let authSession = AuthSession(keychain: KeychainStore())
+        let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
         let viewModel = LoginViewModel(service: mockService)
         viewModel.email = "user@example.com"
         viewModel.password = "secret12"
@@ -63,7 +63,7 @@ struct LoginViewModelTests {
     func submitMapsInvalidCredentialsError() async {
         let mockService = MockLoginService()
         mockService.submitLoginResult = .failure(APIError.httpStatus(401, message: "Invalid credentials"))
-        let authSession = AuthSession(keychain: KeychainStore())
+        let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
         let viewModel = LoginViewModel(service: mockService)
         viewModel.email = "user@example.com"
         viewModel.password = "secret12"
@@ -73,6 +73,23 @@ struct LoginViewModelTests {
         #expect(didSubmit == false)
         #expect(authSession.isAuthenticated == false)
         #expect(viewModel.submitError == String(localized: "login.submitError.invalidCredentials"))
+    }
+
+    @Test("submit ignores duplicate requests while loading")
+    @MainActor
+    func submitIgnoresDuplicateRequestsWhileLoading() async {
+        let mockService = MockLoginService()
+        mockService.submitLoginResult = .success(LoginResponse(token: "jwt-token"))
+        let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
+        let viewModel = LoginViewModel(service: mockService)
+        viewModel.email = "user@example.com"
+        viewModel.password = "secret12"
+        viewModel.isLoading = true
+
+        let didSubmit = await viewModel.submit(using: authSession)
+
+        #expect(didSubmit == false)
+        #expect(authSession.isAuthenticated == false)
     }
 }
 
