@@ -1,16 +1,16 @@
 import Foundation
 
 protocol LoginServicing: Sendable {
-    // TODO: rename and adjust for the actual endpoint(s) this feature needs.
     func submitLogin(_ request: LoginRequest) async throws -> LoginResponse
 }
 
-struct LoginRequest: Encodable {
-    // TODO: add the fields sent to the API
+struct LoginRequest: Encodable, Sendable {
+    let email: String
+    let password: String
 }
 
-struct LoginResponse: Decodable {
-    // TODO: add the fields returned by the API
+struct LoginResponse: Decodable, Sendable {
+    let token: String
 }
 
 final class LoginService: LoginServicing {
@@ -21,7 +21,6 @@ final class LoginService: LoginServicing {
     }
 
     func submitLogin(_ request: LoginRequest) async throws -> LoginResponse {
-        // TODO: replace with the real path
-        try await client.send(path: "/login", method: .post, body: request)
+        try await client.send(path: "login", method: .post, body: request)
     }
 }

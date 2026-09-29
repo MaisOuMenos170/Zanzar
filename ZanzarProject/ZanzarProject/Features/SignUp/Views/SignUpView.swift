@@ -3,6 +3,7 @@ import SwiftUI
 struct SignUpView: View {
     @State private var viewModel = SignUpViewModel()
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(AuthSession.self) private var authSession
 
     var body: some View {
         VStack(spacing: 0) {
@@ -53,21 +54,33 @@ struct SignUpView: View {
             Spacer()
 
             Button("signUp.submitButton.title") {
-                #if DEBUG
-                // Bypass auth until sign-up API is wired.
-                coordinator.completeAuth()
-                #else
-                if viewModel.submitTapped() {
-                    coordinator.completeAuth()
+                Task {
+                    if await viewModel.submit(using: authSession) {
+                        coordinator.finishAuthFlow()
+                    } else if viewModel.shouldNavigateToLogin {
+                        coordinator.pop()
+                        coordinator.push(.login)
+                    }
                 }
-                #endif
             }
             .buttonStyle(AuthPrimaryButtonStyle())
+            .disabled(viewModel.isLoading)
+            .overlay {
+                if viewModel.isLoading {
+                    ProgressView()
+                }
+            }
             .padding(.horizontal, 19)
             .padding(.bottom, 24)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.white)
+        .overlay(alignment: .top) {
+            if let submitError = viewModel.submitError {
+                AuthErrorBanner(message: submitError)
+                    .padding()
+            }
+        }
         .navigationBarBackButtonHidden()
     }
 }
@@ -76,5 +89,6 @@ struct SignUpView: View {
     NavigationStack {
         SignUpView()
             .environment(AppCoordinator())
+            .environment(AuthSession())
     }
 }

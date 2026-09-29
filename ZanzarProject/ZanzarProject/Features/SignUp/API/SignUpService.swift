@@ -1,16 +1,21 @@
 import Foundation
 
 protocol SignUpServicing: Sendable {
-    // TODO: rename and adjust for the actual endpoint(s) this feature needs.
     func submitSignUp(_ request: SignUpRequest) async throws -> SignUpResponse
 }
 
-struct SignUpRequest: Encodable {
-    // TODO: add the fields sent to the API
+struct SignUpRequest: Encodable, Sendable {
+    let email: String
+    let username: String
+    let password: String
 }
 
-struct SignUpResponse: Decodable {
-    // TODO: add the fields returned by the API
+struct SignUpResponse: Decodable, Sendable {
+    let id: String
+
+    private enum CodingKeys: String, CodingKey {
+        case id = "_id"
+    }
 }
 
 final class SignUpService: SignUpServicing {
@@ -21,7 +26,6 @@ final class SignUpService: SignUpServicing {
     }
 
     func submitSignUp(_ request: SignUpRequest) async throws -> SignUpResponse {
-        // TODO: replace with the real path
-        try await client.send(path: "/signUp", method: .post, body: request)
+        try await client.send(path: "register", method: .post, body: request)
     }
 }

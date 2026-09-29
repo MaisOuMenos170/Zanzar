@@ -3,6 +3,7 @@ import SwiftUI
 struct LoginView: View {
     @State private var viewModel = LoginViewModel()
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(AuthSession.self) private var authSession
 
     var body: some View {
         VStack(spacing: 0) {
@@ -45,21 +46,30 @@ struct LoginView: View {
             Spacer()
 
             Button("login.submitButton.title") {
-                #if DEBUG
-                // Bypass auth until login API is wired.
-                coordinator.completeAuth()
-                #else
-                if viewModel.submitTapped() {
-                    coordinator.completeAuth()
+                Task {
+                    if await viewModel.submit(using: authSession) {
+                        coordinator.finishAuthFlow()
+                    }
                 }
-                #endif
             }
             .buttonStyle(AuthPrimaryButtonStyle())
+            .disabled(viewModel.isLoading)
+            .overlay {
+                if viewModel.isLoading {
+                    ProgressView()
+                }
+            }
             .padding(.horizontal, 19)
             .padding(.bottom, 24)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.white)
+        .overlay(alignment: .top) {
+            if let submitError = viewModel.submitError {
+                AuthErrorBanner(message: submitError)
+                    .padding()
+            }
+        }
         .navigationBarBackButtonHidden()
     }
 }
@@ -68,5 +78,6 @@ struct LoginView: View {
     NavigationStack {
         LoginView()
             .environment(AppCoordinator())
+            .environment(AuthSession())
     }
 }

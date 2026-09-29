@@ -2,11 +2,12 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var coordinator = AppCoordinator()
+    @State private var authSession = AuthSession()
 
     var body: some View {
         NavigationStack(path: $coordinator.path) {
             Group {
-                if coordinator.isAuthenticated {
+                if authSession.isAuthenticated {
                     MainTabView()
                 } else {
                     WelcomeView()
@@ -17,6 +18,7 @@ struct ContentView: View {
         .sheet(item: $coordinator.presentedSheet) { coordinator.view(for: $0) }
         .fullScreenCover(item: $coordinator.presentedFullScreenCover) { coordinator.view(for: $0) }
         .environment(coordinator)
+        .environment(authSession)
     }
 }
 
