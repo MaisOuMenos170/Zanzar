@@ -24,12 +24,14 @@ enum MapPinClustering {
         let latitudeCellSize = span * cellSizeFactor
         let longitudeScale = cos(region.center.latitude * .pi / 180)
         let longitudeCellSize = latitudeCellSize / max(longitudeScale, 0.4)
+        let originLatitude = region.center.latitude - (region.span.latitudeDelta / 2)
+        let originLongitude = region.center.longitude - (region.span.longitudeDelta / 2)
 
         var buckets: [GridCell: [MapPlace]] = [:]
         for place in places {
             let cell = GridCell(
-                x: Int(floor((place.longitude - region.center.longitude) / longitudeCellSize)),
-                y: Int(floor((place.latitude - region.center.latitude) / latitudeCellSize))
+                x: Int(floor((place.longitude - originLongitude) / longitudeCellSize)),
+                y: Int(floor((place.latitude - originLatitude) / latitudeCellSize))
             )
             buckets[cell, default: []].append(place)
         }
