@@ -3,17 +3,26 @@ import SwiftUI
 
 struct LocationMapView: View {
     @State private var viewModel = LocationMapViewModel()
+    @State private var selectedPlaceID: String?
     @Environment(AppCoordinator.self) private var coordinator
 
     var body: some View {
-        Map(position: $viewModel.cameraPosition) {
+        Map(position: $viewModel.cameraPosition, selection: $selectedPlaceID) {
             userLocationContent
             ForEach(viewModel.places) { place in
                 Annotation(place.name, coordinate: place.coordinate) {
                     LocationPinView(iconName: place.pinIconName)
                         .accessibilityLabel(place.name)
+                        .accessibilityAddTraits(.isButton)
                 }
+                .tag(place.id)
             }
+        }
+        .onChange(of: selectedPlaceID) { _, placeID in
+            guard let placeID,
+                  let place = viewModel.places.first(where: { $0.id == placeID }) else { return }
+            selectedPlaceID = nil
+            coordinator.push(.placeDetail(place))
         }
         .mapStyle(.standard(elevation: .realistic))
         .mapControls {
