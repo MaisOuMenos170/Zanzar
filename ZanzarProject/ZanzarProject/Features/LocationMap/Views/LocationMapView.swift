@@ -9,14 +9,7 @@ struct LocationMapView: View {
     var body: some View {
         Map(position: $viewModel.cameraPosition, selection: $selectedPlaceID) {
             userLocationContent
-            ForEach(viewModel.places) { place in
-                Annotation(place.name, coordinate: place.coordinate) {
-                    LocationPinView(iconName: place.pinIconName)
-                        .accessibilityLabel(place.name)
-                        .accessibilityAddTraits(.isButton)
-                }
-                .tag(place.id)
-            }
+            placeAnnotations
         }
         .onChange(of: selectedPlaceID) { _, placeID in
             guard let placeID,
@@ -30,6 +23,9 @@ struct LocationMapView: View {
             MapUserLocationButton()
             #endif
             MapCompass()
+        }
+        .onMapCameraChange(frequency: .continuous) { context in
+            viewModel.updateVisibleRegion(context.region)
         }
         .overlay(alignment: .top) {
             if let errorMessage = viewModel.errorMessage {
@@ -51,6 +47,35 @@ struct LocationMapView: View {
     }
 
     @MapContentBuilder
+    private var placeAnnotations: some MapContent {
+        ForEach(viewModel.displayItems) { item in
+            switch item {
+            case .place(let place):
+                Annotation(place.name, coordinate: place.coordinate) {
+                    LocationPinView(iconName: place.pinIconName)
+                        .accessibilityLabel(place.name)
+                        .accessibilityAddTraits(.isButton)
+                }
+                .tag(place.id)
+            case .cluster(let cluster):
+                Annotation("", coordinate: cluster.coordinate) {
+                    Button {
+                        viewModel.focus(on: cluster)
+                    } label: {
+                        LocationClusterPinView(count: cluster.count)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(
+                        String(
+                            localized: "locationMap.clusterPin.accessibilityLabel \(cluster.count)"
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    @MapContentBuilder
     private var userLocationContent: some MapContent {
         #if DEBUG && targetEnvironment(simulator)
         if let coordinate = viewModel.userCoordinate {
@@ -63,6 +88,7 @@ struct LocationMapView: View {
         UserAnnotation()
         #endif
     }
+
 }
 
 #Preview {

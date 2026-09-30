@@ -10,8 +10,16 @@ final class LocationMapViewModel {
     var cameraPosition: MapCameraPosition = .automatic
     var userCoordinate: UserCoordinate?
     var places: [MapPlace] = []
+    var mapRegion = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 0, longitude: 0),
+        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+    )
     var isLoading = false
     var errorMessage: String?
+
+    var displayItems: [MapPinDisplayItem] {
+        MapPinClustering.cluster(places: places, region: mapRegion)
+    }
 
     init(service: LocationMapServicing = LocationMapService()) {
         self.service = service
@@ -34,13 +42,13 @@ final class LocationMapViewModel {
             guard generation == loadGeneration else { return }
 
             userCoordinate = coordinate
-            cameraPosition = .region(
-                MKCoordinateRegion(
-                    center: coordinate.clLocationCoordinate2D,
-                    latitudinalMeters: 1000,
-                    longitudinalMeters: 1000
-                )
+            let region = MKCoordinateRegion(
+                center: coordinate.clLocationCoordinate2D,
+                latitudinalMeters: 1000,
+                longitudinalMeters: 1000
             )
+            mapRegion = region
+            cameraPosition = .region(region)
         } catch is CancellationError {
             return
         } catch {
@@ -64,6 +72,28 @@ final class LocationMapViewModel {
 
             places = []
             errorMessage = String(localized: "locationMap.placesLoadError")
+        }
+    }
+
+    func updateVisibleRegion(_ region: MKCoordinateRegion) {
+        mapRegion = region
+    }
+
+    func focus(on cluster: MapPinCluster) {
+        let span = max(mapRegion.span.latitudeDelta, mapRegion.span.longitudeDelta)
+        let zoomedSpan = span * 0.35
+
+        let region = MKCoordinateRegion(
+            center: cluster.coordinate,
+            span: MKCoordinateSpan(
+                latitudeDelta: zoomedSpan,
+                longitudeDelta: zoomedSpan
+            )
+        )
+
+        withAnimation(.smooth(duration: 0.45)) {
+            mapRegion = region
+            cameraPosition = .region(region)
         }
     }
 }

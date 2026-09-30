@@ -18,6 +18,23 @@
         }
       }
     },
+    "locationMap.clusterPin.accessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld places in this area"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld lugares nesta área"
+          }
+        }
+      }
+    },
     "locationMap.loadingIndicator.title": {
       "extractionState": "manual",
       "localizations": {
