@@ -9,14 +9,7 @@ struct LocationMapView: View {
     var body: some View {
         Map(position: $viewModel.cameraPosition, selection: $selectedPlaceID) {
             userLocationContent
-            ForEach(viewModel.places) { place in
-                Annotation(place.name, coordinate: place.coordinate) {
-                    LocationPinView(iconName: place.pinIconName)
-                        .accessibilityLabel(place.name)
-                        .accessibilityAddTraits(.isButton)
-                }
-                .tag(place.id)
-            }
+            placeAnnotations
         }
         .onChange(of: selectedPlaceID) { _, placeID in
             guard let placeID,
@@ -30,6 +23,9 @@ struct LocationMapView: View {
             MapUserLocationButton()
             #endif
             MapCompass()
+        }
+        .onMapCameraChange(frequency: .continuous) { context in
+            viewModel.updateVisibleRegion(context.region)
         }
         .overlay(alignment: .top) {
             if let errorMessage = viewModel.errorMessage {
@@ -48,6 +44,38 @@ struct LocationMapView: View {
             await viewModel.load()
         }
         .ignoresSafeArea()
+    }
+
+    @MapContentBuilder
+    private var placeAnnotations: some MapContent {
+        ForEach(viewModel.displayItems) { item in
+            switch item {
+            case .place(let place):
+                Annotation(place.name, coordinate: place.coordinate) {
+                    LocationPinView(iconName: place.pinIconName)
+                        .accessibilityLabel(place.name)
+                        .accessibilityAddTraits(.isButton)
+                }
+                .tag(place.id)
+            case .cluster(let cluster):
+                Annotation("", coordinate: cluster.coordinate) {
+                    Button {
+                        let region = viewModel.focusRegion(on: cluster)
+                        withAnimation(.smooth(duration: 0.45)) {
+                            viewModel.applyCameraRegion(region)
+                        }
+                    } label: {
+                        LocationClusterPinView(count: cluster.count)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(
+                        String(
+                            localized: "locationMap.clusterPin.accessibilityLabel \(cluster.count)"
+                        )
+                    )
+                }
+            }
+        }
     }
 
     @MapContentBuilder
