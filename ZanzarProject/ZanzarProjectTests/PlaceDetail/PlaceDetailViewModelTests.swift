@@ -108,14 +108,14 @@ final class MockPlaceDetailService: PlaceDetailServicing, @unchecked Sendable {
         try fetchResult.get()
     }
 
-    func checkIn(placeID: String, userID: String) async throws {
+    func checkIn(placeID: String) async throws {
         guard let checkInResult else {
             fatalError("MockPlaceDetailService.checkInResult not configured")
         }
         try checkInResult.get()
     }
 
-    func submitReaction(placeID: String, userID: String, impressionTag: String) async throws {
+    func submitReaction(placeID: String, impressionTag: String) async throws {
         guard let reactionResult else {
             fatalError("MockPlaceDetailService.reactionResult not configured")
         }

@@ -511,23 +511,6 @@
         }
       }
     },
-    "placeDetail.details.mockDescription": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "One of Curitiba's best-known spots to enjoy the outdoors, take a walk, and break from the daily routine. The park has green areas, trails, activity spaces, and the famous Barigui lake."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Um dos lugares mais conhecidos de Curitiba para aproveitar o ar livre, caminhar e sair um pouco da rotina. O parque tem áreas verdes, trilhas, espaços para atividades e o famoso lago do Barigui."
-          }
-        }
-      }
-    },
     "placeDetail.detailsSection.title": {
       "extractionState": "manual",
       "localizations": {
@@ -630,23 +613,6 @@
         }
       }
     },
-    "placeDetail.favoriteButton.accessibilityLabel": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mark as visited"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marcar como visitado"
-          }
-        }
-      }
-    },
     "placeDetail.header.closedNow": {
       "extractionState": "manual",
       "localizations": {
@@ -711,23 +677,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aberto agora"
-          }
-        }
-      }
-    },
-    "placeDetail.header.openTwentyFourHours": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open 24 hours"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aberto 24 horas"
           }
         }
       }

@@ -26,20 +26,17 @@ struct PlaceDetailView: View {
                 )
             }
         }
-        .background(.white)
+        .background(.background)
         .navigationBarBackButtonHidden()
         .task {
-            if mediaPolicy.needsCellularPermissionPrompt,
-               viewModel.detail?.heroPhotoReference != nil {
-                viewModel.showsCellularImagesPrompt = true
-            }
             await viewModel.load()
+            viewModel.updateCellularImagesPromptIfNeeded(using: mediaPolicy)
         }
         .onChange(of: mediaPolicy.usesCellular) { _, _ in
-            if mediaPolicy.needsCellularPermissionPrompt,
-               viewModel.detail?.heroPhotoReference != nil {
-                viewModel.showsCellularImagesPrompt = true
-            }
+            viewModel.updateCellularImagesPromptIfNeeded(using: mediaPolicy)
+        }
+        .onChange(of: viewModel.detail?.heroPhotoReference) { _, _ in
+            viewModel.updateCellularImagesPromptIfNeeded(using: mediaPolicy)
         }
         .alert("placeDetail.cellularPrompt.title", isPresented: $viewModel.showsCellularImagesPrompt) {
             Button("placeDetail.cellularPrompt.allowButton.title") {

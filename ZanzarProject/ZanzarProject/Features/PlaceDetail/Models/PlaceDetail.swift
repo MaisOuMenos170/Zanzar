@@ -58,7 +58,8 @@ extension PlaceDetail {
         hasCheckedIn: Bool,
         selectedReactionTag: String?
     ) -> PlaceDetail {
-        let distanceKilometers = mapPlace.distanceMeters / 1000
+        let distanceMeters = placeResponse.distanceMeters ?? mapPlace.distanceMeters
+        let distanceKilometers = distanceMeters / 1000
         let distanceText = String(
             format: String(localized: "placeDetail.header.distanceFormat"),
             locale: Locale.current,

@@ -1,18 +1,18 @@
 import SwiftUI
 
-struct PlaceRemoteImage: View {
+struct PlaceRemoteImage<Placeholder: View>: View {
     let photoReference: String?
     let mediaPolicy: PlaceMediaAccessPolicy
-    let placeholder: AnyView
+    let placeholder: Placeholder
 
     init(
         photoReference: String?,
         mediaPolicy: PlaceMediaAccessPolicy = .shared,
-        @ViewBuilder placeholder: () -> some View
+        @ViewBuilder placeholder: () -> Placeholder
     ) {
         self.photoReference = photoReference
         self.mediaPolicy = mediaPolicy
-        self.placeholder = AnyView(placeholder())
+        self.placeholder = placeholder()
     }
 
     var body: some View {

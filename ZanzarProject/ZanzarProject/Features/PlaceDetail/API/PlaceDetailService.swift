@@ -2,8 +2,8 @@ import Foundation
 
 protocol PlaceDetailServicing: Sendable {
     func fetchPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail
-    func checkIn(placeID: String, userID: String) async throws
-    func submitReaction(placeID: String, userID: String, impressionTag: String) async throws
+    func checkIn(placeID: String) async throws
+    func submitReaction(placeID: String, impressionTag: String) async throws
 }
 
 struct PlaceDetailAPIResponse: Decodable, Sendable {
@@ -99,8 +99,9 @@ struct PlaceDetailAPIResponse: Decodable, Sendable {
 }
 
 private struct CheckInCreateRequest: Encodable, Sendable {
-    let userId: String
     let placeId: String
+    let datetime: String
+    let clientMutationId: String
 }
 
 private struct CheckInStatusResponse: Decodable, Sendable {
@@ -143,11 +144,11 @@ final class PlaceDetailService: PlaceDetailServicing {
             ]
         )
 
-        let hasCheckedIn = try await fetchHasCheckedIn(
+        async let hasCheckedIn = fetchHasCheckedIn(
             placeID: context.place.id,
             userID: context.userID
         )
-        let selectedReactionTag = try await fetchSelectedReactionTag(
+        async let selectedReactionTag = fetchSelectedReactionTag(
             placeID: context.place.id,
             userID: context.userID
         )
@@ -156,20 +157,24 @@ final class PlaceDetailService: PlaceDetailServicing {
             placeResponse: placeResponse,
             nearbyResponses: nearbyResponses,
             mapPlace: context.place,
-            hasCheckedIn: hasCheckedIn,
-            selectedReactionTag: selectedReactionTag
+            hasCheckedIn: try await hasCheckedIn,
+            selectedReactionTag: try await selectedReactionTag
         )
     }
 
-    func checkIn(placeID: String, userID: String) async throws {
+    func checkIn(placeID: String) async throws {
         let _: CheckInMessageResponse = try await client.send(
             path: "checkIn",
             method: .post,
-            body: CheckInCreateRequest(userId: userID, placeId: placeID)
+            body: CheckInCreateRequest(
+                placeId: placeID,
+                datetime: Date().formatted(.iso8601),
+                clientMutationId: UUID().uuidString
+            )
         )
     }
 
-    func submitReaction(placeID: String, userID: String, impressionTag: String) async throws {
+    func submitReaction(placeID: String, impressionTag: String) async throws {
         let _: RatingResponse = try await client.send(
             path: "rating",
             method: .post,
@@ -182,24 +187,23 @@ final class PlaceDetailService: PlaceDetailServicing {
     }
 
     private func fetchHasCheckedIn(placeID: String, userID: String?) async throws -> Bool {
-        guard let userID else { return false }
+        guard userID != nil else { return false }
 
         do {
             let _: CheckInStatusResponse = try await client.get(
                 path: "checkIn",
-                queryItems: [
-                    URLQueryItem(name: "placeId", value: placeID),
-                    URLQueryItem(name: "userId", value: userID),
-                ]
+                queryItems: [URLQueryItem(name: "placeId", value: placeID)]
             )
             return true
         } catch APIError.httpStatus(404, _) {
+            return false
+        } catch APIError.httpStatus(401, _), APIError.httpStatus(403, _) {
             return false
         }
     }
 
     private func fetchSelectedReactionTag(placeID: String, userID: String?) async throws -> String? {
-        guard let userID else { return nil }
+        guard userID != nil else { return nil }
 
         do {
             let response: UserRatingResponse = try await client.get(
@@ -208,6 +212,8 @@ final class PlaceDetailService: PlaceDetailServicing {
             )
             return response.impressionTag
         } catch APIError.httpStatus(404, _) {
+            return nil
+        } catch APIError.httpStatus(401, _), APIError.httpStatus(403, _) {
             return nil
         }
     }

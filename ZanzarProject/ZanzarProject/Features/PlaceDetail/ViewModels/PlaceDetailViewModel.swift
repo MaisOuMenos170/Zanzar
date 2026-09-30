@@ -44,8 +44,9 @@ final class PlaceDetailViewModel {
     }
 
     func performCheckIn() async {
+        guard !isCheckingIn else { return }
         guard var currentDetail = detail, !currentDetail.hasCheckedIn else { return }
-        guard let userID = userIDProvider() else {
+        guard userIDProvider() != nil else {
             errorMessage = String(localized: "placeDetail.checkInError.notAuthenticated")
             return
         }
@@ -55,25 +56,29 @@ final class PlaceDetailViewModel {
         defer { isCheckingIn = false }
 
         do {
-            try await service.checkIn(placeID: currentDetail.id, userID: userID)
+            try await service.checkIn(placeID: currentDetail.id)
             currentDetail.hasCheckedIn = true
             currentDetail.totalCheckIns += 1
             detail = currentDetail
         } catch is CancellationError {
             return
+        } catch APIError.httpStatus(409, _) {
+            currentDetail.hasCheckedIn = true
+            detail = currentDetail
         } catch {
             errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
         }
     }
 
     func selectReaction(_ impressionTag: String) async {
+        guard !isSubmittingReaction else { return }
         guard var currentDetail = detail else { return }
         guard currentDetail.hasCheckedIn else {
             errorMessage = String(localized: "placeDetail.reactionError.checkInRequired")
             return
         }
         guard currentDetail.selectedReactionTag == nil else { return }
-        guard let userID = userIDProvider() else {
+        guard userIDProvider() != nil else {
             errorMessage = String(localized: "placeDetail.reactionError.notAuthenticated")
             return
         }
@@ -85,7 +90,6 @@ final class PlaceDetailViewModel {
         do {
             try await service.submitReaction(
                 placeID: currentDetail.id,
-                userID: userID,
                 impressionTag: impressionTag
             )
 
@@ -101,6 +105,9 @@ final class PlaceDetailViewModel {
             detail = currentDetail
         } catch is CancellationError {
             return
+        } catch APIError.httpStatus(409, _) {
+            currentDetail.selectedReactionTag = impressionTag
+            detail = currentDetail
         } catch {
             errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
         }
@@ -109,5 +116,12 @@ final class PlaceDetailViewModel {
     func allowCellularImages() {
         PlaceMediaAccessPolicy.shared.allowsCellularImages = true
         showsCellularImagesPrompt = false
+    }
+
+    func updateCellularImagesPromptIfNeeded(using mediaPolicy: PlaceMediaAccessPolicy) {
+        if mediaPolicy.needsCellularPermissionPrompt,
+           detail?.heroPhotoReference != nil {
+            showsCellularImagesPrompt = true
+        }
     }
 }
