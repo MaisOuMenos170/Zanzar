@@ -62,6 +62,117 @@ struct LocationMapViewModelTests {
         #expect(viewModel.errorMessage == nil)
     }
 
+    @Test("Visible region updates are ignored until the initial load completes")
+    func visibleRegionIgnoredDuringLoad() async {
+        let viewModel = LocationMapViewModel(service: MockLocationMapService())
+        let initialRegion = viewModel.mapRegion
+        let updatedRegion = MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 1, longitude: 2),
+            span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
+        )
+
+        viewModel.updateVisibleRegion(updatedRegion)
+
+        #expect(viewModel.mapRegion.center.latitude == initialRegion.center.latitude)
+        #expect(viewModel.mapRegion.center.longitude == initialRegion.center.longitude)
+        #expect(viewModel.mapRegion.span.latitudeDelta == initialRegion.span.latitudeDelta)
+        #expect(viewModel.mapRegion.span.longitudeDelta == initialRegion.span.longitudeDelta)
+    }
+
+    @Test("Visible region updates apply after the initial load completes")
+    func visibleRegionUpdatesAfterLoad() async throws {
+        let coordinate = UserCoordinate(latitude: -25.4098994, longitude: -49.2670599)
+        let service = MockLocationMapService()
+        service.locationResult = .success(coordinate)
+        service.placesResult = .success([])
+        let viewModel = LocationMapViewModel(service: service)
+
+        await viewModel.load()
+
+        let updatedRegion = MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: -25.5, longitude: -49.3),
+            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+        )
+        viewModel.updateVisibleRegion(updatedRegion)
+
+        #expect(viewModel.mapRegion.center.latitude == updatedRegion.center.latitude)
+        #expect(viewModel.mapRegion.center.longitude == updatedRegion.center.longitude)
+    }
+
+    @Test("Display items cluster nearby places when the map is zoomed out")
+    func displayItemsClusterWhenZoomedOut() async {
+        let coordinate = UserCoordinate(latitude: -25.43, longitude: -49.27)
+        let places = [
+            MapPlace(
+                id: "a",
+                name: "A",
+                latitude: -25.430,
+                longitude: -49.270,
+                category: .museum,
+                distanceMeters: 0
+            ),
+            MapPlace(
+                id: "b",
+                name: "B",
+                latitude: -25.4302,
+                longitude: -49.2702,
+                category: .museum,
+                distanceMeters: 0
+            )
+        ]
+        let service = MockLocationMapService()
+        service.locationResult = .success(coordinate)
+        service.placesResult = .success(places)
+        let viewModel = LocationMapViewModel(service: service)
+
+        await viewModel.load()
+        viewModel.updateVisibleRegion(
+            MKCoordinateRegion(
+                center: coordinate.clLocationCoordinate2D,
+                span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+            )
+        )
+
+        #expect(viewModel.displayItems.count == 1)
+        if case .cluster(let cluster) = viewModel.displayItems[0] {
+            #expect(cluster.count == 2)
+        } else {
+            Issue.record("Expected a cluster display item")
+        }
+    }
+
+    @Test("Focus region zooms in below the individual pin threshold")
+    func focusRegionExpandsClusterInOneStep() {
+        let cluster = MapPinCluster(
+            cellColumn: 3,
+            cellRow: 4,
+            places: [
+                MapPlace(
+                    id: "a",
+                    name: "A",
+                    latitude: -25.430,
+                    longitude: -49.270,
+                    category: .museum,
+                    distanceMeters: 0
+                ),
+                MapPlace(
+                    id: "b",
+                    name: "B",
+                    latitude: -25.4302,
+                    longitude: -49.2702,
+                    category: .museum,
+                    distanceMeters: 0
+                )
+            ]
+        )
+        let viewModel = LocationMapViewModel()
+
+        let region = viewModel.focusRegion(on: cluster)
+        let span = max(region.span.latitudeDelta, region.span.longitudeDelta)
+
+        #expect(span <= MapPinClustering.individualSpanThreshold)
+    }
+
     @Test("Failed places fetch keeps the user coordinate and shows an error")
     func failedPlacesLoad() async {
         let coordinate = UserCoordinate(latitude: -25.4098994, longitude: -49.2670599)

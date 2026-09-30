@@ -37,7 +37,7 @@ struct LocationClusterPinView: View {
                 .offset(y: Metrics.innerCircleCenterYOffset)
 
             Text(countLabel)
-                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                .font(.subheadline.bold())
                 .foregroundStyle(.white)
                 .minimumScaleFactor(0.7)
                 .lineLimit(1)

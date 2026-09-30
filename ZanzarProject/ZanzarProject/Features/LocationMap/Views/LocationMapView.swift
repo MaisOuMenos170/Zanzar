@@ -60,7 +60,10 @@ struct LocationMapView: View {
             case .cluster(let cluster):
                 Annotation("", coordinate: cluster.coordinate) {
                     Button {
-                        viewModel.focus(on: cluster)
+                        let region = viewModel.focusRegion(on: cluster)
+                        withAnimation(.smooth(duration: 0.45)) {
+                            viewModel.applyCameraRegion(region)
+                        }
                     } label: {
                         LocationClusterPinView(count: cluster.count)
                     }
@@ -88,7 +91,6 @@ struct LocationMapView: View {
         UserAnnotation()
         #endif
     }
-
 }
 
 #Preview {

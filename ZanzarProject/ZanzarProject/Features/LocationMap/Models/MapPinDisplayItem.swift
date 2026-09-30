@@ -13,9 +13,11 @@ struct MapPinCluster: Identifiable, Equatable, Sendable {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 
-    init(places: [MapPlace]) {
+    init(cellColumn: Int, cellRow: Int, places: [MapPlace]) {
+        precondition(!places.isEmpty, "A cluster must contain at least one place.")
+
         self.places = places
-        id = places.map(\.id).sorted().joined(separator: "-")
+        id = "cluster-\(cellColumn)-\(cellRow)"
         latitude = places.map(\.latitude).reduce(0, +) / Double(places.count)
         longitude = places.map(\.longitude).reduce(0, +) / Double(places.count)
     }
@@ -30,7 +32,7 @@ enum MapPinDisplayItem: Identifiable, Equatable, Sendable {
         case .place(let place):
             place.id
         case .cluster(let cluster):
-            "cluster-\(cluster.id)"
+            cluster.id
         }
     }
 

@@ -3,14 +3,17 @@ import MapKit
 
 enum MapPinClustering {
     /// Span below which every pin is shown individually (~250 m at the equator).
-    private static let individualSpanThreshold: Double = 0.00225
+    static let individualSpanThreshold: Double = 0.00225
+
+    /// Target span when expanding a cluster in one tap.
+    static let zoomInSpanThreshold: Double = individualSpanThreshold * 0.8
 
     /// Fraction of the visible map span used as the grid cell size (~pin overlap on screen).
     private static let cellSizeFactor: Double = 0.034
 
     private struct GridCell: Hashable {
-        let x: Int
-        let y: Int
+        let column: Int
+        let row: Int
     }
 
     static func cluster(places: [MapPlace], region: MKCoordinateRegion) -> [MapPinDisplayItem] {
@@ -30,17 +33,17 @@ enum MapPinClustering {
         var buckets: [GridCell: [MapPlace]] = [:]
         for place in places {
             let cell = GridCell(
-                x: Int(floor((place.longitude - originLongitude) / longitudeCellSize)),
-                y: Int(floor((place.latitude - originLatitude) / latitudeCellSize))
+                column: Int(floor((place.longitude - originLongitude) / longitudeCellSize)),
+                row: Int(floor((place.latitude - originLatitude) / latitudeCellSize))
             )
             buckets[cell, default: []].append(place)
         }
 
-        return buckets.values.map { members in
+        return buckets.map { cell, members in
             if members.count == 1 {
                 .place(members[0])
             } else {
-                .cluster(MapPinCluster(places: members))
+                .cluster(MapPinCluster(cellColumn: cell.column, cellRow: cell.row, places: members))
             }
         }
     }

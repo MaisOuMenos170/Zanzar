@@ -18,7 +18,7 @@
         }
       }
     },
-    "locationMap.clusterPin.accessibilityLabel" : {
+    "locationMap.clusterPin.accessibilityLabel %lld" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -34,9 +34,6 @@
           }
         }
       }
-    },
-    "locationMap.clusterPin.accessibilityLabel %lld" : {
-
     },
     "locationMap.loadingIndicator.title" : {
       "extractionState" : "manual",

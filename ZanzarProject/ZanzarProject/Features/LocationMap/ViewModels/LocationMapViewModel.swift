@@ -16,6 +16,7 @@ final class LocationMapViewModel {
     )
     var isLoading = false
     var errorMessage: String?
+    private(set) var acceptsVisibleRegionUpdates = false
 
     var displayItems: [MapPinDisplayItem] {
         MapPinClustering.cluster(places: places, region: mapRegion)
@@ -29,11 +30,13 @@ final class LocationMapViewModel {
         loadGeneration += 1
         let generation = loadGeneration
 
+        acceptsVisibleRegionUpdates = false
         isLoading = true
         errorMessage = nil
         defer {
             if generation == loadGeneration {
                 isLoading = false
+                acceptsVisibleRegionUpdates = true
             }
         }
 
@@ -76,24 +79,39 @@ final class LocationMapViewModel {
     }
 
     func updateVisibleRegion(_ region: MKCoordinateRegion) {
+        guard acceptsVisibleRegionUpdates else { return }
         mapRegion = region
     }
 
-    func focus(on cluster: MapPinCluster) {
-        let span = max(mapRegion.span.latitudeDelta, mapRegion.span.longitudeDelta)
-        let zoomedSpan = span * 0.35
+    func focusRegion(on cluster: MapPinCluster) -> MKCoordinateRegion {
+        let latitudes = cluster.places.map(\.latitude)
+        let longitudes = cluster.places.map(\.longitude)
 
-        let region = MKCoordinateRegion(
-            center: cluster.coordinate,
-            span: MKCoordinateSpan(
-                latitudeDelta: zoomedSpan,
-                longitudeDelta: zoomedSpan
-            )
+        let minLatitude = latitudes.min() ?? cluster.latitude
+        let maxLatitude = latitudes.max() ?? cluster.latitude
+        let minLongitude = longitudes.min() ?? cluster.longitude
+        let maxLongitude = longitudes.max() ?? cluster.longitude
+
+        let latitudeDelta = max(
+            (maxLatitude - minLatitude) * 1.6,
+            MapPinClustering.zoomInSpanThreshold
+        )
+        let longitudeDelta = max(
+            (maxLongitude - minLongitude) * 1.6,
+            MapPinClustering.zoomInSpanThreshold
         )
 
-        withAnimation(.smooth(duration: 0.45)) {
-            mapRegion = region
-            cameraPosition = .region(region)
-        }
+        return MKCoordinateRegion(
+            center: cluster.coordinate,
+            span: MKCoordinateSpan(
+                latitudeDelta: latitudeDelta,
+                longitudeDelta: longitudeDelta
+            )
+        )
+    }
+
+    func applyCameraRegion(_ region: MKCoordinateRegion) {
+        mapRegion = region
+        cameraPosition = .region(region)
     }
 }
