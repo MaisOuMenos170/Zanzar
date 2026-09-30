@@ -70,6 +70,22 @@ struct MapPinClusteringTests {
         #expect(individual?.id == "c")
     }
 
+    @Test("Pins far apart in a chain are not grouped into one cluster")
+    func chainDoesNotOverCluster() {
+        let places = [
+            place(id: "a", latitude: -25.430, longitude: -49.270),
+            place(id: "b", latitude: -25.432, longitude: -49.270),
+            place(id: "c", latitude: -25.434, longitude: -49.270)
+        ]
+
+        let items = MapPinClustering.cluster(places: places, region: region(span: 0.05))
+
+        #expect(items.count == 3)
+        #expect(items.allSatisfy { item in
+            if case .place = item { true } else { false }
+        })
+    }
+
     @Test("Single place never becomes a cluster")
     func singlePlaceStaysIndividual() {
         let places = [place(id: "solo", latitude: -25.430, longitude: -49.270)]
