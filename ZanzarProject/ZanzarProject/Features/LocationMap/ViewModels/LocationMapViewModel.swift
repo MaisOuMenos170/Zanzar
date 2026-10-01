@@ -114,4 +114,16 @@ final class LocationMapViewModel {
         mapRegion = region
         cameraPosition = .region(region)
     }
+
+    func reloadPlaces() async {
+        guard let userCoordinate else { return }
+
+        do {
+            places = try await service.fetchNearbyPlaces(from: userCoordinate)
+        } catch is CancellationError {
+            return
+        } catch {
+            errorMessage = String(localized: "locationMap.placesLoadError")
+        }
+    }
 }

@@ -69,6 +69,7 @@ struct MapPlace: Identifiable, Hashable, Sendable {
     let longitude: Double
     let category: ZanzarPlaceCategory
     let distanceMeters: Double
+    let pinStyle: LocationPinStyle
 
     var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
@@ -77,6 +78,29 @@ struct MapPlace: Identifiable, Hashable, Sendable {
     var pinIconName: String {
         category.pinIconName
     }
+
+    init(
+        id: String,
+        name: String,
+        latitude: Double,
+        longitude: Double,
+        category: ZanzarPlaceCategory,
+        distanceMeters: Double,
+        pinStyle: LocationPinStyle = .available
+    ) {
+        self.id = id
+        self.name = name
+        self.latitude = latitude
+        self.longitude = longitude
+        self.category = category
+        self.distanceMeters = distanceMeters
+        self.pinStyle = pinStyle
+    }
+}
+
+struct PlaceUserContext: Decodable, Sendable {
+    let hasCheckedIn: Bool
+    let isInActiveItinerary: Bool
 }
 
 struct PlaceAPIResponse: Decodable, Sendable {
@@ -85,6 +109,7 @@ struct PlaceAPIResponse: Decodable, Sendable {
     let geometry: Geometry
     let zanzar: Zanzar
     let distanceMeters: Double
+    let userContext: PlaceUserContext?
 
     enum CodingKeys: String, CodingKey {
         case placeId = "place_id"
@@ -92,6 +117,7 @@ struct PlaceAPIResponse: Decodable, Sendable {
         case geometry
         case zanzar
         case distanceMeters
+        case userContext
     }
 
     struct Geometry: Decodable, Sendable {
@@ -116,5 +142,13 @@ extension MapPlace {
         longitude = response.geometry.location.lng
         category = ZanzarPlaceCategory(rawCategory: response.zanzar.category)
         distanceMeters = response.distanceMeters
+        pinStyle = Self.pinStyle(from: response.userContext)
+    }
+
+    static func pinStyle(from context: PlaceUserContext?) -> LocationPinStyle {
+        guard let context else { return .available }
+        if context.hasCheckedIn { return .checkedIn }
+        if context.isInActiveItinerary { return .inCurrentItinerary }
+        return .available
     }
 }

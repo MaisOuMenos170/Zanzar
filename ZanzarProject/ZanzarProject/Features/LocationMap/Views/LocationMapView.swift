@@ -43,6 +43,11 @@ struct LocationMapView: View {
         .task {
             await viewModel.load()
         }
+        .onAppear {
+            Task {
+                await viewModel.reloadPlaces()
+            }
+        }
         .ignoresSafeArea()
     }
 
@@ -52,7 +57,7 @@ struct LocationMapView: View {
             switch item {
             case .place(let place):
                 Annotation(place.name, coordinate: place.coordinate, anchor: .bottom) {
-                    LocationPinView(category: place.category)
+                    LocationPinView(category: place.category, style: place.pinStyle)
                         .accessibilityLabel(place.name)
                         .accessibilityAddTraits(.isButton)
                 }

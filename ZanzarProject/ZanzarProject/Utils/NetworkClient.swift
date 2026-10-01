@@ -24,7 +24,7 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         authTokenProvider: { AuthTokenStore.shared.getToken() }
     )
 
-    private static let publicPaths: Set<String> = ["login", "register", "places", "health"]
+    private static let publicPaths: Set<String> = ["login", "register", "health"]
 
     private let baseURL: URL
     private let session: URLSession
