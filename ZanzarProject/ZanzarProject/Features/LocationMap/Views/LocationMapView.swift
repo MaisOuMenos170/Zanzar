@@ -52,7 +52,7 @@ struct LocationMapView: View {
             switch item {
             case .place(let place):
                 Annotation(place.name, coordinate: place.coordinate, anchor: .bottom) {
-                    LocationPinView(iconName: place.pinIconName)
+                    LocationPinView(category: place.category)
                         .accessibilityLabel(place.name)
                         .accessibilityAddTraits(.isButton)
                 }

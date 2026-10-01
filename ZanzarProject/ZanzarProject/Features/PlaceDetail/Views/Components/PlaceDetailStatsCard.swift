@@ -2,6 +2,7 @@ import SwiftUI
 
 struct PlaceDetailStatsCard: View {
     let totalCheckIns: Int
+    let category: ZanzarPlaceCategory
 
     var body: some View {
         HStack(spacing: 0) {
@@ -20,35 +21,11 @@ struct PlaceDetailStatsCard: View {
             }
             .frame(maxWidth: .infinity)
 
-            PlaceDetailBadgeIcon()
+            PlaceCategorySealView(category: category)
                 .frame(width: 102, height: 102)
         }
         .padding(.horizontal, 36)
         .padding(.vertical, 16)
         .background(Color("PlaceDetailStatsBackground"), in: .rect(cornerRadius: 16))
-    }
-}
-
-private struct PlaceDetailBadgeIcon: View {
-    var body: some View {
-        ZStack {
-            Image(systemName: "seal.fill")
-                .font(.system(size: 88))
-                .foregroundStyle(Color("PlaceDetailTagGreenBackground"))
-                .rotationEffect(.degrees(-8))
-
-            Image(systemName: "seal.fill")
-                .font(.system(size: 88))
-                .foregroundStyle(Color("PlaceDetailTagGreen"))
-                .rotationEffect(.degrees(8))
-
-            Circle()
-                .fill(Color("PlaceDetailTagGreenBackground"))
-                .frame(width: 56, height: 56)
-
-            Image(systemName: "leaf.fill")
-                .font(.title)
-                .foregroundStyle(Color("PlaceDetailTagGreen"))
-        }
     }
 }

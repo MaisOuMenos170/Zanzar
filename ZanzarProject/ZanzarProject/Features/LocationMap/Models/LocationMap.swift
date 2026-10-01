@@ -20,29 +20,42 @@ enum DevLocation {
 #endif
 
 enum ZanzarPlaceCategory: String, Sendable {
-    case museum
-    case park
     case restaurant
     case bar
     case cafe
-    case historic
+    case museum
+    case park
     case tourist
+    case historic
+    case curiosity
+    case party
     case unknown
 
     init(rawCategory: String) {
         self = Self(rawValue: rawCategory) ?? .unknown
     }
 
+    /// SF Symbol aligned with Figma node 860:4084 (pins e selos).
     var pinIconName: String {
         switch self {
         case .restaurant:
             "fork.knife"
-        case .cafe:
-            "cup.and.saucer"
         case .bar:
             "wineglass"
-        case .museum, .park, .historic, .tourist:
+        case .cafe:
+            "cup.and.heat.waves.fill"
+        case .museum:
+            "building.columns.fill"
+        case .park:
             "leaf"
+        case .tourist:
+            "signpost.right.and.left"
+        case .historic:
+            "scroll"
+        case .curiosity:
+            "eyes.inverse"
+        case .party:
+            "party.popper"
         case .unknown:
             "mappin"
         }

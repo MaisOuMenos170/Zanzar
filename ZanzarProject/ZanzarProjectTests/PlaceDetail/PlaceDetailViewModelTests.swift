@@ -23,6 +23,7 @@ struct PlaceDetailViewModelTests {
             distanceText: "1.3 km",
             openingHoursText: "Open now",
             tags: [],
+            category: .park,
             description: "Description",
             heroPhotoReference: "photo-ref",
             totalCheckIns: 10,

@@ -33,7 +33,7 @@ struct PlaceAPIResponseTests {
         #expect(place.longitude == -49.2670599)
         #expect(place.category == .museum)
         #expect(place.distanceMeters == 123.4)
-        #expect(place.pinIconName == "leaf")
+        #expect(place.pinIconName == "building.columns.fill")
     }
 
     @Test("Unknown category maps to mappin icon")
