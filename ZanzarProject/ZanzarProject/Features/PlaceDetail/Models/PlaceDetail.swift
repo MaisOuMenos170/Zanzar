@@ -40,13 +40,29 @@ struct PlaceDetailReaction: Identifiable, Hashable, Sendable {
 struct PlaceDetailNearbyPlace: Identifiable, Hashable, Sendable {
     let id: String
     let name: String
+    let latitude: Double
+    let longitude: Double
+    let category: ZanzarPlaceCategory
+    let distanceMeters: Double
     let checkInCount: Int
     let photoReference: String?
     let reactionImageNames: [String]
+
+    var mapPlace: MapPlace {
+        MapPlace(
+            id: id,
+            name: name,
+            latitude: latitude,
+            longitude: longitude,
+            category: category,
+            distanceMeters: distanceMeters
+        )
+    }
 }
 
 struct PlaceDetailLoadContext: Sendable {
     let place: MapPlace
+    let userCoordinate: UserCoordinate?
     let userID: String?
 }
 
@@ -92,11 +108,13 @@ extension PlaceDetail {
                     PlaceDetailNearbyPlace(
                         id: nearby.placeId,
                         name: nearby.name,
+                        latitude: nearby.geometry.location.lat,
+                        longitude: nearby.geometry.location.lng,
+                        category: ZanzarPlaceCategory(rawCategory: nearby.zanzar.category),
+                        distanceMeters: nearby.distanceMeters ?? 0,
                         checkInCount: nearby.zanzar.checkInCount,
                         photoReference: nearby.photos.first?.photoReference,
-                        reactionImageNames: ImpressionTag.topReactionImageNames(
-                            from: nearby.zanzar.impressionCounts
-                        )
+                        reactionImageNames: ImpressionTag.allReactionImageNames
                     )
                 },
             hasCheckedIn: hasCheckedIn,

@@ -124,7 +124,7 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
             if status >= 500 {
                 AppLog.network.error(summary, error: apiError)
             } else {
-                AppLog.network.warning("\(summary) | \(String(reflecting: apiError))")
+                AppLog.network.warning(summary)
             }
             throw apiError
         }

@@ -13,11 +13,11 @@ struct MapPinCluster: Identifiable, Equatable, Sendable {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 
-    init(cellColumn: Int, cellRow: Int, places: [MapPlace]) {
+    init(places: [MapPlace], stableID: String) {
         precondition(!places.isEmpty, "A cluster must contain at least one place.")
 
         self.places = places
-        id = "cluster-\(cellColumn)-\(cellRow)"
+        id = stableID
         latitude = places.map(\.latitude).reduce(0, +) / Double(places.count)
         longitude = places.map(\.longitude).reduce(0, +) / Double(places.count)
     }

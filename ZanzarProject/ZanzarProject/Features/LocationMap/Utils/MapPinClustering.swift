@@ -9,7 +9,10 @@ enum MapPinClustering {
     static let zoomInSpanThreshold: Double = individualSpanThreshold * 0.8
 
     /// Fraction of the visible map span used as the grid cell size (~pin overlap on screen).
-    private static let cellSizeFactor: Double = 0.034
+    private static let cellSizeFactor: Double = 0.042
+
+    /// Fraction of the visible map span used to merge markers that still overlap visually.
+    private static let mergeDistanceFactor: Double = 0.055
 
     private struct GridCell: Hashable {
         let column: Int
@@ -39,12 +42,88 @@ enum MapPinClustering {
             buckets[cell, default: []].append(place)
         }
 
-        return buckets.map { cell, members in
-            if members.count == 1 {
-                .place(members[0])
-            } else {
-                .cluster(MapPinCluster(cellColumn: cell.column, cellRow: cell.row, places: members))
+        let initialItems = buckets.map { cell, members in
+            displayItem(for: members, stableID: "cluster-\(cell.column)-\(cell.row)")
+        }
+
+        return mergeOverlappingItems(
+            initialItems,
+            maxCentroidDistance: span * mergeDistanceFactor
+        )
+    }
+
+    private static func displayItem(for places: [MapPlace], stableID: String) -> MapPinDisplayItem {
+        if places.count == 1, let place = places.first {
+            .place(place)
+        } else {
+            .cluster(MapPinCluster(places: places, stableID: stableID))
+        }
+    }
+
+    private static func mergeOverlappingItems(
+        _ items: [MapPinDisplayItem],
+        maxCentroidDistance: Double
+    ) -> [MapPinDisplayItem] {
+        var current = items
+
+        while true {
+            var mergedAny = false
+
+            for firstIndex in current.indices {
+                for secondIndex in (firstIndex + 1) ..< current.count {
+                    let firstItem = current[firstIndex]
+                    let secondItem = current[secondIndex]
+                    let distance = coordinateDistance(
+                        from: firstItem.coordinate,
+                        to: secondItem.coordinate
+                    )
+
+                    guard distance <= maxCentroidDistance else { continue }
+
+                    let mergedPlaces = uniquePlaces(
+                        firstItem.memberPlaces + secondItem.memberPlaces
+                    )
+                    let stableID = min(firstItem.id, secondItem.id)
+                    let mergedItem = displayItem(for: mergedPlaces, stableID: stableID)
+
+                    current.remove(at: secondIndex)
+                    current.remove(at: firstIndex)
+                    current.append(mergedItem)
+                    mergedAny = true
+                    break
+                }
+
+                if mergedAny { break }
             }
+
+            if !mergedAny { break }
+        }
+
+        return current
+    }
+
+    private static func uniquePlaces(_ places: [MapPlace]) -> [MapPlace] {
+        var seenIDs = Set<String>()
+        return places.filter { seenIDs.insert($0.id).inserted }
+    }
+
+    private static func coordinateDistance(
+        from origin: CLLocationCoordinate2D,
+        to destination: CLLocationCoordinate2D
+    ) -> Double {
+        let latitudeDelta = origin.latitude - destination.latitude
+        let longitudeDelta = origin.longitude - destination.longitude
+        return (latitudeDelta * latitudeDelta + longitudeDelta * longitudeDelta).squareRoot()
+    }
+}
+
+private extension MapPinDisplayItem {
+    var memberPlaces: [MapPlace] {
+        switch self {
+        case .place(let place):
+            [place]
+        case .cluster(let cluster):
+            cluster.places
         }
     }
 }

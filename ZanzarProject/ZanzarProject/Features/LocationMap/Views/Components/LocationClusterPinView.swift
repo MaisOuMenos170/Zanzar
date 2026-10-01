@@ -1,24 +1,17 @@
 import SwiftUI
 
-/// Cluster pin shown when several places overlap at the current zoom level.
+/// Compact cluster badge shown when several places overlap at the current zoom level.
 struct LocationClusterPinView: View {
     let count: Int
 
-    private enum Metrics {
-        static let width: CGFloat = 40.077
-        static let height: CGFloat = 47.711
-        static let innerDiameter: CGFloat = 28
-        static let innerCircleCenterYOffset: CGFloat = -3.856
-    }
-
-    private var scale: CGFloat {
+    private var diameter: CGFloat {
         switch count {
-        case ..<5:
-            1
         case ..<10:
-            1.06
+            34
+        case ..<100:
+            38
         default:
-            1.12
+            42
         }
     }
 
@@ -27,36 +20,27 @@ struct LocationClusterPinView: View {
     }
 
     var body: some View {
-        ZStack {
-            LocationPinShape()
-                .fill(Color("LocationPinPrimary"))
-
-            Circle()
-                .fill(Color("LocationPinInner"))
-                .frame(width: Metrics.innerDiameter, height: Metrics.innerDiameter)
-                .offset(y: Metrics.innerCircleCenterYOffset)
-
-            Text(countLabel)
-                .font(.subheadline.bold())
-                .foregroundStyle(.white)
-                .minimumScaleFactor(0.7)
-                .lineLimit(1)
-                .contentTransition(.numericText())
-                .offset(y: Metrics.innerCircleCenterYOffset)
-        }
-        .frame(width: Metrics.width, height: Metrics.height)
-        .scaleEffect(scale)
-        .animation(.smooth(duration: 0.25), value: count)
-        .animation(.smooth(duration: 0.25), value: scale)
-        .accessibilityHidden(true)
+        Text(countLabel)
+            .font(.caption.bold())
+            .monospacedDigit()
+            .foregroundStyle(.white)
+            .frame(width: diameter, height: diameter)
+            .background(Color("LocationPinPrimary"), in: .circle)
+            .overlay {
+                Circle()
+                    .strokeBorder(.white, lineWidth: 2.5)
+            }
+            .shadow(color: .black.opacity(0.18), radius: 3, y: 1)
+            .accessibilityHidden(true)
     }
 }
 
 #Preview {
     HStack(spacing: 24) {
         LocationClusterPinView(count: 3)
-        LocationClusterPinView(count: 8)
+        LocationClusterPinView(count: 16)
         LocationClusterPinView(count: 24)
     }
     .padding()
+    .background(Color.gray.opacity(0.2))
 }

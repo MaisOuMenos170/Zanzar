@@ -144,8 +144,6 @@ struct LocationMapViewModelTests {
     @Test("Focus region zooms in below the individual pin threshold")
     func focusRegionExpandsClusterInOneStep() {
         let cluster = MapPinCluster(
-            cellColumn: 3,
-            cellRow: 4,
             places: [
                 MapPlace(
                     id: "a",
@@ -163,7 +161,8 @@ struct LocationMapViewModelTests {
                     category: .museum,
                     distanceMeters: 0
                 )
-            ]
+            ],
+            stableID: "cluster-test"
         )
         let viewModel = LocationMapViewModel()
 

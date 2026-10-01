@@ -40,4 +40,8 @@ enum ImpressionTag: String, CaseIterable, Sendable {
             .prefix(limit)
             .map(\.imageName)
     }
+
+    static var allReactionImageNames: [String] {
+        allCases.map(\.imageName)
+    }
 }
