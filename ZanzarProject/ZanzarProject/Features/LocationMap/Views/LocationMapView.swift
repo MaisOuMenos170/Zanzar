@@ -24,7 +24,7 @@ struct LocationMapView: View {
             #endif
             MapCompass()
         }
-        .onMapCameraChange(frequency: .continuous) { context in
+        .onMapCameraChange(frequency: .onEnd) { context in
             viewModel.updateVisibleRegion(context.region)
         }
         .overlay(alignment: .top) {
@@ -51,14 +51,14 @@ struct LocationMapView: View {
         ForEach(viewModel.displayItems) { item in
             switch item {
             case .place(let place):
-                Annotation(place.name, coordinate: place.coordinate) {
+                Annotation(place.name, coordinate: place.coordinate, anchor: .bottom) {
                     LocationPinView(iconName: place.pinIconName)
                         .accessibilityLabel(place.name)
                         .accessibilityAddTraits(.isButton)
                 }
                 .tag(place.id)
             case .cluster(let cluster):
-                Annotation("", coordinate: cluster.coordinate) {
+                Annotation("", coordinate: cluster.coordinate, anchor: .center) {
                     Button {
                         let region = viewModel.focusRegion(on: cluster)
                         withAnimation(.smooth(duration: 0.45)) {
