@@ -102,6 +102,7 @@ extension PlaceDetail {
                 selectedTag: selectedReactionTag
             ),
             nearbyPlaces: nearbyResponses
+                .filter { $0.placeId != placeResponse.placeId }
                 .prefix(6)
                 .map { nearby in
                     PlaceDetailNearbyPlace(

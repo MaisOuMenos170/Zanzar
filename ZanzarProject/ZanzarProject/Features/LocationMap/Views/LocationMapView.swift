@@ -24,7 +24,7 @@ struct LocationMapView: View {
             #endif
             MapCompass()
         }
-        .onMapCameraChange(frequency: .onEnd) { context in
+        .onMapCameraChange(frequency: .continuous) { context in
             viewModel.updateVisibleRegion(context.region)
         }
         .overlay(alignment: .top) {

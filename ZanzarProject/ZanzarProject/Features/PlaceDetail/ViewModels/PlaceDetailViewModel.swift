@@ -7,6 +7,7 @@ final class PlaceDetailViewModel {
     private let place: MapPlace
     private let userIDProvider: @Sendable () -> String?
     private let userCoordinateProvider: @Sendable () async throws -> UserCoordinate
+    private var loadGeneration = 0
 
     var detail: PlaceDetail?
     var isLoading = false
@@ -30,22 +31,33 @@ final class PlaceDetailViewModel {
     }
 
     func load() async {
+        loadGeneration += 1
+        let generation = loadGeneration
+
         isLoading = true
         errorMessage = nil
-        defer { isLoading = false }
+        defer {
+            if generation == loadGeneration {
+                isLoading = false
+            }
+        }
+
+        let userCoordinateTask = Task { try? await userCoordinateProvider() }
 
         do {
-            let userCoordinate = try? await userCoordinateProvider()
-            detail = try await service.fetchPlaceDetail(
+            let loadedDetail = try await service.fetchPlaceDetail(
                 context: PlaceDetailLoadContext(
                     place: place,
-                    userCoordinate: userCoordinate,
+                    userCoordinate: await userCoordinateTask.value,
                     userID: userIDProvider()
                 )
             )
+            guard generation == loadGeneration else { return }
+            detail = loadedDetail
         } catch is CancellationError {
             return
         } catch {
+            guard generation == loadGeneration else { return }
             errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
         }
     }

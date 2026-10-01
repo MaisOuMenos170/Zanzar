@@ -749,9 +749,6 @@
         }
       }
     },
-    "placeDetail.nearbyPlace.checkInsFormat %lld" : {
-
-    },
     "placeDetail.nearbySection.title" : {
       "extractionState" : "manual",
       "localizations" : {

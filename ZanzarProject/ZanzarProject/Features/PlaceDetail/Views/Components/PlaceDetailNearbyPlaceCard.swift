@@ -34,7 +34,11 @@ struct PlaceDetailNearbyPlaceCard: View {
                             .lineLimit(1)
 
                         Text(
-                            "placeDetail.nearbyPlace.checkInsFormat \(place.checkInCount)"
+                            String(
+                                format: String(localized: "placeDetail.nearbyPlace.checkInsFormat"),
+                                locale: Locale.current,
+                                place.checkInCount
+                            )
                         )
                         .font(.caption2)
                         .foregroundStyle(Color("PlaceDetailNearbySubtitle"))
