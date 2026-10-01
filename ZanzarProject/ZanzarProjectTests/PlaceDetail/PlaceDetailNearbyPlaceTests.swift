@@ -49,7 +49,7 @@ struct PlaceDetailNearbyPlaceTests {
         #expect(cardPlace.longitude == -49.31)
         #expect(cardPlace.category == .park)
         #expect(cardPlace.distanceMeters == 850)
-        #expect(cardPlace.reactionImageNames == ImpressionTag.allReactionImageNames)
+        #expect(cardPlace.reactionImageNames == ["CarinhaFeliz", "CarinhaSorrindo"])
         #expect(cardPlace.mapPlace.id == "place-nearby")
     }
 

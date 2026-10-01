@@ -3,7 +3,8 @@ import Foundation
 protocol PlaceDetailServicing: Sendable {
     func fetchPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail
     func checkIn(placeID: String) async throws
-    func submitReaction(placeID: String, impressionTag: String) async throws
+    func submitReaction(placeID: String, impressionTag: String) async throws -> PlaceReactionSubmission
+    func fetchReactionSnapshot(placeID: String, userID: String?) async throws -> PlaceReactionSnapshot
 }
 
 struct PlaceDetailAPIResponse: Decodable, Sendable {
@@ -117,6 +118,20 @@ private struct RatingCreateRequest: Encodable, Sendable {
 private struct RatingResponse: Decodable, Sendable {
     let impressionTag: String
     let placeId: String
+    let impressionCounts: [String: Int]
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        impressionTag = try container.decode(String.self, forKey: .impressionTag)
+        placeId = try container.decode(String.self, forKey: .placeId)
+        impressionCounts = try container.decodeIfPresent([String: Int].self, forKey: .impressionCounts) ?? [:]
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case impressionTag
+        case placeId
+        case impressionCounts
+    }
 }
 
 private struct UserRatingResponse: Decodable, Sendable {
@@ -190,8 +205,8 @@ final class PlaceDetailService: PlaceDetailServicing {
         )
     }
 
-    func submitReaction(placeID: String, impressionTag: String) async throws {
-        let _: RatingResponse = try await client.send(
+    func submitReaction(placeID: String, impressionTag: String) async throws -> PlaceReactionSubmission {
+        let response: RatingResponse = try await client.send(
             path: "rating",
             method: .post,
             body: RatingCreateRequest(
@@ -200,6 +215,25 @@ final class PlaceDetailService: PlaceDetailServicing {
                 clientMutationId: UUID().uuidString
             )
         )
+        return PlaceReactionSubmission(
+            impressionTag: response.impressionTag,
+            impressionCounts: response.impressionCounts
+        )
+    }
+
+    func fetchReactionSnapshot(placeID: String, userID: String?) async throws -> PlaceReactionSnapshot {
+        async let impressionCounts = fetchImpressionCounts(placeID: placeID)
+        async let selectedReactionTag = fetchSelectedReactionTag(placeID: placeID, userID: userID)
+
+        return PlaceReactionSnapshot(
+            impressionCounts: try await impressionCounts,
+            selectedReactionTag: try await selectedReactionTag
+        )
+    }
+
+    private func fetchImpressionCounts(placeID: String) async throws -> [String: Int] {
+        let response: PlaceDetailAPIResponse = try await client.get(path: "places/\(placeID)")
+        return response.zanzar.impressionCounts
     }
 
     private func fetchHasCheckedIn(placeID: String, userID: String?) async throws -> Bool {

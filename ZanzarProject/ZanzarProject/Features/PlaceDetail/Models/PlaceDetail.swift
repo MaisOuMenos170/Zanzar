@@ -66,6 +66,23 @@ struct PlaceDetailLoadContext: Sendable {
     let userID: String?
 }
 
+struct PlaceReactionSubmission: Sendable {
+    let impressionTag: String
+    let impressionCounts: [String: Int]
+}
+
+struct PlaceReactionSnapshot: Sendable {
+    let impressionCounts: [String: Int]
+    let selectedReactionTag: String?
+}
+
+extension PlaceDetail {
+    mutating func applyReactionState(counts: [String: Int], selectedTag: String?) {
+        reactions = ImpressionTag.reactions(from: counts, selectedTag: selectedTag)
+        selectedReactionTag = selectedTag
+    }
+}
+
 extension PlaceDetail {
     static func make(
         placeResponse: PlaceDetailAPIResponse,
@@ -114,7 +131,9 @@ extension PlaceDetail {
                         distanceMeters: nearby.distanceMeters ?? 0,
                         checkInCount: nearby.zanzar.checkInCount,
                         photoReference: nearby.photos.first?.photoReference,
-                        reactionImageNames: ImpressionTag.allReactionImageNames
+                        reactionImageNames: ImpressionTag.topReactionImageNames(
+                            from: nearby.zanzar.impressionCounts
+                        )
                     )
                 },
             hasCheckedIn: hasCheckedIn,

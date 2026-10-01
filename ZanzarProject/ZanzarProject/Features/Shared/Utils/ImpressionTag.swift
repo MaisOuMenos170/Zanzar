@@ -36,6 +36,7 @@ enum ImpressionTag: String, CaseIterable, Sendable {
 
     static func topReactionImageNames(from counts: [String: Int], limit: Int = 5) -> [String] {
         allCases
+            .filter { counts[$0.rawValue, default: 0] > 0 }
             .sorted { counts[$0.rawValue, default: 0] > counts[$1.rawValue, default: 0] }
             .prefix(limit)
             .map(\.imageName)

@@ -107,26 +107,37 @@ final class PlaceDetailViewModel {
         defer { isSubmittingReaction = false }
 
         do {
-            try await service.submitReaction(
+            let submission = try await service.submitReaction(
                 placeID: currentDetail.id,
                 impressionTag: impressionTag
             )
-
-            currentDetail.reactions = currentDetail.reactions.map { reaction in
-                var updated = reaction
-                if updated.impressionTag == impressionTag {
-                    updated.count += 1
-                    updated.isSelected = true
-                }
-                return updated
-            }
-            currentDetail.selectedReactionTag = impressionTag
+            currentDetail.applyReactionState(
+                counts: submission.impressionCounts,
+                selectedTag: submission.impressionTag
+            )
             detail = currentDetail
         } catch is CancellationError {
             return
         } catch APIError.httpStatus(409, _) {
-            currentDetail.selectedReactionTag = impressionTag
+            await syncReactionState(into: &currentDetail)
             detail = currentDetail
+        } catch {
+            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+        }
+    }
+
+    private func syncReactionState(into detail: inout PlaceDetail) async {
+        do {
+            let snapshot = try await service.fetchReactionSnapshot(
+                placeID: detail.id,
+                userID: userIDProvider()
+            )
+            detail.applyReactionState(
+                counts: snapshot.impressionCounts,
+                selectedTag: snapshot.selectedReactionTag
+            )
+        } catch is CancellationError {
+            return
         } catch {
             errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
         }
