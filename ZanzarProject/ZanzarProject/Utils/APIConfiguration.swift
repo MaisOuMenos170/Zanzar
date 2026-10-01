@@ -15,6 +15,9 @@ enum APIConfiguration {
             preconditionFailure("ZanzarAPIBaseURL must be configured for Release builds.")
             #endif
         }
+        #if !DEBUG
+        precondition(url.scheme == "https", "ZanzarAPIBaseURL must be an https URL for Release builds.")
+        #endif
         return url
     }
 }

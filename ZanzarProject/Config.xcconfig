@@ -1,4 +1,0 @@
-// Local config — not committed. See Config.xcconfig.example.
-
-GOOGLE_PLACES_API_KEY = AIzaSyAJN7mefj4MpTmRg6goENsGbKAZ3xU-CJU
-INFOPLIST_KEY_GooglePlacesAPIKey = $(GOOGLE_PLACES_API_KEY)

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Custom keys are not supported via INFOPLIST_KEY_*; values come from Config.xcconfig. -->
+	<key>ZanzarAPIBaseURL</key>
+	<string>$(ZANZAR_API_BASE_URL)</string>
+	<key>GooglePlacesAPIKey</key>
+	<string>$(GOOGLE_PLACES_API_KEY)</string>
+</dict>
+</plist>

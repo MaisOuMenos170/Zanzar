@@ -42,6 +42,7 @@ final class LocationMapService: LocationMapServicing {
 
         for try await update in CLLocationUpdate.liveUpdates() {
             if update.authorizationDenied || update.authorizationRestricted {
+                AppLog.map.warning("Location authorization denied or restricted")
                 throw LocationMapError.authorizationDenied
             }
             if let location = update.location {
@@ -51,18 +52,26 @@ final class LocationMapService: LocationMapServicing {
                 )
             }
         }
+        AppLog.map.error("Location updates ended without a location", error: LocationMapError.locationUnavailable)
         throw LocationMapError.locationUnavailable
         #endif
     }
 
     func fetchNearbyPlaces(from coordinate: UserCoordinate) async throws -> [MapPlace] {
-        let responses: [PlaceAPIResponse] = try await client.get(
-            path: "places",
-            queryItems: [
-                URLQueryItem(name: "lat", value: String(coordinate.latitude)),
-                URLQueryItem(name: "lng", value: String(coordinate.longitude))
-            ]
-        )
-        return responses.map(MapPlace.init(response:))
+        AppLog.map.info("Fetching nearby places...")
+        do {
+            let responses: [PlaceAPIResponse] = try await client.get(
+                path: "places",
+                queryItems: [
+                    URLQueryItem(name: "lat", value: String(coordinate.latitude)),
+                    URLQueryItem(name: "lng", value: String(coordinate.longitude))
+                ]
+            )
+            AppLog.map.info("Fetched \(responses.count) nearby places successfully")
+            return responses.map(MapPlace.init(response:))
+        } catch {
+            AppLog.map.error("Failed to fetch nearby places", error: error)
+            throw error
+        }
     }
 }
