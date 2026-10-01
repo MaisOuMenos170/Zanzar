@@ -715,6 +715,23 @@
         }
       }
     },
+    "placeDetail.nearbyPlace.accessibilityLabel %@ %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, %lld check-ins"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, %lld check-ins"
+          }
+        }
+      }
+    },
     "placeDetail.nearbyPlace.checkInsFormat" : {
       "extractionState" : "manual",
       "localizations" : {

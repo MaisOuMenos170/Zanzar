@@ -141,7 +141,9 @@ struct PlaceDetailView: View {
                                         PlaceDetailNearbyPlaceCard(
                                             place: nearbyPlace,
                                             mediaPolicy: mediaPolicy
-                                        )
+                                        ) {
+                                            coordinator.push(.placeDetail(nearbyPlace.mapPlace))
+                                        }
                                     }
                                 }
                             }

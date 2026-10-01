@@ -135,15 +135,6 @@ final class PlaceDetailService: PlaceDetailServicing {
             path: "places/\(context.place.id)"
         )
 
-        let nearbyResponses: [PlaceDetailAPIResponse] = try await client.get(
-            path: "places",
-            queryItems: [
-                URLQueryItem(name: "lat", value: String(placeResponse.geometry.location.lat)),
-                URLQueryItem(name: "lng", value: String(placeResponse.geometry.location.lng)),
-                URLQueryItem(name: "limit", value: "8"),
-            ]
-        )
-
         async let hasCheckedIn = fetchHasCheckedIn(
             placeID: context.place.id,
             userID: context.userID
@@ -152,14 +143,39 @@ final class PlaceDetailService: PlaceDetailServicing {
             placeID: context.place.id,
             userID: context.userID
         )
+        async let nearbyResponses = fetchNearbyPlaces(
+            userCoordinate: context.userCoordinate,
+            excludingPlaceID: context.place.id
+        )
 
         return PlaceDetail.make(
             placeResponse: placeResponse,
-            nearbyResponses: nearbyResponses,
+            nearbyResponses: await nearbyResponses,
             mapPlace: context.place,
             hasCheckedIn: try await hasCheckedIn,
             selectedReactionTag: try await selectedReactionTag
         )
+    }
+
+    private func fetchNearbyPlaces(
+        userCoordinate: UserCoordinate?,
+        excludingPlaceID: String
+    ) async -> [PlaceDetailAPIResponse] {
+        guard let userCoordinate else { return [] }
+
+        do {
+            return try await client.get(
+                path: "places",
+                queryItems: [
+                    URLQueryItem(name: "lat", value: String(userCoordinate.latitude)),
+                    URLQueryItem(name: "lng", value: String(userCoordinate.longitude)),
+                    URLQueryItem(name: "limit", value: "6"),
+                    URLQueryItem(name: "excludePlaceId", value: excludingPlaceID),
+                ]
+            )
+        } catch {
+            return []
+        }
     }
 
     func checkIn(placeID: String) async throws {

@@ -80,10 +80,38 @@ struct MapPinClusteringTests {
 
         let items = MapPinClustering.cluster(places: places, region: region(span: 0.05))
 
-        #expect(items.count == 3)
-        #expect(items.allSatisfy { item in
-            if case .place = item { true } else { false }
-        })
+        #expect(items.count == 2)
+
+        let cluster = items.compactMap { item -> MapPinCluster? in
+            if case .cluster(let cluster) = item { cluster } else { nil }
+        }.first
+        #expect(cluster?.count == 2)
+
+        let individuals = items.compactMap { item -> MapPlace? in
+            if case .place(let place) = item { place } else { nil }
+        }
+        #expect(individuals.count == 1)
+        #expect(individuals[0].id == "a" || individuals[0].id == "c")
+    }
+
+    @Test("Dense overlapping places merge into a single cluster marker")
+    func densePlacesMergeIntoOneCluster() {
+        let places = (0 ..< 8).map { index in
+            place(
+                id: "\(index)",
+                latitude: -25.430 + (Double(index) * 0.00025),
+                longitude: -49.270 + (Double(index) * 0.00025)
+            )
+        }
+
+        let items = MapPinClustering.cluster(places: places, region: region(span: 0.05))
+
+        #expect(items.count == 1)
+        if case .cluster(let cluster) = items[0] {
+            #expect(cluster.count == 8)
+        } else {
+            Issue.record("Expected a single cluster display item")
+        }
     }
 
     @Test("Single place never becomes a cluster")
