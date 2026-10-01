@@ -3,6 +3,8 @@ import Testing
 
 @Suite("PlaceDetailViewModel")
 struct PlaceDetailViewModelTests {
+    private let sampleUserCoordinate = UserCoordinate(latitude: -25.4298844, longitude: -49.2719424)
+
     private let samplePlace = MapPlace(
         id: "place-1",
         name: "Jardim Botânico",
@@ -38,11 +40,13 @@ struct PlaceDetailViewModelTests {
         let viewModel = PlaceDetailViewModel(
             place: samplePlace,
             userIDProvider: { "user-1" },
+            userCoordinateProvider: { self.sampleUserCoordinate },
             service: service
         )
 
         await viewModel.load()
 
+        #expect(service.lastLoadContext?.userCoordinate == sampleUserCoordinate)
         #expect(viewModel.detail?.name == "Jardim Botânico")
         #expect(viewModel.detail?.totalCheckIns == 10)
         #expect(viewModel.isLoading == false)
@@ -58,6 +62,7 @@ struct PlaceDetailViewModelTests {
         let viewModel = PlaceDetailViewModel(
             place: samplePlace,
             userIDProvider: { "user-1" },
+            userCoordinateProvider: { self.sampleUserCoordinate },
             service: service
         )
 
@@ -69,6 +74,22 @@ struct PlaceDetailViewModelTests {
         #expect(viewModel.isCheckingIn == false)
     }
 
+    @Test("load omits nearby places when user location is unavailable")
+    func loadOmitsNearbyPlacesWithoutUserLocation() async {
+        let service = MockPlaceDetailService(fetchResult: .success(sampleDetail()))
+        let viewModel = PlaceDetailViewModel(
+            place: samplePlace,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: { throw LocationMapError.locationUnavailable },
+            service: service
+        )
+
+        await viewModel.load()
+
+        #expect(service.lastLoadContext?.userCoordinate == nil)
+        #expect(viewModel.detail?.name == "Jardim Botânico")
+    }
+
     @Test("selectReaction updates counts after check-in")
     func selectReactionUpdatesCounts() async {
         let service = MockPlaceDetailService(
@@ -78,6 +99,7 @@ struct PlaceDetailViewModelTests {
         let viewModel = PlaceDetailViewModel(
             place: samplePlace,
             userIDProvider: { "user-1" },
+            userCoordinateProvider: { self.sampleUserCoordinate },
             service: service
         )
 
@@ -93,6 +115,7 @@ final class MockPlaceDetailService: PlaceDetailServicing, @unchecked Sendable {
     var fetchResult: Result<PlaceDetail, Error>
     var checkInResult: Result<Void, Error>?
     var reactionResult: Result<Void, Error>?
+    private(set) var lastLoadContext: PlaceDetailLoadContext?
 
     init(
         fetchResult: Result<PlaceDetail, Error>,
@@ -105,7 +128,8 @@ final class MockPlaceDetailService: PlaceDetailServicing, @unchecked Sendable {
     }
 
     func fetchPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail {
-        try fetchResult.get()
+        lastLoadContext = context
+        return try fetchResult.get()
     }
 
     func checkIn(placeID: String) async throws {

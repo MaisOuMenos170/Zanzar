@@ -135,14 +135,20 @@ final class PlaceDetailService: PlaceDetailServicing {
             path: "places/\(context.place.id)"
         )
 
-        let nearbyResponses: [PlaceDetailAPIResponse] = try await client.get(
-            path: "places",
-            queryItems: [
-                URLQueryItem(name: "lat", value: String(placeResponse.geometry.location.lat)),
-                URLQueryItem(name: "lng", value: String(placeResponse.geometry.location.lng)),
-                URLQueryItem(name: "limit", value: "8"),
-            ]
-        )
+        let nearbyResponses: [PlaceDetailAPIResponse]
+        if let userCoordinate = context.userCoordinate {
+            nearbyResponses = try await client.get(
+                path: "places",
+                queryItems: [
+                    URLQueryItem(name: "lat", value: String(userCoordinate.latitude)),
+                    URLQueryItem(name: "lng", value: String(userCoordinate.longitude)),
+                    URLQueryItem(name: "limit", value: "6"),
+                    URLQueryItem(name: "excludePlaceId", value: context.place.id),
+                ]
+            )
+        } else {
+            nearbyResponses = []
+        }
 
         async let hasCheckedIn = fetchHasCheckedIn(
             placeID: context.place.id,
