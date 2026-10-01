@@ -2,4 +2,7 @@
 // Config.xcconfig is gitignored — never commit secrets.
 
 GOOGLE_PLACES_API_KEY = YOUR_GOOGLE_PLACES_API_KEY
-INFOPLIST_KEY_GooglePlacesAPIKey = $(GOOGLE_PLACES_API_KEY)
+
+// API base URL. xcconfig treats // as a comment, so write the scheme as https:/$()/host.
+// If empty, Debug falls back to http://127.0.0.1:3000; Release requires a value.
+ZANZAR_API_BASE_URL = http:/$()/127.0.0.1:3000

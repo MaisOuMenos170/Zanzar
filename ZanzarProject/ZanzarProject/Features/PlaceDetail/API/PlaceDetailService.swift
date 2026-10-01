@@ -131,6 +131,46 @@ final class PlaceDetailService: PlaceDetailServicing {
     }
 
     func fetchPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail {
+        AppLog.placeDetail.info("Fetching place detail placeId=\(context.place.id)...")
+        do {
+            let detail = try await loadPlaceDetail(context: context)
+            AppLog.placeDetail.info("Fetched place detail placeId=\(context.place.id) successfully")
+            return detail
+        } catch {
+            AppLog.placeDetail.error("Failed to fetch place detail placeId=\(context.place.id)", error: error)
+            throw error
+        }
+    }
+
+    func checkIn(placeID: String) async throws {
+        AppLog.placeDetail.info("Checking in placeId=\(placeID)...")
+        do {
+            try await sendCheckIn(placeID: placeID)
+            AppLog.placeDetail.info("Checked in placeId=\(placeID) successfully")
+        } catch APIError.httpStatus(409, let message) {
+            AppLog.placeDetail.warning("Check-in conflict placeId=\(placeID) message=\(message ?? "-")")
+            throw APIError.httpStatus(409, message: message)
+        } catch {
+            AppLog.placeDetail.error("Failed to check in placeId=\(placeID)", error: error)
+            throw error
+        }
+    }
+
+    func submitReaction(placeID: String, impressionTag: String) async throws {
+        AppLog.placeDetail.info("Submitting reaction placeId=\(placeID) tag=\(impressionTag)...")
+        do {
+            try await sendReaction(placeID: placeID, impressionTag: impressionTag)
+            AppLog.placeDetail.info("Submitted reaction placeId=\(placeID) successfully")
+        } catch APIError.httpStatus(409, let message) {
+            AppLog.placeDetail.warning("Reaction conflict placeId=\(placeID) message=\(message ?? "-")")
+            throw APIError.httpStatus(409, message: message)
+        } catch {
+            AppLog.placeDetail.error("Failed to submit reaction placeId=\(placeID)", error: error)
+            throw error
+        }
+    }
+
+    private func loadPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail {
         let placeResponse: PlaceDetailAPIResponse = try await client.get(
             path: "places/\(context.place.id)"
         )
@@ -162,7 +202,7 @@ final class PlaceDetailService: PlaceDetailServicing {
         )
     }
 
-    func checkIn(placeID: String) async throws {
+    private func sendCheckIn(placeID: String) async throws {
         let _: CheckInMessageResponse = try await client.send(
             path: "checkIn",
             method: .post,
@@ -174,7 +214,7 @@ final class PlaceDetailService: PlaceDetailServicing {
         )
     }
 
-    func submitReaction(placeID: String, impressionTag: String) async throws {
+    private func sendReaction(placeID: String, impressionTag: String) async throws {
         let _: RatingResponse = try await client.send(
             path: "rating",
             method: .post,

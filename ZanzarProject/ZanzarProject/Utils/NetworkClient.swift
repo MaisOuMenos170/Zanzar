@@ -93,16 +93,48 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
     }
 
     private func perform<Response: Decodable>(_ request: URLRequest) async throws -> Response {
-        let (data, response) = try await session.data(for: request)
+        let label = "\(request.httpMethod ?? "?") \(request.url?.path ?? "?")"
+        let start = ContinuousClock.now
+        AppLog.network.info("\(label) started")
+
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await session.data(for: request)
+        } catch {
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled {
+                AppLog.network.error("\(label) transport failure", error: error)
+            }
+            throw error
+        }
+
+        let elapsedMs = Int((ContinuousClock.now - start) / .milliseconds(1))
         guard let httpResponse = response as? HTTPURLResponse else {
+            AppLog.network.error("\(label) returned a non-HTTP response (\(elapsedMs)ms)")
             throw APIError.invalidResponse
         }
-        guard (200..<300).contains(httpResponse.statusCode) else {
-            throw APIError.from(data: data, statusCode: httpResponse.statusCode)
+
+        // Backend tags every request with an id; log it to find the matching server-side lines.
+        let requestID = httpResponse.value(forHTTPHeaderField: "X-Request-Id") ?? "-"
+        let status = httpResponse.statusCode
+        let summary = "\(label) -> \(status) (\(elapsedMs)ms) reqId=\(requestID)"
+
+        guard (200..<300).contains(status) else {
+            let apiError = APIError.from(data: data, statusCode: status)
+            if status >= 500 {
+                AppLog.network.error(summary, error: apiError)
+            } else {
+                AppLog.network.warning("\(summary) | \(String(reflecting: apiError))")
+            }
+            throw apiError
         }
+
         do {
-            return try decoder.decode(Response.self, from: data)
+            let decoded = try decoder.decode(Response.self, from: data)
+            AppLog.network.info(summary)
+            return decoded
         } catch {
+            AppLog.network.error("\(summary) | decoding failed, body=\(data.count) bytes", error: error)
             throw APIError.decodingFailed
         }
     }

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Updates the Cloudflare Tunnel API URL used by the iOS app (Debug build only).
+# Updates the API base URL used by the iOS app by writing ZANZAR_API_BASE_URL to the
+# gitignored ZanzarProject/Config.xcconfig (read into Info.plist at build time).
 # Usage: ./scripts/update-api-tunnel-url.sh https://your-subdomain.trycloudflare.com
 set -euo pipefail
 
@@ -11,18 +12,21 @@ fi
 
 URL="${1%/}"
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-PBXPROJ="$ROOT_DIR/ZanzarProject/ZanzarProject.xcodeproj/project.pbxproj"
+CONFIG="$ROOT_DIR/ZanzarProject/Config.xcconfig"
 
-python3 - "$URL" "$PBXPROJ" <<'PY'
+python3 - "$URL" "$CONFIG" <<'PY'
+import os
 import re
 import sys
 
 url, path = sys.argv[1], sys.argv[2]
-text = open(path).read()
-pattern = r'(INFOPLIST_KEY_ZanzarAPIBaseURL = ")[^"]+(";)'
-updated, count = re.subn(pattern, rf'\g<1>{url}\2', text, count=1)
+# xcconfig treats "//" as a comment, so the scheme separator is written as ":/$()/".
+value = url.replace("://", ":/$()/", 1)
+line = f"ZANZAR_API_BASE_URL = {value}"
+text = open(path).read() if os.path.exists(path) else ""
+updated, count = re.subn(r"^ZANZAR_API_BASE_URL\s*=.*$", lambda _: line, text, count=1, flags=re.M)
 if count == 0:
-    raise SystemExit("INFOPLIST_KEY_ZanzarAPIBaseURL not found in project.pbxproj")
+    updated = text.rstrip("\n") + ("\n" if text else "") + line + "\n"
 open(path, "w").write(updated)
-print(f"Updated ZanzarAPIBaseURL (Debug) -> {url}")
+print(f"Updated ZANZAR_API_BASE_URL in Config.xcconfig -> {url}")
 PY

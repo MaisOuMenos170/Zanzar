@@ -26,6 +26,14 @@ final class SignUpService: SignUpServicing {
     }
 
     func submitSignUp(_ request: SignUpRequest) async throws -> SignUpResponse {
-        try await client.send(path: "register", method: .post, body: request)
+        AppLog.signUp.info("Submitting sign up...")
+        do {
+            let response: SignUpResponse = try await client.send(path: "register", method: .post, body: request)
+            AppLog.signUp.info("Sign up succeeded userId=\(response.id)")
+            return response
+        } catch {
+            AppLog.signUp.error("Sign up request failed", error: error)
+            throw error
+        }
     }
 }

@@ -21,6 +21,14 @@ final class LoginService: LoginServicing {
     }
 
     func submitLogin(_ request: LoginRequest) async throws -> LoginResponse {
-        try await client.send(path: "login", method: .post, body: request)
+        AppLog.login.info("Submitting login...")
+        do {
+            let response: LoginResponse = try await client.send(path: "login", method: .post, body: request)
+            AppLog.login.info("Login request succeeded")
+            return response
+        } catch {
+            AppLog.login.error("Login request failed", error: error)
+            throw error
+        }
     }
 }

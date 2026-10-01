@@ -32,21 +32,35 @@ final class AuthSession {
         }
         token = storedToken
         tokenStore.setToken(storedToken)
+        AppLog.auth.info("Session restored from keychain")
     }
 
     func signIn(token: String) throws {
         let trimmedToken = token.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedToken.isEmpty else {
+            AppLog.auth.error("Sign in rejected: empty token", error: AuthSessionError.invalidToken)
             throw AuthSessionError.invalidToken
         }
-        try keychain.saveToken(trimmedToken)
+        do {
+            try keychain.saveToken(trimmedToken)
+        } catch {
+            AppLog.auth.error("Failed to save token to keychain", error: error)
+            throw error
+        }
         self.token = trimmedToken
         tokenStore.setToken(trimmedToken)
+        AppLog.auth.info("Signed in, token saved to keychain")
     }
 
     func signOut() throws {
-        try keychain.deleteToken()
+        do {
+            try keychain.deleteToken()
+        } catch {
+            AppLog.auth.error("Failed to delete token from keychain", error: error)
+            throw error
+        }
         token = nil
         tokenStore.setToken(nil)
+        AppLog.auth.info("Signed out")
     }
 }
