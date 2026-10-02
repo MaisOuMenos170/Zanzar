@@ -28,14 +28,20 @@ final class RatingPromptService: RatingPromptServicing {
     }
 
     func hasRated(placeID: String) async throws -> Bool {
+        AppLog.ratingPrompt.info("Checking existing rating placeId=\(placeID)...")
         do {
             let _: UserRatingResponse = try await client.get(
                 path: "rating",
                 queryItems: [URLQueryItem(name: "placeId", value: placeID)]
             )
+            AppLog.ratingPrompt.info("Existing rating found placeId=\(placeID)")
             return true
         } catch APIError.httpStatus(404, _) {
+            AppLog.ratingPrompt.info("No existing rating placeId=\(placeID)")
             return false
+        } catch {
+            AppLog.ratingPrompt.error("Failed to check existing rating placeId=\(placeID)", error: error)
+            throw error
         }
     }
 

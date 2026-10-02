@@ -17,12 +17,22 @@ final class UserDefaultsPendingRatingStore: PendingRatingStoring {
 
     func load() -> PendingRating? {
         guard let data = defaults.data(forKey: Self.key) else { return nil }
-        return try? JSONDecoder().decode(PendingRating.self, from: data)
+        do {
+            return try JSONDecoder().decode(PendingRating.self, from: data)
+        } catch {
+            AppLog.ratingPrompt.error("Failed to decode stored pending rating; discarding", error: error)
+            defaults.removeObject(forKey: Self.key)
+            return nil
+        }
     }
 
     func save(_ pendingRating: PendingRating) {
-        guard let data = try? JSONEncoder().encode(pendingRating) else { return }
-        defaults.set(data, forKey: Self.key)
+        do {
+            defaults.set(try JSONEncoder().encode(pendingRating), forKey: Self.key)
+            AppLog.ratingPrompt.info("Saved pending rating placeId=\(pendingRating.placeID)")
+        } catch {
+            AppLog.ratingPrompt.error("Failed to encode pending rating placeId=\(pendingRating.placeID)", error: error)
+        }
     }
 
     func clear() {
