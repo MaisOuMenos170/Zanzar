@@ -52,6 +52,7 @@ struct PlaceDetailNearbyPlaceCard: View {
                                 .frame(width: 16, height: 16)
                         }
                     }
+                    .frame(height: 16)
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
