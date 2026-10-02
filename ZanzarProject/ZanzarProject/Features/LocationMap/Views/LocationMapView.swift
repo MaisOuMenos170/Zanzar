@@ -60,14 +60,17 @@ struct LocationMapView: View {
         .task {
             await viewModel.load()
         }
-        .task {
-            await ratingPrompt.refresh()
-        }
-        .onChange(of: scenePhase) { _, phase in
-            guard phase == .active else { return }
-            Task { await ratingPrompt.refresh() }
+        // The map stays mounted underneath pushed screens, so neither `.task` nor `scenePhase` fires when the
+        // user pops back from a check-in. Keying on visibility restarts the monitor on pop and on foreground.
+        .task(id: isMonitoringRating) {
+            guard isMonitoringRating else { return }
+            await ratingPrompt.monitorLeaving()
         }
         .ignoresSafeArea()
+    }
+
+    private var isMonitoringRating: Bool {
+        coordinator.path.isEmpty && scenePhase == .active
     }
 
     @MapContentBuilder

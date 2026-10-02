@@ -81,24 +81,31 @@ final class PlaceDetailViewModel {
             currentDetail.hasCheckedIn = true
             currentDetail.totalCheckIns += 1
             detail = currentDetail
-            pendingRatingStore.save(
-                PendingRating(
-                    userID: userID,
-                    placeID: currentDetail.id,
-                    placeName: currentDetail.name,
-                    latitude: currentDetail.latitude,
-                    longitude: currentDetail.longitude,
-                    checkedInAt: Date()
-                )
-            )
+            queueRatingPrompt(for: currentDetail, userID: userID)
         } catch is CancellationError {
             return
         } catch APIError.httpStatus(409, _) {
+            // Already checked in (another device or session): still queue the prompt, since the inline
+            // rating is gone from the detail. The map skips it if the user has already rated.
             currentDetail.hasCheckedIn = true
             detail = currentDetail
+            queueRatingPrompt(for: currentDetail, userID: userID)
         } catch {
             errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
         }
+    }
+
+    private func queueRatingPrompt(for detail: PlaceDetail, userID: String) {
+        pendingRatingStore.save(
+            PendingRating(
+                userID: userID,
+                placeID: detail.id,
+                placeName: detail.name,
+                latitude: detail.latitude,
+                longitude: detail.longitude,
+                checkedInAt: Date()
+            )
+        )
     }
 
     func allowCellularImages() {

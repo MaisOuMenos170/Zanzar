@@ -1,4 +1,5 @@
 import Foundation
+import os
 import Testing
 @testable import ZanzarProject
 
@@ -36,6 +37,97 @@ struct RatingPromptViewModelTests {
             userCoordinateProvider: { location },
             now: { current }
         )
+    }
+
+    // MARK: monitorLeaving
+
+    @Test("monitorLeaving polls the location until the user leaves the place")
+    func monitorPollsUntilUserLeaves() async {
+        let locationCalls = OSAllocatedUnfairLock(initialState: 0)
+        let sleeps = OSAllocatedUnfairLock(initialState: 0)
+        let near = nearPlace
+        let far = farAway
+        let current = now
+        let viewModel = RatingPromptViewModel(
+            service: MockRatingPromptService(hasRatedResult: .success(false)),
+            store: InMemoryPendingRatingStore(stored: pending()),
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: {
+                let call = locationCalls.withLock { state -> Int in
+                    state += 1
+                    return state
+                }
+                return call < 3 ? near : far
+            },
+            now: { current },
+            sleep: { _ in sleeps.withLock { $0 += 1 } }
+        )
+
+        await viewModel.monitorLeaving()
+
+        #expect(viewModel.isPresented)
+        #expect(sleeps.withLock { $0 } == 2)
+    }
+
+    @Test("monitorLeaving returns right away when nothing is pending")
+    func monitorWithoutPending() async {
+        let sleeps = OSAllocatedUnfairLock(initialState: 0)
+        let current = now
+        let viewModel = RatingPromptViewModel(
+            service: MockRatingPromptService(),
+            store: InMemoryPendingRatingStore(),
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: { UserCoordinate(latitude: 0, longitude: 0) },
+            now: { current },
+            sleep: { _ in sleeps.withLock { $0 += 1 } }
+        )
+
+        await viewModel.monitorLeaving()
+
+        #expect(viewModel.isPresented == false)
+        #expect(sleeps.withLock { $0 } == 0)
+    }
+
+    @Test("monitorLeaving stops when its task is cancelled")
+    func monitorStopsWhenTaskIsCancelled() async {
+        let store = InMemoryPendingRatingStore(stored: pending())
+        let near = nearPlace
+        let current = now
+        let viewModel = RatingPromptViewModel(
+            service: MockRatingPromptService(),
+            store: store,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: { near },
+            now: { current },
+            sleep: { try await Task.sleep(for: $0) }
+        )
+
+        let monitor = Task { await viewModel.monitorLeaving() }
+        monitor.cancel()
+        await monitor.value
+
+        #expect(viewModel.isPresented == false)
+        #expect(store.stored != nil)
+    }
+
+    @Test("monitorLeaving stops when the wait between polls is interrupted")
+    func monitorStopsWhenSleepIsInterrupted() async {
+        let store = InMemoryPendingRatingStore(stored: pending())
+        let near = nearPlace
+        let current = now
+        let viewModel = RatingPromptViewModel(
+            service: MockRatingPromptService(),
+            store: store,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: { near },
+            now: { current },
+            sleep: { _ in throw CancellationError() }
+        )
+
+        await viewModel.monitorLeaving()
+
+        #expect(viewModel.isPresented == false)
+        #expect(store.stored != nil)
     }
 
     // MARK: refresh
