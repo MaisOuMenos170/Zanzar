@@ -7,6 +7,7 @@ final class PlaceDetailViewModel {
     private let place: MapPlace
     private let userIDProvider: @Sendable () -> String?
     private let userCoordinateProvider: @Sendable () async throws -> UserCoordinate
+    private let pendingRatingStore: PendingRatingStoring
     private var loadGeneration = 0
 
     var detail: PlaceDetail?
@@ -22,12 +23,14 @@ final class PlaceDetailViewModel {
         userCoordinateProvider: @escaping @Sendable () async throws -> UserCoordinate = {
             try await LocationMapService().currentUserLocation()
         },
-        service: PlaceDetailServicing = PlaceDetailService()
+        service: PlaceDetailServicing = PlaceDetailService(),
+        pendingRatingStore: PendingRatingStoring = UserDefaultsPendingRatingStore()
     ) {
         self.place = place
         self.userIDProvider = userIDProvider
         self.userCoordinateProvider = userCoordinateProvider
         self.service = service
+        self.pendingRatingStore = pendingRatingStore
     }
 
     func load() async {
@@ -65,7 +68,7 @@ final class PlaceDetailViewModel {
     func performCheckIn() async {
         guard !isCheckingIn else { return }
         guard var currentDetail = detail, !currentDetail.hasCheckedIn else { return }
-        guard userIDProvider() != nil else {
+        guard let userID = userIDProvider() else {
             errorMessage = String(localized: "placeDetail.checkInError.notAuthenticated")
             return
         }
@@ -79,6 +82,16 @@ final class PlaceDetailViewModel {
             currentDetail.hasCheckedIn = true
             currentDetail.totalCheckIns += 1
             detail = currentDetail
+            pendingRatingStore.save(
+                PendingRating(
+                    userID: userID,
+                    placeID: currentDetail.id,
+                    placeName: currentDetail.name,
+                    latitude: currentDetail.latitude,
+                    longitude: currentDetail.longitude,
+                    checkedInAt: Date()
+                )
+            )
         } catch is CancellationError {
             return
         } catch APIError.httpStatus(409, _) {
