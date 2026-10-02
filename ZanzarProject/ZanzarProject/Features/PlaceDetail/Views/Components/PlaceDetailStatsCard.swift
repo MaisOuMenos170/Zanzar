@@ -7,6 +7,8 @@ struct PlaceDetailStatsCard: View {
         HStack(spacing: 0) {
             VStack(spacing: 4) {
                 Text(totalCheckIns, format: .number)
+                    .contentTransition(.numericText(value: Double(totalCheckIns)))
+                    .animation(.default, value: totalCheckIns)
                     .font(.largeTitle)
                     .bold()
                     .foregroundStyle(.primary)
