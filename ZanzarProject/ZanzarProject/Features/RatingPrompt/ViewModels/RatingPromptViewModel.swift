@@ -61,11 +61,12 @@ final class RatingPromptViewModel {
                 return
             }
         } catch {
-            // Can't tell whether the user rated: don't risk asking twice.
+            // Can't tell whether the user rated (the service already logged why): don't risk asking twice.
             return
         }
         guard generation == refreshGeneration else { return }
 
+        AppLog.ratingPrompt.info("Presenting rating prompt placeId=\(stored.placeID)")
         pendingRating = stored
         selectedTag = nil
         errorMessage = nil
