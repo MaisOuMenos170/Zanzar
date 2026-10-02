@@ -1,6 +1,7 @@
 import Testing
 @testable import ZanzarProject
 
+@MainActor
 @Suite("PlaceDetailViewModel")
 struct PlaceDetailViewModelTests {
     private let sampleUserCoordinate = UserCoordinate(latitude: -25.4298844, longitude: -49.2719424)
@@ -59,11 +60,13 @@ struct PlaceDetailViewModelTests {
             fetchResult: .success(sampleDetail()),
             checkInResult: .success(())
         )
+        let store = InMemoryPendingRatingStore()
         let viewModel = PlaceDetailViewModel(
             place: samplePlace,
             userIDProvider: { "user-1" },
             userCoordinateProvider: { self.sampleUserCoordinate },
-            service: service
+            service: service,
+            pendingRatingStore: store
         )
 
         await viewModel.load()
@@ -72,6 +75,31 @@ struct PlaceDetailViewModelTests {
         #expect(viewModel.detail?.hasCheckedIn == true)
         #expect(viewModel.detail?.totalCheckIns == 11)
         #expect(viewModel.isCheckingIn == false)
+        #expect(store.stored?.userID == "user-1")
+        #expect(store.stored?.placeID == samplePlace.id)
+        #expect(store.stored?.placeName == samplePlace.name)
+    }
+
+    @Test("a check-in conflict does not queue a rating prompt")
+    func checkInConflictDoesNotQueueRating() async {
+        let service = MockPlaceDetailService(
+            fetchResult: .success(sampleDetail()),
+            checkInResult: .failure(APIError.httpStatus(409, message: nil))
+        )
+        let store = InMemoryPendingRatingStore()
+        let viewModel = PlaceDetailViewModel(
+            place: samplePlace,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: { self.sampleUserCoordinate },
+            service: service,
+            pendingRatingStore: store
+        )
+
+        await viewModel.load()
+        await viewModel.performCheckIn()
+
+        #expect(viewModel.detail?.hasCheckedIn == true)
+        #expect(store.stored == nil)
     }
 
     @Test("load omits nearby places when user location is unavailable")
