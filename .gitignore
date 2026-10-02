@@ -6,7 +6,7 @@
 xcuserdata/
 
 ## Local secrets (copy from Config.xcconfig.example)
-ZanzarProject/Config.xcconfig
+**/Config.xcconfig
 
 ## Obj-C/Swift specific
 *.hmap
