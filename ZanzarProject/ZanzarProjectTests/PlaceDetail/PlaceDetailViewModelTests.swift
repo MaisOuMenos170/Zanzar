@@ -80,8 +80,8 @@ struct PlaceDetailViewModelTests {
         #expect(store.stored?.placeName == samplePlace.name)
     }
 
-    @Test("a check-in conflict does not queue a rating prompt")
-    func checkInConflictDoesNotQueueRating() async {
+    @Test("a check-in conflict still queues a rating prompt")
+    func checkInConflictQueuesRating() async throws {
         let service = MockPlaceDetailService(
             fetchResult: .success(sampleDetail()),
             checkInResult: .failure(APIError.httpStatus(409, message: nil))
@@ -99,7 +99,9 @@ struct PlaceDetailViewModelTests {
         await viewModel.performCheckIn()
 
         #expect(viewModel.detail?.hasCheckedIn == true)
-        #expect(store.stored == nil)
+        let queued = try #require(store.stored)
+        #expect(queued.userID == "user-1")
+        #expect(queued.placeID == viewModel.detail?.id)
     }
 
     @Test("load omits nearby places when user location is unavailable")
