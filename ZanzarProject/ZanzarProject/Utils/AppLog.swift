@@ -13,6 +13,7 @@ enum AppLog: String {
     case signUp
     case map
     case placeDetail
+    case ratingPrompt
 
     private static let subsystem = Bundle.main.bundleIdentifier ?? "ZanzarProject"
 
