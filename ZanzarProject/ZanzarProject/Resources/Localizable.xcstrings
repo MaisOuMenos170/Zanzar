@@ -715,6 +715,40 @@
         }
       }
     },
+    "placeDetail.navigationSheet.openIn %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open in %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir no %@"
+          }
+        }
+      }
+    },
+    "placeDetail.navigationSheet.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select an action"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selecione uma ação"
+          }
+        }
+      }
+    },
     "placeDetail.nearbyPlace.accessibilityLabel %@ %lld" : {
       "extractionState" : "manual",
       "localizations" : {

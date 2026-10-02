@@ -6,21 +6,42 @@ struct PlaceDetailDirectionsButton: View {
     let placeName: String
 
     @Environment(\.openURL) private var openURL
+    @State private var navigationAppOptions: PlaceDetailNavigationAppOptions?
 
     var body: some View {
-        Button("placeDetail.directionsButton.title", systemImage: "arrow.up.forward") {
-            openDirections()
+        Button(action: showDirections) {
+            HStack {
+                Text("placeDetail.directionsButton.title")
+                Image(systemName: "arrow.up.forward")
+            }
+            .font(.body)
+            .fontWeight(.medium)
+            .foregroundStyle(.primary)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
         }
-        .font(.body)
-        .foregroundStyle(.primary)
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
-        .background(Color("WelcomeSecondaryBackground"), in: .capsule)
+        .buttonStyle(.glass)
+        .buttonBorderShape(.capsule)
+        .sheet(item: $navigationAppOptions) { options in
+            PlaceDetailNavigationAppsSheet(apps: options.apps, onSelect: openDirections)
+        }
     }
 
-    private func openDirections() {
-        let encodedName = placeName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? placeName
-        guard let url = URL(string: "http://maps.apple.com/?daddr=\(latitude),\(longitude)&q=\(encodedName)") else {
+    private func showDirections() {
+        let apps = PlaceDetailNavigationApp.installed
+        switch apps.count {
+        case 0:
+            // Apple Maps was removed and no other app is installed: the web link opens in the browser.
+            openDirections(in: .appleMaps)
+        case 1:
+            openDirections(in: apps[0])
+        default:
+            navigationAppOptions = PlaceDetailNavigationAppOptions(apps: apps)
+        }
+    }
+
+    private func openDirections(in app: PlaceDetailNavigationApp) {
+        guard let url = app.directionsURL(latitude: latitude, longitude: longitude, placeName: placeName) else {
             return
         }
         openURL(url)
