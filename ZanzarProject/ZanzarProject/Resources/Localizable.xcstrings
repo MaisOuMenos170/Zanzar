@@ -766,40 +766,6 @@
         }
       }
     },
-    "placeDetail.reactionError.checkInRequired" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check in before leaving a reaction."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Faça check-in antes de deixar uma reação."
-          }
-        }
-      }
-    },
-    "placeDetail.reactionError.notAuthenticated" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sign in to react to this place."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entre na conta para reagir a este lugar."
-          }
-        }
-      }
-    },
     "placeDetail.reactionItem.accessibilityLabel" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -813,6 +779,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld reações"
+          }
+        }
+      }
+    },
+    "placeDetail.reactionsSection.emptyMessage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place with reactions. Check in to leave a reaction."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Local ainda sem reações. Faça check-in para deixar sua reação."
           }
         }
       }

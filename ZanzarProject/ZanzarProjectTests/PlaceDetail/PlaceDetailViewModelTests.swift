@@ -117,42 +117,19 @@ struct PlaceDetailViewModelTests {
         #expect(service.lastLoadContext?.userCoordinate == nil)
         #expect(viewModel.detail?.name == "Jardim Botânico")
     }
-
-    @Test("selectReaction updates counts after check-in")
-    func selectReactionUpdatesCounts() async {
-        let service = MockPlaceDetailService(
-            fetchResult: .success(sampleDetail(hasCheckedIn: true)),
-            reactionResult: .success(())
-        )
-        let viewModel = PlaceDetailViewModel(
-            place: samplePlace,
-            userIDProvider: { "user-1" },
-            userCoordinateProvider: { self.sampleUserCoordinate },
-            service: service
-        )
-
-        await viewModel.load()
-        await viewModel.selectReaction(ImpressionTag.delighted.rawValue)
-
-        #expect(viewModel.detail?.selectedReactionTag == ImpressionTag.delighted.rawValue)
-        #expect(viewModel.detail?.reactions.first(where: { $0.impressionTag == ImpressionTag.delighted.rawValue })?.count == 1)
-    }
 }
 
 final class MockPlaceDetailService: PlaceDetailServicing, @unchecked Sendable {
     var fetchResult: Result<PlaceDetail, Error>
     var checkInResult: Result<Void, Error>?
-    var reactionResult: Result<Void, Error>?
     private(set) var lastLoadContext: PlaceDetailLoadContext?
 
     init(
         fetchResult: Result<PlaceDetail, Error>,
-        checkInResult: Result<Void, Error>? = nil,
-        reactionResult: Result<Void, Error>? = nil
+        checkInResult: Result<Void, Error>? = nil
     ) {
         self.fetchResult = fetchResult
         self.checkInResult = checkInResult
-        self.reactionResult = reactionResult
     }
 
     func fetchPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail {
@@ -165,12 +142,5 @@ final class MockPlaceDetailService: PlaceDetailServicing, @unchecked Sendable {
             fatalError("MockPlaceDetailService.checkInResult not configured")
         }
         try checkInResult.get()
-    }
-
-    func submitReaction(placeID: String, impressionTag: String) async throws {
-        guard let reactionResult else {
-            fatalError("MockPlaceDetailService.reactionResult not configured")
-        }
-        try reactionResult.get()
     }
 }

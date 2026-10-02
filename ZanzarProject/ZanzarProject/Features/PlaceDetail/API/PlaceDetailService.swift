@@ -3,7 +3,6 @@ import Foundation
 protocol PlaceDetailServicing: Sendable {
     func fetchPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail
     func checkIn(placeID: String) async throws
-    func submitReaction(placeID: String, impressionTag: String) async throws
 }
 
 struct PlaceDetailAPIResponse: Decodable, Sendable {
@@ -108,17 +107,6 @@ private struct CheckInStatusResponse: Decodable, Sendable {
     let placeId: String
 }
 
-private struct RatingCreateRequest: Encodable, Sendable {
-    let placeId: String
-    let impressionTag: String
-    let clientMutationId: String
-}
-
-private struct RatingResponse: Decodable, Sendable {
-    let impressionTag: String
-    let placeId: String
-}
-
 private struct UserRatingResponse: Decodable, Sendable {
     let impressionTag: String
 }
@@ -152,20 +140,6 @@ final class PlaceDetailService: PlaceDetailServicing {
             throw APIError.httpStatus(409, message: message)
         } catch {
             AppLog.placeDetail.error("Failed to check in placeId=\(placeID)", error: error)
-            throw error
-        }
-    }
-
-    func submitReaction(placeID: String, impressionTag: String) async throws {
-        AppLog.placeDetail.info("Submitting reaction placeId=\(placeID) tag=\(impressionTag)...")
-        do {
-            try await sendReaction(placeID: placeID, impressionTag: impressionTag)
-            AppLog.placeDetail.info("Submitted reaction placeId=\(placeID) successfully")
-        } catch APIError.httpStatus(409, let message) {
-            AppLog.placeDetail.warning("Reaction conflict (409) placeId=\(placeID)")
-            throw APIError.httpStatus(409, message: message)
-        } catch {
-            AppLog.placeDetail.error("Failed to submit reaction placeId=\(placeID)", error: error)
             throw error
         }
     }
@@ -226,18 +200,6 @@ final class PlaceDetailService: PlaceDetailServicing {
             body: CheckInCreateRequest(
                 placeId: placeID,
                 datetime: Date().formatted(.iso8601),
-                clientMutationId: UUID().uuidString
-            )
-        )
-    }
-
-    private func sendReaction(placeID: String, impressionTag: String) async throws {
-        let _: RatingResponse = try await client.send(
-            path: "rating",
-            method: .post,
-            body: RatingCreateRequest(
-                placeId: placeID,
-                impressionTag: impressionTag,
                 clientMutationId: UUID().uuidString
             )
         )
