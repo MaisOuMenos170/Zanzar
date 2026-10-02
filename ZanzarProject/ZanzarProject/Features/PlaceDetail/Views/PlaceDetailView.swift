@@ -119,15 +119,7 @@ struct PlaceDetailView: View {
 
                     PlaceDetailStatsCard(totalCheckIns: detail.totalCheckIns)
 
-                    PlaceDetailReactionsSection(
-                        reactions: detail.reactions,
-                        canReact: detail.hasCheckedIn && detail.selectedReactionTag == nil,
-                        isSubmitting: viewModel.isSubmittingReaction
-                    ) { impressionTag in
-                        Task {
-                            await viewModel.selectReaction(impressionTag)
-                        }
-                    }
+                    PlaceDetailReactionsSection(reactions: detail.reactions)
 
                     if !detail.nearbyPlaces.isEmpty {
                         VStack(alignment: .leading, spacing: 16) {
