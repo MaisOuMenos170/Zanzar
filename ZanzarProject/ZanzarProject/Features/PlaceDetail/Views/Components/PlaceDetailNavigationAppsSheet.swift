@@ -39,8 +39,8 @@ struct PlaceDetailNavigationAppsSheet: View {
                     Divider()
                 }
                 Button {
-                    dismiss()
                     onSelect(app)
+                    dismiss()
                 } label: {
                     Text("placeDetail.navigationSheet.openIn \(app.displayName)")
                         .font(.body)

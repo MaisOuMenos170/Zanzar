@@ -7,23 +7,23 @@ struct PlaceDetailDirectionsButton: View {
 
     @Environment(\.openURL) private var openURL
     @State private var navigationAppOptions: PlaceDetailNavigationAppOptions?
+    @State private var pendingNavigationApp: PlaceDetailNavigationApp?
 
     var body: some View {
         Button(action: showDirections) {
-            HStack {
-                Text("placeDetail.directionsButton.title")
-                Image(systemName: "arrow.up.forward")
-            }
-            .font(.body)
-            .fontWeight(.medium)
-            .foregroundStyle(.primary)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
+            Label("placeDetail.directionsButton.title", systemImage: "arrow.up.forward")
+                .font(.body)
+                .fontWeight(.medium)
+                .foregroundStyle(.primary)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
         }
         .buttonStyle(.glass)
         .buttonBorderShape(.capsule)
-        .sheet(item: $navigationAppOptions) { options in
-            PlaceDetailNavigationAppsSheet(apps: options.apps, onSelect: openDirections)
+        .sheet(item: $navigationAppOptions, onDismiss: openPendingNavigationApp) { options in
+            PlaceDetailNavigationAppsSheet(apps: options.apps) { app in
+                pendingNavigationApp = app
+            }
         }
     }
 
@@ -40,8 +40,17 @@ struct PlaceDetailDirectionsButton: View {
         }
     }
 
+    /// The URL is opened only once the sheet is fully dismissed: opening it while the sheet is
+    /// still being torn down can make the system ignore the request.
+    private func openPendingNavigationApp() {
+        guard let app = pendingNavigationApp else { return }
+        pendingNavigationApp = nil
+        openDirections(in: app)
+    }
+
     private func openDirections(in app: PlaceDetailNavigationApp) {
         guard let url = app.directionsURL(latitude: latitude, longitude: longitude, placeName: placeName) else {
+            AppLog.placeDetail.error("Failed to build directions URL app=\(app.rawValue)")
             return
         }
         openURL(url)
