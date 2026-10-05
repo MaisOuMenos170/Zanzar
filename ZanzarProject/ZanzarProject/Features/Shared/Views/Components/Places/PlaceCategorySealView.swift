@@ -29,7 +29,6 @@ struct PlaceCategorySealView: View {
                 .accessibilityHidden(true)
         }
         .frame(width: size, height: size)
-        .accessibilityHidden(true)
     }
 }
 

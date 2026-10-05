@@ -91,6 +91,24 @@ struct PlaceAPIResponseTests {
         #expect(place.pinStyle == .checkedIn)
     }
 
+    @Test("Explicit null userContext maps to available pin style")
+    func nullUserContext() throws {
+        let jsonString = """
+        {
+          "place_id": "place-anonymous",
+          "name": "Parque",
+          "geometry": { "location": { "lat": -25.4, "lng": -49.2 } },
+          "zanzar": { "category": "park" },
+          "distanceMeters": 100,
+          "userContext": null
+        }
+        """
+        let response = try JSONDecoder().decode(PlaceAPIResponse.self, from: Data(jsonString.utf8))
+        let place = MapPlace(response: response)
+
+        #expect(place.pinStyle == .available)
+    }
+
     @Test("Unknown category maps to mappin icon")
     func unknownCategory() throws {
         let jsonString = """
