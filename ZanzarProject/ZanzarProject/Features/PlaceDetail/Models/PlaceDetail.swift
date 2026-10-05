@@ -8,6 +8,7 @@ struct PlaceDetail: Identifiable, Hashable, Sendable {
     let distanceText: String
     let openingHoursText: String
     let tags: [PlaceDetailTag]
+    let category: ZanzarPlaceCategory
     let description: String
     let heroPhotoReference: String?
     var totalCheckIns: Int
@@ -108,6 +109,7 @@ extension PlaceDetail {
             distanceText: distanceText,
             openingHoursText: openingHoursText(from: placeResponse.openingHours),
             tags: tags(from: placeResponse),
+            category: ZanzarPlaceCategory(rawCategory: placeResponse.zanzar.category),
             description: description,
             heroPhotoReference: placeResponse.photos.first?.photoReference,
             totalCheckIns: placeResponse.zanzar.checkInCount,
@@ -177,13 +179,55 @@ extension PlaceDetail {
                 label: String(localized: "placeDetail.tag.park"),
                 style: .park
             )
-        case .tourist, .historic, .museum:
+        case .tourist:
             PlaceDetailTag(
                 id: "category-tourist",
                 label: String(localized: "placeDetail.tag.touristSpot"),
                 style: .touristSpot
             )
-        default:
+        case .restaurant:
+            PlaceDetailTag(
+                id: "category-restaurant",
+                label: String(localized: "placeDetail.tag.restaurant"),
+                style: .category
+            )
+        case .bar:
+            PlaceDetailTag(
+                id: "category-bar",
+                label: String(localized: "placeDetail.tag.bar"),
+                style: .category
+            )
+        case .cafe:
+            PlaceDetailTag(
+                id: "category-cafe",
+                label: String(localized: "placeDetail.tag.cafe"),
+                style: .category
+            )
+        case .museum:
+            PlaceDetailTag(
+                id: "category-museum",
+                label: String(localized: "placeDetail.tag.museum"),
+                style: .category
+            )
+        case .historic:
+            PlaceDetailTag(
+                id: "category-historic",
+                label: String(localized: "placeDetail.tag.historic"),
+                style: .touristSpot
+            )
+        case .curiosity:
+            PlaceDetailTag(
+                id: "category-curiosity",
+                label: String(localized: "placeDetail.tag.curiosity"),
+                style: .category
+            )
+        case .party:
+            PlaceDetailTag(
+                id: "category-party",
+                label: String(localized: "placeDetail.tag.party"),
+                style: .category
+            )
+        case .unknown:
             nil
         }
     }

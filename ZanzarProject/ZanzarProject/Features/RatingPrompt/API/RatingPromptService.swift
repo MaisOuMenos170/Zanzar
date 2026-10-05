@@ -1,8 +1,13 @@
 import Foundation
 
+struct RatingSubmission: Sendable {
+    let impressionTag: ImpressionTag
+    let impressionCounts: [String: Int]?
+}
+
 protocol RatingPromptServicing: Sendable {
     func hasRated(placeID: String) async throws -> Bool
-    func submitRating(placeID: String, impressionTag: ImpressionTag) async throws
+    func submitRating(placeID: String, impressionTag: ImpressionTag) async throws -> RatingSubmission
 }
 
 private struct RatingCreateRequest: Encodable, Sendable {
@@ -14,6 +19,20 @@ private struct RatingCreateRequest: Encodable, Sendable {
 private struct RatingResponse: Decodable, Sendable {
     let impressionTag: String
     let placeId: String
+    let impressionCounts: [String: Int]?
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        impressionTag = try container.decode(String.self, forKey: .impressionTag)
+        placeId = try container.decode(String.self, forKey: .placeId)
+        impressionCounts = try container.decodeIfPresent([String: Int].self, forKey: .impressionCounts)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case impressionTag
+        case placeId
+        case impressionCounts
+    }
 }
 
 private struct UserRatingResponse: Decodable, Sendable {
@@ -45,10 +64,10 @@ final class RatingPromptService: RatingPromptServicing {
         }
     }
 
-    func submitRating(placeID: String, impressionTag: ImpressionTag) async throws {
+    func submitRating(placeID: String, impressionTag: ImpressionTag) async throws -> RatingSubmission {
         AppLog.ratingPrompt.info("Submitting rating placeId=\(placeID) tag=\(impressionTag.rawValue)...")
         do {
-            let _: RatingResponse = try await client.send(
+            let response: RatingResponse = try await client.send(
                 path: "rating",
                 method: .post,
                 body: RatingCreateRequest(
@@ -57,7 +76,16 @@ final class RatingPromptService: RatingPromptServicing {
                     clientMutationId: UUID().uuidString
                 )
             )
+            if response.impressionCounts == nil {
+                AppLog.ratingPrompt.warning(
+                    "Rating response missing impressionCounts placeId=\(placeID); client will keep existing counts"
+                )
+            }
             AppLog.ratingPrompt.info("Submitted rating placeId=\(placeID) successfully")
+            return RatingSubmission(
+                impressionTag: ImpressionTag(rawValue: response.impressionTag) ?? impressionTag,
+                impressionCounts: response.impressionCounts
+            )
         } catch APIError.httpStatus(409, let message) {
             AppLog.ratingPrompt.warning("Rating conflict (409) placeId=\(placeID)")
             throw APIError.httpStatus(409, message: message)

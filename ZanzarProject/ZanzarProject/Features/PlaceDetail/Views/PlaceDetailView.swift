@@ -117,7 +117,10 @@ struct PlaceDetailView: View {
                         }
                     }
 
-                    PlaceDetailStatsCard(totalCheckIns: detail.totalCheckIns)
+                    PlaceDetailStatsCard(
+                        totalCheckIns: detail.totalCheckIns,
+                        category: detail.category
+                    )
 
                     PlaceDetailReactionsSection(reactions: detail.reactions)
 

@@ -334,11 +334,12 @@ final class MockRatingPromptService: RatingPromptServicing, @unchecked Sendable 
         return try hasRatedResult.get()
     }
 
-    func submitRating(placeID: String, impressionTag: ImpressionTag) async throws {
+    func submitRating(placeID: String, impressionTag: ImpressionTag) async throws -> RatingSubmission {
         guard let submitResult else {
             fatalError("MockRatingPromptService.submitResult not configured")
         }
         submitted.append((placeID, impressionTag))
         try submitResult.get()
+        return RatingSubmission(impressionTag: impressionTag, impressionCounts: nil)
     }
 }

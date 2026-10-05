@@ -65,6 +65,7 @@ struct LocationMapView: View {
         .task(id: isMonitoringRating) {
             guard isMonitoringRating else { return }
             await ratingPrompt.monitorLeaving()
+            await viewModel.reloadPlaces()
         }
         .ignoresSafeArea()
     }
@@ -79,7 +80,7 @@ struct LocationMapView: View {
             switch item {
             case .place(let place):
                 Annotation(place.name, coordinate: place.coordinate, anchor: .bottom) {
-                    LocationPinView(iconName: place.pinIconName)
+                    LocationPinView(category: place.category, style: place.pinStyle)
                         .accessibilityLabel(place.name)
                         .accessibilityAddTraits(.isButton)
                 }

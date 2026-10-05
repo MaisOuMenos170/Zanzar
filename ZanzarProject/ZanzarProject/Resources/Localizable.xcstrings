@@ -1,1519 +1,1655 @@
 {
-  "sourceLanguage" : "pt-BR",
-  "strings" : {
-    "auth.backButton.accessibilityLabel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Back"
+  "sourceLanguage": "pt-BR",
+  "strings": {
+    "auth.backButton.accessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voltar"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voltar"
           }
         }
       }
     },
-    "locationMap.clusterPin.accessibilityLabel %lld" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld places in this area"
+    "locationMap.clusterPin.accessibilityLabel %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld places in this area"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld lugares nesta área"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld lugares nesta área"
           }
         }
       }
     },
-    "locationMap.loadingIndicator.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finding your location…"
+    "locationMap.loadingIndicator.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finding your location…"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Localizando você…"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Localizando você…"
           }
         }
       }
     },
-    "locationMap.locationAccessDenied" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Location access was denied. Enable it in Settings to see nearby places."
+    "locationMap.locationAccessDenied": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location access was denied. Enable it in Settings to see nearby places."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acesso à localização negado. Ative nas Configurações para ver lugares próximos."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acesso à localização negado. Ative nas Configurações para ver lugares próximos."
           }
         }
       }
     },
-    "locationMap.locationUnavailable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn't determine your location. Try again."
+    "locationMap.locationUnavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't determine your location. Try again."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível obter sua localização. Tente novamente."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível obter sua localização. Tente novamente."
           }
         }
       }
     },
-    "locationMap.pin.accessibilityLabel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Place"
+    "locationMap.pin.accessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Place"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lugar"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lugar"
           }
         }
       }
     },
-    "locationMap.placesLoadError" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn't load places. Try again later."
+    "locationMap.placesLoadError": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't load places. Try again later."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível carregar os lugares. Tente novamente."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível carregar os lugares. Tente novamente."
           }
         }
       }
     },
-    "locationMap.userLocation.accessibilityLabel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your location"
+    "locationMap.userLocation.accessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your location"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua localização"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sua localização"
           }
         }
       }
     },
-    "login.emailField.errorEmpty" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter your email to continue."
+    "login.emailField.errorEmpty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter your email to continue."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Informe seu email para continuar."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informe seu email para continuar."
           }
         }
       }
     },
-    "login.emailField.errorInvalid" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Incorrect email"
+    "login.emailField.errorInvalid": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incorrect email"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Email incorreto"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email incorreto"
           }
         }
       }
     },
-    "login.emailField.label" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Email"
+    "login.emailField.label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Email"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email"
           }
         }
       }
     },
-    "login.emailField.placeholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "example@email.com"
+    "login.emailField.placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "example@email.com"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "exemplo@email.com"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "exemplo@email.com"
           }
         }
       }
     },
-    "login.header.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Log in"
+    "login.header.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Log in"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Login"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Login"
           }
         }
       }
     },
-    "login.passwordField.errorEmpty" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter your password to continue."
+    "login.passwordField.errorEmpty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter your password to continue."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Digite sua senha para continuar."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Digite sua senha para continuar."
           }
         }
       }
     },
-    "login.passwordField.errorInvalid" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Incorrect password"
+    "login.passwordField.errorInvalid": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incorrect password"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Senha incorreta"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senha incorreta"
           }
         }
       }
     },
-    "login.passwordField.label" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Password"
+    "login.passwordField.label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Senha"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senha"
           }
         }
       }
     },
-    "login.passwordField.placeholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter a password"
+    "login.passwordField.placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a password"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Digite uma senha"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Digite uma senha"
           }
         }
       }
     },
-    "login.submitButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Log in"
+    "login.submitButton.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Log in"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fazer login"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fazer login"
           }
         }
       }
     },
-    "login.submitError.generic" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Could not sign in. Try again."
+    "login.submitError.generic": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not sign in. Try again."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível entrar. Tente novamente."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível entrar. Tente novamente."
           }
         }
       }
     },
-    "login.submitError.invalidCredentials" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Incorrect email or password."
+    "login.submitError.invalidCredentials": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incorrect email or password."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Email ou senha incorretos."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email ou senha incorretos."
           }
         }
       }
     },
-    "mainTab.checkInTab.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check in"
+    "mainTab.checkInTab.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check in"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check in"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check in"
           }
         }
       }
     },
-    "mainTab.discoverTab.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Discover"
+    "mainTab.discoverTab.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discover"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Descobrir"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descobrir"
           }
         }
       }
     },
-    "mainTab.profileTab.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Profile"
+    "mainTab.profileTab.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Perfil"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perfil"
           }
         }
       }
     },
-    "placeDetail.cellularPrompt.allowButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Allow"
+    "placeDetail.cellularPrompt.allowButton.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Permitir"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permitir"
           }
         }
       }
     },
-    "placeDetail.cellularPrompt.declineButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not now"
+    "placeDetail.cellularPrompt.declineButton.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not now"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agora não"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agora não"
           }
         }
       }
     },
-    "placeDetail.cellularPrompt.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Place photos are loaded from Google Maps and may use your mobile data."
+    "placeDetail.cellularPrompt.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Place photos are loaded from Google Maps and may use your mobile data."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As fotos dos lugares vêm do Google Maps e podem usar seus dados móveis."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As fotos dos lugares vêm do Google Maps e podem usar seus dados móveis."
           }
         }
       }
     },
-    "placeDetail.cellularPrompt.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Use mobile data for photos?"
+    "placeDetail.cellularPrompt.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use mobile data for photos?"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usar dados móveis para fotos?"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usar dados móveis para fotos?"
           }
         }
       }
     },
-    "placeDetail.checkInButton.doneTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check-in done"
+    "placeDetail.checkInButton.doneTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check-in done"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check-in feito"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check-in feito"
           }
         }
       }
     },
-    "placeDetail.checkInButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check in"
+    "placeDetail.checkInButton.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check in"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fazer check-in"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fazer check-in"
           }
         }
       }
     },
-    "placeDetail.checkInError.notAuthenticated" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sign in to check in at this place."
+    "placeDetail.checkInError.notAuthenticated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in to check in at this place."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entre na conta para fazer check-in neste lugar."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entre na conta para fazer check-in neste lugar."
           }
         }
       }
     },
-    "placeDetail.details.fallbackDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No description available for this place."
+    "placeDetail.details.fallbackDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No description available for this place."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhuma descrição disponível para este lugar."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhuma descrição disponível para este lugar."
           }
         }
       }
     },
-    "placeDetail.detailsSection.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Details"
+    "placeDetail.detailsSection.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Details"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Detalhes"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detalhes"
           }
         }
       }
     },
-    "placeDetail.directionsButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Let's go!"
+    "placeDetail.directionsButton.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Let's go!"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bora lá!"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bora lá!"
           }
         }
       }
     },
-    "placeDetail.errorAlert.dismissButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
+    "placeDetail.errorAlert.dismissButton.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
           }
         }
       }
     },
-    "placeDetail.errorAlert.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Something went wrong"
+    "placeDetail.errorAlert.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Something went wrong"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Algo deu errado"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Algo deu errado"
           }
         }
       }
     },
-    "placeDetail.errorState.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Try again later."
+    "placeDetail.errorState.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again later."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tente novamente mais tarde."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tente novamente mais tarde."
           }
         }
       }
     },
-    "placeDetail.errorState.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Could not load place"
+    "placeDetail.errorState.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not load place"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível carregar o lugar"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível carregar o lugar"
           }
         }
       }
     },
-    "placeDetail.header.closedNow" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Closed now"
+    "placeDetail.header.closedNow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Closed now"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fechado agora"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fechado agora"
           }
         }
       }
     },
-    "placeDetail.header.distanceFormat" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%.1f km away"
+    "placeDetail.header.distanceFormat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%.1f km away"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "a %.1fkm"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a %.1fkm"
           }
         }
       }
     },
-    "placeDetail.header.hoursUnavailable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hours unavailable"
+    "placeDetail.header.hoursUnavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hours unavailable"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Horário indisponível"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Horário indisponível"
           }
         }
       }
     },
-    "placeDetail.header.openNow" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open now"
+    "placeDetail.header.openNow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open now"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aberto agora"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aberto agora"
           }
         }
       }
     },
-    "placeDetail.loadingIndicator.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading place…"
+    "placeDetail.loadingIndicator.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading place…"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Carregando lugar…"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carregando lugar…"
           }
         }
       }
     },
-    "placeDetail.navigationSheet.openIn %@" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open in %@"
+    "placeDetail.navigationSheet.openIn %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open in %@"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abrir no %@"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir no %@"
           }
         }
       }
     },
-    "placeDetail.navigationSheet.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select an action"
+    "placeDetail.navigationSheet.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select an action"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Selecione uma ação"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selecione uma ação"
           }
         }
       }
     },
-    "placeDetail.nearbyPlace.accessibilityLabel %@ %lld" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, %lld check-ins"
+    "placeDetail.nearbyPlace.accessibilityLabel %@ %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %lld check-ins"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, %lld check-ins"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %lld check-ins"
           }
         }
       }
     },
-    "placeDetail.nearbyPlace.checkInsFormat" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld check-ins"
+    "placeDetail.nearbyPlace.checkInsFormat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld check-ins"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld check-ins"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld check-ins"
           }
         }
       }
     },
-    "placeDetail.nearbySection.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nearby places"
+    "placeDetail.nearbySection.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nearby places"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lugares próximos"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lugares próximos"
           }
         }
       }
     },
-    "placeDetail.reactionItem.accessibilityLabel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld reactions"
+    "placeDetail.reactionItem.accessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld reactions"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld reações"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld reações"
           }
         }
       }
     },
-    "placeDetail.reactionsSection.emptyMessage" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Place with reactions. Check in to leave a reaction."
+    "placeDetail.reactionsSection.emptyMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Place with reactions. Check in to leave a reaction."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Local ainda sem reações. Faça check-in para deixar sua reação."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local ainda sem reações. Faça check-in para deixar sua reação."
           }
         }
       }
     },
-    "placeDetail.reactionsSection.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reactions"
+    "placeDetail.reactionsSection.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reactions"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reações"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reações"
           }
         }
       }
     },
-    "placeDetail.statsCard.totalCheckInsLabel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Total Check-ins"
+    "placeDetail.statsCard.totalCheckInsLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total Check-ins"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check-ins Totais"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check-ins Totais"
           }
         }
       }
     },
-    "placeDetail.tag.park" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Park"
+    "placeDetail.tag.park": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Park"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parque"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parque"
           }
         }
       }
     },
-    "placeDetail.tag.touristSpot" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tourist spot"
+    "placeDetail.tag.touristSpot": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tourist spot"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ponto turístico"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ponto turístico"
           }
         }
       }
     },
-    "ratingPrompt.dismissButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not now"
+    "ratingPrompt.dismissButton.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not now"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agora não"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agora não"
           }
         }
       }
     },
-    "ratingPrompt.emotion.delighted" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delighted"
+    "ratingPrompt.emotion.delighted": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delighted"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Encantado"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encantado"
           }
         }
       }
     },
-    "ratingPrompt.emotion.happy" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Happy"
+    "ratingPrompt.emotion.happy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Happy"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feliz"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feliz"
           }
         }
       }
     },
-    "ratingPrompt.emotion.nauseated" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nauseated"
+    "ratingPrompt.emotion.nauseated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nauseated"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enjoado"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enjoado"
           }
         }
       }
     },
-    "ratingPrompt.emotion.sad" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sad"
+    "ratingPrompt.emotion.sad": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sad"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Triste"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Triste"
           }
         }
       }
     },
-    "ratingPrompt.emotion.sleepy" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sleepy"
+    "ratingPrompt.emotion.sleepy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleepy"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com sono"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Com sono"
           }
         }
       }
     },
-    "ratingPrompt.error.notAuthenticated" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sign in to rate this place."
+    "ratingPrompt.error.notAuthenticated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in to rate this place."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entre na sua conta para avaliar este lugar."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entre na sua conta para avaliar este lugar."
           }
         }
       }
     },
-    "ratingPrompt.message.prefix" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "We noticed you've left "
+    "ratingPrompt.message.prefix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We noticed you've left "
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vimos que você já saiu de "
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vimos que você já saiu de "
           }
         }
       }
     },
-    "ratingPrompt.message.suffix" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : ". Would you like to rate your experience by leaving a reaction for other people?"
+    "ratingPrompt.message.suffix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ". Would you like to rate your experience by leaving a reaction for other people?"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : ". Gostaria de avaliar sua experiência deixando uma reação para outras pessoas?"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ". Gostaria de avaliar sua experiência deixando uma reação para outras pessoas?"
           }
         }
       }
     },
-    "ratingPrompt.submitButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rate"
+    "ratingPrompt.submitButton.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rate"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avaliar"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avaliar"
           }
         }
       }
     },
-    "ratingPrompt.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rating"
+    "ratingPrompt.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rating"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avaliação"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avaliação"
           }
         }
       }
     },
-    "signUp.emailField.errorEmpty" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter your email to continue."
+    "signUp.emailField.errorEmpty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter your email to continue."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Informe seu email para continuar."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informe seu email para continuar."
           }
         }
       }
     },
-    "signUp.emailField.errorInvalid" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invalid email. Use a format like example@email.com"
+    "signUp.emailField.errorInvalid": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid email. Use a format like example@email.com"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Email inválido. Use um formato como exemplo@email.com"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email inválido. Use um formato como exemplo@email.com"
           }
         }
       }
     },
-    "signUp.emailField.errorRequired" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter an email"
+    "signUp.emailField.errorRequired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter an email"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Insira um email"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insira um email"
           }
         }
       }
     },
-    "signUp.emailField.label" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Email"
+    "signUp.emailField.label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Email"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email"
           }
         }
       }
     },
-    "signUp.emailField.placeholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "example@email.com"
+    "signUp.emailField.placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "example@email.com"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "exemplo@email.com"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "exemplo@email.com"
           }
         }
       }
     },
-    "signUp.header.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sign up"
+    "signUp.header.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign up"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cadastro"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cadastro"
           }
         }
       }
     },
-    "signUp.passwordField.errorEmpty" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create a password to continue."
+    "signUp.passwordField.errorEmpty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create a password to continue."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crie uma senha para continuar."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crie uma senha para continuar."
           }
         }
       }
     },
-    "signUp.passwordField.errorInvalid" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Password must be at least 8 characters and include a letter and a number."
+    "signUp.passwordField.errorInvalid": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password must be at least 8 characters and include a letter and a number."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A senha deve ter pelo menos 8 caracteres e incluir uma letra e um número."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A senha deve ter pelo menos 8 caracteres e incluir uma letra e um número."
           }
         }
       }
     },
-    "signUp.passwordField.errorRequired" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter a password"
+    "signUp.passwordField.errorRequired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a password"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Digite uma senha"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Digite uma senha"
           }
         }
       }
     },
-    "signUp.passwordField.errorTooShort" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Password must be at least 8 characters."
+    "signUp.passwordField.errorTooShort": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password must be at least 8 characters."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A senha deve ter pelo menos 8 caracteres."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A senha deve ter pelo menos 8 caracteres."
           }
         }
       }
     },
-    "signUp.passwordField.label" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Password"
+    "signUp.passwordField.label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Senha"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senha"
           }
         }
       }
     },
-    "signUp.passwordField.placeholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter a password"
+    "signUp.passwordField.placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a password"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Digite uma senha"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Digite uma senha"
           }
         }
       }
     },
-    "signUp.submitButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create account"
+    "signUp.submitButton.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create account"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criar conta"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Criar conta"
           }
         }
       }
     },
-    "signUp.submitError.accountCreatedLoginRequired" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Account created. Please log in to continue."
+    "signUp.submitError.accountCreatedLoginRequired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account created. Please log in to continue."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conta criada. Faça login para continuar."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conta criada. Faça login para continuar."
           }
         }
       }
     },
-    "signUp.submitError.emailInUse" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This email is already registered."
+    "signUp.submitError.emailInUse": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already registered."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este email já está cadastrado."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este email já está cadastrado."
           }
         }
       }
     },
-    "signUp.submitError.generic" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Could not create your account. Try again."
+    "signUp.submitError.generic": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not create your account. Try again."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível criar sua conta. Tente novamente."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível criar sua conta. Tente novamente."
           }
         }
       }
     },
-    "signUp.usernameField.errorEmpty" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter a username to continue."
+    "signUp.usernameField.errorEmpty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a username to continue."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Informe um nome de usuário para continuar."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informe um nome de usuário para continuar."
           }
         }
       }
     },
-    "signUp.usernameField.errorRequired" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter a username"
+    "signUp.usernameField.errorRequired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a username"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Digite um nome"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Digite um nome"
           }
         }
       }
     },
-    "signUp.usernameField.errorTooShort" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Username must be at least 3 characters."
+    "signUp.usernameField.errorTooShort": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Username must be at least 3 characters."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O nome deve ter pelo menos 3 caracteres."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O nome deve ter pelo menos 3 caracteres."
           }
         }
       }
     },
-    "signUp.usernameField.label" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Username"
+    "signUp.usernameField.label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Username"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nome de usuário"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nome de usuário"
           }
         }
       }
     },
-    "signUp.usernameField.placeholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create a username"
+    "signUp.usernameField.placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create a username"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crie um nome"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crie um nome"
           }
         }
       }
     },
-    "welcome.createAccountButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create account"
+    "welcome.createAccountButton.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create account"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criar conta"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Criar conta"
           }
         }
       }
     },
-    "welcome.header.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Discover cool places. In Curitiba."
+    "welcome.header.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discover cool places. In Curitiba."
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conheça lugares legais. Em Curitiba."
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conheça lugares legais. Em Curitiba."
           }
         }
       }
     },
-    "welcome.header.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Welcome to\nour app!"
+    "welcome.header.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to\nour app!"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bem-vindo ao\nnosso app!"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bem-vindo ao\nnosso app!"
           }
         }
       }
     },
-    "welcome.loginButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Log in"
+    "welcome.loginButton.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Log in"
           }
         },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fazer login"
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fazer login"
+          }
+        }
+      }
+    },
+    "placeDetail.tag.bar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bar"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bar"
+          }
+        }
+      }
+    },
+    "placeDetail.tag.cafe": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Café"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Café"
+          }
+        }
+      }
+    },
+    "placeDetail.tag.curiosity": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Curiosity"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Curiosidade"
+          }
+        }
+      }
+    },
+    "placeDetail.tag.historic": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Historic"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Histórico"
+          }
+        }
+      }
+    },
+    "placeDetail.tag.museum": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Museum"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Museu"
+          }
+        }
+      }
+    },
+    "placeDetail.tag.party": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Party"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Festas"
+          }
+        }
+      }
+    },
+    "placeDetail.tag.restaurant": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurant"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurante"
+          }
+        }
+      }
+    },
+    "placeDetail.statsCard.categoryUnknown": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown category"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Categoria desconhecida"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

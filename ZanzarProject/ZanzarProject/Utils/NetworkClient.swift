@@ -24,7 +24,9 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         authTokenProvider: { AuthTokenStore.shared.getToken() }
     )
 
-    private static let publicPaths: Set<String> = ["login", "register", "places", "health"]
+    // `/places` is intentionally omitted: the backend accepts anonymous reads but enriches
+    // responses when a Bearer token is available (optional auth).
+    private static let publicPaths: Set<String> = ["login", "register", "health"]
 
     private let baseURL: URL
     private let session: URLSession
