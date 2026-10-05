@@ -8,6 +8,7 @@ struct PlaceDetail: Identifiable, Hashable, Sendable {
     let distanceText: String
     let openingHoursText: String
     let tags: [PlaceDetailTag]
+    let category: ZanzarPlaceCategory
     let description: String
     let heroPhotoReference: String?
     var totalCheckIns: Int
@@ -108,6 +109,7 @@ extension PlaceDetail {
             distanceText: distanceText,
             openingHoursText: openingHoursText(from: placeResponse.openingHours),
             tags: tags(from: placeResponse),
+            category: ZanzarPlaceCategory(rawCategory: placeResponse.zanzar.category),
             description: description,
             heroPhotoReference: placeResponse.photos.first?.photoReference,
             totalCheckIns: placeResponse.zanzar.checkInCount,
