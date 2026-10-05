@@ -2,6 +2,8 @@ import SwiftUI
 
 struct PlaceDetailStatsCard: View {
     let totalCheckIns: Int
+    let category: ZanzarPlaceCategory
+    let hasCheckedIn: Bool
 
     var body: some View {
         HStack(spacing: 0) {
@@ -22,35 +24,55 @@ struct PlaceDetailStatsCard: View {
             }
             .frame(maxWidth: .infinity)
 
-            PlaceDetailBadgeIcon()
-                .frame(width: 102, height: 102)
+            if hasCheckedIn {
+                PlaceCategorySealView(category: category)
+                    .frame(width: 102, height: 102)
+                    .transition(.scale.combined(with: .opacity))
+                    .accessibilityLabel(categoryAccessibilityLabel)
+            }
         }
+        .animation(.spring(duration: 0.45), value: hasCheckedIn)
         .padding(.horizontal, 36)
         .padding(.vertical, 16)
         .background(Color("PlaceDetailStatsBackground"), in: .rect(cornerRadius: 16))
     }
-}
 
-private struct PlaceDetailBadgeIcon: View {
-    var body: some View {
-        ZStack {
-            Image(systemName: "seal.fill")
-                .font(.system(size: 88))
-                .foregroundStyle(Color("PlaceDetailTagGreenBackground"))
-                .rotationEffect(.degrees(-8))
-
-            Image(systemName: "seal.fill")
-                .font(.system(size: 88))
-                .foregroundStyle(Color("PlaceDetailTagGreen"))
-                .rotationEffect(.degrees(8))
-
-            Circle()
-                .fill(Color("PlaceDetailTagGreenBackground"))
-                .frame(width: 56, height: 56)
-
-            Image(systemName: "leaf.fill")
-                .font(.title)
-                .foregroundStyle(Color("PlaceDetailTagGreen"))
+    private var categoryAccessibilityLabel: String {
+        switch category {
+        case .restaurant:
+            String(localized: "placeDetail.tag.restaurant")
+        case .bar:
+            String(localized: "placeDetail.tag.bar")
+        case .cafe:
+            String(localized: "placeDetail.tag.cafe")
+        case .museum:
+            String(localized: "placeDetail.tag.museum")
+        case .park:
+            String(localized: "placeDetail.tag.park")
+        case .tourist:
+            String(localized: "placeDetail.tag.touristSpot")
+        case .historic:
+            String(localized: "placeDetail.tag.historic")
+        case .unknown:
+            String(localized: "placeDetail.statsCard.categoryUnknown")
         }
     }
+}
+
+#Preview("Before check-in") {
+    PlaceDetailStatsCard(
+        totalCheckIns: 42,
+        category: .restaurant,
+        hasCheckedIn: false
+    )
+    .padding()
+}
+
+#Preview("After check-in") {
+    PlaceDetailStatsCard(
+        totalCheckIns: 43,
+        category: .restaurant,
+        hasCheckedIn: true
+    )
+    .padding()
 }
