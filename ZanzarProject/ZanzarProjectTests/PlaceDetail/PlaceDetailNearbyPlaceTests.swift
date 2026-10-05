@@ -49,7 +49,8 @@ struct PlaceDetailNearbyPlaceTests {
         #expect(cardPlace.longitude == -49.31)
         #expect(cardPlace.category == .park)
         #expect(cardPlace.distanceMeters == 850)
-        #expect(cardPlace.reactionImageNames == ImpressionTag.allReactionImageNames)
+        // Fixture ratings are happy: 2, delighted: 1 — only rated emotions, most rated first.
+        #expect(cardPlace.reactionImageNames == [ImpressionTag.happy.imageName, ImpressionTag.delighted.imageName])
         #expect(cardPlace.mapPlace.id == "place-nearby")
     }
 

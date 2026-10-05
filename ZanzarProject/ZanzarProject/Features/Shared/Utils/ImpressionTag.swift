@@ -34,14 +34,18 @@ enum ImpressionTag: String, CaseIterable, Sendable {
         }
     }
 
+    /// Images of the emotions that have at least one rating, most rated first. Ties keep the
+    /// declaration order of `ImpressionTag`.
     static func topReactionImageNames(from counts: [String: Int], limit: Int = 5) -> [String] {
         allCases
-            .sorted { counts[$0.rawValue, default: 0] > counts[$1.rawValue, default: 0] }
+            .enumerated()
+            .filter { counts[$0.element.rawValue, default: 0] > 0 }
+            .sorted { lhs, rhs in
+                let lhsCount = counts[lhs.element.rawValue, default: 0]
+                let rhsCount = counts[rhs.element.rawValue, default: 0]
+                return lhsCount != rhsCount ? lhsCount > rhsCount : lhs.offset < rhs.offset
+            }
             .prefix(limit)
-            .map(\.imageName)
-    }
-
-    static var allReactionImageNames: [String] {
-        allCases.map(\.imageName)
+            .map(\.element.imageName)
     }
 }
