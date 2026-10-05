@@ -8,6 +8,8 @@ struct PlaceDetailStatsCard: View {
         HStack(spacing: 0) {
             VStack(spacing: 4) {
                 Text(totalCheckIns, format: .number)
+                    .contentTransition(.numericText(value: Double(totalCheckIns)))
+                    .animation(.default, value: totalCheckIns)
                     .font(.largeTitle)
                     .bold()
                     .foregroundStyle(.primary)
@@ -23,9 +25,35 @@ struct PlaceDetailStatsCard: View {
 
             PlaceCategorySealView(category: category)
                 .frame(width: 102, height: 102)
+                .accessibilityLabel(categoryAccessibilityLabel)
         }
         .padding(.horizontal, 36)
         .padding(.vertical, 16)
         .background(Color("PlaceDetailStatsBackground"), in: .rect(cornerRadius: 16))
+    }
+
+    private var categoryAccessibilityLabel: String {
+        switch category {
+        case .restaurant:
+            String(localized: "placeDetail.tag.restaurant")
+        case .bar:
+            String(localized: "placeDetail.tag.bar")
+        case .cafe:
+            String(localized: "placeDetail.tag.cafe")
+        case .museum:
+            String(localized: "placeDetail.tag.museum")
+        case .park:
+            String(localized: "placeDetail.tag.park")
+        case .tourist:
+            String(localized: "placeDetail.tag.touristSpot")
+        case .historic:
+            String(localized: "placeDetail.tag.historic")
+        case .curiosity:
+            String(localized: "placeDetail.tag.curiosity")
+        case .party:
+            String(localized: "placeDetail.tag.party")
+        case .unknown:
+            String(localized: "placeDetail.statsCard.categoryUnknown")
+        }
     }
 }

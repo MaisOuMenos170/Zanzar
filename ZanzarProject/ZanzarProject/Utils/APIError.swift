@@ -29,6 +29,21 @@ extension APIError: LocalizedError {
     }
 }
 
+// Used by `String(reflecting:)` in logs: status only, never the server-provided message,
+// which can echo submitted login/registration data.
+extension APIError: CustomDebugStringConvertible {
+    var debugDescription: String {
+        switch self {
+        case .httpStatus(let status, _):
+            "APIError.httpStatus(\(status))"
+        case .decodingFailed:
+            "APIError.decodingFailed"
+        case .invalidResponse:
+            "APIError.invalidResponse"
+        }
+    }
+}
+
 private struct APIErrorPayload: Decodable {
     let success: Bool?
     let message: String?

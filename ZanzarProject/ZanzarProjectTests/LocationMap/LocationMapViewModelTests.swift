@@ -172,6 +172,55 @@ struct LocationMapViewModelTests {
         #expect(span <= MapPinClustering.individualSpanThreshold)
     }
 
+    @Test("reloadPlaces ignores stale responses when a newer load starts")
+    func reloadPlacesIgnoresStaleResponses() async {
+        let coordinate = UserCoordinate(latitude: -25.4098994, longitude: -49.2670599)
+        let initialPlaces = [
+            MapPlace(
+                id: "initial",
+                name: "Initial",
+                latitude: -25.4098994,
+                longitude: -49.2670599,
+                category: .museum,
+                distanceMeters: 0
+            )
+        ]
+        let refreshedPlaces = [
+            MapPlace(
+                id: "refreshed",
+                name: "Refreshed",
+                latitude: -25.4098994,
+                longitude: -49.2670599,
+                category: .museum,
+                distanceMeters: 0,
+                pinStyle: .checkedIn
+            )
+        ]
+        let service = MockLocationMapService()
+        service.locationResult = .success(coordinate)
+        service.placesResult = .success(initialPlaces)
+        let viewModel = LocationMapViewModel(service: service)
+
+        await viewModel.load()
+        service.placesResult = .success(refreshedPlaces)
+        await viewModel.reloadPlaces()
+
+        #expect(viewModel.places == refreshedPlaces)
+    }
+
+    @Test("reloadPlaces does nothing before the initial load completes")
+    func reloadPlacesWaitsForInitialLoad() async {
+        let coordinate = UserCoordinate(latitude: -25.4098994, longitude: -49.2670599)
+        let service = MockLocationMapService()
+        service.locationResult = .success(coordinate)
+        service.placesResult = .success([])
+        let viewModel = LocationMapViewModel(service: service)
+
+        await viewModel.reloadPlaces()
+
+        #expect(viewModel.places.isEmpty)
+    }
+
     @Test("Failed places fetch keeps the user coordinate and shows an error")
     func failedPlacesLoad() async {
         let coordinate = UserCoordinate(latitude: -25.4098994, longitude: -49.2670599)

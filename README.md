@@ -98,12 +98,12 @@ cloudflared tunnel --url http://127.0.0.1:3000
 Saída esperada:
 
 ```text
-Updated ZanzarAPIBaseURL (Debug) -> https://invest-plaza-assessed-lived.trycloudflare.com
+Updated ZANZAR_API_BASE_URL in Config.xcconfig -> https://invest-plaza-assessed-lived.trycloudflare.com
 ```
 
 ### O que o script altera
 
-O script edita `ZanzarProject/ZanzarProject.xcodeproj/project.pbxproj` e atualiza a chave `INFOPLIST_KEY_ZanzarAPIBaseURL` **apenas na configuração Debug**. Em runtime, `APIConfiguration.baseURL` lê esse valor do Info.plist gerado pelo Xcode.
+O script escreve `ZANZAR_API_BASE_URL` em `ZanzarProject/Config.xcconfig` (arquivo local, ignorado pelo git; veja `Config.xcconfig.example`). O `ZanzarProject/Info.plist` expõe esse valor como `ZanzarAPIBaseURL`, e em runtime `APIConfiguration.baseURL` o lê de lá. Chaves customizadas não funcionam via `INFOPLIST_KEY_*`, por isso o `Info.plist` separado.
 
 > Builds **Release** não usam essa URL de túnel — a URL de produção precisa ser configurada separadamente.
 
@@ -121,6 +121,6 @@ O script edita `ZanzarProject/ZanzarProject.xcodeproj/project.pbxproj` e atualiz
 ### Observações importantes
 
 - **URL efêmera** — cada vez que o `cloudflared` reinicia, a URL muda. Rode o script de novo (ou use `dev-tunnel.sh`) sempre que subir um túnel novo.
-- **Só Debug** — o script não altera a config Release do Xcode.
+- **Local** — o valor fica no `Config.xcconfig` (não versionado) e vale para Debug e Release; defina a URL de produção separadamente antes de um build Release.
 - **Dois repositórios** — `ZanzarBackend` e `Zanzar` devem estar no mesmo diretório pai (ex.: `~/projetos/ZanzarBackend` e `~/projetos/Zanzar`), pois o `dev-tunnel.sh` resolve o caminho relativo entre eles.
-- **Simulador sem túnel** — se `ZanzarAPIBaseURL` não estiver definida em Debug, o app usa fallback `http://127.0.0.1:3000` (ver `APIConfiguration.swift`).
+- **Simulador sem túnel** — se `ZANZAR_API_BASE_URL` estiver vazia em Debug, o app usa fallback `http://127.0.0.1:3000` (ver `APIConfiguration.swift`).

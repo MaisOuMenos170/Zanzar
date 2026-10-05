@@ -116,13 +116,20 @@ final class LocationMapViewModel {
     }
 
     func reloadPlaces() async {
+        guard acceptsVisibleRegionUpdates else { return }
         guard let userCoordinate else { return }
 
+        loadGeneration += 1
+        let generation = loadGeneration
+
         do {
-            places = try await service.fetchNearbyPlaces(from: userCoordinate)
+            let refreshedPlaces = try await service.fetchNearbyPlaces(from: userCoordinate)
+            guard generation == loadGeneration else { return }
+            places = refreshedPlaces
         } catch is CancellationError {
             return
         } catch {
+            guard generation == loadGeneration else { return }
             errorMessage = String(localized: "locationMap.placesLoadError")
         }
     }

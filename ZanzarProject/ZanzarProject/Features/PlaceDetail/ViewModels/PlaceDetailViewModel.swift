@@ -7,12 +7,12 @@ final class PlaceDetailViewModel {
     private let place: MapPlace
     private let userIDProvider: @Sendable () -> String?
     private let userCoordinateProvider: @Sendable () async throws -> UserCoordinate
+    private let pendingRatingStore: PendingRatingStoring
     private var loadGeneration = 0
 
     var detail: PlaceDetail?
     var isLoading = false
     var isCheckingIn = false
-    var isSubmittingReaction = false
     var errorMessage: String?
     var showsCellularImagesPrompt = false
 
@@ -22,12 +22,14 @@ final class PlaceDetailViewModel {
         userCoordinateProvider: @escaping @Sendable () async throws -> UserCoordinate = {
             try await LocationMapService().currentUserLocation()
         },
-        service: PlaceDetailServicing = PlaceDetailService()
+        service: PlaceDetailServicing = PlaceDetailService(),
+        pendingRatingStore: PendingRatingStoring = UserDefaultsPendingRatingStore()
     ) {
         self.place = place
         self.userIDProvider = userIDProvider
         self.userCoordinateProvider = userCoordinateProvider
         self.service = service
+        self.pendingRatingStore = pendingRatingStore
     }
 
     func load() async {
@@ -65,7 +67,7 @@ final class PlaceDetailViewModel {
     func performCheckIn() async {
         guard !isCheckingIn else { return }
         guard var currentDetail = detail, !currentDetail.hasCheckedIn else { return }
-        guard userIDProvider() != nil else {
+        guard let userID = userIDProvider() else {
             errorMessage = String(localized: "placeDetail.checkInError.notAuthenticated")
             return
         }
@@ -79,68 +81,31 @@ final class PlaceDetailViewModel {
             currentDetail.hasCheckedIn = true
             currentDetail.totalCheckIns += 1
             detail = currentDetail
+            queueRatingPrompt(for: currentDetail, userID: userID)
         } catch is CancellationError {
             return
         } catch APIError.httpStatus(409, _) {
+            // Already checked in (another device or session): still queue the prompt, since the inline
+            // rating is gone from the detail. The map skips it if the user has already rated.
             currentDetail.hasCheckedIn = true
             detail = currentDetail
+            queueRatingPrompt(for: currentDetail, userID: userID)
         } catch {
             errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
         }
     }
 
-    func selectReaction(_ impressionTag: String) async {
-        guard !isSubmittingReaction else { return }
-        guard var currentDetail = detail else { return }
-        guard currentDetail.hasCheckedIn else {
-            errorMessage = String(localized: "placeDetail.reactionError.checkInRequired")
-            return
-        }
-        guard currentDetail.selectedReactionTag == nil else { return }
-        guard userIDProvider() != nil else {
-            errorMessage = String(localized: "placeDetail.reactionError.notAuthenticated")
-            return
-        }
-
-        isSubmittingReaction = true
-        errorMessage = nil
-        defer { isSubmittingReaction = false }
-
-        do {
-            let submission = try await service.submitReaction(
-                placeID: currentDetail.id,
-                impressionTag: impressionTag
-            )
-            currentDetail.applyReactionState(
-                counts: submission.impressionCounts,
-                selectedTag: submission.impressionTag
-            )
-            detail = currentDetail
-        } catch is CancellationError {
-            return
-        } catch APIError.httpStatus(409, _) {
-            await syncReactionState(into: &currentDetail)
-            detail = currentDetail
-        } catch {
-            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-        }
-    }
-
-    private func syncReactionState(into detail: inout PlaceDetail) async {
-        do {
-            let snapshot = try await service.fetchReactionSnapshot(
+    private func queueRatingPrompt(for detail: PlaceDetail, userID: String) {
+        pendingRatingStore.save(
+            PendingRating(
+                userID: userID,
                 placeID: detail.id,
-                userID: userIDProvider()
+                placeName: detail.name,
+                latitude: detail.latitude,
+                longitude: detail.longitude,
+                checkedInAt: Date()
             )
-            detail.applyReactionState(
-                counts: snapshot.impressionCounts,
-                selectedTag: snapshot.selectedReactionTag
-            )
-        } catch is CancellationError {
-            return
-        } catch {
-            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-        }
+        )
     }
 
     func allowCellularImages() {

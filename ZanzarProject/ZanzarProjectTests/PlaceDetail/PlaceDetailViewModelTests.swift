@@ -1,6 +1,7 @@
 import Testing
 @testable import ZanzarProject
 
+@MainActor
 @Suite("PlaceDetailViewModel")
 struct PlaceDetailViewModelTests {
     private let sampleUserCoordinate = UserCoordinate(latitude: -25.4298844, longitude: -49.2719424)
@@ -60,11 +61,13 @@ struct PlaceDetailViewModelTests {
             fetchResult: .success(sampleDetail()),
             checkInResult: .success(())
         )
+        let store = InMemoryPendingRatingStore()
         let viewModel = PlaceDetailViewModel(
             place: samplePlace,
             userIDProvider: { "user-1" },
             userCoordinateProvider: { self.sampleUserCoordinate },
-            service: service
+            service: service,
+            pendingRatingStore: store
         )
 
         await viewModel.load()
@@ -73,6 +76,33 @@ struct PlaceDetailViewModelTests {
         #expect(viewModel.detail?.hasCheckedIn == true)
         #expect(viewModel.detail?.totalCheckIns == 11)
         #expect(viewModel.isCheckingIn == false)
+        #expect(store.stored?.userID == "user-1")
+        #expect(store.stored?.placeID == samplePlace.id)
+        #expect(store.stored?.placeName == samplePlace.name)
+    }
+
+    @Test("a check-in conflict still queues a rating prompt")
+    func checkInConflictQueuesRating() async throws {
+        let service = MockPlaceDetailService(
+            fetchResult: .success(sampleDetail()),
+            checkInResult: .failure(APIError.httpStatus(409, message: nil))
+        )
+        let store = InMemoryPendingRatingStore()
+        let viewModel = PlaceDetailViewModel(
+            place: samplePlace,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: { self.sampleUserCoordinate },
+            service: service,
+            pendingRatingStore: store
+        )
+
+        await viewModel.load()
+        await viewModel.performCheckIn()
+
+        #expect(viewModel.detail?.hasCheckedIn == true)
+        let queued = try #require(store.stored)
+        #expect(queued.userID == "user-1")
+        #expect(queued.placeID == viewModel.detail?.id)
     }
 
     @Test("load omits nearby places when user location is unavailable")
@@ -90,75 +120,19 @@ struct PlaceDetailViewModelTests {
         #expect(service.lastLoadContext?.userCoordinate == nil)
         #expect(viewModel.detail?.name == "Jardim Botânico")
     }
-
-    @Test("selectReaction applies server counts after check-in")
-    func selectReactionUpdatesCounts() async {
-        let service = MockPlaceDetailService(
-            fetchResult: .success(sampleDetail(hasCheckedIn: true)),
-            reactionResult: .success(
-                PlaceReactionSubmission(
-                    impressionTag: ImpressionTag.delighted.rawValue,
-                    impressionCounts: [ImpressionTag.delighted.rawValue: 4, ImpressionTag.happy.rawValue: 2]
-                )
-            )
-        )
-        let viewModel = PlaceDetailViewModel(
-            place: samplePlace,
-            userIDProvider: { "user-1" },
-            userCoordinateProvider: { self.sampleUserCoordinate },
-            service: service
-        )
-
-        await viewModel.load()
-        await viewModel.selectReaction(ImpressionTag.delighted.rawValue)
-
-        #expect(viewModel.detail?.selectedReactionTag == ImpressionTag.delighted.rawValue)
-        #expect(viewModel.detail?.reactions.first(where: { $0.impressionTag == ImpressionTag.delighted.rawValue })?.count == 4)
-        #expect(viewModel.detail?.reactions.first(where: { $0.impressionTag == ImpressionTag.happy.rawValue })?.count == 2)
-    }
-
-    @Test("selectReaction syncs counts when the user already rated")
-    func selectReactionSyncsOnConflict() async {
-        let service = MockPlaceDetailService(
-            fetchResult: .success(sampleDetail(hasCheckedIn: true)),
-            reactionResult: .failure(APIError.httpStatus(409, message: "User has already rated this place")),
-            reactionSnapshot: PlaceReactionSnapshot(
-                impressionCounts: [ImpressionTag.sleepy.rawValue: 3],
-                selectedReactionTag: ImpressionTag.sleepy.rawValue
-            )
-        )
-        let viewModel = PlaceDetailViewModel(
-            place: samplePlace,
-            userIDProvider: { "user-1" },
-            userCoordinateProvider: { self.sampleUserCoordinate },
-            service: service
-        )
-
-        await viewModel.load()
-        await viewModel.selectReaction(ImpressionTag.delighted.rawValue)
-
-        #expect(viewModel.detail?.selectedReactionTag == ImpressionTag.sleepy.rawValue)
-        #expect(viewModel.detail?.reactions.first(where: { $0.impressionTag == ImpressionTag.sleepy.rawValue })?.count == 3)
-    }
 }
 
 final class MockPlaceDetailService: PlaceDetailServicing, @unchecked Sendable {
     var fetchResult: Result<PlaceDetail, Error>
     var checkInResult: Result<Void, Error>?
-    var reactionResult: Result<PlaceReactionSubmission, Error>?
-    var reactionSnapshot: PlaceReactionSnapshot?
     private(set) var lastLoadContext: PlaceDetailLoadContext?
 
     init(
         fetchResult: Result<PlaceDetail, Error>,
-        checkInResult: Result<Void, Error>? = nil,
-        reactionResult: Result<PlaceReactionSubmission, Error>? = nil,
-        reactionSnapshot: PlaceReactionSnapshot? = nil
+        checkInResult: Result<Void, Error>? = nil
     ) {
         self.fetchResult = fetchResult
         self.checkInResult = checkInResult
-        self.reactionResult = reactionResult
-        self.reactionSnapshot = reactionSnapshot
     }
 
     func fetchPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail {
@@ -171,19 +145,5 @@ final class MockPlaceDetailService: PlaceDetailServicing, @unchecked Sendable {
             fatalError("MockPlaceDetailService.checkInResult not configured")
         }
         try checkInResult.get()
-    }
-
-    func submitReaction(placeID: String, impressionTag: String) async throws -> PlaceReactionSubmission {
-        guard let reactionResult else {
-            fatalError("MockPlaceDetailService.reactionResult not configured")
-        }
-        return try reactionResult.get()
-    }
-
-    func fetchReactionSnapshot(placeID: String, userID: String?) async throws -> PlaceReactionSnapshot {
-        guard let reactionSnapshot else {
-            fatalError("MockPlaceDetailService.reactionSnapshot not configured")
-        }
-        return reactionSnapshot
     }
 }

@@ -36,6 +36,20 @@ struct PlaceDetailReaction: Identifiable, Hashable, Sendable {
     let imageName: String
     var count: Int
     var isSelected: Bool
+
+    /// The reactions to show, most rated first (ties keep their original order). Reactions
+    /// nobody picked are hidden, except the user's own.
+    static func displayed(_ reactions: [PlaceDetailReaction]) -> [PlaceDetailReaction] {
+        reactions
+            .enumerated()
+            .filter { $0.element.count > 0 || $0.element.isSelected }
+            .sorted { lhs, rhs in
+                lhs.element.count != rhs.element.count
+                    ? lhs.element.count > rhs.element.count
+                    : lhs.offset < rhs.offset
+            }
+            .map(\.element)
+    }
 }
 
 struct PlaceDetailNearbyPlace: Identifiable, Hashable, Sendable {
@@ -65,23 +79,6 @@ struct PlaceDetailLoadContext: Sendable {
     let place: MapPlace
     let userCoordinate: UserCoordinate?
     let userID: String?
-}
-
-struct PlaceReactionSubmission: Sendable {
-    let impressionTag: String
-    let impressionCounts: [String: Int]
-}
-
-struct PlaceReactionSnapshot: Sendable {
-    let impressionCounts: [String: Int]
-    let selectedReactionTag: String?
-}
-
-extension PlaceDetail {
-    mutating func applyReactionState(counts: [String: Int], selectedTag: String?) {
-        reactions = ImpressionTag.reactions(from: counts, selectedTag: selectedTag)
-        selectedReactionTag = selectedTag
-    }
 }
 
 extension PlaceDetail {
@@ -133,9 +130,7 @@ extension PlaceDetail {
                         distanceMeters: nearby.distanceMeters ?? 0,
                         checkInCount: nearby.zanzar.checkInCount,
                         photoReference: nearby.photos.first?.photoReference,
-                        reactionImageNames: ImpressionTag.topReactionImageNames(
-                            from: nearby.zanzar.impressionCounts
-                        )
+                        reactionImageNames: ImpressionTag.topReactionImageNames(from: nearby.zanzar.impressionCounts)
                     )
                 },
             hasCheckedIn: hasCheckedIn,

@@ -3,8 +3,10 @@ import SwiftUI
 
 struct LocationMapView: View {
     @State private var viewModel = LocationMapViewModel()
+    @State private var ratingPrompt = RatingPromptViewModel()
     @State private var selectedPlaceID: String?
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         Map(position: $viewModel.cameraPosition, selection: $selectedPlaceID) {
@@ -40,15 +42,36 @@ struct LocationMapView: View {
                     .background(.regularMaterial, in: .rect(cornerRadius: 12))
             }
         }
+        .overlay {
+            if ratingPrompt.isPresented, let pendingRating = ratingPrompt.pendingRating {
+                RatingPromptView(
+                    placeName: pendingRating.placeName,
+                    selectedTag: ratingPrompt.selectedTag,
+                    isSubmitting: ratingPrompt.isSubmitting,
+                    errorMessage: ratingPrompt.errorMessage,
+                    onSelect: { ratingPrompt.select($0) },
+                    onSubmit: { Task { await ratingPrompt.submit() } },
+                    onDismiss: { ratingPrompt.dismiss() }
+                )
+                .transition(.opacity)
+            }
+        }
+        .animation(.default, value: ratingPrompt.isPresented)
         .task {
             await viewModel.load()
         }
-        .onAppear {
-            Task {
-                await viewModel.reloadPlaces()
-            }
+        // The map stays mounted underneath pushed screens, so neither `.task` nor `scenePhase` fires when the
+        // user pops back from a check-in. Keying on visibility restarts the monitor on pop and on foreground.
+        .task(id: isMonitoringRating) {
+            guard isMonitoringRating else { return }
+            await ratingPrompt.monitorLeaving()
+            await viewModel.reloadPlaces()
         }
         .ignoresSafeArea()
+    }
+
+    private var isMonitoringRating: Bool {
+        coordinator.path.isEmpty && scenePhase == .active
     }
 
     @MapContentBuilder
