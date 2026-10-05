@@ -35,6 +35,20 @@ struct PlaceDetailReaction: Identifiable, Hashable, Sendable {
     let imageName: String
     var count: Int
     var isSelected: Bool
+
+    /// The reactions to show, most rated first (ties keep their original order). Reactions
+    /// nobody picked are hidden, except the user's own.
+    static func displayed(_ reactions: [PlaceDetailReaction]) -> [PlaceDetailReaction] {
+        reactions
+            .enumerated()
+            .filter { $0.element.count > 0 || $0.element.isSelected }
+            .sorted { lhs, rhs in
+                lhs.element.count != rhs.element.count
+                    ? lhs.element.count > rhs.element.count
+                    : lhs.offset < rhs.offset
+            }
+            .map(\.element)
+    }
 }
 
 struct PlaceDetailNearbyPlace: Identifiable, Hashable, Sendable {
@@ -114,7 +128,7 @@ extension PlaceDetail {
                         distanceMeters: nearby.distanceMeters ?? 0,
                         checkInCount: nearby.zanzar.checkInCount,
                         photoReference: nearby.photos.first?.photoReference,
-                        reactionImageNames: ImpressionTag.allReactionImageNames
+                        reactionImageNames: ImpressionTag.topReactionImageNames(from: nearby.zanzar.impressionCounts)
                     )
                 },
             hasCheckedIn: hasCheckedIn,
