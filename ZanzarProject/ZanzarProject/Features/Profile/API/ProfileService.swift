@@ -43,13 +43,16 @@ struct RecentCheckInAPIResponse: Decodable, Sendable {
             placeName: placeName,
             date: try Self.parseDate(datetime),
             photoReference: photoReference,
-            sealCategory: stamp.map { ZanzarPlaceCategory(rawCategory: Self.categoryName(forStampID: $0.stampId)) }
+            sealCategory: stamp.flatMap { Self.sealCategory(forStampID: $0.stampId) }
         )
     }
 
     /// The backend names stamps `stamp_<category>` (e.g. `stamp_bar`); the app's seals are keyed by category.
-    private static func categoryName(forStampID stampID: String) -> String {
-        stampID.hasPrefix("stamp_") ? String(stampID.dropFirst("stamp_".count)) : stampID
+    /// An unrecognised stamp yields `nil` because `.unknown` would render the restaurant seal.
+    private static func sealCategory(forStampID stampID: String) -> ZanzarPlaceCategory? {
+        let name = stampID.hasPrefix("stamp_") ? String(stampID.dropFirst("stamp_".count)) : stampID
+        let category = ZanzarPlaceCategory(rawCategory: name)
+        return category == .unknown ? nil : category
     }
 
     private static func parseDate(_ value: String) throws -> Date {

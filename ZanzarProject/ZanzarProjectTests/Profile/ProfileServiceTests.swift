@@ -62,11 +62,11 @@ struct ProfileServiceTests {
         #expect(checkIns[1].date == Date(timeIntervalSince1970: 1_791_108_000))
     }
 
-    @Test("an unknown stamp id falls back to the unknown category")
-    func unknownStampFallsBack() throws {
+    @Test("an unknown stamp id shows no seal instead of a wrong one")
+    func unknownStampHasNoSeal() throws {
         let checkIns = try Self.decodeProfile(Self.readmeJSON).recentCheckIns
 
-        #expect(checkIns[2].sealCategory == .unknown)
+        #expect(checkIns[2].sealCategory == nil)
     }
 
     @Test("check-in ids are unique per place and moment")
