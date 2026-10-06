@@ -5,6 +5,10 @@ struct PlaceDetailNearbyPlaceCard: View {
     let mediaPolicy: PlaceMediaAccessPolicy
     let onTap: () -> Void
 
+    private var sealState: PlaceCategorySealState {
+        place.hasCheckedIn ? .earned : .preview
+    }
+
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 0) {
@@ -16,13 +20,11 @@ struct PlaceDetailNearbyPlaceCard: View {
                             endPoint: .bottomTrailing
                         )
 
-                        if !place.hasCheckedIn {
-                            PlaceCategorySealView(
-                                category: place.category,
-                                state: .preview,
-                                size: 32
-                            )
-                        }
+                        PlaceCategorySealView(
+                            category: place.category,
+                            state: sealState,
+                            size: 32
+                        )
                     }
                 }
                 .frame(height: 114)

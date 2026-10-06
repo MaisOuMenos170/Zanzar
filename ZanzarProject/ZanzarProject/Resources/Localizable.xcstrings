@@ -868,6 +868,40 @@
         }
       }
     },
+    "placeDetail.statsCard.sealPreviewAccessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ seal — to be earned"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selo de %@ — a conquistar"
+          }
+        }
+      }
+    },
+    "placeDetail.statsCard.sealEarnedAccessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ seal earned"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selo de %@ conquistado"
+          }
+        }
+      }
+    },
     "placeDetail.tag.park": {
       "extractionState": "manual",
       "localizations": {

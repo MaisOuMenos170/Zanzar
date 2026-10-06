@@ -17,6 +17,20 @@ struct ZanzarPlaceCategoryTests {
         #expect(ZanzarPlaceCategory.unknown.pinIconName == "mappin")
     }
 
+    @Test("Each category maps to a Figma seal asset")
+    func categorySealAssetsMatchFigma() {
+        #expect(ZanzarPlaceCategory.restaurant.sealImageName == "PlaceCategorySealRestaurant")
+        #expect(ZanzarPlaceCategory.bar.sealImageName == "PlaceCategorySealBar")
+        #expect(ZanzarPlaceCategory.cafe.sealImageName == "PlaceCategorySealCafe")
+        #expect(ZanzarPlaceCategory.museum.sealImageName == "PlaceCategorySealMuseum")
+        #expect(ZanzarPlaceCategory.park.sealImageName == "PlaceCategorySealPark")
+        #expect(ZanzarPlaceCategory.tourist.sealImageName == "PlaceCategorySealTourist")
+        #expect(ZanzarPlaceCategory.historic.sealImageName == "PlaceCategorySealHistoric")
+        #expect(ZanzarPlaceCategory.curiosity.sealImageName == "PlaceCategorySealCuriosity")
+        #expect(ZanzarPlaceCategory.party.sealImageName == "PlaceCategorySealParty")
+        #expect(ZanzarPlaceCategory.unknown.sealImageName == "PlaceCategorySealRestaurant")
+    }
+
     @Test("Unknown backend category maps to unknown")
     func unknownCategoryMapping() {
         #expect(ZanzarPlaceCategory(rawCategory: "not_a_category") == .unknown)

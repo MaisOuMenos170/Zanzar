@@ -155,7 +155,7 @@ final class PlaceDetailService: PlaceDetailServicing {
             path: "places/\(context.place.id)"
         )
 
-        async let hasCheckedIn = fetchHasCheckedIn(
+        async let checkInFromEndpoint = fetchHasCheckedIn(
             placeID: context.place.id,
             userID: context.userID
         )
@@ -168,11 +168,14 @@ final class PlaceDetailService: PlaceDetailServicing {
             excludingPlaceID: context.place.id
         )
 
+        let endpointCheckedIn = try await checkInFromEndpoint
+        let hasCheckedIn = placeResponse.userContext?.hasCheckedIn == true || endpointCheckedIn
+
         return PlaceDetail.make(
             placeResponse: placeResponse,
             nearbyResponses: await nearbyResponses,
             mapPlace: context.place,
-            hasCheckedIn: try await hasCheckedIn,
+            hasCheckedIn: hasCheckedIn,
             selectedReactionTag: try await selectedReactionTag
         )
     }

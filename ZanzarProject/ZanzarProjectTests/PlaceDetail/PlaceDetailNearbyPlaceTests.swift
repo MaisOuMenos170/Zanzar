@@ -95,6 +95,39 @@ struct PlaceDetailNearbyPlaceTests {
         #expect(detail.nearbyPlaces.isEmpty)
     }
 
+    @Test("Main place uses nickname for displayName")
+    func mainPlaceUsesNicknameForDisplayName() throws {
+        let mainPlace = try makeAPIResponse(
+            placeId: "place-main",
+            name: "Oscar Niemeyer Museum",
+            nickname: "MON",
+            lat: -25.41,
+            lng: -49.27,
+            category: "museum",
+            checkInCount: 5,
+            distanceMeters: nil
+        )
+
+        let detail = PlaceDetail.make(
+            placeResponse: mainPlace,
+            nearbyResponses: [],
+            mapPlace: MapPlace(
+                id: "place-main",
+                name: "Oscar Niemeyer Museum",
+                nickname: "MON",
+                latitude: -25.41,
+                longitude: -49.27,
+                category: .museum,
+                distanceMeters: 1200
+            ),
+            hasCheckedIn: false,
+            selectedReactionTag: nil
+        )
+
+        #expect(detail.displayName == "MON")
+        #expect(detail.name == "Oscar Niemeyer Museum")
+    }
+
     @Test("Nearby places prefer nickname and decode userContext check-in state")
     func nearbyPlacesPreferNicknameAndCheckInState() throws {
         let mainPlace = try makeAPIResponse(

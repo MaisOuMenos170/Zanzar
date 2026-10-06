@@ -16,7 +16,7 @@ struct PlaceDetailStatsCard: View {
             VStack(spacing: 4) {
                 Text(totalCheckIns, format: .number)
                     .contentTransition(.numericText(value: Double(totalCheckIns)))
-                    .animation(.default, value: totalCheckIns)
+                    .animation(reduceMotion ? nil : .default, value: totalCheckIns)
                     .font(.largeTitle)
                     .bold()
                     .foregroundStyle(.primary)
@@ -32,7 +32,7 @@ struct PlaceDetailStatsCard: View {
 
             PlaceCategorySealView(category: category, state: sealState)
                 .frame(width: 102, height: 102)
-                .accessibilityLabel(categoryAccessibilityLabel)
+                .accessibilityLabel(sealAccessibilityLabel)
         }
         .animation(reduceMotion ? nil : .spring(duration: 0.45), value: hasCheckedIn)
         .padding(.horizontal, 36)
@@ -40,7 +40,7 @@ struct PlaceDetailStatsCard: View {
         .background(Color("PlaceDetailStatsBackground"), in: .rect(cornerRadius: 16))
     }
 
-    private var categoryAccessibilityLabel: String {
+    private var categoryLabel: String {
         switch category {
         case .restaurant:
             String(localized: "placeDetail.tag.restaurant")
@@ -62,6 +62,14 @@ struct PlaceDetailStatsCard: View {
             String(localized: "placeDetail.tag.party")
         case .unknown:
             String(localized: "placeDetail.statsCard.categoryUnknown")
+        }
+    }
+
+    private var sealAccessibilityLabel: String {
+        if hasCheckedIn {
+            String(format: String(localized: "placeDetail.statsCard.sealEarnedAccessibilityLabel"), categoryLabel)
+        } else {
+            String(format: String(localized: "placeDetail.statsCard.sealPreviewAccessibilityLabel"), categoryLabel)
         }
     }
 }

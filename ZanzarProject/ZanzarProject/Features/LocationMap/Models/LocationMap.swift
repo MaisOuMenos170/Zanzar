@@ -60,6 +60,32 @@ enum ZanzarPlaceCategory: String, Sendable {
             "mappin"
         }
     }
+
+    /// Raster seal from Figma node 860:4084 (Group 633180–633188).
+    var sealImageName: String {
+        switch self {
+        case .restaurant:
+            "PlaceCategorySealRestaurant"
+        case .bar:
+            "PlaceCategorySealBar"
+        case .cafe:
+            "PlaceCategorySealCafe"
+        case .museum:
+            "PlaceCategorySealMuseum"
+        case .park:
+            "PlaceCategorySealPark"
+        case .tourist:
+            "PlaceCategorySealTourist"
+        case .historic:
+            "PlaceCategorySealHistoric"
+        case .curiosity:
+            "PlaceCategorySealCuriosity"
+        case .party:
+            "PlaceCategorySealParty"
+        case .unknown:
+            "PlaceCategorySealRestaurant"
+        }
+    }
 }
 
 struct MapPlace: Identifiable, Hashable, Sendable {
