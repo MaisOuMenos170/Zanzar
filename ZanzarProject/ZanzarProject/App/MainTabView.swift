@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @Environment(AppCoordinator.self) private var coordinator
     @State private var selectedTab: MainTab = .discover
 
     var body: some View {
@@ -18,9 +19,17 @@ struct MainTabView: View {
     private func tabContent(for tab: MainTab) -> some View {
         switch tab {
         case .discover:
-            LocationMapView()
-        case .checkIn, .profile:
+            NavigationStack(path: Bindable(coordinator).path) {
+                LocationMapView()
+                    .navigationDestination(for: Route.self) { coordinator.view(for: $0) }
+            }
+        case .checkIn:
             TabPlaceholderView(tab: tab)
+        case .profile:
+            NavigationStack {
+                ProfileView()
+            }
+            .tint(.primary)
         }
     }
 }
@@ -28,4 +37,5 @@ struct MainTabView: View {
 #Preview {
     MainTabView()
         .environment(AppCoordinator())
+        .environment(AuthSession())
 }
