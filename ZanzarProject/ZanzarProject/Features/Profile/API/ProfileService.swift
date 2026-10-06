@@ -40,6 +40,7 @@ struct RecentCheckInAPIResponse: Decodable, Sendable {
     func makeCheckIn() throws -> ProfileCheckIn {
         ProfileCheckIn(
             id: "\(placeId)|\(datetime)",
+            placeID: placeId,
             placeName: placeName,
             date: try Self.parseDate(datetime),
             photoReference: photoReference,

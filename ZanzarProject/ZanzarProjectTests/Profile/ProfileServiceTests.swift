@@ -76,6 +76,16 @@ struct ProfileServiceTests {
         #expect(Set(checkIns.map(\.id)).count == checkIns.count)
     }
 
+    @Test("a check-in opens the place detail with the place id and no distance")
+    func checkInMapsToPlace() throws {
+        let checkIn = try Self.decodeProfile(Self.readmeJSON).recentCheckIns[0]
+
+        #expect(checkIn.placeID == "ChIJ1")
+        #expect(checkIn.mapPlace.id == "ChIJ1")
+        #expect(checkIn.mapPlace.category == .bar)
+        #expect(checkIn.mapPlace.distanceMeters == nil)
+    }
+
     @Test("an unparseable datetime fails the mapping")
     func invalidDateThrows() throws {
         let json = Self.readmeJSON.replacingOccurrences(of: "2026-10-04T10:00:00Z", with: "yesterday")

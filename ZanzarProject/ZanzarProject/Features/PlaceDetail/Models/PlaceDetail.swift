@@ -1,3 +1,4 @@
+import CoreLocation
 import Foundation
 
 struct PlaceDetail: Identifiable, Hashable, Sendable {
@@ -6,7 +7,7 @@ struct PlaceDetail: Identifiable, Hashable, Sendable {
     let nickname: String?
     let latitude: Double
     let longitude: Double
-    let distanceText: String
+    let distanceText: String?
     let openingHoursText: String
     let tags: [PlaceDetailTag]
     let category: ZanzarPlaceCategory
@@ -99,15 +100,23 @@ extension PlaceDetail {
         nearbyResponses: [PlaceDetailAPIResponse],
         mapPlace: MapPlace,
         hasCheckedIn: Bool,
-        selectedReactionTag: String?
+        selectedReactionTag: String?,
+        userCoordinate: UserCoordinate? = nil
     ) -> PlaceDetail {
-        let distanceMeters = placeResponse.distanceMeters ?? mapPlace.distanceMeters
-        let distanceKilometers = distanceMeters / 1000
-        let distanceText = String(
-            format: String(localized: "placeDetail.header.distanceFormat"),
-            locale: Locale.current,
-            distanceKilometers
-        )
+        let location = placeResponse.geometry.location
+        let distanceMeters = placeResponse.distanceMeters
+            ?? mapPlace.distanceMeters
+            ?? userCoordinate.map {
+                CLLocation(latitude: $0.latitude, longitude: $0.longitude)
+                    .distance(from: CLLocation(latitude: location.lat, longitude: location.lng))
+            }
+        let distanceText = distanceMeters.map {
+            String(
+                format: String(localized: "placeDetail.header.distanceFormat"),
+                locale: Locale.current,
+                $0 / 1000
+            )
+        }
 
         let description = placeResponse.editorialSummary?.overview
             ?? placeResponse.formattedAddress

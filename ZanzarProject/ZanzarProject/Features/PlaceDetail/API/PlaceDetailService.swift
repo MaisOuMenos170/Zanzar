@@ -176,7 +176,8 @@ final class PlaceDetailService: PlaceDetailServicing {
             nearbyResponses: await nearbyResponses,
             mapPlace: context.place,
             hasCheckedIn: hasCheckedIn,
-            selectedReactionTag: try await selectedReactionTag
+            selectedReactionTag: try await selectedReactionTag,
+            userCoordinate: context.userCoordinate
         )
     }
 

@@ -20,7 +20,10 @@ struct ProfileRecentCheckInsSection: View {
             } else {
                 LazyVGrid(columns: columns, spacing: 8) {
                     ForEach(checkIns) { checkIn in
+                        NavigationLink(value: Route.placeDetail(checkIn.mapPlace)) {
                         ProfileCheckInCard(checkIn: checkIn)
+                    }
+                    .buttonStyle(.plain)
                     }
                 }
             }
@@ -29,8 +32,10 @@ struct ProfileRecentCheckInsSection: View {
 }
 
 #Preview {
-    ProfileRecentCheckInsSection(checkIns: Profile.preview.recentCheckIns)
-        .padding()
+    NavigationStack {
+        ProfileRecentCheckInsSection(checkIns: Profile.preview.recentCheckIns)
+            .padding()
+    }
 }
 
 #Preview("Empty") {
