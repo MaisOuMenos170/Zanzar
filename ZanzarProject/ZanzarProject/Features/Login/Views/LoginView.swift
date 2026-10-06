@@ -7,41 +7,27 @@ struct LoginView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                AuthBackButton { coordinator.pop() }
-                Spacer()
+            VStack(spacing: 16) {
+                AuthFormField(
+                    labelKey: "login.emailField.label",
+                    placeholderKey: "login.emailField.placeholder",
+                    text: $viewModel.email,
+                    errorMessageKey: viewModel.emailError,
+                    textContentType: .emailAddress,
+                    keyboardType: .emailAddress
+                )
+
+                AuthFormField(
+                    labelKey: "login.passwordField.label",
+                    placeholderKey: "login.passwordField.placeholder",
+                    text: $viewModel.password,
+                    errorMessageKey: viewModel.passwordError,
+                    isSecure: true,
+                    textContentType: .password
+                )
             }
             .padding(.horizontal, 19)
-            .padding(.top, 8)
-
-            VStack(alignment: .leading, spacing: 24) {
-                Text("login.header.title")
-                    .font(.largeTitle)
-                    .bold()
-                    .foregroundStyle(.primary)
-
-                VStack(spacing: 16) {
-                    AuthFormField(
-                        labelKey: "login.emailField.label",
-                        placeholderKey: "login.emailField.placeholder",
-                        text: $viewModel.email,
-                        errorMessageKey: viewModel.emailError,
-                        textContentType: .emailAddress,
-                        keyboardType: .emailAddress
-                    )
-
-                    AuthFormField(
-                        labelKey: "login.passwordField.label",
-                        placeholderKey: "login.passwordField.placeholder",
-                        text: $viewModel.password,
-                        errorMessageKey: viewModel.passwordError,
-                        isSecure: true,
-                        textContentType: .password
-                    )
-                }
-            }
-            .padding(.horizontal, 19)
-            .padding(.top, 32)
+            .padding(.top, 16)
 
             Spacer()
 
@@ -70,7 +56,8 @@ struct LoginView: View {
                     .padding()
             }
         }
-        .navigationBarBackButtonHidden()
+        .navigationTitle("login.header.title")
+        .navigationBarTitleDisplayMode(.large)
     }
 }
 

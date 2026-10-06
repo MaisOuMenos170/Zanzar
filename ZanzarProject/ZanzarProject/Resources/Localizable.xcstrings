@@ -1,7 +1,7 @@
 {
   "sourceLanguage": "pt-BR",
   "strings": {
-    "auth.backButton.accessibilityLabel": {
+    "backButton.accessibilityLabel": {
       "extractionState": "manual",
       "localizations": {
         "en": {

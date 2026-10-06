@@ -26,6 +26,8 @@ struct PlaceRemoteImage<Placeholder: View>: View {
                         image
                             .resizable()
                             .scaledToFill()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .clipped()
                     case .failure:
                         placeholder
                     case .empty:
