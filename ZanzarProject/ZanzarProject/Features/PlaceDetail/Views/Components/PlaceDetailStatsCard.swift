@@ -91,3 +91,21 @@ struct PlaceDetailStatsCard: View {
     )
     .padding()
 }
+
+#Preview("Before check-in") {
+    PlaceDetailStatsCard(
+        totalCheckIns: 42,
+        category: .restaurant,
+        hasCheckedIn: false
+    )
+    .padding()
+}
+
+#Preview("After check-in") {
+    PlaceDetailStatsCard(
+        totalCheckIns: 43,
+        category: .restaurant,
+        hasCheckedIn: true
+    )
+    .padding()
+}
