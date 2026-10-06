@@ -749,36 +749,72 @@
         }
       }
     },
-    "placeDetail.nearbyPlace.accessibilityLabel %@ %lld": {
+    "placeDetail.nearbyPlace.accessibilityLabel %@ %@": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@, %lld check-ins"
+            "value": "%1$@, %2$@"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@, %lld check-ins"
+            "value": "%1$@, %2$@"
           }
         }
       }
     },
-    "placeDetail.nearbyPlace.checkInsFormat": {
+    "placeDetail.nearbyPlace.checkInsCount %lld": {
       "extractionState": "manual",
       "localizations": {
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld check-ins"
+          "variations": {
+            "plural": {
+              "zero": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld check-ins"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld check-in"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld check-ins"
+                }
+              }
+            }
           }
         },
         "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld check-ins"
+          "variations": {
+            "plural": {
+              "zero": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld check-ins"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld check-in"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld check-ins"
+                }
+              }
+            }
           }
         }
       }

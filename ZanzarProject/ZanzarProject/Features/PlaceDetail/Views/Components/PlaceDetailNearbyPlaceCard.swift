@@ -5,8 +5,16 @@ struct PlaceDetailNearbyPlaceCard: View {
     let mediaPolicy: PlaceMediaAccessPolicy
     let onTap: () -> Void
 
+    @ScaledMetric(relativeTo: .caption) private var cardWidth = 117
+    @ScaledMetric(relativeTo: .caption) private var imageHeight = 114
+    @ScaledMetric(relativeTo: .caption) private var reactionSize = 16
+
     private var sealState: PlaceCategorySealState {
         place.hasCheckedIn ? .earned : .preview
+    }
+
+    private var checkInsText: String {
+        String(localized: "placeDetail.nearbyPlace.checkInsCount \(place.checkInCount)")
     }
 
     var body: some View {
@@ -27,10 +35,8 @@ struct PlaceDetailNearbyPlaceCard: View {
                         )
                     }
                 }
-                .frame(height: 114)
+                .frame(height: imageHeight)
                 .frame(maxWidth: .infinity)
-                .clipped()
-                .clipShape(.rect(topLeadingRadius: 8, topTrailingRadius: 8))
 
                 VStack(alignment: .trailing, spacing: 8) {
                     VStack(alignment: .trailing, spacing: 0) {
@@ -39,13 +45,7 @@ struct PlaceDetailNearbyPlaceCard: View {
                             .foregroundStyle(Color("PlaceDetailNearbyTitle"))
                             .lineLimit(1)
 
-                        Text(
-                            String(
-                                format: String(localized: "placeDetail.nearbyPlace.checkInsFormat"),
-                                locale: Locale.current,
-                                place.checkInCount
-                            )
-                        )
+                        Text(checkInsText)
                         .font(.caption2)
                         .foregroundStyle(Color("PlaceDetailNearbySubtitle"))
                     }
@@ -55,22 +55,21 @@ struct PlaceDetailNearbyPlaceCard: View {
                             Image(imageName)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 16, height: 16)
+                                .frame(width: reactionSize, height: reactionSize)
                         }
                     }
-                    .frame(height: 16)
+                    .frame(height: reactionSize)
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .background(Color("PlaceDetailNearbyCardBackground"))
-                .clipShape(.rect(bottomLeadingRadius: 8, bottomTrailingRadius: 8))
             }
             .clipShape(.rect(cornerRadius: 8))
             .shadow(color: .black.opacity(0.25), radius: 1, x: 1, y: 1)
-            .frame(width: 117)
+            .frame(width: cardWidth)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("placeDetail.nearbyPlace.accessibilityLabel \(place.displayName) \(place.checkInCount)")
+        .accessibilityLabel(Text("placeDetail.nearbyPlace.accessibilityLabel \(place.displayName) \(checkInsText)"))
     }
 }
