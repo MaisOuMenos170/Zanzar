@@ -37,7 +37,7 @@ enum AuthErrorMapper {
             }
             #endif
             return String(localized: genericKey)
-        case .decodingFailed, .invalidResponse:
+        case .decodingFailed, .invalidResponse, .invalidRequest:
             return String(localized: genericKey)
         }
     }

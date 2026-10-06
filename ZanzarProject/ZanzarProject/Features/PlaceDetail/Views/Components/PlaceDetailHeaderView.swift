@@ -2,7 +2,7 @@ import SwiftUI
 
 struct PlaceDetailHeaderView: View {
     let name: String
-    let distanceText: String
+    let distanceText: String?
     let openingHoursText: String
     let onBack: () -> Void
 
@@ -17,9 +17,11 @@ struct PlaceDetailHeaderView: View {
                     .foregroundStyle(.primary)
                     .lineLimit(2)
 
-                Text(distanceText)
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.primary)
+                if let distanceText {
+                    Text(distanceText)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.primary)
+                }
 
                 HStack(spacing: 4) {
                     Image(systemName: "clock")

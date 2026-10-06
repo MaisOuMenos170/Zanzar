@@ -95,7 +95,8 @@ struct MapPlace: Identifiable, Hashable, Sendable {
     let latitude: Double
     let longitude: Double
     let category: ZanzarPlaceCategory
-    let distanceMeters: Double
+    /// `nil` when the place was reached without a known user position (e.g. from the profile).
+    let distanceMeters: Double?
     let pinStyle: LocationPinStyle
 
     var displayName: String {
@@ -117,7 +118,7 @@ struct MapPlace: Identifiable, Hashable, Sendable {
         latitude: Double,
         longitude: Double,
         category: ZanzarPlaceCategory,
-        distanceMeters: Double,
+        distanceMeters: Double?,
         pinStyle: LocationPinStyle = .available
     ) {
         self.id = id

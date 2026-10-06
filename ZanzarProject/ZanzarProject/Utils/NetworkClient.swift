@@ -10,6 +10,8 @@ enum HTTPMethod: String {
 protocol NetworkClient: Sendable {
     func get<Response: Decodable>(path: String, queryItems: [URLQueryItem]) async throws -> Response
     func send<Body: Encodable, Response: Decodable>(path: String, method: HTTPMethod, body: Body) async throws -> Response
+    /// For endpoints that answer with an empty body (e.g. `204 No Content`) and take no payload.
+    func sendWithoutResponse(path: String, method: HTTPMethod) async throws
 }
 
 extension NetworkClient {
@@ -71,6 +73,17 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         return try await perform(authorizedRequest(from: request, path: normalizedPath))
     }
 
+    func sendWithoutResponse(path: String, method: HTTPMethod) async throws {
+        let normalizedPath = normalizedPath(path)
+        guard let url = buildURL(path: normalizedPath, queryItems: []) else {
+            throw APIError.invalidResponse
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = method.rawValue
+        let (_, summary) = try await performRequest(authorizedRequest(from: request, path: normalizedPath))
+        AppLog.network.info(summary)
+    }
+
     private func normalizedPath(_ path: String) -> String {
         path.hasPrefix("/") ? String(path.dropFirst()) : path
     }
@@ -85,6 +98,17 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         return components?.url
     }
 
+    /// Hides the user id in `/user/{id}/...` so device logs never carry it.
+    static func redactedPath(_ path: String) -> String {
+        var previous = ""
+        return path.split(separator: "/", omittingEmptySubsequences: false)
+            .map { segment in
+                defer { previous = String(segment) }
+                return previous == "user" ? "*" : String(segment)
+            }
+            .joined(separator: "/")
+    }
+
     private func authorizedRequest(from request: URLRequest, path: String) -> URLRequest {
         var request = request
         guard !Self.publicPaths.contains(path) else { return request }
@@ -95,7 +119,20 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
     }
 
     private func perform<Response: Decodable>(_ request: URLRequest) async throws -> Response {
-        let label = "\(request.httpMethod ?? "?") \(request.url?.path ?? "?")"
+        let (data, summary) = try await performRequest(request)
+        do {
+            let decoded = try decoder.decode(Response.self, from: data)
+            AppLog.network.info(summary)
+            return decoded
+        } catch {
+            AppLog.network.error("\(summary) | decoding failed, body=\(data.count) bytes", error: error)
+            throw APIError.decodingFailed
+        }
+    }
+
+    /// Runs the request and validates the status; returns the raw body plus a log summary line.
+    private func performRequest(_ request: URLRequest) async throws -> (data: Data, summary: String) {
+        let label = "\(request.httpMethod ?? "?") \(Self.redactedPath(request.url?.path ?? "?"))"
         let start = ContinuousClock.now
         AppLog.network.info("\(label) started")
 
@@ -131,13 +168,6 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
             throw apiError
         }
 
-        do {
-            let decoded = try decoder.decode(Response.self, from: data)
-            AppLog.network.info(summary)
-            return decoded
-        } catch {
-            AppLog.network.error("\(summary) | decoding failed, body=\(data.count) bytes", error: error)
-            throw APIError.decodingFailed
-        }
+        return (data, summary)
     }
 }

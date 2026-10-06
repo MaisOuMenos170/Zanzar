@@ -4,6 +4,7 @@ enum APIError: Error, Sendable {
     case httpStatus(Int, message: String?)
     case decodingFailed
     case invalidResponse
+    case invalidRequest
 
     static func from(data: Data, statusCode: Int) -> APIError {
         if let payload = try? JSONDecoder().decode(APIErrorPayload.self, from: data) {
@@ -23,7 +24,7 @@ extension APIError: LocalizedError {
         switch self {
         case .httpStatus(_, let message):
             message
-        case .decodingFailed, .invalidResponse:
+        case .decodingFailed, .invalidResponse, .invalidRequest:
             nil
         }
     }
@@ -40,6 +41,8 @@ extension APIError: CustomDebugStringConvertible {
             "APIError.decodingFailed"
         case .invalidResponse:
             "APIError.invalidResponse"
+        case .invalidRequest:
+            "APIError.invalidRequest"
         }
     }
 }
