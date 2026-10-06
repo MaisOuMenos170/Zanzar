@@ -16,9 +16,13 @@ struct PlaceDetailNearbyPlaceCard: View {
                             endPoint: .bottomTrailing
                         )
 
-                        Image(systemName: "leaf.fill")
-                            .font(.largeTitle)
-                            .foregroundStyle(Color("PlaceDetailTagGreen").opacity(0.6))
+                        if !place.hasCheckedIn {
+                            PlaceCategorySealView(
+                                category: place.category,
+                                state: .preview,
+                                size: 32
+                            )
+                        }
                     }
                 }
                 .frame(height: 114)
@@ -28,7 +32,7 @@ struct PlaceDetailNearbyPlaceCard: View {
 
                 VStack(alignment: .trailing, spacing: 8) {
                     VStack(alignment: .trailing, spacing: 0) {
-                        Text(place.name)
+                        Text(place.displayName)
                             .font(.caption.weight(.medium))
                             .foregroundStyle(Color("PlaceDetailNearbyTitle"))
                             .lineLimit(1)
@@ -65,6 +69,6 @@ struct PlaceDetailNearbyPlaceCard: View {
             .frame(width: 117)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("placeDetail.nearbyPlace.accessibilityLabel \(place.name) \(place.checkInCount)")
+        .accessibilityLabel("placeDetail.nearbyPlace.accessibilityLabel \(place.displayName) \(place.checkInCount)")
     }
 }

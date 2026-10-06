@@ -3,6 +3,13 @@ import SwiftUI
 struct PlaceDetailStatsCard: View {
     let totalCheckIns: Int
     let category: ZanzarPlaceCategory
+    let hasCheckedIn: Bool
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private var sealState: PlaceCategorySealState {
+        hasCheckedIn ? .earned : .preview
+    }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -23,10 +30,11 @@ struct PlaceDetailStatsCard: View {
             }
             .frame(maxWidth: .infinity)
 
-            PlaceCategorySealView(category: category)
+            PlaceCategorySealView(category: category, state: sealState)
                 .frame(width: 102, height: 102)
                 .accessibilityLabel(categoryAccessibilityLabel)
         }
+        .animation(reduceMotion ? nil : .spring(duration: 0.45), value: hasCheckedIn)
         .padding(.horizontal, 36)
         .padding(.vertical, 16)
         .background(Color("PlaceDetailStatsBackground"), in: .rect(cornerRadius: 16))
@@ -56,4 +64,22 @@ struct PlaceDetailStatsCard: View {
             String(localized: "placeDetail.statsCard.categoryUnknown")
         }
     }
+}
+
+#Preview("Before check-in") {
+    PlaceDetailStatsCard(
+        totalCheckIns: 42,
+        category: .restaurant,
+        hasCheckedIn: false
+    )
+    .padding()
+}
+
+#Preview("After check-in") {
+    PlaceDetailStatsCard(
+        totalCheckIns: 43,
+        category: .restaurant,
+        hasCheckedIn: true
+    )
+    .padding()
 }
