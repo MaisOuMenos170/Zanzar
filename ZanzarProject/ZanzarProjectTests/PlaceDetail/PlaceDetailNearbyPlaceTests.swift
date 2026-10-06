@@ -44,6 +44,8 @@ struct PlaceDetailNearbyPlaceTests {
 
         let cardPlace = detail.nearbyPlaces[0]
         #expect(cardPlace.name == "Parque Barigui")
+        #expect(cardPlace.displayName == "Parque Barigui")
+        #expect(cardPlace.hasCheckedIn == false)
         #expect(cardPlace.checkInCount == 21)
         #expect(cardPlace.latitude == -25.42)
         #expect(cardPlace.longitude == -49.31)
@@ -93,19 +95,99 @@ struct PlaceDetailNearbyPlaceTests {
         #expect(detail.nearbyPlaces.isEmpty)
     }
 
+    @Test("Main place uses nickname for displayName")
+    func mainPlaceUsesNicknameForDisplayName() throws {
+        let mainPlace = try makeAPIResponse(
+            placeId: "place-main",
+            name: "Oscar Niemeyer Museum",
+            nickname: "MON",
+            lat: -25.41,
+            lng: -49.27,
+            category: "museum",
+            checkInCount: 5,
+            distanceMeters: nil
+        )
+
+        let detail = PlaceDetail.make(
+            placeResponse: mainPlace,
+            nearbyResponses: [],
+            mapPlace: MapPlace(
+                id: "place-main",
+                name: "Oscar Niemeyer Museum",
+                nickname: "MON",
+                latitude: -25.41,
+                longitude: -49.27,
+                category: .museum,
+                distanceMeters: 1200
+            ),
+            hasCheckedIn: false,
+            selectedReactionTag: nil
+        )
+
+        #expect(detail.displayName == "MON")
+        #expect(detail.name == "Oscar Niemeyer Museum")
+    }
+
+    @Test("Nearby places prefer nickname and decode userContext check-in state")
+    func nearbyPlacesPreferNicknameAndCheckInState() throws {
+        let mainPlace = try makeAPIResponse(
+            placeId: "place-main",
+            name: "Museu",
+            lat: -25.41,
+            lng: -49.27,
+            category: "museum",
+            checkInCount: 5,
+            distanceMeters: nil
+        )
+        let nearbyPlace = try makeAPIResponse(
+            placeId: "place-nearby",
+            name: "Oscar Niemeyer Museum",
+            nickname: "MON",
+            lat: -25.42,
+            lng: -49.31,
+            category: "museum",
+            checkInCount: 21,
+            distanceMeters: 850,
+            hasCheckedIn: true
+        )
+
+        let detail = PlaceDetail.make(
+            placeResponse: mainPlace,
+            nearbyResponses: [nearbyPlace],
+            mapPlace: MapPlace(
+                id: "place-main",
+                name: "Museu",
+                latitude: -25.41,
+                longitude: -49.27,
+                category: .museum,
+                distanceMeters: 1200
+            ),
+            hasCheckedIn: false,
+            selectedReactionTag: nil
+        )
+
+        let cardPlace = detail.nearbyPlaces[0]
+        #expect(cardPlace.displayName == "MON")
+        #expect(cardPlace.hasCheckedIn == true)
+    }
+
     private func makeAPIResponse(
         placeId: String,
         name: String,
+        nickname: String? = nil,
         lat: Double,
         lng: Double,
         category: String,
         checkInCount: Int,
-        distanceMeters: Double?
+        distanceMeters: Double?,
+        hasCheckedIn: Bool = false
     ) throws -> PlaceDetailAPIResponse {
+        let nicknameField = nickname.map { ", \"nickname\": \"\($0)\"" } ?? ""
+        let userContextField = ", \"userContext\": { \"hasCheckedIn\": \(hasCheckedIn ? "true" : "false"), \"isInActiveItinerary\": false }"
         let json = """
         {
           "place_id": "\(placeId)",
-          "name": "\(name)",
+          "name": "\(name)"\(nicknameField),
           "geometry": {
             "location": { "lat": \(lat), "lng": \(lng) }
           },
@@ -116,7 +198,7 @@ struct PlaceDetailNearbyPlaceTests {
             "checkInCount": \(checkInCount),
             "impressionCounts": { "delighted": 1, "happy": 2 }
           }
-          \(distanceMeters.map { ", \"distanceMeters\": \($0)" } ?? "")
+          \(distanceMeters.map { ", \"distanceMeters\": \($0)" } ?? "")\(userContextField)
         }
         """
 

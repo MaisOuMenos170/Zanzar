@@ -60,16 +60,47 @@ enum ZanzarPlaceCategory: String, Sendable {
             "mappin"
         }
     }
+
+    /// Raster seal from Figma node 860:4084 (Group 633180–633188).
+    var sealImageName: String {
+        switch self {
+        case .restaurant:
+            "PlaceCategorySealRestaurant"
+        case .bar:
+            "PlaceCategorySealBar"
+        case .cafe:
+            "PlaceCategorySealCafe"
+        case .museum:
+            "PlaceCategorySealMuseum"
+        case .park:
+            "PlaceCategorySealPark"
+        case .tourist:
+            "PlaceCategorySealTourist"
+        case .historic:
+            "PlaceCategorySealHistoric"
+        case .curiosity:
+            "PlaceCategorySealCuriosity"
+        case .party:
+            "PlaceCategorySealParty"
+        case .unknown:
+            "PlaceCategorySealRestaurant"
+        }
+    }
 }
 
 struct MapPlace: Identifiable, Hashable, Sendable {
     let id: String
     let name: String
+    let nickname: String?
     let latitude: Double
     let longitude: Double
     let category: ZanzarPlaceCategory
     let distanceMeters: Double
     let pinStyle: LocationPinStyle
+
+    var displayName: String {
+        PlaceDisplayNameResolver.displayName(nickname: nickname, name: name)
+    }
 
     var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
@@ -82,6 +113,7 @@ struct MapPlace: Identifiable, Hashable, Sendable {
     init(
         id: String,
         name: String,
+        nickname: String? = nil,
         latitude: Double,
         longitude: Double,
         category: ZanzarPlaceCategory,
@@ -90,6 +122,7 @@ struct MapPlace: Identifiable, Hashable, Sendable {
     ) {
         self.id = id
         self.name = name
+        self.nickname = nickname
         self.latitude = latitude
         self.longitude = longitude
         self.category = category
@@ -106,6 +139,7 @@ struct PlaceUserContext: Decodable, Sendable {
 struct PlaceAPIResponse: Decodable, Sendable {
     let placeId: String
     let name: String
+    let nickname: String?
     let geometry: Geometry
     let zanzar: Zanzar
     let distanceMeters: Double
@@ -114,6 +148,7 @@ struct PlaceAPIResponse: Decodable, Sendable {
     enum CodingKeys: String, CodingKey {
         case placeId = "place_id"
         case name
+        case nickname
         case geometry
         case zanzar
         case distanceMeters
@@ -138,6 +173,7 @@ extension MapPlace {
     init(response: PlaceAPIResponse) {
         id = response.placeId
         name = response.name
+        nickname = response.nickname
         latitude = response.geometry.location.lat
         longitude = response.geometry.location.lng
         category = ZanzarPlaceCategory(rawCategory: response.zanzar.category)

@@ -5,6 +5,10 @@ struct PlaceDetailNearbyPlaceCard: View {
     let mediaPolicy: PlaceMediaAccessPolicy
     let onTap: () -> Void
 
+    private var sealState: PlaceCategorySealState {
+        place.hasCheckedIn ? .earned : .preview
+    }
+
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 0) {
@@ -16,9 +20,11 @@ struct PlaceDetailNearbyPlaceCard: View {
                             endPoint: .bottomTrailing
                         )
 
-                        Image(systemName: "leaf.fill")
-                            .font(.largeTitle)
-                            .foregroundStyle(Color("PlaceDetailTagGreen").opacity(0.6))
+                        PlaceCategorySealView(
+                            category: place.category,
+                            state: sealState,
+                            size: 32
+                        )
                     }
                 }
                 .frame(height: 114)
@@ -28,7 +34,7 @@ struct PlaceDetailNearbyPlaceCard: View {
 
                 VStack(alignment: .trailing, spacing: 8) {
                     VStack(alignment: .trailing, spacing: 0) {
-                        Text(place.name)
+                        Text(place.displayName)
                             .font(.caption.weight(.medium))
                             .foregroundStyle(Color("PlaceDetailNearbyTitle"))
                             .lineLimit(1)
@@ -65,6 +71,6 @@ struct PlaceDetailNearbyPlaceCard: View {
             .frame(width: 117)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("placeDetail.nearbyPlace.accessibilityLabel \(place.name) \(place.checkInCount)")
+        .accessibilityLabel("placeDetail.nearbyPlace.accessibilityLabel \(place.displayName) \(place.checkInCount)")
     }
 }

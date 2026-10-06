@@ -3,6 +3,7 @@ import Foundation
 struct PlaceDetail: Identifiable, Hashable, Sendable {
     let id: String
     let name: String
+    let nickname: String?
     let latitude: Double
     let longitude: Double
     let distanceText: String
@@ -16,6 +17,10 @@ struct PlaceDetail: Identifiable, Hashable, Sendable {
     let nearbyPlaces: [PlaceDetailNearbyPlace]
     var hasCheckedIn: Bool
     var selectedReactionTag: String?
+
+    var displayName: String {
+        PlaceDisplayNameResolver.displayName(nickname: nickname, name: name)
+    }
 }
 
 struct PlaceDetailTag: Identifiable, Hashable, Sendable {
@@ -55,6 +60,7 @@ struct PlaceDetailReaction: Identifiable, Hashable, Sendable {
 struct PlaceDetailNearbyPlace: Identifiable, Hashable, Sendable {
     let id: String
     let name: String
+    let nickname: String?
     let latitude: Double
     let longitude: Double
     let category: ZanzarPlaceCategory
@@ -62,11 +68,17 @@ struct PlaceDetailNearbyPlace: Identifiable, Hashable, Sendable {
     let checkInCount: Int
     let photoReference: String?
     let reactionImageNames: [String]
+    let hasCheckedIn: Bool
+
+    var displayName: String {
+        PlaceDisplayNameResolver.displayName(nickname: nickname, name: name)
+    }
 
     var mapPlace: MapPlace {
         MapPlace(
             id: id,
             name: name,
+            nickname: nickname,
             latitude: latitude,
             longitude: longitude,
             category: category,
@@ -104,6 +116,7 @@ extension PlaceDetail {
         return PlaceDetail(
             id: placeResponse.placeId,
             name: placeResponse.name,
+            nickname: placeResponse.nickname,
             latitude: placeResponse.geometry.location.lat,
             longitude: placeResponse.geometry.location.lng,
             distanceText: distanceText,
@@ -124,13 +137,15 @@ extension PlaceDetail {
                     PlaceDetailNearbyPlace(
                         id: nearby.placeId,
                         name: nearby.name,
+                        nickname: nearby.nickname,
                         latitude: nearby.geometry.location.lat,
                         longitude: nearby.geometry.location.lng,
                         category: ZanzarPlaceCategory(rawCategory: nearby.zanzar.category),
                         distanceMeters: nearby.distanceMeters ?? 0,
                         checkInCount: nearby.zanzar.checkInCount,
                         photoReference: nearby.photos.first?.photoReference,
-                        reactionImageNames: ImpressionTag.topReactionImageNames(from: nearby.zanzar.impressionCounts)
+                        reactionImageNames: ImpressionTag.topReactionImageNames(from: nearby.zanzar.impressionCounts),
+                        hasCheckedIn: nearby.userContext?.hasCheckedIn ?? false
                     )
                 },
             hasCheckedIn: hasCheckedIn,

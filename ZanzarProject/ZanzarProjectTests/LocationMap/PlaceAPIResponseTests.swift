@@ -109,6 +109,25 @@ struct PlaceAPIResponseTests {
         #expect(place.pinStyle == .available)
     }
 
+    @Test("Nickname maps to displayName")
+    func nicknameDisplayName() throws {
+        let jsonString = """
+        {
+          "place_id": "place-nick",
+          "name": "Museu Oscar Niemeyer | MON",
+          "nickname": "MON",
+          "geometry": { "location": { "lat": -25.4, "lng": -49.2 } },
+          "zanzar": { "category": "museum" },
+          "distanceMeters": 100
+        }
+        """
+        let response = try JSONDecoder().decode(PlaceAPIResponse.self, from: Data(jsonString.utf8))
+        let place = MapPlace(response: response)
+
+        #expect(place.displayName == "MON")
+        #expect(place.name == "Museu Oscar Niemeyer | MON")
+    }
+
     @Test("Unknown category maps to mappin icon")
     func unknownCategory() throws {
         let jsonString = """

@@ -3,13 +3,20 @@ import SwiftUI
 struct PlaceDetailStatsCard: View {
     let totalCheckIns: Int
     let category: ZanzarPlaceCategory
+    let hasCheckedIn: Bool
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private var sealState: PlaceCategorySealState {
+        hasCheckedIn ? .earned : .preview
+    }
 
     var body: some View {
         HStack(spacing: 0) {
             VStack(spacing: 4) {
                 Text(totalCheckIns, format: .number)
                     .contentTransition(.numericText(value: Double(totalCheckIns)))
-                    .animation(.default, value: totalCheckIns)
+                    .animation(reduceMotion ? nil : .default, value: totalCheckIns)
                     .font(.largeTitle)
                     .bold()
                     .foregroundStyle(.primary)
@@ -23,16 +30,17 @@ struct PlaceDetailStatsCard: View {
             }
             .frame(maxWidth: .infinity)
 
-            PlaceCategorySealView(category: category)
+            PlaceCategorySealView(category: category, state: sealState)
                 .frame(width: 102, height: 102)
-                .accessibilityLabel(categoryAccessibilityLabel)
+                .accessibilityLabel(sealAccessibilityLabel)
         }
+        .animation(reduceMotion ? nil : .spring(duration: 0.45), value: hasCheckedIn)
         .padding(.horizontal, 36)
         .padding(.vertical, 16)
         .background(Color("PlaceDetailStatsBackground"), in: .rect(cornerRadius: 16))
     }
 
-    private var categoryAccessibilityLabel: String {
+    private var categoryLabel: String {
         switch category {
         case .restaurant:
             String(localized: "placeDetail.tag.restaurant")
@@ -56,4 +64,48 @@ struct PlaceDetailStatsCard: View {
             String(localized: "placeDetail.statsCard.categoryUnknown")
         }
     }
+
+    private var sealAccessibilityLabel: String {
+        if hasCheckedIn {
+            String(format: String(localized: "placeDetail.statsCard.sealEarnedAccessibilityLabel"), categoryLabel)
+        } else {
+            String(format: String(localized: "placeDetail.statsCard.sealPreviewAccessibilityLabel"), categoryLabel)
+        }
+    }
+}
+
+#Preview("Before check-in") {
+    PlaceDetailStatsCard(
+        totalCheckIns: 42,
+        category: .restaurant,
+        hasCheckedIn: false
+    )
+    .padding()
+}
+
+#Preview("After check-in") {
+    PlaceDetailStatsCard(
+        totalCheckIns: 43,
+        category: .restaurant,
+        hasCheckedIn: true
+    )
+    .padding()
+}
+
+#Preview("Before check-in") {
+    PlaceDetailStatsCard(
+        totalCheckIns: 42,
+        category: .restaurant,
+        hasCheckedIn: false
+    )
+    .padding()
+}
+
+#Preview("After check-in") {
+    PlaceDetailStatsCard(
+        totalCheckIns: 43,
+        category: .restaurant,
+        hasCheckedIn: true
+    )
+    .padding()
 }

@@ -100,7 +100,7 @@ final class PlaceDetailViewModel {
             PendingRating(
                 userID: userID,
                 placeID: detail.id,
-                placeName: detail.name,
+                placeName: detail.displayName,
                 latitude: detail.latitude,
                 longitude: detail.longitude,
                 checkedInAt: Date()
