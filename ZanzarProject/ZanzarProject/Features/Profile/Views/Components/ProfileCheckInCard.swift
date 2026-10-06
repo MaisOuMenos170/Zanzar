@@ -5,36 +5,27 @@ struct ProfileCheckInCard: View {
 
     var body: some View {
         VStack(spacing: 10) {
-            Color.clear
+            Color("ProfileReactionPlaceholder")
                 .frame(height: 78)
                 .overlay {
-                    // Placeholder photo until check-ins carry their own image.
-                    Image("ProfileCheckInSample")
-                        .resizable()
-                        .scaledToFill()
+                    PlaceRemoteImage(photoReference: checkIn.photoReference) {
+                        Color("ProfileReactionPlaceholder")
+                    }
                 }
                 .clipped()
 
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 8) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(checkIn.placeName)
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.primary)
-                        Text("profile.checkInCard.dateLabel \(checkIn.date.formatted(date: .numeric, time: .omitted))")
-                            .font(.caption2)
-                            .foregroundStyle(Color("PlaceDetailNearbySubtitle"))
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                    reactionBadge
+            HStack(spacing: 8) {
+                VStack(alignment: .leading, spacing: 4) {
+                    placeNameText
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.primary)
+                    Text("profile.checkInCard.dateLabel \(checkIn.date.formatted(date: .numeric, time: .omitted))")
+                        .font(.caption2)
+                        .foregroundStyle(Color("PlaceDetailNearbySubtitle"))
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                Image(checkIn.impressionImageName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 22, height: 23)
-                    .accessibilityHidden(true)
+                sealBadge
             }
             .padding(.horizontal, 12)
         }
@@ -45,25 +36,30 @@ struct ProfileCheckInCard: View {
         .accessibilityElement(children: .combine)
     }
 
-    private var reactionBadge: some View {
-        Circle()
-            .fill(Color("ProfileReactionPlaceholder"))
-            .frame(width: 47, height: 47)
-            .overlay {
-                if let reactionImageName = checkIn.reactionImageName {
-                    Image(reactionImageName)
-                        .resizable()
-                        .scaledToFit()
-                        .padding(2)
-                }
-            }
+    private var placeNameText: Text {
+        if let placeName = checkIn.placeName {
+            Text(placeName)
+        } else {
+            Text("profile.checkInCard.unknownPlace")
+        }
+    }
+
+    @ViewBuilder
+    private var sealBadge: some View {
+        if let sealCategory = checkIn.sealCategory {
+            PlaceCategorySealView(category: sealCategory, size: 47)
+        } else {
+            Circle()
+                .fill(Color("ProfileReactionPlaceholder"))
+                .frame(width: 47, height: 47)
+        }
     }
 }
 
 #Preview {
     HStack {
-        ProfileCheckInCard(checkIn: ProfileCheckIn.samples[0])
-        ProfileCheckInCard(checkIn: ProfileCheckIn.samples[1])
+        ProfileCheckInCard(checkIn: Profile.preview.recentCheckIns[0])
+        ProfileCheckInCard(checkIn: Profile.preview.recentCheckIns[2])
     }
     .padding()
 }

@@ -33,6 +33,6 @@ private struct ProfileStatItem: View {
 }
 
 #Preview {
-    ProfileStatsView(summary: .sample)
+    ProfileStatsView(summary: Profile.preview.summary)
         .padding()
 }

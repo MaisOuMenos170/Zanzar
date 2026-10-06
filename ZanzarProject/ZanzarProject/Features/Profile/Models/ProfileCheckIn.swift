@@ -1,9 +1,9 @@
 import Foundation
 
 struct ProfileCheckIn: Identifiable, Hashable {
-    let id: UUID
-    let placeName: String
+    let id: String
+    let placeName: String?
     let date: Date
-    let impressionImageName: String
-    let reactionImageName: String?
+    let photoReference: String?
+    let sealCategory: ZanzarPlaceCategory?
 }

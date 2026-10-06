@@ -13,9 +13,15 @@ struct ProfileRecentCheckInsSection: View {
             Text("profile.recentCheckIns.title")
                 .font(.headline)
 
-            LazyVGrid(columns: columns, spacing: 8) {
-                ForEach(checkIns) { checkIn in
-                    ProfileCheckInCard(checkIn: checkIn)
+            if checkIns.isEmpty {
+                Text("profile.recentCheckIns.empty")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            } else {
+                LazyVGrid(columns: columns, spacing: 8) {
+                    ForEach(checkIns) { checkIn in
+                        ProfileCheckInCard(checkIn: checkIn)
+                    }
                 }
             }
         }
@@ -23,6 +29,11 @@ struct ProfileRecentCheckInsSection: View {
 }
 
 #Preview {
-    ProfileRecentCheckInsSection(checkIns: ProfileCheckIn.samples)
+    ProfileRecentCheckInsSection(checkIns: Profile.preview.recentCheckIns)
+        .padding()
+}
+
+#Preview("Empty") {
+    ProfileRecentCheckInsSection(checkIns: [])
         .padding()
 }
