@@ -13,6 +13,7 @@ struct LocationMapView: View {
             userLocationContent
             placeAnnotations
         }
+        .tint(.blue)
         .onChange(of: selectedPlaceID) { _, placeID in
             guard let placeID,
                   let place = viewModel.places.first(where: { $0.id == placeID }) else { return }
