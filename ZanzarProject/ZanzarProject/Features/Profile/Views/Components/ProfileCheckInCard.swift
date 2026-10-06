@@ -15,29 +15,31 @@ struct ProfileCheckInCard: View {
                 .clipped()
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(checkIn.placeName)
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.black)
-                Text("profile.checkInCard.dateLabel \(checkIn.date.formatted(date: .numeric, time: .omitted))")
-                    .font(.caption2)
-                    .foregroundStyle(Color("PlaceDetailNearbySubtitle"))
+                HStack(spacing: 8) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(checkIn.placeName)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.black)
+                        Text("profile.checkInCard.dateLabel \(checkIn.date.formatted(date: .numeric, time: .omitted))")
+                            .font(.caption2)
+                            .foregroundStyle(Color("PlaceDetailNearbySubtitle"))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    reactionBadge
+                }
+
                 Image(checkIn.impressionImageName)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 22, height: 23)
                     .accessibilityHidden(true)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 12)
         }
         .padding(.bottom, 8)
         .frame(maxWidth: .infinity)
         .background(Color("ProfileCheckInCardBackground"))
-        .overlay(alignment: .bottomTrailing) {
-            reactionBadge
-                .padding(.trailing, 30)
-                .padding(.bottom, 22)
-        }
         .clipShape(.rect(cornerRadius: 8))
         .accessibilityElement(children: .combine)
     }
