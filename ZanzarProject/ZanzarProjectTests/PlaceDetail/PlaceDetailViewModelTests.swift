@@ -19,6 +19,7 @@ struct PlaceDetailViewModelTests {
         PlaceDetail(
             id: samplePlace.id,
             name: samplePlace.name,
+            nickname: nil,
             latitude: samplePlace.latitude,
             longitude: samplePlace.longitude,
             distanceText: "1.3 km",

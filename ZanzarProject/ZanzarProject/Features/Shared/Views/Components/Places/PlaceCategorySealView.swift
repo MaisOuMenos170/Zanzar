@@ -3,7 +3,10 @@ import SwiftUI
 /// Category seal from Figma node 871:5586 (selos por categoria de lugar).
 struct PlaceCategorySealView: View {
     let category: ZanzarPlaceCategory
+    var state: PlaceCategorySealState = .earned
     var size: CGFloat = 102
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var innerDiameter: CGFloat { size * (70.496 / 103.624) }
     private var iconSize: CGFloat { size * (37 / 103.624) }
@@ -29,13 +32,25 @@ struct PlaceCategorySealView: View {
                 .accessibilityHidden(true)
         }
         .frame(width: size, height: size)
+        .saturation(state == .preview ? 0 : 1)
+        .opacity(state == .preview ? 0.45 : 1)
+        .scaleEffect(state == .earned ? 1 : 0.92)
+        .animation(reduceMotion ? nil : .spring(duration: 0.45), value: state == .earned)
     }
 }
 
-#Preview {
+#Preview("Earned") {
     HStack {
-        PlaceCategorySealView(category: .restaurant)
-        PlaceCategorySealView(category: .park, size: 72)
+        PlaceCategorySealView(category: .restaurant, state: .earned)
+        PlaceCategorySealView(category: .park, state: .earned, size: 72)
+    }
+    .padding()
+}
+
+#Preview("Preview") {
+    HStack {
+        PlaceCategorySealView(category: .restaurant, state: .preview)
+        PlaceCategorySealView(category: .party, state: .preview, size: 72)
     }
     .padding()
 }

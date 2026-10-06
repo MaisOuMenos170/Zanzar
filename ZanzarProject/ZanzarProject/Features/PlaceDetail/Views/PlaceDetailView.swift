@@ -72,7 +72,7 @@ struct PlaceDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 PlaceDetailHeaderView(
-                    name: detail.name,
+                    name: detail.displayName,
                     distanceText: detail.distanceText,
                     openingHoursText: detail.openingHoursText,
                     onBack: { coordinator.pop() }
@@ -119,7 +119,8 @@ struct PlaceDetailView: View {
 
                     PlaceDetailStatsCard(
                         totalCheckIns: detail.totalCheckIns,
-                        category: detail.category
+                        category: detail.category,
+                        hasCheckedIn: detail.hasCheckedIn
                     )
 
                     PlaceDetailReactionsSection(reactions: detail.reactions)
@@ -149,7 +150,7 @@ struct PlaceDetailView: View {
                     PlaceDetailDirectionsButton(
                         latitude: detail.latitude,
                         longitude: detail.longitude,
-                        placeName: detail.name
+                        placeName: detail.displayName
                     )
                 }
                 .padding(.horizontal, 16)

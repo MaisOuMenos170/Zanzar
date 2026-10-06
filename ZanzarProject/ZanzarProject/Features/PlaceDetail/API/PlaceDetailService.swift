@@ -8,6 +8,7 @@ protocol PlaceDetailServicing: Sendable {
 struct PlaceDetailAPIResponse: Decodable, Sendable {
     let placeId: String
     let name: String
+    let nickname: String?
     let formattedAddress: String?
     let geometry: Geometry
     let editorialSummary: EditorialSummary?
@@ -15,10 +16,12 @@ struct PlaceDetailAPIResponse: Decodable, Sendable {
     let photos: [Photo]
     let zanzar: Zanzar
     let distanceMeters: Double?
+    let userContext: PlaceUserContext?
 
     enum CodingKeys: String, CodingKey {
         case placeId = "place_id"
         case name
+        case nickname
         case formattedAddress = "formatted_address"
         case geometry
         case editorialSummary = "editorial_summary"
@@ -26,6 +29,7 @@ struct PlaceDetailAPIResponse: Decodable, Sendable {
         case photos
         case zanzar
         case distanceMeters
+        case userContext
     }
 
     struct Geometry: Decodable, Sendable {
@@ -87,6 +91,7 @@ struct PlaceDetailAPIResponse: Decodable, Sendable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         placeId = try container.decode(String.self, forKey: .placeId)
         name = try container.decode(String.self, forKey: .name)
+        nickname = try container.decodeIfPresent(String.self, forKey: .nickname)
         formattedAddress = try container.decodeIfPresent(String.self, forKey: .formattedAddress)
         geometry = try container.decode(Geometry.self, forKey: .geometry)
         editorialSummary = try container.decodeIfPresent(EditorialSummary.self, forKey: .editorialSummary)
@@ -94,6 +99,7 @@ struct PlaceDetailAPIResponse: Decodable, Sendable {
         photos = try container.decodeIfPresent([Photo].self, forKey: .photos) ?? []
         zanzar = try container.decode(Zanzar.self, forKey: .zanzar)
         distanceMeters = try container.decodeIfPresent(Double.self, forKey: .distanceMeters)
+        userContext = try container.decodeIfPresent(PlaceUserContext.self, forKey: .userContext)
     }
 }
 

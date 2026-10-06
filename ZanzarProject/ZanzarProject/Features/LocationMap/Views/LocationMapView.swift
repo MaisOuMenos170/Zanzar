@@ -79,9 +79,9 @@ struct LocationMapView: View {
         ForEach(viewModel.displayItems) { item in
             switch item {
             case .place(let place):
-                Annotation(place.name, coordinate: place.coordinate, anchor: .bottom) {
+                Annotation(place.displayName, coordinate: place.coordinate, anchor: .bottom) {
                     LocationPinView(category: place.category, style: place.pinStyle)
-                        .accessibilityLabel(place.name)
+                        .accessibilityLabel(place.displayName)
                         .accessibilityAddTraits(.isButton)
                 }
                 .tag(place.id)
