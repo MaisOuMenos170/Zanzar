@@ -67,7 +67,6 @@ struct LocationMapView: View {
             await ratingPrompt.monitorLeaving()
             await viewModel.reloadPlaces()
         }
-        .ignoresSafeArea()
     }
 
     private var isMonitoringRating: Bool {
