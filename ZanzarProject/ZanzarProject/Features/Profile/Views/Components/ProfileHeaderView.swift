@@ -3,10 +3,12 @@ import SwiftUI
 struct ProfileHeaderView: View {
     let name: String
 
+    @ScaledMetric(relativeTo: .largeTitle) private var iconSize = 72
+
     var body: some View {
         VStack(spacing: 24) {
             Image(systemName: "person.fill")
-                .font(.system(size: 72))
+                .font(.system(size: iconSize))
                 .foregroundStyle(Color("TabBarSelected"))
                 .accessibilityHidden(true)
 

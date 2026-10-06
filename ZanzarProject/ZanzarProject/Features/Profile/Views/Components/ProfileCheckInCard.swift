@@ -8,6 +8,7 @@ struct ProfileCheckInCard: View {
             Color.clear
                 .frame(height: 78)
                 .overlay {
+                    // Placeholder photo until check-ins carry their own image.
                     Image("ProfileCheckInSample")
                         .resizable()
                         .scaledToFill()
@@ -19,7 +20,7 @@ struct ProfileCheckInCard: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(checkIn.placeName)
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(.black)
+                            .foregroundStyle(.primary)
                         Text("profile.checkInCard.dateLabel \(checkIn.date.formatted(date: .numeric, time: .omitted))")
                             .font(.caption2)
                             .foregroundStyle(Color("PlaceDetailNearbySubtitle"))

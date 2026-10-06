@@ -1,3 +1,4 @@
+import SwiftUI
 import Testing
 @testable import ZanzarProject
 
@@ -27,10 +28,68 @@ struct ProfileViewModelTests {
         try authSession.signIn(token: "token")
         let viewModel = ProfileViewModel()
 
-        viewModel.signOut(using: authSession)
+        viewModel.signOut(using: authSession, coordinator: AppCoordinator())
 
         #expect(!authSession.isAuthenticated)
         #expect(store.readToken() == nil)
         #expect(!viewModel.signOutFailed)
+    }
+
+    @Test("signOut resets the navigation path together with the session")
+    func signOutResetsNavigationPath() throws {
+        let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
+        try authSession.signIn(token: "token")
+        let coordinator = AppCoordinator()
+        coordinator.push(.login)
+        let viewModel = ProfileViewModel()
+
+        viewModel.signOut(using: authSession, coordinator: coordinator)
+
+        #expect(coordinator.path.isEmpty)
+    }
+
+    @Test("a failed signOut keeps the session and the navigation path")
+    func failedSignOutKeepsState() throws {
+        let authSession = AuthSession(keychain: FailingDeleteTokenStore())
+        try authSession.signIn(token: "token")
+        let coordinator = AppCoordinator()
+        coordinator.push(.login)
+        let viewModel = ProfileViewModel()
+
+        viewModel.signOut(using: authSession, coordinator: coordinator)
+
+        #expect(viewModel.signOutFailed)
+        #expect(authSession.isAuthenticated)
+        #expect(!coordinator.path.isEmpty)
+    }
+
+    @Test("a new signOut attempt clears the previous failure flag")
+    func newAttemptClearsPreviousFailure() throws {
+        let store = FailingDeleteTokenStore()
+        let authSession = AuthSession(keychain: store)
+        try authSession.signIn(token: "token")
+        let viewModel = ProfileViewModel()
+
+        viewModel.signOut(using: authSession, coordinator: AppCoordinator())
+        #expect(viewModel.signOutFailed)
+
+        store.shouldFail = false
+        viewModel.signOut(using: authSession, coordinator: AppCoordinator())
+
+        #expect(!viewModel.signOutFailed)
+        #expect(!authSession.isAuthenticated)
+    }
+}
+
+/// Test double: `shouldFail` is only mutated from the main-actor test bodies, sequentially.
+private final class FailingDeleteTokenStore: AuthTokenPersisting, @unchecked Sendable {
+    struct DeleteFailure: Error {}
+
+    var shouldFail = true
+
+    func saveToken(_ token: String) throws {}
+    func readToken() -> String? { nil }
+    func deleteToken() throws {
+        if shouldFail { throw DeleteFailure() }
     }
 }

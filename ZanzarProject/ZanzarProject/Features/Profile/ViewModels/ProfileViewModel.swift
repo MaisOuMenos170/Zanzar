@@ -17,9 +17,13 @@ final class ProfileViewModel {
         self.recentCheckIns = recentCheckIns
     }
 
-    func signOut(using authSession: AuthSession) {
+    /// Signs out and resets navigation in the same main-actor turn, so the
+    /// unauthenticated UI never renders with a stale authenticated path.
+    func signOut(using authSession: AuthSession, coordinator: AppCoordinator) {
+        signOutFailed = false
         do {
             try authSession.signOut()
+            coordinator.popToRoot()
         } catch {
             signOutFailed = true
         }

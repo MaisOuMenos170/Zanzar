@@ -3,6 +3,7 @@ import SwiftUI
 struct ProfileView: View {
     @State private var viewModel = ProfileViewModel()
     @Environment(AuthSession.self) private var authSession
+    @Environment(AppCoordinator.self) private var coordinator
 
     var body: some View {
         ScrollView {
@@ -30,13 +31,17 @@ struct ProfileView: View {
         }
         .alert("profile.signOutConfirmation.title", isPresented: $viewModel.showsSignOutConfirmation) {
             Button("profile.signOutConfirmation.confirmButton.title", role: .destructive) {
-                viewModel.signOut(using: authSession)
+                viewModel.signOut(using: authSession, coordinator: coordinator)
             }
             Button("profile.signOutConfirmation.cancelButton.title", role: .cancel) {}
         } message: {
             Text("profile.signOutConfirmation.message")
         }
-        .alert("profile.signOutAlert.title", isPresented: $viewModel.signOutFailed) {}
+        .alert("profile.signOutAlert.title", isPresented: $viewModel.signOutFailed) {
+            Button("profile.signOutAlert.dismissButton.title", role: .cancel) {
+                viewModel.signOutFailed = false
+            }
+        }
     }
 }
 
@@ -45,4 +50,5 @@ struct ProfileView: View {
         ProfileView()
     }
     .environment(AuthSession())
+    .environment(AppCoordinator())
 }
