@@ -40,7 +40,7 @@ struct ProfileViewModelTests {
         #expect(service.fetchCount == 0)
     }
 
-    @Test("a failed first load exposes an error message")
+    @Test("a failed first load exposes a generic message, never the server's text")
     func firstLoadFailure() async {
         let service = MockProfileService(fetchResult: .failure(APIError.httpStatus(500, message: "boom")))
         let viewModel = ProfileViewModel(service: service, userIDProvider: { "user-1" })
@@ -48,7 +48,7 @@ struct ProfileViewModelTests {
         await viewModel.load()
 
         #expect(viewModel.profile == nil)
-        #expect(viewModel.errorMessage == "boom")
+        #expect(viewModel.errorMessage == String(localized: "profile.errorState.message"))
         #expect(!viewModel.isLoading)
     }
 
@@ -63,6 +63,21 @@ struct ProfileViewModelTests {
 
         #expect(viewModel.profile == Self.profile)
         #expect(viewModel.errorMessage == nil)
+    }
+
+    @Test("a refresh without a signed-in user drops the stale profile and reports an error")
+    func refreshWithoutUserIDClearsProfile() async {
+        let service = MockProfileService(fetchResult: .success(Self.profile))
+        var userID: String? = "user-1"
+        let viewModel = ProfileViewModel(service: service, userIDProvider: { userID })
+        await viewModel.load()
+
+        userID = nil
+        await viewModel.load()
+
+        #expect(viewModel.profile == nil)
+        #expect(viewModel.errorMessage == String(localized: "profile.loadError.notAuthenticated"))
+        #expect(service.fetchCount == 1)
     }
 
     // MARK: - signOut

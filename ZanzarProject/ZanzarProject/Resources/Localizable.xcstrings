@@ -953,6 +953,23 @@
         }
       }
     },
+    "profile.checkInCard.openDetailsHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the place details"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre os detalhes do lugar"
+          }
+        }
+      }
+    },
     "profile.checkInCard.unknownPlace": {
       "extractionState": "manual",
       "localizations": {

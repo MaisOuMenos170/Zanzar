@@ -98,6 +98,17 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         return components?.url
     }
 
+    /// Hides the user id in `/user/{id}/...` so device logs never carry it.
+    static func redactedPath(_ path: String) -> String {
+        var previous = ""
+        return path.split(separator: "/", omittingEmptySubsequences: false)
+            .map { segment in
+                defer { previous = String(segment) }
+                return previous == "user" ? "*" : String(segment)
+            }
+            .joined(separator: "/")
+    }
+
     private func authorizedRequest(from request: URLRequest, path: String) -> URLRequest {
         var request = request
         guard !Self.publicPaths.contains(path) else { return request }
@@ -121,7 +132,7 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
 
     /// Runs the request and validates the status; returns the raw body plus a log summary line.
     private func performRequest(_ request: URLRequest) async throws -> (data: Data, summary: String) {
-        let label = "\(request.httpMethod ?? "?") \(request.url?.path ?? "?")"
+        let label = "\(request.httpMethod ?? "?") \(Self.redactedPath(request.url?.path ?? "?"))"
         let start = ContinuousClock.now
         AppLog.network.info("\(label) started")
 

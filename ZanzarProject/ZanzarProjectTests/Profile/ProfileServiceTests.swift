@@ -86,13 +86,32 @@ struct ProfileServiceTests {
         #expect(checkIn.mapPlace.distanceMeters == nil)
     }
 
-    @Test("an unparseable datetime fails the mapping")
-    func invalidDateThrows() throws {
+    @Test("a check-in with an unparseable datetime is dropped without failing the profile")
+    func invalidDateIsSkipped() throws {
         let json = Self.readmeJSON.replacingOccurrences(of: "2026-10-04T10:00:00Z", with: "yesterday")
 
-        #expect(throws: APIError.self) {
-            try Self.decodeProfile(json)
+        let profile = try Self.decodeProfile(json)
+
+        #expect(profile.summary.name == "tiago")
+        #expect(profile.recentCheckIns.count == 2)
+    }
+
+    @Test("repeated check-ins keep unique ids")
+    func duplicateCheckInsGetUniqueIDs() throws {
+        let json = """
+        {
+          "username": "tiago", "checkInCount": 2, "completedItinerariesCount": 0, "stampsCount": 0,
+          "recentCheckIns": [
+            { "placeId": "ChIJ1", "datetime": "2026-10-05T18:30:00Z" },
+            { "placeId": "ChIJ1", "datetime": "2026-10-05T18:30:00Z" }
+          ]
         }
+        """
+
+        let checkIns = try Self.decodeProfile(json).recentCheckIns
+
+        #expect(checkIns.count == 2)
+        #expect(Set(checkIns.map(\.id)).count == 2)
     }
 
     // MARK: - Requests
@@ -107,6 +126,17 @@ struct ProfileServiceTests {
         #expect(client.lastGetPath == "user/user-1/profile")
         #expect(client.lastQueryItems == [URLQueryItem(name: "limit", value: "4")])
         #expect(profile.summary.name == "tiago")
+    }
+
+    @Test("fetchProfile refuses a user id that would add path segments")
+    func fetchProfileRejectsMalformedUserID() async {
+        let client = StubNetworkClient(responseJSON: Self.readmeJSON)
+        let service = ProfileService(client: client)
+
+        await #expect(throws: APIError.self) {
+            try await service.fetchProfile(userID: "../logout", limit: 4)
+        }
+        #expect(client.lastGetPath == nil)
     }
 
     @Test("logout posts to /logout without a body")

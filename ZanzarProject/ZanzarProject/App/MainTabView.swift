@@ -30,6 +30,7 @@ struct MainTabView: View {
         case .profile:
             NavigationStack(path: Bindable(profileCoordinator).path) {
                 ProfileView()
+                    .environment(profileCoordinator)
                     .navigationDestination(for: Route.self) { route in
                         profileCoordinator.view(for: route)
                             .environment(profileCoordinator)

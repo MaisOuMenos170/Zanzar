@@ -33,7 +33,11 @@ struct ProfileView: View {
                     viewModel.signOutFailed = false
                 }
             }
-            .task { await viewModel.load() }
+            // Restarts when a pushed place detail is popped, so a check-in made there shows up here.
+            .task(id: coordinator.path.isEmpty) {
+                guard coordinator.path.isEmpty else { return }
+                await viewModel.load()
+            }
     }
 
     @ViewBuilder
@@ -56,6 +60,11 @@ struct ProfileView: View {
                 Label("profile.errorState.title", systemImage: "exclamationmark.triangle")
             } description: {
                 Text(errorMessage)
+            } actions: {
+                Button("profile.errorState.retryButton.title") {
+                    Task { await viewModel.load() }
+                }
+                .disabled(viewModel.isLoading)
             }
         } else {
             ProgressView("profile.loadingIndicator.title")

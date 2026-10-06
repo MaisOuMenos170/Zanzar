@@ -28,6 +28,12 @@ struct URLSessionNetworkClientTests {
         #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer token")
     }
 
+    @Test("log paths hide the user id")
+    func redactsUserID() {
+        #expect(URLSessionNetworkClient.redactedPath("/user/abc-123/profile") == "/user/*/profile")
+        #expect(URLSessionNetworkClient.redactedPath("/logout") == "/logout")
+    }
+
     @Test("maps a non-2xx response to an API error")
     func mapsHTTPFailure() async {
         StubURLProtocol.stub(status: 401, body: Data(#"{"message":"Invalid JWT token"}"#.utf8))

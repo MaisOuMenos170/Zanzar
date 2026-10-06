@@ -10,6 +10,17 @@ struct ProfileCheckIn: Identifiable, Hashable {
 }
 
 extension ProfileCheckIn {
+    func withID(_ id: String) -> ProfileCheckIn {
+        ProfileCheckIn(
+            id: id,
+            placeID: placeID,
+            placeName: placeName,
+            date: date,
+            photoReference: photoReference,
+            sealCategory: sealCategory
+        )
+    }
+
     /// Minimal place used to open the detail screen, which loads the full place and the
     /// user's check-in state from the API. Coordinates and distance are unknown here.
     var mapPlace: MapPlace {

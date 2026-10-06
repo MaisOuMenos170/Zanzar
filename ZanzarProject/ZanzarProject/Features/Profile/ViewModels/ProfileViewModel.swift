@@ -38,10 +38,10 @@ final class ProfileViewModel {
             }
         }
 
+        // Without a user id the session is unusable; showing the previous profile would be stale data.
         guard let userID = userIDProvider() else {
-            if profile == nil {
-                errorMessage = String(localized: "profile.loadError.notAuthenticated")
-            }
+            profile = nil
+            errorMessage = String(localized: "profile.loadError.notAuthenticated")
             return
         }
 
@@ -52,13 +52,15 @@ final class ProfileViewModel {
         } catch is CancellationError {
             return
         } catch {
+            // The server's message is never shown: the service already logged the details.
             guard generation == loadGeneration, profile == nil else { return }
-            errorMessage = (error as? LocalizedError)?.errorDescription ?? String(localized: "profile.errorState.message")
+            errorMessage = String(localized: "profile.errorState.message")
         }
     }
 
     /// Revokes the token on the server first (the Bearer is still stored), then ends the local session.
-    /// A server failure never traps the user: the local sign-out happens regardless. The session and
+    /// A server failure never traps the user: the local sign-out happens regardless (the token then stays
+    /// valid on the server until it expires). The session and
     /// the navigation path are reset in the same main-actor turn so Welcome never renders a stale path.
     func signOut(using authSession: AuthSession, coordinator: AppCoordinator) async {
         guard !isSigningOut else { return }

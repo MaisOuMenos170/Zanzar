@@ -20,8 +20,26 @@ struct ProfileAPIResponse: Decodable, Sendable {
                 itineraryCount: completedItinerariesCount,
                 sealCount: stampsCount
             ),
-            recentCheckIns: try recentCheckIns.map { try $0.makeCheckIn() }
+            recentCheckIns: makeCheckIns()
         )
+    }
+
+    /// One malformed entry is dropped (and logged) instead of failing the whole profile.
+    private func makeCheckIns() -> [ProfileCheckIn] {
+        var seenIDs: [String: Int] = [:]
+        return recentCheckIns.compactMap { response in
+            guard var checkIn = try? response.makeCheckIn() else {
+                AppLog.profile.warning("Skipping a check-in with an unparseable datetime")
+                return nil
+            }
+            // The id is derived from place + moment; keep it unique if the backend repeats an entry.
+            let occurrence = seenIDs[checkIn.id, default: 0]
+            seenIDs[checkIn.id] = occurrence + 1
+            if occurrence > 0 {
+                checkIn = checkIn.withID("\(checkIn.id)#\(occurrence)")
+            }
+            return checkIn
+        }
     }
 }
 
@@ -75,6 +93,11 @@ final class ProfileService: ProfileServicing {
     }
 
     func fetchProfile(userID: String, limit: Int) async throws -> Profile {
+        // The id comes from the JWT and is interpolated into the path, so it must not add segments.
+        guard Self.isSafePathSegment(userID) else {
+            AppLog.profile.error("Refusing to fetch a profile for a malformed user id")
+            throw APIError.invalidRequest
+        }
         AppLog.profile.info("Fetching profile (limit=\(limit))")
         do {
             let response: ProfileAPIResponse = try await client.get(
@@ -88,6 +111,10 @@ final class ProfileService: ProfileServicing {
             AppLog.profile.error("Profile request failed", error: error)
             throw error
         }
+    }
+
+    private static func isSafePathSegment(_ value: String) -> Bool {
+        !value.isEmpty && value.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "-" || $0 == "_") }
     }
 
     func logout() async throws {
