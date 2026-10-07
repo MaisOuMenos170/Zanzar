@@ -83,6 +83,7 @@ final class ItineraryListViewModel {
         do {
             try await itineraryService.abandonActiveItinerary()
             activeItinerary = nil
+            NotificationCenter.default.post(name: AppNotification.activeItineraryDidChange, object: nil)
         } catch is CancellationError {
             return
         } catch {

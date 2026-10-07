@@ -77,6 +77,7 @@ final class ItineraryDetailViewModel {
         do {
             let active = try await service.activateItinerary(slug: slug)
             activeItinerary = active
+            NotificationCenter.default.post(name: AppNotification.activeItineraryDidChange, object: nil)
             return true
         } catch is CancellationError {
             return false
@@ -99,6 +100,7 @@ final class ItineraryDetailViewModel {
         do {
             try await service.abandonActiveItinerary()
             activeItinerary = nil
+            NotificationCenter.default.post(name: AppNotification.activeItineraryDidChange, object: nil)
             return true
         } catch is CancellationError {
             return false
