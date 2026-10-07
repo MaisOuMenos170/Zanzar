@@ -1260,6 +1260,40 @@
         }
       }
     },
+    "placeDetail.itineraryCompletedAlert.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You visited every stop on this itinerary."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Você visitou todos os pontos deste roteiro."
+          }
+        }
+      }
+    },
+    "placeDetail.itineraryCompletedAlert.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yay! You completed the itinerary!"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eba! Você concluiu o roteiro!"
+          }
+        }
+      }
+    },
     "placeDetail.loadingIndicator.title": {
       "extractionState": "manual",
       "localizations": {

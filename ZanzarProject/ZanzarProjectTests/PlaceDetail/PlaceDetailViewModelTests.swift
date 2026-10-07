@@ -108,6 +108,7 @@ struct PlaceDetailViewModelTests {
         #expect(viewModel.isCheckingIn == false)
         #expect(viewModel.earnedSealPresentation?.placeName == "Jardim Botânico")
         #expect(viewModel.earnedSealPresentation?.category == .park)
+        #expect(viewModel.showsCompletedItineraryAlert == false)
         #expect(store.stored?.userID == "user-1")
         #expect(store.stored?.placeID == samplePlace.id)
     }
@@ -137,6 +138,68 @@ struct PlaceDetailViewModelTests {
 
         #expect(viewModel.detail?.hasCheckedIn == true)
         #expect(viewModel.earnedSealPresentation == nil)
+        #expect(viewModel.showsCompletedItineraryAlert == false)
+    }
+
+    @Test("completing an itinerary without a new stamp shows the completion alert")
+    func completedItineraryShowsAlert() async {
+        let completedResult = CheckInResult(
+            stampID: "stamp_park",
+            isNewStamp: false,
+            completedItinerarySlots: 3,
+            totalItinerarySlots: 3,
+            isItineraryCompleted: true
+        )
+        let service = MockPlaceDetailService(
+            fetchResult: .success(sampleDetail()),
+            checkInResult: .success(completedResult)
+        )
+        let viewModel = PlaceDetailViewModel(
+            place: samplePlace,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: { self.sampleUserCoordinate },
+            service: service
+        )
+
+        await viewModel.load()
+        await viewModel.confirmCheckIn()
+
+        #expect(viewModel.earnedSealPresentation == nil)
+        #expect(viewModel.showsCompletedItineraryAlert)
+        viewModel.dismissCompletedItineraryAlert()
+        #expect(viewModel.showsCompletedItineraryAlert == false)
+    }
+
+    @Test("a new seal is shown before the itinerary completion alert")
+    func completedItineraryWaitsForSealDismiss() async {
+        let completedWithSeal = CheckInResult(
+            stampID: "stamp_park",
+            isNewStamp: true,
+            completedItinerarySlots: 3,
+            totalItinerarySlots: 3,
+            isItineraryCompleted: true
+        )
+        let service = MockPlaceDetailService(
+            fetchResult: .success(sampleDetail()),
+            checkInResult: .success(completedWithSeal)
+        )
+        let viewModel = PlaceDetailViewModel(
+            place: samplePlace,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: { self.sampleUserCoordinate },
+            service: service
+        )
+
+        await viewModel.load()
+        await viewModel.confirmCheckIn()
+
+        #expect(viewModel.earnedSealPresentation?.category == .park)
+        #expect(viewModel.showsCompletedItineraryAlert == false)
+
+        viewModel.dismissEarnedSealAlert()
+
+        #expect(viewModel.earnedSealPresentation == nil)
+        #expect(viewModel.showsCompletedItineraryAlert)
     }
 
     @Test("a check-in conflict still queues a rating prompt")

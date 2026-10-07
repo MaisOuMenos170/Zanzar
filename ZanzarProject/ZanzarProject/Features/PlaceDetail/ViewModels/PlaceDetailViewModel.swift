@@ -22,6 +22,8 @@ final class PlaceDetailViewModel {
     var showsCellularImagesPrompt = false
     var showsCheckInConfirmation = false
     var earnedSealPresentation: EarnedSealPresentation?
+    var showsCompletedItineraryAlert = false
+    private var pendingCompletedItineraryAlert = false
 
     init(
         place: MapPlace,
@@ -83,6 +85,14 @@ final class PlaceDetailViewModel {
 
     func dismissEarnedSealAlert() {
         earnedSealPresentation = nil
+        if pendingCompletedItineraryAlert {
+            pendingCompletedItineraryAlert = false
+            showsCompletedItineraryAlert = true
+        }
+    }
+
+    func dismissCompletedItineraryAlert() {
+        showsCompletedItineraryAlert = false
     }
 
     func performCheckIn() async {
@@ -103,6 +113,7 @@ final class PlaceDetailViewModel {
             detail = currentDetail
             queueRatingPrompt(for: currentDetail, userID: userID)
             presentEarnedSealIfNeeded(for: currentDetail, result: result)
+            presentCompletedItineraryIfNeeded(result: result)
             notifyItineraryChangeIfNeeded(result: result)
         } catch is CancellationError {
             return
@@ -137,6 +148,15 @@ final class PlaceDetailViewModel {
         let category = result.sealCategory ?? (detail.category == .unknown ? nil : detail.category)
         guard let category else { return }
         earnedSealPresentation = EarnedSealPresentation(placeName: detail.displayName, category: category)
+    }
+
+    private func presentCompletedItineraryIfNeeded(result: CheckInResult) {
+        guard result.isItineraryCompleted else { return }
+        if earnedSealPresentation != nil {
+            pendingCompletedItineraryAlert = true
+        } else {
+            showsCompletedItineraryAlert = true
+        }
     }
 
     private func notifyItineraryChangeIfNeeded(result: CheckInResult) {
