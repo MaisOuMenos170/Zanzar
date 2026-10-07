@@ -55,6 +55,35 @@ struct PlaceDetailView: View {
                 Text(errorMessage)
             }
         }
+        .alert("placeDetail.checkInConfirmation.title", isPresented: $viewModel.showsCheckInConfirmation) {
+            Button("placeDetail.checkInConfirmation.cancelButton.title", role: .cancel) {}
+            Button("placeDetail.checkInConfirmation.confirmButton.title") {
+                Task { await viewModel.confirmCheckIn() }
+            }
+        } message: {
+            if let placeName = viewModel.detail?.displayName {
+                Text(checkInConfirmationMessage(for: placeName))
+            }
+        }
+        .overlay {
+            if let presentation = viewModel.earnedSealPresentation {
+                SealEarnedAlertView(
+                    placeName: presentation.placeName,
+                    category: presentation.category,
+                    onAccept: viewModel.dismissEarnedSealAlert
+                )
+                .transition(.opacity)
+            }
+        }
+        .animation(.default, value: viewModel.earnedSealPresentation != nil)
+    }
+
+    private func checkInConfirmationMessage(for placeName: String) -> AttributedString {
+        var name = AttributedString(placeName)
+        name.inlinePresentationIntent = .stronglyEmphasized
+        return AttributedString(localized: "placeDetail.checkInConfirmation.message.prefix")
+            + name
+            + AttributedString(localized: "placeDetail.checkInConfirmation.message.suffix")
     }
 
     private var errorAlertIsPresented: Binding<Bool> {
@@ -99,9 +128,7 @@ struct PlaceDetailView: View {
                             hasCheckedIn: detail.hasCheckedIn,
                             isLoading: viewModel.isCheckingIn
                         ) {
-                            Task {
-                                await viewModel.performCheckIn()
-                            }
+                            viewModel.requestCheckIn()
                         }
 
                         VStack(alignment: .leading, spacing: 8) {
@@ -120,7 +147,8 @@ struct PlaceDetailView: View {
                     PlaceDetailStatsCard(
                         totalCheckIns: detail.totalCheckIns,
                         category: detail.category,
-                        hasCheckedIn: detail.hasCheckedIn
+                        hasCheckedIn: detail.hasCheckedIn,
+                        isInActiveItinerary: detail.isInActiveItinerary
                     )
 
                     PlaceDetailReactionsSection(reactions: detail.reactions)

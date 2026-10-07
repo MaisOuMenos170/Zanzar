@@ -2,14 +2,25 @@ import SwiftUI
 
 struct ProfileCheckInCard: View {
     let checkIn: ProfileCheckIn
+    let mediaPolicy: PlaceMediaAccessPolicy
 
     var body: some View {
         VStack(spacing: 10) {
             Color("ProfileReactionPlaceholder")
                 .frame(height: 78)
                 .overlay {
-                    PlaceRemoteImage(photoReference: checkIn.photoReference) {
+                    PlaceRemoteImage(photoReference: checkIn.photoReference, mediaPolicy: mediaPolicy) {
                         Color("ProfileReactionPlaceholder")
+                    }
+                }
+                .overlay(alignment: .bottomLeading) {
+                    if let impressionTag = checkIn.impressionTag {
+                        Image(impressionTag.imageName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 36, height: 36)
+                            .padding(8)
+                            .accessibilityLabel(Text("profile.checkInCard.reactionAccessibilityLabel"))
                     }
                 }
                 .clipped()
@@ -58,8 +69,8 @@ struct ProfileCheckInCard: View {
 
 #Preview {
     HStack {
-        ProfileCheckInCard(checkIn: Profile.preview.recentCheckIns[0])
-        ProfileCheckInCard(checkIn: Profile.preview.recentCheckIns[2])
+        ProfileCheckInCard(checkIn: Profile.preview.recentCheckIns[0], mediaPolicy: .shared)
+        ProfileCheckInCard(checkIn: Profile.preview.recentCheckIns[2], mediaPolicy: .shared)
     }
     .padding()
 }

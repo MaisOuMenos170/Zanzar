@@ -8,7 +8,7 @@ struct ProfileViewModelTests {
     private static let profile = Profile(
         summary: ProfileSummary(name: "Bia", checkInCount: 2, itineraryCount: 1, sealCount: 3),
         recentCheckIns: [
-            ProfileCheckIn(id: "p1|d1", placeID: "p1", placeName: "Parque", date: .now, photoReference: nil, sealCategory: .park)
+            ProfileCheckIn(id: "p1|d1", placeID: "p1", placeName: "Parque", date: .now, photoReference: nil, sealCategory: .park, impressionTag: nil)
         ]
     )
 

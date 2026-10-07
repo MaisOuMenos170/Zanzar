@@ -7,6 +7,7 @@ struct ProfileCheckIn: Identifiable, Hashable {
     let date: Date
     let photoReference: String?
     let sealCategory: ZanzarPlaceCategory?
+    let impressionTag: ImpressionTag?
 }
 
 extension ProfileCheckIn {
@@ -17,7 +18,8 @@ extension ProfileCheckIn {
             placeName: placeName,
             date: date,
             photoReference: photoReference,
-            sealCategory: sealCategory
+            sealCategory: sealCategory,
+            impressionTag: impressionTag
         )
     }
 

@@ -2,7 +2,7 @@ import Foundation
 
 protocol PlaceDetailServicing: Sendable {
     func fetchPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail
-    func checkIn(placeID: String) async throws
+    func checkIn(placeID: String) async throws -> CheckInResult
 }
 
 struct PlaceDetailAPIResponse: Decodable, Sendable {
@@ -136,11 +136,12 @@ final class PlaceDetailService: PlaceDetailServicing {
         }
     }
 
-    func checkIn(placeID: String) async throws {
+    func checkIn(placeID: String) async throws -> CheckInResult {
         AppLog.placeDetail.info("Checking in placeId=\(placeID)...")
         do {
-            try await sendCheckIn(placeID: placeID)
-            AppLog.placeDetail.info("Checked in placeId=\(placeID) successfully")
+            let result = try await sendCheckIn(placeID: placeID)
+            AppLog.placeDetail.info("Checked in placeId=\(placeID) successfully (isNewStamp=\(result.isNewStamp))")
+            return result
         } catch APIError.httpStatus(409, let message) {
             AppLog.placeDetail.warning("Check-in conflict (409) placeId=\(placeID)")
             throw APIError.httpStatus(409, message: message)
@@ -203,8 +204,8 @@ final class PlaceDetailService: PlaceDetailServicing {
         }
     }
 
-    private func sendCheckIn(placeID: String) async throws {
-        let _: CheckInMessageResponse = try await client.send(
+    private func sendCheckIn(placeID: String) async throws -> CheckInResult {
+        let response: CheckInAPIResponse = try await client.send(
             path: "checkIn",
             method: .post,
             body: CheckInCreateRequest(
@@ -213,6 +214,7 @@ final class PlaceDetailService: PlaceDetailServicing {
                 clientMutationId: UUID().uuidString
             )
         )
+        return response.makeCheckInResult()
     }
 
     private func fetchHasCheckedIn(placeID: String, userID: String?) async throws -> Bool {
@@ -248,6 +250,3 @@ final class PlaceDetailService: PlaceDetailServicing {
     }
 }
 
-private struct CheckInMessageResponse: Decodable, Sendable {
-    let message: String
-}

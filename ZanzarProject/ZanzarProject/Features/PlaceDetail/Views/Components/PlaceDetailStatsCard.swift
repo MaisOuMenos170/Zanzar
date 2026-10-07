@@ -4,11 +4,16 @@ struct PlaceDetailStatsCard: View {
     let totalCheckIns: Int
     let category: ZanzarPlaceCategory
     let hasCheckedIn: Bool
+    let isInActiveItinerary: Bool
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var sealState: PlaceCategorySealState {
         hasCheckedIn ? .earned : .preview
+    }
+
+    private var sealSize: CGFloat {
+        isInActiveItinerary ? 72 : 102
     }
 
     var body: some View {
@@ -30,12 +35,18 @@ struct PlaceDetailStatsCard: View {
             }
             .frame(maxWidth: .infinity)
 
-            PlaceCategorySealView(category: category, state: sealState)
-                .frame(width: 102, height: 102)
-                .accessibilityLabel(sealAccessibilityLabel)
+            HStack(spacing: 12) {
+                PlaceCategorySealView(category: category, state: sealState, size: sealSize)
+                    .accessibilityLabel(categorySealAccessibilityLabel)
+
+                if isInActiveItinerary {
+                    ItineraryStampView(state: sealState, size: sealSize)
+                        .accessibilityLabel(itinerarySealAccessibilityLabel)
+                }
+            }
         }
         .animation(reduceMotion ? nil : .spring(duration: 0.45), value: hasCheckedIn)
-        .padding(.horizontal, 36)
+        .padding(.horizontal, isInActiveItinerary ? 24 : 36)
         .padding(.vertical, 16)
         .background(Color("PlaceDetailStatsBackground"), in: .rect(cornerRadius: 16))
     }
@@ -65,12 +76,18 @@ struct PlaceDetailStatsCard: View {
         }
     }
 
-    private var sealAccessibilityLabel: String {
+    private var categorySealAccessibilityLabel: String {
         if hasCheckedIn {
             String(format: String(localized: "placeDetail.statsCard.sealEarnedAccessibilityLabel"), categoryLabel)
         } else {
             String(format: String(localized: "placeDetail.statsCard.sealPreviewAccessibilityLabel"), categoryLabel)
         }
+    }
+
+    private var itinerarySealAccessibilityLabel: String {
+        hasCheckedIn
+            ? String(localized: "placeDetail.statsCard.itinerarySealEarnedAccessibilityLabel")
+            : String(localized: "placeDetail.statsCard.itinerarySealPreviewAccessibilityLabel")
     }
 }
 
@@ -78,34 +95,28 @@ struct PlaceDetailStatsCard: View {
     PlaceDetailStatsCard(
         totalCheckIns: 42,
         category: .restaurant,
-        hasCheckedIn: false
+        hasCheckedIn: false,
+        isInActiveItinerary: false
     )
     .padding()
 }
 
-#Preview("After check-in") {
-    PlaceDetailStatsCard(
-        totalCheckIns: 43,
-        category: .restaurant,
-        hasCheckedIn: true
-    )
-    .padding()
-}
-
-#Preview("Before check-in") {
+#Preview("In active itinerary") {
     PlaceDetailStatsCard(
         totalCheckIns: 42,
         category: .restaurant,
-        hasCheckedIn: false
+        hasCheckedIn: false,
+        isInActiveItinerary: true
     )
     .padding()
 }
 
-#Preview("After check-in") {
+#Preview("After check-in in itinerary") {
     PlaceDetailStatsCard(
         totalCheckIns: 43,
         category: .restaurant,
-        hasCheckedIn: true
+        hasCheckedIn: true,
+        isInActiveItinerary: true
     )
     .padding()
 }
