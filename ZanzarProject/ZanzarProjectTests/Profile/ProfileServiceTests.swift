@@ -48,6 +48,34 @@ struct ProfileServiceTests {
         #expect(profile.recentCheckIns.count == 3)
     }
 
+    @Test("accepts the legacy completedItinerariesCount key")
+    func decodesLegacyItineraryCount() throws {
+        let json = """
+        {
+          "username": "tiago", "checkInCount": 2, "completedItinerariesCount": 4, "stampsCount": 1,
+          "recentCheckIns": []
+        }
+        """
+
+        let profile = try Self.decodeProfile(json)
+
+        #expect(profile.summary.itineraryCount == 4)
+    }
+
+    @Test("prefers itinerariesCount when the legacy key is also present")
+    func prefersCurrentItineraryCount() throws {
+        let json = """
+        {
+          "username": "tiago", "checkInCount": 2, "itinerariesCount": 7,
+          "completedItinerariesCount": 4, "stampsCount": 1, "recentCheckIns": []
+        }
+        """
+
+        let profile = try Self.decodeProfile(json)
+
+        #expect(profile.summary.itineraryCount == 7)
+    }
+
     @Test("maps null and unknown impression tags")
     func mapsImpressionTags() throws {
         let json = """
