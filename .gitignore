@@ -63,3 +63,6 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# Notas locais de backlog MVP (não versionar)
+MVP-TASKS.md

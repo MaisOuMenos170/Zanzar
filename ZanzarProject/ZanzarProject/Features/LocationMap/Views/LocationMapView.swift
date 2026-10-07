@@ -71,6 +71,9 @@ struct LocationMapView: View {
             await ratingPrompt.monitorLeaving()
             await viewModel.reloadPlaces()
         }
+        .onReceive(NotificationCenter.default.publisher(for: AppNotification.activeItineraryDidChange)) { _ in
+            Task { await viewModel.reloadPlaces() }
+        }
     }
 
     private static let pinTransition = AnyTransition.opacity.combined(with: .scale(scale: 0.7))

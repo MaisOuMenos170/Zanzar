@@ -56,18 +56,13 @@ final class AppCoordinator {
     @ViewBuilder
     func view(for sheet: Sheet) -> some View {
         switch sheet {
-        // TODO: add a case per feature sheet
-        default:
-            EmptyView()
+        case .itineraryDetail(let slug):
+            ItineraryDetailSheet(slug: slug)
         }
     }
 
     @ViewBuilder
     func view(for fullScreenCover: FullScreenCover) -> some View {
-        switch fullScreenCover {
-        // TODO: add a case per feature full-screen cover
-        default:
-            EmptyView()
-        }
+        EmptyView()
     }
 }

@@ -273,20 +273,19 @@ struct LocationMapViewModelTests {
 
 @MainActor
 final class MockLocationMapService: LocationMapServicing {
-    var locationResult: Result<UserCoordinate, Error>?
-    var placesResult: Result<[MapPlace], Error>?
+    var locationResult: Result<UserCoordinate, Error> = .failure(URLError(.notConnectedToInternet))
+    var placesResult: Result<[MapPlace], Error> = .success([])
+
+    /// Stub for tests that trigger nearby fetch but do not care about location data.
+    static func nearbyUnavailable() -> MockLocationMapService {
+        MockLocationMapService()
+    }
 
     func currentUserLocation() async throws -> UserCoordinate {
-        guard let locationResult else {
-            fatalError("MockLocationMapService.locationResult not configured")
-        }
-        return try locationResult.get()
+        try locationResult.get()
     }
 
     func fetchNearbyPlaces(from coordinate: UserCoordinate) async throws -> [MapPlace] {
-        guard let placesResult else {
-            fatalError("MockLocationMapService.placesResult not configured")
-        }
-        return try placesResult.get()
+        try placesResult.get()
     }
 }

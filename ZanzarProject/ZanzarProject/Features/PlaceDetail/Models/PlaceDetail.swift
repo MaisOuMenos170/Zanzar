@@ -88,6 +88,24 @@ struct PlaceDetailNearbyPlace: Identifiable, Hashable, Sendable {
     }
 }
 
+extension PlaceDetailNearbyPlace {
+    init(mapPlace: MapPlace) {
+        self.init(
+            id: mapPlace.id,
+            name: mapPlace.name,
+            nickname: mapPlace.nickname,
+            latitude: mapPlace.latitude,
+            longitude: mapPlace.longitude,
+            category: mapPlace.category,
+            distanceMeters: mapPlace.distanceMeters ?? 0,
+            checkInCount: 0,
+            photoReference: nil,
+            reactionImageNames: [],
+            hasCheckedIn: mapPlace.pinStyle == .checkedIn
+        )
+    }
+}
+
 struct PlaceDetailLoadContext: Sendable {
     let place: MapPlace
     let userCoordinate: UserCoordinate?
