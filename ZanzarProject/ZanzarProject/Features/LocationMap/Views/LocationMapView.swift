@@ -6,6 +6,7 @@ struct LocationMapView: View {
     @State private var ratingPrompt = RatingPromptViewModel()
     @State private var selectedPlaceID: String?
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(ToastPresenter.self) private var toasts
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -30,11 +31,11 @@ struct LocationMapView: View {
         .onMapCameraChange(frequency: .continuous) { context in
             viewModel.updateVisibleRegion(context.region)
         }
-        .overlay(alignment: .top) {
-            if let errorMessage = viewModel.errorMessage {
-                LocationMapErrorBanner(message: errorMessage)
-                    .padding()
-            }
+        // The error is handed to the app-level toast and consumed, so a repeated failure shows it again.
+        .onChange(of: viewModel.errorMessage) { _, message in
+            guard let message else { return }
+            toasts.show(message)
+            viewModel.errorMessage = nil
         }
         .overlay {
             if viewModel.isLoading && viewModel.userCoordinate == nil {
@@ -124,4 +125,5 @@ struct LocationMapView: View {
 #Preview {
     LocationMapView()
         .environment(AppCoordinator())
+        .environment(ToastPresenter())
 }
