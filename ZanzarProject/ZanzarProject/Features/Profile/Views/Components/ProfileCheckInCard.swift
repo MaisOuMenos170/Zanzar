@@ -12,6 +12,16 @@ struct ProfileCheckInCard: View {
                         Color("ProfileReactionPlaceholder")
                     }
                 }
+                .overlay(alignment: .bottomLeading) {
+                    if let impressionTag = checkIn.impressionTag {
+                        Image(impressionTag.imageName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 36, height: 36)
+                            .padding(8)
+                            .accessibilityLabel(Text("profile.checkInCard.reactionAccessibilityLabel"))
+                    }
+                }
                 .clipped()
 
             HStack(spacing: 8) {

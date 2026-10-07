@@ -8,7 +8,7 @@ protocol ProfileServicing: Sendable {
 struct ProfileAPIResponse: Decodable, Sendable {
     let username: String
     let checkInCount: Int
-    let completedItinerariesCount: Int
+    let itinerariesCount: Int
     let stampsCount: Int
     let recentCheckIns: [RecentCheckInAPIResponse]
 
@@ -17,7 +17,7 @@ struct ProfileAPIResponse: Decodable, Sendable {
             summary: ProfileSummary(
                 name: username,
                 checkInCount: checkInCount,
-                itineraryCount: completedItinerariesCount,
+                itineraryCount: itinerariesCount,
                 sealCount: stampsCount
             ),
             recentCheckIns: makeCheckIns()
@@ -49,6 +49,7 @@ struct RecentCheckInAPIResponse: Decodable, Sendable {
     let datetime: String
     let photoReference: String?
     let stamp: StampAPIResponse?
+    let impressionTag: String?
 
     struct StampAPIResponse: Decodable, Sendable {
         let stampId: String
@@ -62,7 +63,8 @@ struct RecentCheckInAPIResponse: Decodable, Sendable {
             placeName: placeName,
             date: try Self.parseDate(datetime),
             photoReference: photoReference,
-            sealCategory: stamp.flatMap { Self.sealCategory(forStampID: $0.stampId) }
+            sealCategory: stamp.flatMap { Self.sealCategory(forStampID: $0.stampId) },
+            impressionTag: impressionTag.flatMap(ImpressionTag.init(rawValue:))
         )
     }
 

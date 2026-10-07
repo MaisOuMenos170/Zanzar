@@ -9,7 +9,7 @@ struct ProfileServiceTests {
     {
       "username": "tiago",
       "checkInCount": 12,
-      "completedItinerariesCount": 2,
+      "itinerariesCount": 2,
       "stampsCount": 9,
       "recentCheckIns": [
         {
@@ -17,7 +17,8 @@ struct ProfileServiceTests {
           "placeName": "Bar do Zé",
           "datetime": "2026-10-05T18:30:00.000Z",
           "photoReference": "AUacSh",
-          "stamp": { "stampId": "stamp_bar", "imageUrl": "/assets/stamps/bar.png" }
+          "stamp": { "stampId": "stamp_bar", "imageUrl": "/assets/stamps/bar.png" },
+          "impressionTag": "happy"
         },
         {
           "placeId": "ChIJ2",
@@ -54,6 +55,7 @@ struct ProfileServiceTests {
         #expect(checkIns[0].placeName == "Bar do Zé")
         #expect(checkIns[0].photoReference == "AUacSh")
         #expect(checkIns[0].sealCategory == .bar)
+        #expect(checkIns[0].impressionTag == .happy)
         #expect(checkIns[0].date == Date(timeIntervalSince1970: 1_791_225_000))
 
         #expect(checkIns[1].placeName == nil)
@@ -100,7 +102,7 @@ struct ProfileServiceTests {
     func duplicateCheckInsGetUniqueIDs() throws {
         let json = """
         {
-          "username": "tiago", "checkInCount": 2, "completedItinerariesCount": 0, "stampsCount": 0,
+          "username": "tiago", "checkInCount": 2, "itinerariesCount": 0, "stampsCount": 0,
           "recentCheckIns": [
             { "placeId": "ChIJ1", "datetime": "2026-10-05T18:30:00Z" },
             { "placeId": "ChIJ1", "datetime": "2026-10-05T18:30:00Z" }
