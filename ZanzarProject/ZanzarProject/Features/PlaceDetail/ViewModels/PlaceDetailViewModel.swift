@@ -28,7 +28,7 @@ final class PlaceDetailViewModel {
 
     init(
         place: MapPlace,
-        userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.getToken().flatMap(JWTDecoder.userID(from:)) },
+        userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.userID },
         userCoordinateProvider: @escaping @Sendable () async throws -> UserCoordinate = {
             try await LocationMapService().currentUserLocation()
         },

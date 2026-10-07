@@ -1,6 +1,6 @@
 import UIKit
 
-enum PlaceDetailNavigationApp: String, CaseIterable, Identifiable {
+nonisolated enum PlaceDetailNavigationApp: String, CaseIterable, Identifiable {
     case appleMaps
     case googleMaps
     case waze

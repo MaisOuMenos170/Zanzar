@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Visual state from Figma node 860:4084 (pins e selos).
-enum LocationPinStyle: Sendable {
+nonisolated enum LocationPinStyle: Sendable {
     /// Lugar habilitado para fazer check-in — centro branco, ícone coral.
     case available
     /// Check-in já foi realizado — centro vermelho escuro, ícone branco.

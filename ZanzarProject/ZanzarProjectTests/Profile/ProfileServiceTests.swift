@@ -233,7 +233,11 @@ private final class StubNetworkClient: NetworkClient, @unchecked Sendable {
         return try JSONDecoder().decode(Response.self, from: Data(responseJSON.utf8))
     }
 
-    func send<Body: Encodable, Response: Decodable>(path: String, method: HTTPMethod, body: Body) async throws -> Response {
+    func send<Body: Encodable, Response: Decodable>(
+        path: String,
+        method: HTTPMethod,
+        body: Body
+    ) async throws -> Response {
         try JSONDecoder().decode(Response.self, from: Data(responseJSON.utf8))
     }
 

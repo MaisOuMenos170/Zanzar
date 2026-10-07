@@ -1,7 +1,7 @@
 import CoreLocation
 import Foundation
 
-struct MapPinCluster: Identifiable, Equatable, Sendable {
+nonisolated struct MapPinCluster: Identifiable, Equatable, Sendable {
     let id: String
     let places: [MapPlace]
     let latitude: Double
@@ -23,7 +23,7 @@ struct MapPinCluster: Identifiable, Equatable, Sendable {
     }
 }
 
-enum MapPinDisplayItem: Identifiable, Equatable, Sendable {
+nonisolated enum MapPinDisplayItem: Identifiable, Equatable, Sendable {
     case place(MapPlace)
     case cluster(MapPinCluster)
 

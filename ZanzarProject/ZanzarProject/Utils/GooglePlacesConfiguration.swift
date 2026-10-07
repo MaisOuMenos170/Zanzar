@@ -8,7 +8,7 @@ enum GooglePlacesConfiguration {
         )
         components?.queryItems = [
             URLQueryItem(name: "ref", value: reference),
-            URLQueryItem(name: "maxwidth", value: String(maxWidth)),
+            URLQueryItem(name: "maxwidth", value: String(maxWidth))
         ]
         return components?.url
     }

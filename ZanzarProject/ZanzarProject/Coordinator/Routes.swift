@@ -11,9 +11,3 @@ enum Sheet: Identifiable, Hashable {
 
     var id: Self { self }
 }
-
-enum FullScreenCover: Identifiable, Hashable {
-    var id: Self {
-        switch self {}
-    }
-}

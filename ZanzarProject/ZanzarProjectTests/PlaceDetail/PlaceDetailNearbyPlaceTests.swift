@@ -7,22 +7,26 @@ struct PlaceDetailNearbyPlaceTests {
     @Test("Nearby places map from API responses with navigation metadata")
     func nearbyPlacesMapFromAPIResponses() throws {
         let mainPlace = try makeAPIResponse(
-            placeId: "place-main",
-            name: "Museu",
-            lat: -25.41,
-            lng: -49.27,
-            category: "museum",
-            checkInCount: 5,
-            distanceMeters: nil
+            APIResponseFixture(
+                placeId: "place-main",
+                name: "Museu",
+                lat: -25.41,
+                lng: -49.27,
+                category: "museum",
+                checkInCount: 5,
+                distanceMeters: nil
+            )
         )
         let nearbyPlace = try makeAPIResponse(
-            placeId: "place-nearby",
-            name: "Parque Barigui",
-            lat: -25.42,
-            lng: -49.31,
-            category: "park",
-            checkInCount: 21,
-            distanceMeters: 850
+            APIResponseFixture(
+                placeId: "place-nearby",
+                name: "Parque Barigui",
+                lat: -25.42,
+                lng: -49.31,
+                category: "park",
+                checkInCount: 21,
+                distanceMeters: 850
+            )
         )
 
         let detail = PlaceDetail.make(
@@ -59,22 +63,26 @@ struct PlaceDetailNearbyPlaceTests {
     @Test("Nearby places exclude the place currently being viewed")
     func nearbyPlacesExcludeCurrentPlace() throws {
         let mainPlace = try makeAPIResponse(
-            placeId: "place-main",
-            name: "Museu",
-            lat: -25.41,
-            lng: -49.27,
-            category: "museum",
-            checkInCount: 5,
-            distanceMeters: nil
+            APIResponseFixture(
+                placeId: "place-main",
+                name: "Museu",
+                lat: -25.41,
+                lng: -49.27,
+                category: "museum",
+                checkInCount: 5,
+                distanceMeters: nil
+            )
         )
         let duplicateNearby = try makeAPIResponse(
-            placeId: "place-main",
-            name: "Museu",
-            lat: -25.41,
-            lng: -49.27,
-            category: "museum",
-            checkInCount: 5,
-            distanceMeters: 100
+            APIResponseFixture(
+                placeId: "place-main",
+                name: "Museu",
+                lat: -25.41,
+                lng: -49.27,
+                category: "museum",
+                checkInCount: 5,
+                distanceMeters: 100
+            )
         )
 
         let detail = PlaceDetail.make(
@@ -98,14 +106,16 @@ struct PlaceDetailNearbyPlaceTests {
     @Test("Main place uses nickname for displayName")
     func mainPlaceUsesNicknameForDisplayName() throws {
         let mainPlace = try makeAPIResponse(
-            placeId: "place-main",
-            name: "Oscar Niemeyer Museum",
-            nickname: "MON",
-            lat: -25.41,
-            lng: -49.27,
-            category: "museum",
-            checkInCount: 5,
-            distanceMeters: nil
+            APIResponseFixture(
+                placeId: "place-main",
+                name: "Oscar Niemeyer Museum",
+                nickname: "MON",
+                lat: -25.41,
+                lng: -49.27,
+                category: "museum",
+                checkInCount: 5,
+                distanceMeters: nil
+            )
         )
 
         let detail = PlaceDetail.make(
@@ -131,24 +141,28 @@ struct PlaceDetailNearbyPlaceTests {
     @Test("Nearby places prefer nickname and decode userContext check-in state")
     func nearbyPlacesPreferNicknameAndCheckInState() throws {
         let mainPlace = try makeAPIResponse(
-            placeId: "place-main",
-            name: "Museu",
-            lat: -25.41,
-            lng: -49.27,
-            category: "museum",
-            checkInCount: 5,
-            distanceMeters: nil
+            APIResponseFixture(
+                placeId: "place-main",
+                name: "Museu",
+                lat: -25.41,
+                lng: -49.27,
+                category: "museum",
+                checkInCount: 5,
+                distanceMeters: nil
+            )
         )
         let nearbyPlace = try makeAPIResponse(
-            placeId: "place-nearby",
-            name: "Oscar Niemeyer Museum",
-            nickname: "MON",
-            lat: -25.42,
-            lng: -49.31,
-            category: "museum",
-            checkInCount: 21,
-            distanceMeters: 850,
-            hasCheckedIn: true
+            APIResponseFixture(
+                placeId: "place-nearby",
+                name: "Oscar Niemeyer Museum",
+                nickname: "MON",
+                lat: -25.42,
+                lng: -49.31,
+                category: "museum",
+                checkInCount: 21,
+                distanceMeters: 850,
+                hasCheckedIn: true
+            )
         )
 
         let detail = PlaceDetail.make(
@@ -175,14 +189,16 @@ struct PlaceDetailNearbyPlaceTests {
     func categoryChipDropsCaseVariantSlug() throws {
         let categoryLabel = String(localized: "placeDetail.tag.historic")
         let response = try makeAPIResponse(
-            placeId: "place-historic",
-            name: "Cavalo Babão",
-            lat: -25.43,
-            lng: -49.27,
-            category: "historic",
-            checkInCount: 1,
-            distanceMeters: 100,
-            tags: [categoryLabel.lowercased(), "centro"]
+            APIResponseFixture(
+                placeId: "place-historic",
+                name: "Cavalo Babão",
+                lat: -25.43,
+                lng: -49.27,
+                category: "historic",
+                checkInCount: 1,
+                distanceMeters: 100,
+                tags: [categoryLabel.lowercased(), "centro"]
+            )
         )
 
         let detail = PlaceDetail.make(
@@ -209,36 +225,41 @@ struct PlaceDetailNearbyPlaceTests {
         #expect(labels.count == 2)
     }
 
-    private func makeAPIResponse(
-        placeId: String,
-        name: String,
-        nickname: String? = nil,
-        lat: Double,
-        lng: Double,
-        category: String,
-        checkInCount: Int,
-        distanceMeters: Double?,
-        hasCheckedIn: Bool = false,
-        tags: [String] = []
-    ) throws -> PlaceDetailAPIResponse {
-        let nicknameField = nickname.map { ", \"nickname\": \"\($0)\"" } ?? ""
-        let tagsField = tags.map { "\"\($0)\"" }.joined(separator: ", ")
-        let userContextField = ", \"userContext\": { \"hasCheckedIn\": \(hasCheckedIn ? "true" : "false"), \"isInActiveItinerary\": false }"
+    private struct APIResponseFixture {
+        let placeId: String
+        let name: String
+        var nickname: String?
+        let lat: Double
+        let lng: Double
+        let category: String
+        let checkInCount: Int
+        let distanceMeters: Double?
+        var hasCheckedIn = false
+        var tags: [String] = []
+    }
+
+    private func makeAPIResponse(_ fixture: APIResponseFixture) throws -> PlaceDetailAPIResponse {
+        let nicknameField = fixture.nickname.map { ", \"nickname\": \"\($0)\"" } ?? ""
+        let hasCheckedIn = fixture.hasCheckedIn ? "true" : "false"
+        let userContextField =
+            ", \"userContext\": { \"hasCheckedIn\": \(hasCheckedIn), \"isInActiveItinerary\": false }"
+        let tagsField = fixture.tags.map { "\"\($0)\"" }.joined(separator: ", ")
+        let distanceField = fixture.distanceMeters.map { ", \"distanceMeters\": \($0)" } ?? ""
         let json = """
         {
-          "place_id": "\(placeId)",
-          "name": "\(name)"\(nicknameField),
+          "place_id": "\(fixture.placeId)",
+          "name": "\(fixture.name)"\(nicknameField),
           "geometry": {
-            "location": { "lat": \(lat), "lng": \(lng) }
+            "location": { "lat": \(fixture.lat), "lng": \(fixture.lng) }
           },
           "photos": [],
           "zanzar": {
-            "category": "\(category)",
+            "category": "\(fixture.category)",
             "tags": [\(tagsField)],
-            "checkInCount": \(checkInCount),
+            "checkInCount": \(fixture.checkInCount),
             "impressionCounts": { "delighted": 1, "happy": 2 }
           }
-          \(distanceMeters.map { ", \"distanceMeters\": \($0)" } ?? "")\(userContextField)
+          \(distanceField)\(userContextField)
         }
         """
 

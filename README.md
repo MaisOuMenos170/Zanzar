@@ -16,8 +16,8 @@ ZanzarProject/ZanzarProject/
     ViewModels/
       <FeatureName>ViewModel.swift
   Coordinator/
-    AppCoordinator.swift         @Observable, owns NavigationPath + sheet/cover state
-    Routes.swift                 Route / Sheet / FullScreenCover enums
+    AppCoordinator.swift         @Observable, owns the NavigationPath
+    Routes.swift                 Route enum
   Extensions/                    cross-feature Swift/SwiftUI extensions
   Utils/
     NetworkClient.swift          the one shared network client

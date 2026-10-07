@@ -20,9 +20,11 @@ final class PlaceMediaAccessPolicy {
 
     private init() {
         monitor.pathUpdateHandler = { [weak self] path in
-            Task { @MainActor in
-                self?.isOnline = path.status == .satisfied
-                self?.usesCellular = path.usesInterfaceType(.cellular)
+            let isOnline = path.status == .satisfied
+            let usesCellular = path.usesInterfaceType(.cellular)
+            Task { @MainActor [weak self] in
+                self?.isOnline = isOnline
+                self?.usesCellular = usesCellular
             }
         }
         monitor.start(queue: monitorQueue)

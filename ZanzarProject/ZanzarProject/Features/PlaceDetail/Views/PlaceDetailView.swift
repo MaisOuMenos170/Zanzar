@@ -164,20 +164,11 @@ struct PlaceDetailView: View {
     private func detailBody(for detail: PlaceDetail) -> some View {
         VStack(alignment: .leading, spacing: 24) {
             VStack(alignment: .leading, spacing: 16) {
-                VStack(alignment: .leading, spacing: 12) {
-                    PlaceDetailHeroImage(
-                        photoReference: detail.heroPhotoReference,
-                        mediaPolicy: mediaPolicy
-                    )
-
-                    if !detail.tags.isEmpty {
-                        HStack(spacing: 8) {
-                            ForEach(detail.tags) { tag in
-                                PlaceDetailTagBadge(label: tag.label, style: tag.style)
-                            }
-                        }
-                    }
-                }
+                PlaceDetailHeroSection(
+                    photoReference: detail.heroPhotoReference,
+                    tags: detail.tags,
+                    mediaPolicy: mediaPolicy
+                )
 
                 PlaceDetailCheckInButton(
                     hasCheckedIn: detail.hasCheckedIn,
@@ -186,17 +177,7 @@ struct PlaceDetailView: View {
                     viewModel.requestCheckIn()
                 }
 
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("placeDetail.detailsSection.title")
-                        .font(.headline)
-                        .bold()
-                        .foregroundStyle(.primary)
-
-                    Text(detail.description)
-                        .font(.caption)
-                        .foregroundStyle(.primary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+                PlaceDetailDescriptionSection(description: detail.description)
             }
 
             PlaceDetailStatsCard(
@@ -209,26 +190,11 @@ struct PlaceDetailView: View {
             PlaceDetailReactionsSection(reactions: detail.reactions)
 
             if !detail.nearbyPlaces.isEmpty {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("placeDetail.nearbySection.title")
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(.primary)
-
-                    ScrollView(.horizontal) {
-                        HStack(spacing: 8) {
-                            ForEach(detail.nearbyPlaces) { nearbyPlace in
-                                PlaceDetailNearbyPlaceCard(
-                                    place: nearbyPlace,
-                                    mediaPolicy: mediaPolicy
-                                ) {
-                                    coordinator.push(.placeDetail(nearbyPlace.mapPlace))
-                                }
-                            }
-                        }
-                    }
-                    .scrollIndicators(.hidden)
-                    // Without this the scroll view clips the cards' shadows at its bounds.
-                    .scrollClipDisabled()
+                PlaceDetailNearbySection(
+                    places: detail.nearbyPlaces,
+                    mediaPolicy: mediaPolicy
+                ) { place in
+                    coordinator.push(.placeDetail(place))
                 }
             }
 

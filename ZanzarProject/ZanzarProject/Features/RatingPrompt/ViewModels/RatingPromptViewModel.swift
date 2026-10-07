@@ -20,7 +20,7 @@ final class RatingPromptViewModel {
     init(
         service: RatingPromptServicing = RatingPromptService(),
         store: PendingRatingStoring = UserDefaultsPendingRatingStore(),
-        userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.getToken().flatMap(JWTDecoder.userID(from:)) },
+        userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.userID },
         userCoordinateProvider: @escaping @Sendable () async throws -> UserCoordinate = {
             try await LocationMapService().currentUserLocation()
         },
@@ -109,7 +109,7 @@ final class RatingPromptViewModel {
         defer { isSubmitting = false }
 
         do {
-            try await service.submitRating(placeID: pendingRating.placeID, impressionTag: selectedTag)
+            _ = try await service.submitRating(placeID: pendingRating.placeID, impressionTag: selectedTag)
             finish()
         } catch is CancellationError {
             return

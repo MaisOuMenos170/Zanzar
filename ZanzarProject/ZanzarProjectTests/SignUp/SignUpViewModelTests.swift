@@ -2,6 +2,7 @@ import Foundation
 import Testing
 @testable import ZanzarProject
 
+@MainActor
 @Suite("SignUpViewModel")
 struct SignUpViewModelTests {
     @Test("validate with empty fields explains each missing field")
@@ -184,7 +185,7 @@ struct SignUpViewModelTests {
     }
 }
 
-final class MockSignUpService: SignUpServicing {
+final class MockSignUpService: SignUpServicing, @unchecked Sendable {
     var submitSignUpResult: Result<SignUpResponse, Error>?
 
     func submitSignUp(_ request: SignUpRequest) async throws -> SignUpResponse {

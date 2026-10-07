@@ -7,19 +7,6 @@ struct RatingPromptResponseDecodingTests {
         let impressionTag: String
         let placeId: String
         let impressionCounts: [String: Int]?
-
-        init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            impressionTag = try container.decode(String.self, forKey: .impressionTag)
-            placeId = try container.decode(String.self, forKey: .placeId)
-            impressionCounts = try container.decodeIfPresent([String: Int].self, forKey: .impressionCounts)
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case impressionTag
-            case placeId
-            case impressionCounts
-        }
     }
 
     @Test("Rating response decodes without impressionCounts")

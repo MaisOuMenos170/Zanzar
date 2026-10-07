@@ -12,7 +12,7 @@ protocol AuthTokenPersisting: Sendable {
     func deleteToken() throws
 }
 
-struct KeychainStore: AuthTokenPersisting {
+nonisolated struct KeychainStore: AuthTokenPersisting {
     private let service = "com.zanzar.auth"
     private let account = "authToken"
 
@@ -20,14 +20,14 @@ struct KeychainStore: AuthTokenPersisting {
         [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccount as String: account,
+            kSecAttrAccount as String: account
         ]
     }
 
     private var protectedAttributes: [String: Any] {
         [
             kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
-            kSecAttrSynchronizable as String: false,
+            kSecAttrSynchronizable as String: false
         ]
     }
 
@@ -35,7 +35,7 @@ struct KeychainStore: AuthTokenPersisting {
         let data = Data(token.utf8)
 
         let attributes: [String: Any] = [
-            kSecValueData as String: data,
+            kSecValueData as String: data
         ].merging(protectedAttributes) { current, _ in current }
 
         let updateStatus = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
@@ -44,7 +44,7 @@ struct KeychainStore: AuthTokenPersisting {
         }
 
         if updateStatus == errSecItemNotFound {
-            var addQuery = query.merging(attributes) { _, new in new }
+            let addQuery = query.merging(attributes) { _, new in new }
             let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
             guard addStatus == errSecSuccess else {
                 throw KeychainError.saveFailed(addStatus)

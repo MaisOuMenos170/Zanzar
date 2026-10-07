@@ -9,7 +9,11 @@ enum HTTPMethod: String {
 
 protocol NetworkClient: Sendable {
     func get<Response: Decodable>(path: String, queryItems: [URLQueryItem]) async throws -> Response
-    func send<Body: Encodable, Response: Decodable>(path: String, method: HTTPMethod, body: Body) async throws -> Response
+    func send<Body: Encodable, Response: Decodable>(
+        path: String,
+        method: HTTPMethod,
+        body: Body
+    ) async throws -> Response
     /// For endpoints that answer with an empty body (e.g. `204 No Content`) and take no payload.
     func sendWithoutResponse(path: String, method: HTTPMethod) async throws
 }

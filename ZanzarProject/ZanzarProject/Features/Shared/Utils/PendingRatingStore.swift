@@ -7,11 +7,11 @@ protocol PendingRatingStoring {
     func clear()
 }
 
-final class UserDefaultsPendingRatingStore: PendingRatingStoring {
+nonisolated final class UserDefaultsPendingRatingStore: PendingRatingStoring {
     private static let key = "pendingRating"
     private let defaults: UserDefaults
 
-    nonisolated init(defaults: UserDefaults = .standard) {
+    init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
     }
 

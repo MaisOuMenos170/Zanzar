@@ -4,7 +4,6 @@ import SwiftUI
 final class AppCoordinator {
     var path = NavigationPath()
     var presentedSheet: Sheet?
-    var presentedFullScreenCover: FullScreenCover?
 
     func finishAuthFlow() {
         popToRoot()
@@ -27,16 +26,8 @@ final class AppCoordinator {
         presentedSheet = sheet
     }
 
-    func present(fullScreenCover: FullScreenCover) {
-        presentedFullScreenCover = fullScreenCover
-    }
-
     func dismissSheet() {
         presentedSheet = nil
-    }
-
-    func dismissFullScreenCover() {
-        presentedFullScreenCover = nil
     }
 
     @ViewBuilder
@@ -48,8 +39,6 @@ final class AppCoordinator {
             LoginView()
         case .placeDetail(let place):
             PlaceDetailView(place: place)
-        default:
-            EmptyView()
         }
     }
 
@@ -59,10 +48,5 @@ final class AppCoordinator {
         case .itineraryDetail(let slug):
             ItineraryDetailSheet(slug: slug)
         }
-    }
-
-    @ViewBuilder
-    func view(for fullScreenCover: FullScreenCover) -> some View {
-        EmptyView()
     }
 }

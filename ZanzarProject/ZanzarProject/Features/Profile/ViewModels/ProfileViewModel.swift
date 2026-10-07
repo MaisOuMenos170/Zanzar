@@ -17,7 +17,7 @@ final class ProfileViewModel {
 
     init(
         service: ProfileServicing = ProfileService(),
-        userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.getToken().flatMap(JWTDecoder.userID(from:)) },
+        userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.userID },
         checkInsLimit: Int = 4
     ) {
         self.service = service
