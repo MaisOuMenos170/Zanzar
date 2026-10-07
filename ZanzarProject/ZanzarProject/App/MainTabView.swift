@@ -10,11 +10,14 @@ struct MainTabView: View {
         TabView(selection: $selectedTab) {
             ForEach(MainTab.allCases, id: \.self) { tab in
                 Tab(tab.titleKey, systemImage: tab.systemImage, value: tab) {
+                    // tab bar's cascades into everything inside the tabs
+                    // we overwrite with a .tint on the content inside
                     tabContent(for: tab)
+                        .tint(.primary)
                 }
             }
         }
-        .tint(Color("TabBarSelected"))
+        .tint(.tabBarSelected)
     }
 
     @ViewBuilder
@@ -34,10 +37,8 @@ struct MainTabView: View {
                     .navigationDestination(for: Route.self) { route in
                         profileCoordinator.view(for: route)
                             .environment(profileCoordinator)
-                            .tint(Color("TabBarSelected"))
                     }
             }
-            .tint(.primary)
         }
     }
 }

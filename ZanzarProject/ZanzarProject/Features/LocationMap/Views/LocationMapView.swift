@@ -6,6 +6,7 @@ struct LocationMapView: View {
     @State private var ratingPrompt = RatingPromptViewModel()
     @State private var selectedPlaceID: String?
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(ToastPresenter.self) private var toasts
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -13,6 +14,7 @@ struct LocationMapView: View {
             userLocationContent
             placeAnnotations
         }
+        .tint(.blue)
         .onChange(of: selectedPlaceID) { _, placeID in
             guard let placeID,
                   let place = viewModel.places.first(where: { $0.id == placeID }) else { return }
@@ -29,11 +31,13 @@ struct LocationMapView: View {
         .onMapCameraChange(frequency: .continuous) { context in
             viewModel.updateVisibleRegion(context.region)
         }
-        .overlay(alignment: .top) {
-            if let errorMessage = viewModel.errorMessage {
-                LocationMapErrorBanner(message: errorMessage)
-                    .padding()
-            }
+        // Pins fade and scale in and out when the grouping changes instead of popping.
+        .animation(.smooth(duration: 0.3), value: viewModel.displayItems)
+        // The error is handed to the app-level toast and consumed, so a repeated failure shows it again.
+        .onChange(of: viewModel.errorMessage) { _, message in
+            guard let message else { return }
+            toasts.show(message)
+            viewModel.errorMessage = nil
         }
         .overlay {
             if viewModel.isLoading && viewModel.userCoordinate == nil {
@@ -67,8 +71,9 @@ struct LocationMapView: View {
             await ratingPrompt.monitorLeaving()
             await viewModel.reloadPlaces()
         }
-        .ignoresSafeArea()
     }
+
+    private static let pinTransition = AnyTransition.opacity.combined(with: .scale(scale: 0.7))
 
     private var isMonitoringRating: Bool {
         coordinator.path.isEmpty && scenePhase == .active
@@ -81,6 +86,7 @@ struct LocationMapView: View {
             case .place(let place):
                 Annotation(place.displayName, coordinate: place.coordinate, anchor: .bottom) {
                     LocationPinView(category: place.category, style: place.pinStyle)
+                        .transition(Self.pinTransition)
                         .accessibilityLabel(place.displayName)
                         .accessibilityAddTraits(.isButton)
                 }
@@ -96,6 +102,7 @@ struct LocationMapView: View {
                         LocationClusterPinView(count: cluster.count)
                     }
                     .buttonStyle(.plain)
+                    .transition(Self.pinTransition)
                     .accessibilityLabel(
                         String(
                             localized: "locationMap.clusterPin.accessibilityLabel \(cluster.count)"
@@ -124,4 +131,5 @@ struct LocationMapView: View {
 #Preview {
     LocationMapView()
         .environment(AppCoordinator())
+        .environment(ToastPresenter())
 }

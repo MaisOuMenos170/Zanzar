@@ -141,6 +141,39 @@ struct LocationMapViewModelTests {
         }
     }
 
+    @Test("Panning at the same zoom does not rebuild the display items")
+    func panningKeepsDisplayItems() async {
+        let coordinate = UserCoordinate(latitude: -25.43, longitude: -49.27)
+        let places = (0 ..< 12).map { index in
+            MapPlace(
+                id: "p\(index)",
+                name: "P\(index)",
+                latitude: -25.43 + Double(index) * 0.0011,
+                longitude: -49.27 + Double(index % 3) * 0.0014,
+                category: .museum,
+                distanceMeters: 0
+            )
+        }
+        let service = MockLocationMapService()
+        service.locationResult = .success(coordinate)
+        service.placesResult = .success(places)
+        let viewModel = LocationMapViewModel(service: service)
+        await viewModel.load()
+
+        let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+        viewModel.updateVisibleRegion(MKCoordinateRegion(center: coordinate.clLocationCoordinate2D, span: span))
+        let reference = viewModel.displayItems
+
+        for step in 1 ... 20 {
+            let center = CLLocationCoordinate2D(
+                latitude: coordinate.latitude + Double(step) * 0.002,
+                longitude: coordinate.longitude - Double(step) * 0.003
+            )
+            viewModel.updateVisibleRegion(MKCoordinateRegion(center: center, span: span))
+            #expect(viewModel.displayItems == reference)
+        }
+    }
+
     @Test("Focus region zooms in below the individual pin threshold")
     func focusRegionExpandsClusterInOneStep() {
         let cluster = MapPinCluster(

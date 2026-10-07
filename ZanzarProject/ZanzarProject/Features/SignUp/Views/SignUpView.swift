@@ -4,52 +4,39 @@ struct SignUpView: View {
     @State private var viewModel = SignUpViewModel()
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(AuthSession.self) private var authSession
+    @Environment(ToastPresenter.self) private var toasts
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                AuthBackButton { coordinator.pop() }
-                Spacer()
+            VStack(spacing: 16) {
+                AuthFormField(
+                    labelKey: "signUp.usernameField.label",
+                    placeholderKey: "signUp.usernameField.placeholder",
+                    text: $viewModel.username,
+                    errorMessageKey: viewModel.usernameError,
+                    textContentType: .username
+                )
+
+                AuthFormField(
+                    labelKey: "signUp.emailField.label",
+                    placeholderKey: "signUp.emailField.placeholder",
+                    text: $viewModel.email,
+                    errorMessageKey: viewModel.emailError,
+                    textContentType: .emailAddress,
+                    keyboardType: .emailAddress
+                )
+
+                AuthFormField(
+                    labelKey: "signUp.passwordField.label",
+                    placeholderKey: "signUp.passwordField.placeholder",
+                    text: $viewModel.password,
+                    errorMessageKey: viewModel.passwordError,
+                    isSecure: true,
+                    textContentType: .newPassword
+                )
             }
             .padding(.horizontal, 19)
-            .padding(.top, 8)
-
-            VStack(alignment: .leading, spacing: 24) {
-                Text("signUp.header.title")
-                    .font(.largeTitle)
-                    .bold()
-                    .foregroundStyle(.primary)
-
-                VStack(spacing: 16) {
-                    AuthFormField(
-                        labelKey: "signUp.usernameField.label",
-                        placeholderKey: "signUp.usernameField.placeholder",
-                        text: $viewModel.username,
-                        errorMessageKey: viewModel.usernameError,
-                        textContentType: .username
-                    )
-
-                    AuthFormField(
-                        labelKey: "signUp.emailField.label",
-                        placeholderKey: "signUp.emailField.placeholder",
-                        text: $viewModel.email,
-                        errorMessageKey: viewModel.emailError,
-                        textContentType: .emailAddress,
-                        keyboardType: .emailAddress
-                    )
-
-                    AuthFormField(
-                        labelKey: "signUp.passwordField.label",
-                        placeholderKey: "signUp.passwordField.placeholder",
-                        text: $viewModel.password,
-                        errorMessageKey: viewModel.passwordError,
-                        isSecure: true,
-                        textContentType: .newPassword
-                    )
-                }
-            }
-            .padding(.horizontal, 19)
-            .padding(.top, 32)
+            .padding(.top, 16)
 
             Spacer()
 
@@ -75,13 +62,15 @@ struct SignUpView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.white)
-        .overlay(alignment: .top) {
-            if let submitError = viewModel.submitError {
-                AuthErrorBanner(message: submitError)
-                    .padding()
+        .navigationTitle("signUp.header.title")
+        .navigationBarTitleDisplayMode(.large)
+        .onChange(of: viewModel.submitError) { _, error in
+            if let error {
+                toasts.show(error)
+            } else {
+                toasts.dismiss()
             }
         }
-        .navigationBarBackButtonHidden()
     }
 }
 
@@ -90,5 +79,6 @@ struct SignUpView: View {
         SignUpView()
             .environment(AppCoordinator())
             .environment(AuthSession())
+            .environment(ToastPresenter())
     }
 }

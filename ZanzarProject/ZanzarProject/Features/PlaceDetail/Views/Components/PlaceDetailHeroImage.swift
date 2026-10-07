@@ -24,6 +24,7 @@ struct PlaceDetailHeroImage: View {
         .frame(maxWidth: .infinity)
         .frame(height: 191)
         .clipShape(.rect(cornerRadius: 16))
+        .allowsHitTesting(false)
         .accessibilityHidden(true)
     }
 }
