@@ -83,6 +83,25 @@ struct ItineraryViewModelTests {
         #expect(itineraryService.fetchActiveItineraryUserID == "user-1")
     }
 
+    @Test("load keeps itineraries when active itinerary fetch fails")
+    func listLoadActiveFailure() async {
+        let itineraryService = MockItineraryService(
+            itinerariesResult: .success([Self.sampleItinerary]),
+            activeItineraryResult: .failure(APIError.invalidResponse)
+        )
+        let viewModel = ItineraryListViewModel(
+            itineraryService: itineraryService,
+            locationService: MockLocationMapService(),
+            userIDProvider: { "user-1" }
+        )
+
+        await viewModel.load()
+
+        #expect(viewModel.itineraries == [Self.sampleItinerary])
+        #expect(viewModel.activeItinerary == nil)
+        #expect(viewModel.errorMessage == nil)
+    }
+
     @Test("abandon clears the active itinerary card")
     func listAbandon() async {
         let itineraryService = MockItineraryService(
@@ -100,6 +119,26 @@ struct ItineraryViewModelTests {
 
         #expect(itineraryService.abandonCount == 1)
         #expect(viewModel.activeItinerary == nil)
+    }
+
+    @Test("abandon failure exposes an action error message")
+    func listAbandonFailure() async {
+        let itineraryService = MockItineraryService(
+            itinerariesResult: .success([]),
+            activeItineraryResult: .success(Self.sampleActive)
+        )
+        itineraryService.abandonError = APIError.invalidResponse
+        let viewModel = ItineraryListViewModel(
+            itineraryService: itineraryService,
+            locationService: MockLocationMapService(),
+            userIDProvider: { "user-1" }
+        )
+        await viewModel.load()
+
+        await viewModel.abandonActiveItinerary()
+
+        #expect(viewModel.activeItinerary == Self.sampleActive)
+        #expect(viewModel.actionErrorMessage == String(localized: "itinerary.detail.actionError.generic"))
     }
 
     // MARK: - Detail

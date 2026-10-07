@@ -13,6 +13,7 @@ final class ItineraryListViewModel {
     var activeItinerary: ActiveItinerary?
     var isLoading = false
     var errorMessage: String?
+    var actionErrorMessage: String?
 
     init(
         itineraryService: ItineraryServicing = ItineraryService(),
@@ -36,23 +37,35 @@ final class ItineraryListViewModel {
             }
         }
 
-        do {
-            async let itinerariesTask = itineraryService.fetchItineraries()
-            async let activeTask = fetchActiveItineraryIfAuthenticated()
-            async let nearbyTask = fetchNearbyPlaces()
+        async let itinerariesTask = itineraryService.fetchItineraries()
+        async let activeTask = fetchActiveItineraryIfAuthenticated()
+        async let nearbyTask = fetchNearbyPlaces()
 
+        do {
             let loadedItineraries = try await itinerariesTask
             guard generation == loadGeneration else { return }
-
             itineraries = loadedItineraries
-            activeItinerary = try await activeTask
-            nearbyPlaces = await nearbyTask
         } catch is CancellationError {
             return
         } catch {
             guard generation == loadGeneration, itineraries.isEmpty else { return }
             errorMessage = String(localized: "itinerary.errorState.message")
+            return
         }
+
+        do {
+            let loadedActive = try await activeTask
+            guard generation == loadGeneration else { return }
+            activeItinerary = loadedActive
+        } catch is CancellationError {
+            return
+        } catch {
+            AppLog.itinerary.warning("Failed to fetch active itinerary")
+        }
+
+        let loadedNearby = await nearbyTask
+        guard generation == loadGeneration else { return }
+        nearbyPlaces = loadedNearby
     }
 
     func refreshActiveItinerary() async {
@@ -66,6 +79,7 @@ final class ItineraryListViewModel {
     }
 
     func abandonActiveItinerary() async {
+        actionErrorMessage = nil
         do {
             try await itineraryService.abandonActiveItinerary()
             activeItinerary = nil
@@ -73,6 +87,7 @@ final class ItineraryListViewModel {
             return
         } catch {
             AppLog.itinerary.error("Failed to abandon active itinerary", error: error)
+            actionErrorMessage = String(localized: "itinerary.detail.actionError.generic")
         }
     }
 

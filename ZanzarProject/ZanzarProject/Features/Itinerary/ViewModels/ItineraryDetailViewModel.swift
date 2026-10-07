@@ -55,7 +55,10 @@ final class ItineraryDetailViewModel {
             guard generation == loadGeneration else { return }
 
             detail = loadedDetail
-            activeItinerary = try await activeTask
+
+            let loadedActive = try await activeTask
+            guard generation == loadGeneration else { return }
+            activeItinerary = loadedActive
         } catch is CancellationError {
             return
         } catch {

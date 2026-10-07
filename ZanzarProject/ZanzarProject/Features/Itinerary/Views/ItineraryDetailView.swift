@@ -103,16 +103,24 @@ struct ItineraryDetailView: View {
             .buttonStyle(.borderedProminent)
             .disabled(viewModel.isPerformingAction)
         } else {
-            Button("itinerary.detail.startButton") {
-                Task {
-                    if await viewModel.activateItinerary() {
-                        onItineraryChanged()
-                        coordinator.dismissSheet()
+            VStack(alignment: .leading, spacing: 8) {
+                Button("itinerary.detail.startButton") {
+                    Task {
+                        if await viewModel.activateItinerary() {
+                            onItineraryChanged()
+                            coordinator.dismissSheet()
+                        }
                     }
                 }
+                .buttonStyle(.borderedProminent)
+                .disabled(viewModel.isPerformingAction || viewModel.hasDifferentActiveItinerary)
+
+                if viewModel.hasDifferentActiveItinerary {
+                    Text("itinerary.detail.actionError.alreadyActive")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
-            .buttonStyle(.borderedProminent)
-            .disabled(viewModel.isPerformingAction || viewModel.hasDifferentActiveItinerary)
         }
     }
 }
@@ -200,7 +208,7 @@ private struct ItinerarySuggestedRouteView: View {
             Text("itinerary.detail.suggestedRoute.title")
                 .font(.body.bold())
 
-            ForEach(Array(places.enumerated()), id: \.element.id) { index, place in
+            ForEach(places.enumerated(), id: \.element.id) { index, place in
                 HStack(alignment: .top, spacing: 12) {
                     Text("\(index + 1)")
                         .font(.caption.bold())

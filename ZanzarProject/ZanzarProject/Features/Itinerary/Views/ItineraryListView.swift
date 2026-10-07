@@ -50,6 +50,26 @@ struct ItineraryListView: View {
             guard newValue == nil else { return }
             Task { await viewModel.refreshActiveItinerary() }
         }
+        .alert("itinerary.detail.actionError.title", isPresented: showsActionError) {
+            Button("itinerary.detail.actionError.dismissButton.title", role: .cancel) {
+                viewModel.actionErrorMessage = nil
+            }
+        } message: {
+            if let actionErrorMessage = viewModel.actionErrorMessage {
+                Text(actionErrorMessage)
+            }
+        }
+    }
+
+    private var showsActionError: Binding<Bool> {
+        Binding(
+            get: { viewModel.actionErrorMessage != nil },
+            set: { isPresented in
+                if !isPresented {
+                    viewModel.actionErrorMessage = nil
+                }
+            }
+        )
     }
 
     private var listContent: some View {
