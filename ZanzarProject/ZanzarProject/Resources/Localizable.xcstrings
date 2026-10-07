@@ -653,23 +653,6 @@
         }
       }
     },
-    "locationMap.pin.accessibilityLabel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Place"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lugar"
-          }
-        }
-      }
-    },
     "locationMap.placesLoadError" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -802,23 +785,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Digite sua senha para continuar."
-          }
-        }
-      }
-    },
-    "login.passwordField.errorInvalid" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Incorrect password"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Senha incorreta"
           }
         }
       }
@@ -2600,23 +2566,6 @@
         }
       }
     },
-    "signUp.emailField.errorRequired" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter an email"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Insira um email"
-          }
-        }
-      }
-    },
     "signUp.emailField.label" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2698,23 +2647,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A senha deve ter pelo menos 8 caracteres e incluir uma letra e um número."
-          }
-        }
-      }
-    },
-    "signUp.passwordField.errorRequired" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter a password"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Digite uma senha"
           }
         }
       }
@@ -2851,23 +2783,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Informe um nome de usuário para continuar."
-          }
-        }
-      }
-    },
-    "signUp.usernameField.errorRequired" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter a username"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Digite um nome"
           }
         }
       }
