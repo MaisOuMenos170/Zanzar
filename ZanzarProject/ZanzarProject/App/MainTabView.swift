@@ -5,6 +5,8 @@ struct MainTabView: View {
     @State private var selectedTab: MainTab = .discover
     /// The profile tab pushes place details on its own path, separate from Discover's.
     @State private var profileCoordinator = AppCoordinator()
+    /// The check-in tab keeps its own navigation path and uses the root coordinator for sheets.
+    @State private var checkInCoordinator = AppCoordinator()
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -26,7 +28,16 @@ struct MainTabView: View {
                     .navigationDestination(for: Route.self) { coordinator.view(for: $0) }
             }
         case .checkIn:
-            TabPlaceholderView(tab: tab)
+            NavigationStack(path: Bindable(checkInCoordinator).path) {
+                ItineraryListView(sheetCoordinator: coordinator)
+                    .environment(checkInCoordinator)
+                    .navigationDestination(for: Route.self) { route in
+                        checkInCoordinator.view(for: route)
+                            .environment(checkInCoordinator)
+                            .tint(Color("TabBarSelected"))
+                    }
+            }
+            .tint(.primary)
         case .profile:
             NavigationStack(path: Bindable(profileCoordinator).path) {
                 ProfileView()
