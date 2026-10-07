@@ -48,6 +48,23 @@ struct ProfileServiceTests {
         #expect(profile.recentCheckIns.count == 3)
     }
 
+    @Test("maps null and unknown impression tags")
+    func mapsImpressionTags() throws {
+        let json = """
+        {
+          "username": "tiago", "checkInCount": 2, "itinerariesCount": 0, "stampsCount": 0,
+          "recentCheckIns": [
+            { "placeId": "ChIJ1", "datetime": "2026-10-05T18:30:00Z", "impressionTag": null },
+            { "placeId": "ChIJ2", "datetime": "2026-10-04T10:00:00Z", "impressionTag": "not-a-tag" }
+          ]
+        }
+        """
+        let checkIns = try Self.decodeProfile(json).recentCheckIns
+
+        #expect(checkIns[0].impressionTag == nil)
+        #expect(checkIns[1].impressionTag == nil)
+    }
+
     @Test("maps check-in fields, including fractional-second dates and nullable values")
     func mapsCheckIns() throws {
         let checkIns = try Self.decodeProfile(Self.readmeJSON).recentCheckIns

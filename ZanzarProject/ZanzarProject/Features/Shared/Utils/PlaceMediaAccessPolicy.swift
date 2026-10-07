@@ -39,4 +39,12 @@ final class PlaceMediaAccessPolicy {
     var needsCellularPermissionPrompt: Bool {
         isOnline && usesCellular && !allowsCellularImages
     }
+
+    #if DEBUG
+    /// Overrides network state for unit tests; production code uses `NWPathMonitor`.
+    func setNetworkStateForTesting(isOnline: Bool, usesCellular: Bool) {
+        self.isOnline = isOnline
+        self.usesCellular = usesCellular
+    }
+    #endif
 }

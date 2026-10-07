@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ProfileRecentCheckInsSection: View {
     let checkIns: [ProfileCheckIn]
+    let mediaPolicy: PlaceMediaAccessPolicy
 
     private let columns = [
         GridItem(.flexible(), spacing: 8),
@@ -21,7 +22,7 @@ struct ProfileRecentCheckInsSection: View {
                 LazyVGrid(columns: columns, spacing: 8) {
                     ForEach(checkIns) { checkIn in
                         NavigationLink(value: Route.placeDetail(checkIn.mapPlace)) {
-                            ProfileCheckInCard(checkIn: checkIn)
+                            ProfileCheckInCard(checkIn: checkIn, mediaPolicy: mediaPolicy)
                         }
                         .buttonStyle(.plain)
                         .accessibilityHint("profile.checkInCard.openDetailsHint")
@@ -34,12 +35,12 @@ struct ProfileRecentCheckInsSection: View {
 
 #Preview {
     NavigationStack {
-        ProfileRecentCheckInsSection(checkIns: Profile.preview.recentCheckIns)
+        ProfileRecentCheckInsSection(checkIns: Profile.preview.recentCheckIns, mediaPolicy: .shared)
             .padding()
     }
 }
 
 #Preview("Empty") {
-    ProfileRecentCheckInsSection(checkIns: [])
+    ProfileRecentCheckInsSection(checkIns: [], mediaPolicy: .shared)
         .padding()
 }

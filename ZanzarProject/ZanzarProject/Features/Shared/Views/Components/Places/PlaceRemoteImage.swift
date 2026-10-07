@@ -34,6 +34,9 @@ struct PlaceRemoteImage<Placeholder: View>: View {
                             }
                             .clipped()
                     case .failure:
+                        #if DEBUG
+                        let _ = AppLog.placeDetail.warning("Place photo failed to load ref=\(photoReference)")
+                        #endif
                         placeholder
                     case .empty:
                         ProgressView()

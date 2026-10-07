@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @State private var viewModel = ProfileViewModel()
+    @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
     @Environment(AuthSession.self) private var authSession
     @Environment(AppCoordinator.self) private var coordinator
 
@@ -49,7 +50,7 @@ struct ProfileView: View {
 
                     VStack(alignment: .leading, spacing: 32) {
                         ProfileStatsView(summary: profile.summary)
-                        ProfileRecentCheckInsSection(checkIns: profile.recentCheckIns)
+                        ProfileRecentCheckInsSection(checkIns: profile.recentCheckIns, mediaPolicy: mediaPolicy)
                     }
                 }
                 .padding(16)
