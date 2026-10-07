@@ -1,6 +1,11 @@
 import Foundation
 import Observation
 
+struct EarnedSealPresentation: Equatable, Sendable {
+    let placeName: String
+    let category: ZanzarPlaceCategory
+}
+
 @Observable
 final class PlaceDetailViewModel {
     private let service: PlaceDetailServicing
@@ -15,6 +20,8 @@ final class PlaceDetailViewModel {
     var isCheckingIn = false
     var errorMessage: String?
     var showsCellularImagesPrompt = false
+    var showsCheckInConfirmation = false
+    var earnedSealPresentation: EarnedSealPresentation?
 
     init(
         place: MapPlace,
@@ -64,6 +71,20 @@ final class PlaceDetailViewModel {
         }
     }
 
+    func requestCheckIn() {
+        guard let detail, !detail.hasCheckedIn, !isCheckingIn else { return }
+        showsCheckInConfirmation = true
+    }
+
+    func confirmCheckIn() async {
+        showsCheckInConfirmation = false
+        await performCheckIn()
+    }
+
+    func dismissEarnedSealAlert() {
+        earnedSealPresentation = nil
+    }
+
     func performCheckIn() async {
         guard !isCheckingIn else { return }
         guard var currentDetail = detail, !currentDetail.hasCheckedIn else { return }
@@ -77,22 +98,50 @@ final class PlaceDetailViewModel {
         defer { isCheckingIn = false }
 
         do {
-            try await service.checkIn(placeID: currentDetail.id)
-            currentDetail.hasCheckedIn = true
-            currentDetail.totalCheckIns += 1
+            let result = try await service.checkIn(placeID: currentDetail.id)
+            applySuccessfulCheckIn(to: &currentDetail, result: result)
             detail = currentDetail
             queueRatingPrompt(for: currentDetail, userID: userID)
+            presentEarnedSealIfNeeded(for: currentDetail, result: result)
+            notifyItineraryChangeIfNeeded(result: result)
         } catch is CancellationError {
             return
         } catch APIError.httpStatus(409, _) {
-            // Already checked in (another device or session): still queue the prompt, since the inline
-            // rating is gone from the detail. The map skips it if the user has already rated.
             currentDetail.hasCheckedIn = true
             detail = currentDetail
             queueRatingPrompt(for: currentDetail, userID: userID)
         } catch {
             errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
         }
+    }
+
+    func allowCellularImages() {
+        PlaceMediaAccessPolicy.shared.allowsCellularImages = true
+        showsCellularImagesPrompt = false
+    }
+
+    func updateCellularImagesPromptIfNeeded(using mediaPolicy: PlaceMediaAccessPolicy) {
+        if mediaPolicy.needsCellularPermissionPrompt,
+           detail?.heroPhotoReference != nil {
+            showsCellularImagesPrompt = true
+        }
+    }
+
+    private func applySuccessfulCheckIn(to detail: inout PlaceDetail, result: CheckInResult) {
+        detail.hasCheckedIn = true
+        detail.totalCheckIns += 1
+    }
+
+    private func presentEarnedSealIfNeeded(for detail: PlaceDetail, result: CheckInResult) {
+        guard result.isNewStamp else { return }
+        let category = result.sealCategory ?? (detail.category == .unknown ? nil : detail.category)
+        guard let category else { return }
+        earnedSealPresentation = EarnedSealPresentation(placeName: detail.displayName, category: category)
+    }
+
+    private func notifyItineraryChangeIfNeeded(result: CheckInResult) {
+        guard result.completedItinerarySlots != nil || result.isItineraryCompleted else { return }
+        NotificationCenter.default.post(name: AppNotification.activeItineraryDidChange, object: nil)
     }
 
     private func queueRatingPrompt(for detail: PlaceDetail, userID: String) {
@@ -106,17 +155,5 @@ final class PlaceDetailViewModel {
                 checkedInAt: Date()
             )
         )
-    }
-
-    func allowCellularImages() {
-        PlaceMediaAccessPolicy.shared.allowsCellularImages = true
-        showsCellularImagesPrompt = false
-    }
-
-    func updateCellularImagesPromptIfNeeded(using mediaPolicy: PlaceMediaAccessPolicy) {
-        if mediaPolicy.needsCellularPermissionPrompt,
-           detail?.heroPhotoReference != nil {
-            showsCellularImagesPrompt = true
-        }
     }
 }

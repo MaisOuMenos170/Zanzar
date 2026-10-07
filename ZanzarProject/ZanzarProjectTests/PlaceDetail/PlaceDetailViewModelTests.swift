@@ -15,7 +15,19 @@ struct PlaceDetailViewModelTests {
         distanceMeters: 1300
     )
 
-    private func sampleDetail(hasCheckedIn: Bool = false, selectedReactionTag: String? = nil) -> PlaceDetail {
+    private let sampleCheckInResult = CheckInResult(
+        stampID: "stamp_park",
+        isNewStamp: true,
+        completedItinerarySlots: 1,
+        totalItinerarySlots: 3,
+        isItineraryCompleted: false
+    )
+
+    private func sampleDetail(
+        hasCheckedIn: Bool = false,
+        isInActiveItinerary: Bool = false,
+        selectedReactionTag: String? = nil
+    ) -> PlaceDetail {
         PlaceDetail(
             id: samplePlace.id,
             name: samplePlace.name,
@@ -32,6 +44,7 @@ struct PlaceDetailViewModelTests {
             reactions: ImpressionTag.reactions(from: [:], selectedTag: selectedReactionTag),
             nearbyPlaces: [],
             hasCheckedIn: hasCheckedIn,
+            isInActiveItinerary: isInActiveItinerary,
             selectedReactionTag: selectedReactionTag
         )
     }
@@ -56,11 +69,27 @@ struct PlaceDetailViewModelTests {
         #expect(viewModel.errorMessage == nil)
     }
 
-    @Test("performCheckIn marks the place as checked in")
-    func performCheckInUpdatesState() async {
+    @Test("requestCheckIn opens confirmation without calling the API")
+    func requestCheckInShowsConfirmation() async {
+        let service = MockPlaceDetailService(fetchResult: .success(sampleDetail()))
+        let viewModel = PlaceDetailViewModel(
+            place: samplePlace,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: { self.sampleUserCoordinate },
+            service: service
+        )
+        await viewModel.load()
+
+        viewModel.requestCheckIn()
+
+        #expect(viewModel.showsCheckInConfirmation)
+    }
+
+    @Test("confirmCheckIn marks the place as checked in and shows a new seal")
+    func confirmCheckInUpdatesState() async {
         let service = MockPlaceDetailService(
             fetchResult: .success(sampleDetail()),
-            checkInResult: .success(())
+            checkInResult: .success(sampleCheckInResult)
         )
         let store = InMemoryPendingRatingStore()
         let viewModel = PlaceDetailViewModel(
@@ -72,14 +101,42 @@ struct PlaceDetailViewModelTests {
         )
 
         await viewModel.load()
-        await viewModel.performCheckIn()
+        await viewModel.confirmCheckIn()
 
         #expect(viewModel.detail?.hasCheckedIn == true)
         #expect(viewModel.detail?.totalCheckIns == 11)
         #expect(viewModel.isCheckingIn == false)
+        #expect(viewModel.earnedSealPresentation?.placeName == "Jardim Botânico")
+        #expect(viewModel.earnedSealPresentation?.category == .park)
         #expect(store.stored?.userID == "user-1")
         #expect(store.stored?.placeID == samplePlace.id)
-        #expect(store.stored?.placeName == samplePlace.name)
+    }
+
+    @Test("a repeated category stamp does not show the earned seal alert")
+    func repeatedStampSkipsAlert() async {
+        let repeatedResult = CheckInResult(
+            stampID: "stamp_park",
+            isNewStamp: false,
+            completedItinerarySlots: 2,
+            totalItinerarySlots: 3,
+            isItineraryCompleted: false
+        )
+        let service = MockPlaceDetailService(
+            fetchResult: .success(sampleDetail()),
+            checkInResult: .success(repeatedResult)
+        )
+        let viewModel = PlaceDetailViewModel(
+            place: samplePlace,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: { self.sampleUserCoordinate },
+            service: service
+        )
+
+        await viewModel.load()
+        await viewModel.confirmCheckIn()
+
+        #expect(viewModel.detail?.hasCheckedIn == true)
+        #expect(viewModel.earnedSealPresentation == nil)
     }
 
     @Test("a check-in conflict still queues a rating prompt")
@@ -98,7 +155,7 @@ struct PlaceDetailViewModelTests {
         )
 
         await viewModel.load()
-        await viewModel.performCheckIn()
+        await viewModel.confirmCheckIn()
 
         #expect(viewModel.detail?.hasCheckedIn == true)
         let queued = try #require(store.stored)
@@ -125,12 +182,12 @@ struct PlaceDetailViewModelTests {
 
 final class MockPlaceDetailService: PlaceDetailServicing, @unchecked Sendable {
     var fetchResult: Result<PlaceDetail, Error>
-    var checkInResult: Result<Void, Error>?
+    var checkInResult: Result<CheckInResult, Error>?
     private(set) var lastLoadContext: PlaceDetailLoadContext?
 
     init(
         fetchResult: Result<PlaceDetail, Error>,
-        checkInResult: Result<Void, Error>? = nil
+        checkInResult: Result<CheckInResult, Error>? = nil
     ) {
         self.fetchResult = fetchResult
         self.checkInResult = checkInResult
@@ -141,10 +198,11 @@ final class MockPlaceDetailService: PlaceDetailServicing, @unchecked Sendable {
         return try fetchResult.get()
     }
 
-    func checkIn(placeID: String) async throws {
+    func checkIn(placeID: String) async throws -> CheckInResult {
+        _ = placeID
         guard let checkInResult else {
             fatalError("MockPlaceDetailService.checkInResult not configured")
         }
-        try checkInResult.get()
+        return try checkInResult.get()
     }
 }
