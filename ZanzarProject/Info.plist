@@ -11,7 +11,5 @@
 	<!-- Custom keys are not supported via INFOPLIST_KEY_*; values come from Config.xcconfig. -->
 	<key>ZanzarAPIBaseURL</key>
 	<string>$(ZANZAR_API_BASE_URL)</string>
-	<key>GooglePlacesAPIKey</key>
-	<string>$(GOOGLE_PLACES_API_KEY)</string>
 </dict>
 </plist>

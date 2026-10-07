@@ -152,7 +152,8 @@ struct ItineraryServiceTests {
         #expect(active.places[0].isCompleted)
         #expect(active.places[0].stampID == "stamp_historic")
         #expect(active.places[1].isCompleted == false)
-        #expect(active.startedAt == Date(timeIntervalSince1970: 1_790_251_200))
+        let expectedStartedAt = try Date("2026-10-06T12:00:00.000Z", strategy: Date.ISO8601FormatStyle(includingFractionalSeconds: true))
+        #expect(active.startedAt == expectedStartedAt)
     }
 
     @Test("maps an active free-route itinerary with anonymous slots")

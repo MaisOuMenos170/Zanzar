@@ -8,16 +8,47 @@ protocol ProfileServicing: Sendable {
 struct ProfileAPIResponse: Decodable, Sendable {
     let username: String
     let checkInCount: Int
-    let completedItinerariesCount: Int
+    let itinerariesCount: Int
     let stampsCount: Int
     let recentCheckIns: [RecentCheckInAPIResponse]
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        username = try container.decode(String.self, forKey: .username)
+        checkInCount = try container.decode(Int.self, forKey: .checkInCount)
+        stampsCount = try container.decode(Int.self, forKey: .stampsCount)
+        recentCheckIns = try container.decode([RecentCheckInAPIResponse].self, forKey: .recentCheckIns)
+        if let itinerariesCount = try container.decodeIfPresent(Int.self, forKey: .itinerariesCount) {
+            self.itinerariesCount = itinerariesCount
+        } else if let legacyCount = try container.decodeIfPresent(Int.self, forKey: .completedItinerariesCount) {
+            // Servers that have not picked up the profile rename still send only completed itineraries.
+            itinerariesCount = legacyCount
+        } else {
+            throw DecodingError.keyNotFound(
+                CodingKeys.itinerariesCount,
+                DecodingError.Context(
+                    codingPath: container.codingPath,
+                    debugDescription: "Expected itinerariesCount or completedItinerariesCount"
+                )
+            )
+        }
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case username
+        case checkInCount
+        case itinerariesCount
+        case completedItinerariesCount
+        case stampsCount
+        case recentCheckIns
+    }
 
     func makeProfile() throws -> Profile {
         Profile(
             summary: ProfileSummary(
                 name: username,
                 checkInCount: checkInCount,
-                itineraryCount: completedItinerariesCount,
+                itineraryCount: itinerariesCount,
                 sealCount: stampsCount
             ),
             recentCheckIns: makeCheckIns()
@@ -49,6 +80,7 @@ struct RecentCheckInAPIResponse: Decodable, Sendable {
     let datetime: String
     let photoReference: String?
     let stamp: StampAPIResponse?
+    let impressionTag: String?
 
     struct StampAPIResponse: Decodable, Sendable {
         let stampId: String
@@ -62,7 +94,8 @@ struct RecentCheckInAPIResponse: Decodable, Sendable {
             placeName: placeName,
             date: try Self.parseDate(datetime),
             photoReference: photoReference,
-            sealCategory: stamp.flatMap { Self.sealCategory(forStampID: $0.stampId) }
+            sealCategory: stamp.flatMap { Self.sealCategory(forStampID: $0.stampId) },
+            impressionTag: impressionTag.flatMap(ImpressionTag.init(rawValue:))
         )
     }
 

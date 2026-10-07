@@ -9,7 +9,7 @@ struct ProfileServiceTests {
     {
       "username": "tiago",
       "checkInCount": 12,
-      "completedItinerariesCount": 2,
+      "itinerariesCount": 2,
       "stampsCount": 9,
       "recentCheckIns": [
         {
@@ -17,7 +17,8 @@ struct ProfileServiceTests {
           "placeName": "Bar do Zé",
           "datetime": "2026-10-05T18:30:00.000Z",
           "photoReference": "AUacSh",
-          "stamp": { "stampId": "stamp_bar", "imageUrl": "/assets/stamps/bar.png" }
+          "stamp": { "stampId": "stamp_bar", "imageUrl": "/assets/stamps/bar.png" },
+          "impressionTag": "happy"
         },
         {
           "placeId": "ChIJ2",
@@ -47,6 +48,51 @@ struct ProfileServiceTests {
         #expect(profile.recentCheckIns.count == 3)
     }
 
+    @Test("accepts the legacy completedItinerariesCount key")
+    func decodesLegacyItineraryCount() throws {
+        let json = """
+        {
+          "username": "tiago", "checkInCount": 2, "completedItinerariesCount": 4, "stampsCount": 1,
+          "recentCheckIns": []
+        }
+        """
+
+        let profile = try Self.decodeProfile(json)
+
+        #expect(profile.summary.itineraryCount == 4)
+    }
+
+    @Test("prefers itinerariesCount when the legacy key is also present")
+    func prefersCurrentItineraryCount() throws {
+        let json = """
+        {
+          "username": "tiago", "checkInCount": 2, "itinerariesCount": 7,
+          "completedItinerariesCount": 4, "stampsCount": 1, "recentCheckIns": []
+        }
+        """
+
+        let profile = try Self.decodeProfile(json)
+
+        #expect(profile.summary.itineraryCount == 7)
+    }
+
+    @Test("maps null and unknown impression tags")
+    func mapsImpressionTags() throws {
+        let json = """
+        {
+          "username": "tiago", "checkInCount": 2, "itinerariesCount": 0, "stampsCount": 0,
+          "recentCheckIns": [
+            { "placeId": "ChIJ1", "datetime": "2026-10-05T18:30:00Z", "impressionTag": null },
+            { "placeId": "ChIJ2", "datetime": "2026-10-04T10:00:00Z", "impressionTag": "not-a-tag" }
+          ]
+        }
+        """
+        let checkIns = try Self.decodeProfile(json).recentCheckIns
+
+        #expect(checkIns[0].impressionTag == nil)
+        #expect(checkIns[1].impressionTag == nil)
+    }
+
     @Test("maps check-in fields, including fractional-second dates and nullable values")
     func mapsCheckIns() throws {
         let checkIns = try Self.decodeProfile(Self.readmeJSON).recentCheckIns
@@ -54,6 +100,7 @@ struct ProfileServiceTests {
         #expect(checkIns[0].placeName == "Bar do Zé")
         #expect(checkIns[0].photoReference == "AUacSh")
         #expect(checkIns[0].sealCategory == .bar)
+        #expect(checkIns[0].impressionTag == .happy)
         #expect(checkIns[0].date == Date(timeIntervalSince1970: 1_791_225_000))
 
         #expect(checkIns[1].placeName == nil)
@@ -100,7 +147,7 @@ struct ProfileServiceTests {
     func duplicateCheckInsGetUniqueIDs() throws {
         let json = """
         {
-          "username": "tiago", "checkInCount": 2, "completedItinerariesCount": 0, "stampsCount": 0,
+          "username": "tiago", "checkInCount": 2, "itinerariesCount": 0, "stampsCount": 0,
           "recentCheckIns": [
             { "placeId": "ChIJ1", "datetime": "2026-10-05T18:30:00Z" },
             { "placeId": "ChIJ1", "datetime": "2026-10-05T18:30:00Z" }

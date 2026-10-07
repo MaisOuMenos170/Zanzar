@@ -1763,6 +1763,23 @@
         }
       }
     },
+    "profile.checkInCard.reactionAccessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your reaction to this place"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sua reação a este lugar"
+          }
+        }
+      }
+    },
     "profile.checkInCard.openDetailsHint": {
       "extractionState": "manual",
       "localizations": {

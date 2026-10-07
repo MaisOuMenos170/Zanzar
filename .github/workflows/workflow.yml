@@ -32,13 +32,10 @@ jobs:
           xcodebuild -project ./ZanzarProject/ZanzarProject.xcodeproj -list
           xcodebuild -project ./ZanzarProject/ZanzarProject.xcodeproj -scheme ZanzarProject -showdestinations
 
-      - name: Create Config.xcconfig with Action Secrets
-        env:
-          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+      - name: Create Config.xcconfig
         run: |
           cat > ZanzarProject/Config.xcconfig <<EOF
-          GOOGLE_PLACES_API_KEY = ${GOOGLE_PLACES_API_KEY}
-          INFOPLIST_KEY_GooglePlacesAPIKey = \$(GOOGLE_PLACES_API_KEY)
+          ZANZAR_API_BASE_URL = http://127.0.0.1:3000
           EOF
 
       - name: Run and test project
