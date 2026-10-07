@@ -144,6 +144,8 @@ struct PlaceDetailView: View {
                                 }
                             }
                             .scrollIndicators(.hidden)
+                            // Without this the scroll view clips the cards' shadows at its bounds.
+                            .scrollClipDisabled()
                         }
                     }
 

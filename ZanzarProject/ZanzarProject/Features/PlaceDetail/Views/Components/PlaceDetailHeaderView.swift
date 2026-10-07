@@ -8,7 +8,7 @@ struct PlaceDetailHeaderView: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
-            AuthBackButton(action: onBack)
+            BackButton(action: onBack)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(name)

@@ -9,8 +9,8 @@ final class LocationMapViewModel {
 
     var cameraPosition: MapCameraPosition = .automatic
     var userCoordinate: UserCoordinate?
-    var places: [MapPlace] = []
-    var mapRegion = MKCoordinateRegion(
+    private(set) var places: [MapPlace] = []
+    private(set) var mapRegion = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 0, longitude: 0),
         span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
     )
@@ -18,9 +18,11 @@ final class LocationMapViewModel {
     var errorMessage: String?
     private(set) var acceptsVisibleRegionUpdates = false
 
-    var displayItems: [MapPinDisplayItem] {
-        MapPinClustering.cluster(places: places, region: mapRegion)
-    }
+    /// The pins to draw. Stored rather than computed so it is only rebuilt when the places or the zoom
+    /// level change (never while merely panning), and it is only reassigned when the result differs, which
+    /// keeps the annotations' identities, and so the map, steady.
+    private(set) var displayItems: [MapPinDisplayItem] = []
+    private var zoomLevel = MapPinClustering.zoomLevel(forSpan: 0.01, previous: nil)
 
     init(service: LocationMapServicing = LocationMapService()) {
         self.service = service
@@ -50,7 +52,7 @@ final class LocationMapViewModel {
                 latitudinalMeters: 1000,
                 longitudinalMeters: 1000
             )
-            mapRegion = region
+            setRegion(region)
             cameraPosition = .region(region)
         } catch is CancellationError {
             return
@@ -58,7 +60,7 @@ final class LocationMapViewModel {
             guard generation == loadGeneration else { return }
 
             userCoordinate = nil
-            places = []
+            setPlaces([])
             errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
             return
         }
@@ -66,21 +68,22 @@ final class LocationMapViewModel {
         guard let userCoordinate else { return }
 
         do {
-            places = try await service.fetchNearbyPlaces(from: userCoordinate)
+            let nearbyPlaces = try await service.fetchNearbyPlaces(from: userCoordinate)
             guard generation == loadGeneration else { return }
+            setPlaces(nearbyPlaces)
         } catch is CancellationError {
             return
         } catch {
             guard generation == loadGeneration else { return }
 
-            places = []
+            setPlaces([])
             errorMessage = String(localized: "locationMap.placesLoadError")
         }
     }
 
     func updateVisibleRegion(_ region: MKCoordinateRegion) {
         guard acceptsVisibleRegionUpdates else { return }
-        mapRegion = region
+        setRegion(region)
     }
 
     func focusRegion(on cluster: MapPinCluster) -> MKCoordinateRegion {
@@ -111,7 +114,7 @@ final class LocationMapViewModel {
     }
 
     func applyCameraRegion(_ region: MKCoordinateRegion) {
-        mapRegion = region
+        setRegion(region)
         cameraPosition = .region(region)
     }
 
@@ -125,12 +128,39 @@ final class LocationMapViewModel {
         do {
             let refreshedPlaces = try await service.fetchNearbyPlaces(from: userCoordinate)
             guard generation == loadGeneration else { return }
-            places = refreshedPlaces
+            setPlaces(refreshedPlaces)
         } catch is CancellationError {
             return
         } catch {
             guard generation == loadGeneration else { return }
             errorMessage = String(localized: "locationMap.placesLoadError")
+        }
+    }
+
+    // MARK: - Pin grouping
+
+    private func setPlaces(_ newPlaces: [MapPlace]) {
+        places = newPlaces
+        refreshDisplayItems()
+    }
+
+    private func setRegion(_ region: MKCoordinateRegion) {
+        mapRegion = region
+        let span = max(region.span.latitudeDelta, region.span.longitudeDelta)
+        let newLevel = MapPinClustering.zoomLevel(forSpan: span, previous: zoomLevel)
+        guard newLevel != zoomLevel else { return }
+        zoomLevel = newLevel
+        refreshDisplayItems()
+    }
+
+    // Runs on the main actor (the project's default isolation) and only when the places or the zoom level
+    // change, over a few dozen places, so there is nothing worth moving off the main thread. If the volume
+    // ever grows to thousands, `MapPinClustering.cluster` is pure and Sendable and can become `@concurrent`
+    // behind a generation check, like `loadGeneration`.
+    private func refreshDisplayItems() {
+        let items = MapPinClustering.cluster(places: places, zoomLevel: zoomLevel)
+        if items != displayItems {
+            displayItems = items
         }
     }
 }

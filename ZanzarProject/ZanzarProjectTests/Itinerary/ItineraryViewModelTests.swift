@@ -91,7 +91,7 @@ struct ItineraryViewModelTests {
         )
         let viewModel = ItineraryListViewModel(
             itineraryService: itineraryService,
-            locationService: MockLocationMapService(),
+            locationService: MockLocationMapService.nearbyUnavailable(),
             userIDProvider: { "user-1" }
         )
 
@@ -110,7 +110,7 @@ struct ItineraryViewModelTests {
         )
         let viewModel = ItineraryListViewModel(
             itineraryService: itineraryService,
-            locationService: MockLocationMapService(),
+            locationService: MockLocationMapService.nearbyUnavailable(),
             userIDProvider: { "user-1" }
         )
         await viewModel.load()
@@ -130,7 +130,7 @@ struct ItineraryViewModelTests {
         itineraryService.abandonError = APIError.invalidResponse
         let viewModel = ItineraryListViewModel(
             itineraryService: itineraryService,
-            locationService: MockLocationMapService(),
+            locationService: MockLocationMapService.nearbyUnavailable(),
             userIDProvider: { "user-1" }
         )
         await viewModel.load()
