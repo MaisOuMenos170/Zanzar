@@ -31,6 +31,8 @@ struct LocationMapView: View {
         .onMapCameraChange(frequency: .continuous) { context in
             viewModel.updateVisibleRegion(context.region)
         }
+        // Pins fade and scale in and out when the grouping changes instead of popping.
+        .animation(.smooth(duration: 0.3), value: viewModel.displayItems)
         // The error is handed to the app-level toast and consumed, so a repeated failure shows it again.
         .onChange(of: viewModel.errorMessage) { _, message in
             guard let message else { return }
@@ -71,6 +73,8 @@ struct LocationMapView: View {
         }
     }
 
+    private static let pinTransition = AnyTransition.opacity.combined(with: .scale(scale: 0.7))
+
     private var isMonitoringRating: Bool {
         coordinator.path.isEmpty && scenePhase == .active
     }
@@ -82,6 +86,7 @@ struct LocationMapView: View {
             case .place(let place):
                 Annotation(place.displayName, coordinate: place.coordinate, anchor: .bottom) {
                     LocationPinView(category: place.category, style: place.pinStyle)
+                        .transition(Self.pinTransition)
                         .accessibilityLabel(place.displayName)
                         .accessibilityAddTraits(.isButton)
                 }
@@ -97,6 +102,7 @@ struct LocationMapView: View {
                         LocationClusterPinView(count: cluster.count)
                     }
                     .buttonStyle(.plain)
+                    .transition(Self.pinTransition)
                     .accessibilityLabel(
                         String(
                             localized: "locationMap.clusterPin.accessibilityLabel \(cluster.count)"

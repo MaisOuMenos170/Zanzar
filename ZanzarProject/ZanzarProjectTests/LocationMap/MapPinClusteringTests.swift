@@ -127,4 +127,114 @@ struct MapPinClusteringTests {
             Issue.record("Expected a single place item")
         }
     }
+
+    // MARK: - Stability
+
+    private var scatteredPlaces: [MapPlace] {
+        (0 ..< 40).map { index in
+            place(
+                id: "p\(index)",
+                latitude: -25.43 + Double(index % 8) * 0.0013,
+                longitude: -49.27 + Double(index / 8) * 0.0017
+            )
+        }
+    }
+
+    private func ids(_ items: [MapPinDisplayItem]) -> [String] {
+        items.map(\.id)
+    }
+
+    @Test("Panning the camera does not change the items or their ids")
+    func panningKeepsItemsStable() {
+        let places = scatteredPlaces
+        let reference = MapPinClustering.cluster(places: places, region: region(span: 0.05))
+
+        for offset in stride(from: -0.03, through: 0.03, by: 0.0037) {
+            let panned = MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: -25.43 + offset, longitude: -49.27 - offset / 2),
+                span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+            )
+            #expect(MapPinClustering.cluster(places: places, region: panned) == reference)
+        }
+    }
+
+    @Test("The same input always gives the same result")
+    func clusteringIsDeterministic() {
+        let places = scatteredPlaces
+        let first = MapPinClustering.cluster(places: places, zoomLevel: .grouped(-8))
+
+        for _ in 0 ..< 50 {
+            #expect(MapPinClustering.cluster(places: places.shuffled(), zoomLevel: .grouped(-8)) == first)
+        }
+    }
+
+    @Test("A cluster takes its id from its smallest member id")
+    func clusterIDComesFromSmallestMember() {
+        let places = [
+            place(id: "z", latitude: -25.430, longitude: -49.270),
+            place(id: "m", latitude: -25.4301, longitude: -49.2701)
+        ]
+
+        let items = MapPinClustering.cluster(places: places, region: region(span: 0.05))
+
+        #expect(ids(items) == ["cluster-m"])
+    }
+
+    @Test("Items come back in a stable order")
+    func itemsAreSortedByID() {
+        let items = MapPinClustering.cluster(places: scatteredPlaces, zoomLevel: .individual)
+
+        #expect(ids(items) == ids(items).sorted())
+    }
+
+    @Test("Zooming in splits a cluster without renaming the pins that were already individual")
+    func zoomingKeepsSoloPinIDs() {
+        let places = [
+            place(id: "a", latitude: -25.430, longitude: -49.270),
+            place(id: "b", latitude: -25.4302, longitude: -49.2702),
+            place(id: "far", latitude: -25.500, longitude: -49.350)
+        ]
+
+        let zoomedOut = MapPinClustering.cluster(places: places, region: region(span: 0.05))
+        let zoomedIn = MapPinClustering.cluster(places: places, region: region(span: 0.001))
+
+        #expect(ids(zoomedOut).contains("far"))
+        #expect(ids(zoomedIn).contains("far"))
+    }
+
+    // MARK: - Zoom level
+
+    @Test("Spans inside one level map to that level")
+    func zoomLevelBucketsSpans() {
+        let level = MapPinClustering.zoomLevel(forSpan: 0.05, previous: nil)
+
+        #expect(level == MapPinClustering.zoomLevel(forSpan: 0.048, previous: nil))
+        #expect(level != MapPinClustering.zoomLevel(forSpan: 0.4, previous: nil))
+    }
+
+    @Test("Close spans are individual")
+    func zoomLevelIndividual() {
+        #expect(MapPinClustering.zoomLevel(forSpan: 0.001, previous: nil) == .individual)
+    }
+
+    @Test("Hysteresis keeps the level when the span barely crosses a boundary")
+    func zoomLevelHysteresis() {
+        let level = MapPinClustering.zoomLevel(forSpan: 0.05, previous: nil)
+        guard case .grouped(let value) = level else {
+            Issue.record("Expected a grouped level")
+            return
+        }
+        let boundary = pow(2, Double(value + 1) / 2)
+
+        #expect(MapPinClustering.zoomLevel(forSpan: boundary * 1.04, previous: level) == level)
+        #expect(MapPinClustering.zoomLevel(forSpan: boundary * 1.4, previous: level) != level)
+    }
+
+    @Test("Hysteresis also applies at the individual threshold")
+    func zoomLevelHysteresisAtIndividualEdge() {
+        let justAbove = MapPinClustering.individualSpanThreshold * 1.03
+
+        #expect(MapPinClustering.zoomLevel(forSpan: justAbove, previous: .individual) == .individual)
+        #expect(MapPinClustering.zoomLevel(forSpan: justAbove, previous: nil) != .individual)
+    }
 }
