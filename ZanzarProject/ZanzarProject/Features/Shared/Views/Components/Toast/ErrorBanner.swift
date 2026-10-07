@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct AuthErrorBanner: View {
+struct ErrorBanner: View {
     let message: String
 
     var body: some View {
@@ -15,5 +15,5 @@ struct AuthErrorBanner: View {
 }
 
 #Preview {
-    AuthErrorBanner(message: "Invalid credentials.")
+    ErrorBanner(message: "Invalid credentials.")
 }

@@ -4,6 +4,7 @@ struct LoginView: View {
     @State private var viewModel = LoginViewModel()
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(AuthSession.self) private var authSession
+    @Environment(ToastPresenter.self) private var toasts
 
     var body: some View {
         VStack(spacing: 0) {
@@ -50,14 +51,15 @@ struct LoginView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.white)
-        .overlay(alignment: .top) {
-            if let submitError = viewModel.submitError {
-                AuthErrorBanner(message: submitError)
-                    .padding()
-            }
-        }
         .navigationTitle("login.header.title")
         .navigationBarTitleDisplayMode(.large)
+        .onChange(of: viewModel.submitError) { _, error in
+            if let error {
+                toasts.show(error)
+            } else {
+                toasts.dismiss()
+            }
+        }
     }
 }
 
@@ -66,5 +68,6 @@ struct LoginView: View {
         LoginView()
             .environment(AppCoordinator())
             .environment(AuthSession())
+            .environment(ToastPresenter())
     }
 }

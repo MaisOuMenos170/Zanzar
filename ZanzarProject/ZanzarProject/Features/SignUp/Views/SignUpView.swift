@@ -4,6 +4,7 @@ struct SignUpView: View {
     @State private var viewModel = SignUpViewModel()
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(AuthSession.self) private var authSession
+    @Environment(ToastPresenter.self) private var toasts
 
     var body: some View {
         VStack(spacing: 0) {
@@ -61,14 +62,15 @@ struct SignUpView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.white)
-        .overlay(alignment: .top) {
-            if let submitError = viewModel.submitError {
-                AuthErrorBanner(message: submitError)
-                    .padding()
-            }
-        }
         .navigationTitle("signUp.header.title")
         .navigationBarTitleDisplayMode(.large)
+        .onChange(of: viewModel.submitError) { _, error in
+            if let error {
+                toasts.show(error)
+            } else {
+                toasts.dismiss()
+            }
+        }
     }
 }
 
@@ -77,5 +79,6 @@ struct SignUpView: View {
         SignUpView()
             .environment(AppCoordinator())
             .environment(AuthSession())
+            .environment(ToastPresenter())
     }
 }

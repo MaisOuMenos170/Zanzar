@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var coordinator = AppCoordinator()
     @State private var authSession = AuthSession()
+    @State private var toastPresenter = ToastPresenter()
 
     var body: some View {
         Group {
@@ -20,8 +21,10 @@ struct ContentView: View {
         }
         .sheet(item: $coordinator.presentedSheet) { coordinator.view(for: $0) }
         .fullScreenCover(item: $coordinator.presentedFullScreenCover) { coordinator.view(for: $0) }
+        .overlay { ToastOverlay() }
         .environment(coordinator)
         .environment(authSession)
+        .environment(toastPresenter)
     }
 }
 
