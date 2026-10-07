@@ -1021,6 +1021,41 @@
         }
       }
     },
+    "placeDetail.checkInConfirmation.cancelButton.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Cancel" } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Cancelar" } }
+      }
+    },
+    "placeDetail.checkInConfirmation.confirmButton.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm" } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Confirmar" } }
+      }
+    },
+    "placeDetail.checkInConfirmation.message.prefix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Check in at " } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Fazer check-in em " } }
+      }
+    },
+    "placeDetail.checkInConfirmation.message.suffix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "?" } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "?" } }
+      }
+    },
+    "placeDetail.checkInConfirmation.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Check in" } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Fazer Check-in" } }
+      }
+    },
     "placeDetail.checkInError.notAuthenticated": {
       "extractionState": "manual",
       "localizations": {
@@ -1446,6 +1481,48 @@
             "value": "Selo de %@ conquistado"
           }
         }
+      }
+    },
+    "placeDetail.sealEarnedAlert.acceptButton.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Accept" } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Aceitar" } }
+      }
+    },
+    "placeDetail.sealEarnedAlert.message.prefix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "You passed by " } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Você passou por " } }
+      }
+    },
+    "placeDetail.sealEarnedAlert.message.suffix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": " and found a seal." } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": " e encontrou um selo." } }
+      }
+    },
+    "placeDetail.sealEarnedAlert.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Yay! You earned a seal!" } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Eba! Você ganhou um selo!" } }
+      }
+    },
+    "placeDetail.statsCard.itinerarySealEarnedAccessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Route stamp earned" } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Carimbo do roteiro conquistado" } }
+      }
+    },
+    "placeDetail.statsCard.itinerarySealPreviewAccessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Route stamp — to be earned" } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Carimbo do roteiro — a conquistar" } }
       }
     },
     "placeDetail.statsCard.sealPreviewAccessibilityLabel": {

@@ -17,6 +17,7 @@ struct PlaceDetail: Identifiable, Hashable, Sendable {
     var reactions: [PlaceDetailReaction]
     let nearbyPlaces: [PlaceDetailNearbyPlace]
     var hasCheckedIn: Bool
+    var isInActiveItinerary: Bool
     var selectedReactionTag: String?
 
     var displayName: String {
@@ -176,6 +177,7 @@ extension PlaceDetail {
                     )
                 },
             hasCheckedIn: hasCheckedIn,
+            isInActiveItinerary: placeResponse.userContext?.isInActiveItinerary ?? false,
             selectedReactionTag: selectedReactionTag
         )
     }
