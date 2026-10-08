@@ -29,18 +29,9 @@ struct ItineraryListView: View {
             }
         }
         .background(Color(.systemBackground))
+        .navigationTitle("itinerary.list.header.title")
+        .navigationSubtitle("itinerary.list.header.subtitle")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                VStack(spacing: 2) {
-                    Text("itinerary.list.header.title")
-                        .font(.headline)
-                    Text("itinerary.list.header.subtitle")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-        }
         .task {
             await viewModel.load()
         }

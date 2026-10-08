@@ -9,6 +9,7 @@ struct ProfileView: View {
     var body: some View {
         content
             .background(Color(.systemBackground))
+            .navigationTitle("mainTab.profileTab.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
