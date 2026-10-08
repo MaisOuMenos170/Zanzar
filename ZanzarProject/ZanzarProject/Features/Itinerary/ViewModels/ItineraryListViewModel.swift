@@ -15,6 +15,11 @@ final class ItineraryListViewModel {
     var errorMessage: String?
     var actionErrorMessage: String?
 
+    var showsActionError: Bool {
+        get { actionErrorMessage != nil }
+        set { if !newValue { actionErrorMessage = nil } }
+    }
+
     init(
         itineraryService: ItineraryServicing = ItineraryService(),
         locationService: LocationMapServicing = LocationMapService(),

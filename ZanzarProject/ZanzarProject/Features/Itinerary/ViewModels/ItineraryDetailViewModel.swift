@@ -16,6 +16,11 @@ final class ItineraryDetailViewModel {
     var errorMessage: String?
     var actionErrorMessage: String?
 
+    var showsActionError: Bool {
+        get { actionErrorMessage != nil }
+        set { if !newValue { actionErrorMessage = nil } }
+    }
+
     init(
         slug: String,
         service: ItineraryServicing = ItineraryService(),

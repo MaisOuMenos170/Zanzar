@@ -139,6 +139,10 @@ struct ItineraryViewModelTests {
 
         #expect(viewModel.activeItinerary == Self.sampleActive)
         #expect(viewModel.actionErrorMessage == String(localized: "itinerary.detail.actionError.generic"))
+        #expect(viewModel.showsActionError)
+        viewModel.showsActionError = false
+        #expect(viewModel.actionErrorMessage == nil)
+        #expect(viewModel.showsActionError == false)
     }
 
     // MARK: - Detail

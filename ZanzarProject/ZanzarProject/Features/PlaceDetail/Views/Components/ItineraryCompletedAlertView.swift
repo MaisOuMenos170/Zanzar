@@ -1,8 +1,6 @@
 import SwiftUI
 
-struct SealEarnedAlertView: View {
-    let placeName: String
-    let category: ZanzarPlaceCategory
+struct ItineraryCompletedAlertView: View {
     let onAccept: () -> Void
 
     @AccessibilityFocusState private var isAcceptFocused: Bool
@@ -16,16 +14,16 @@ struct SealEarnedAlertView: View {
 
             VStack(spacing: 24) {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("placeDetail.sealEarnedAlert.title")
+                    Text("placeDetail.itineraryCompletedAlert.title")
                         .font(.headline)
 
-                    Text(message)
+                    Text("placeDetail.itineraryCompletedAlert.message")
                         .font(.body)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                PlaceCategorySealView(category: category, state: .earned, size: 120)
+                ItineraryStampView(state: .earned, size: 120)
 
                 Button("placeDetail.sealEarnedAlert.acceptButton.title", action: onAccept)
                     .buttonStyle(.glassProminent)
@@ -44,16 +42,8 @@ struct SealEarnedAlertView: View {
             isAcceptFocused = true
         }
     }
-
-    private var message: AttributedString {
-        var name = AttributedString(placeName)
-        name.inlinePresentationIntent = .stronglyEmphasized
-        return AttributedString(localized: "placeDetail.sealEarnedAlert.message.prefix")
-            + name
-            + AttributedString(localized: "placeDetail.sealEarnedAlert.message.suffix")
-    }
 }
 
 #Preview {
-    SealEarnedAlertView(placeName: "Bar do Zé", category: .bar, onAccept: {})
+    ItineraryCompletedAlertView(onAccept: {})
 }

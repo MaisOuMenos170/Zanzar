@@ -8,6 +8,7 @@ struct ItineraryListView: View {
     @Environment(AppCoordinator.self) private var coordinator
 
     var body: some View {
+        @Bindable var viewModel = viewModel
         Group {
             if viewModel.itineraries.isEmpty, viewModel.isLoading {
                 ProgressView("itinerary.loadingIndicator.title")
@@ -50,7 +51,10 @@ struct ItineraryListView: View {
             guard newValue == nil else { return }
             Task { await viewModel.refreshActiveItinerary() }
         }
-        .alert("itinerary.detail.actionError.title", isPresented: showsActionError) {
+        .onReceive(NotificationCenter.default.publisher(for: AppNotification.activeItineraryDidChange)) { _ in
+            Task { await viewModel.refreshActiveItinerary() }
+        }
+        .alert("itinerary.detail.actionError.title", isPresented: $viewModel.showsActionError) {
             Button("itinerary.detail.actionError.dismissButton.title", role: .cancel) {
                 viewModel.actionErrorMessage = nil
             }
@@ -59,17 +63,6 @@ struct ItineraryListView: View {
                 Text(actionErrorMessage)
             }
         }
-    }
-
-    private var showsActionError: Binding<Bool> {
-        Binding(
-            get: { viewModel.actionErrorMessage != nil },
-            set: { isPresented in
-                if !isPresented {
-                    viewModel.actionErrorMessage = nil
-                }
-            }
-        )
     }
 
     private var listContent: some View {
@@ -91,7 +84,7 @@ struct ItineraryListView: View {
                             .font(.body.bold())
 
                         ForEach(viewModel.itineraries) { itinerary in
-                            ItineraryCard(itinerary: itinerary) {
+                            ItineraryCard(itinerary: itinerary, mediaPolicy: mediaPolicy) {
                                 sheetCoordinator.present(sheet: .itineraryDetail(slug: itinerary.slug))
                             }
                         }

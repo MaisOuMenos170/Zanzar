@@ -73,9 +73,13 @@ struct PlaceDetailView: View {
                     onAccept: viewModel.dismissEarnedSealAlert
                 )
                 .transition(.opacity)
+            } else if viewModel.showsCompletedItineraryAlert {
+                ItineraryCompletedAlertView(onAccept: viewModel.dismissCompletedItineraryAlert)
+                    .transition(.opacity)
             }
         }
         .animation(.default, value: viewModel.earnedSealPresentation != nil)
+        .animation(.default, value: viewModel.showsCompletedItineraryAlert)
     }
 
     private func checkInConfirmationMessage(for placeName: String) -> AttributedString {

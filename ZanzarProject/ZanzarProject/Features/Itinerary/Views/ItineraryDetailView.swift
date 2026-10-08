@@ -28,7 +28,7 @@ struct ItineraryDetailView: View {
         .task {
             await viewModel.load()
         }
-        .alert("itinerary.detail.actionError.title", isPresented: showsActionError) {
+        .alert("itinerary.detail.actionError.title", isPresented: $viewModel.showsActionError) {
             Button("itinerary.detail.actionError.dismissButton.title", role: .cancel) {
                 viewModel.actionErrorMessage = nil
             }
@@ -37,17 +37,6 @@ struct ItineraryDetailView: View {
                 Text(actionErrorMessage)
             }
         }
-    }
-
-    private var showsActionError: Binding<Bool> {
-        Binding(
-            get: { viewModel.actionErrorMessage != nil },
-            set: { isPresented in
-                if !isPresented {
-                    viewModel.actionErrorMessage = nil
-                }
-            }
-        )
     }
 
     @ViewBuilder
