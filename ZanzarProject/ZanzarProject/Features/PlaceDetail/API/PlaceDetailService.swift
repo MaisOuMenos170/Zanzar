@@ -274,4 +274,3 @@ final class PlaceDetailService: PlaceDetailServicing {
         }
     }
 }
-

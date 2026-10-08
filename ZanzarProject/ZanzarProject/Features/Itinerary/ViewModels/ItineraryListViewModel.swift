@@ -23,7 +23,7 @@ final class ItineraryListViewModel {
     init(
         itineraryService: ItineraryServicing = ItineraryService(),
         locationService: LocationMapServicing = LocationMapService(),
-        userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.getToken().flatMap(JWTDecoder.userID(from:)) }
+        userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.userID }
     ) {
         self.itineraryService = itineraryService
         self.locationService = locationService

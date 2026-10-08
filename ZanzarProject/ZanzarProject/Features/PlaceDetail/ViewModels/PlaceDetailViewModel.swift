@@ -33,13 +33,13 @@ final class PlaceDetailViewModel {
             try await LocationMapService().currentUserLocation()
         },
         service: PlaceDetailServicing = PlaceDetailService(),
-        pendingRatingStore: PendingRatingStoring = UserDefaultsPendingRatingStore()
+        pendingRatingStore: PendingRatingStoring? = nil
     ) {
         self.place = place
         self.userIDProvider = userIDProvider
         self.userCoordinateProvider = userCoordinateProvider
         self.service = service
-        self.pendingRatingStore = pendingRatingStore
+        self.pendingRatingStore = pendingRatingStore ?? UserDefaultsPendingRatingStore()
     }
 
     func load() async {

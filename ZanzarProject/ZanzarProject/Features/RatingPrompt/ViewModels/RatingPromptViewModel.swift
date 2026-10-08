@@ -19,7 +19,7 @@ final class RatingPromptViewModel {
 
     init(
         service: RatingPromptServicing = RatingPromptService(),
-        store: PendingRatingStoring = UserDefaultsPendingRatingStore(),
+        store: PendingRatingStoring? = nil,
         userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.userID },
         userCoordinateProvider: @escaping @Sendable () async throws -> UserCoordinate = {
             try await LocationMapService().currentUserLocation()
@@ -28,7 +28,7 @@ final class RatingPromptViewModel {
         sleep: @escaping @Sendable (Duration) async throws -> Void = { try await Task.sleep(for: $0) }
     ) {
         self.service = service
-        self.store = store
+        self.store = store ?? UserDefaultsPendingRatingStore()
         self.userIDProvider = userIDProvider
         self.userCoordinateProvider = userCoordinateProvider
         self.now = now

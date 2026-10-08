@@ -2,6 +2,7 @@ import Foundation
 import Testing
 @testable import ZanzarProject
 
+@MainActor
 @Suite("SignUpService")
 struct SignUpServiceTests {
     @Test("submitSignUp posts the payload and decodes the user id")
@@ -32,7 +33,11 @@ private final class StubNetworkClient: NetworkClient, @unchecked Sendable {
         try JSONDecoder().decode(Response.self, from: Data(responseJSON.utf8))
     }
 
-    func send<Body: Encodable, Response: Decodable>(path: String, method: HTTPMethod, body: Body) async throws -> Response {
+    func send<Body: Encodable, Response: Decodable>(
+        path: String,
+        method: HTTPMethod,
+        body: Body
+    ) async throws -> Response {
         lastSendPath = path
         lastSendMethod = method
         return try JSONDecoder().decode(Response.self, from: Data(responseJSON.utf8))

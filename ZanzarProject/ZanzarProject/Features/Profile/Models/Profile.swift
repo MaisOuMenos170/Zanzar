@@ -1,12 +1,12 @@
 import Foundation
 
-struct Profile: Hashable {
+nonisolated struct Profile: Hashable {
     let summary: ProfileSummary
     let recentCheckIns: [ProfileCheckIn]
 }
 
 #if DEBUG
-extension Profile {
+nonisolated extension Profile {
     static let preview = Profile(
         summary: ProfileSummary(name: "Ana Silva", checkInCount: 21, itineraryCount: 3, sealCount: 4),
         recentCheckIns: [

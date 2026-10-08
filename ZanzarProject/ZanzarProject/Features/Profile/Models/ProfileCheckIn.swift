@@ -1,6 +1,6 @@
 import Foundation
 
-struct ProfileCheckIn: Identifiable, Hashable {
+nonisolated struct ProfileCheckIn: Identifiable, Hashable {
     let id: String
     let placeID: String
     let placeName: String?
@@ -10,7 +10,7 @@ struct ProfileCheckIn: Identifiable, Hashable {
     let impressionTag: ImpressionTag?
 }
 
-extension ProfileCheckIn {
+nonisolated extension ProfileCheckIn {
     func withID(_ id: String) -> ProfileCheckIn {
         ProfileCheckIn(
             id: id,

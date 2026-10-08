@@ -1,6 +1,6 @@
 import Foundation
 
-enum AuthErrorMapper {
+nonisolated enum AuthErrorMapper {
     static func loginMessage(for error: APIError) -> String {
         mappedMessage(
             for: error,

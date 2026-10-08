@@ -1,6 +1,6 @@
 import Foundation
 
-enum GooglePlacesConfiguration {
+nonisolated enum GooglePlacesConfiguration {
     static func photoURL(reference: String, maxWidth: Int = 800) -> URL? {
         var components = URLComponents(
             url: APIConfiguration.baseURL.appending(path: "places/photo"),

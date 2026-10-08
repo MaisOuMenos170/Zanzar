@@ -7,7 +7,8 @@ protocol PendingRatingStoring {
     func clear()
 }
 
-nonisolated final class UserDefaultsPendingRatingStore: PendingRatingStoring {
+@MainActor
+final class UserDefaultsPendingRatingStore: PendingRatingStoring {
     private static let key = "pendingRating"
     private let defaults: UserDefaults
 

@@ -7,7 +7,7 @@ struct AuthValidationTests {
     @Test(arguments: [
         ("", "empty"),
         ("not-an-email", "invalid"),
-        ("user@domain.com", nil),
+        ("user@domain.com", nil)
     ] as [(String, String?)])
     func emailValidation(email: String, expectedKey: String?) {
         let result = AuthValidation.emailError(
@@ -21,7 +21,7 @@ struct AuthValidationTests {
     @Test(arguments: [
         ("", "empty"),
         ("ab", "short"),
-        ("ana", nil),
+        ("ana", nil)
     ] as [(String, String?)])
     func usernameValidation(username: String, expectedKey: String?) {
         let result = AuthValidation.usernameError(
@@ -36,7 +36,7 @@ struct AuthValidationTests {
         ("", "empty"),
         ("1234567", "short"),
         ("abcdefgh", "invalid"),
-        ("secret12", nil),
+        ("secret12", nil)
     ] as [(String, String?)])
     func passwordValidation(password: String, expectedKey: String?) {
         let result = AuthValidation.passwordError(

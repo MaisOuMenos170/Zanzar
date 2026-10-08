@@ -24,7 +24,7 @@ final class ItineraryDetailViewModel {
     init(
         slug: String,
         service: ItineraryServicing = ItineraryService(),
-        userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.getToken().flatMap(JWTDecoder.userID(from:)) }
+        userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.userID }
     ) {
         self.slug = slug
         self.service = service

@@ -152,7 +152,10 @@ struct ItineraryServiceTests {
         #expect(active.places[0].isCompleted)
         #expect(active.places[0].stampID == "stamp_historic")
         #expect(active.places[1].isCompleted == false)
-        let expectedStartedAt = try Date("2026-10-06T12:00:00.000Z", strategy: Date.ISO8601FormatStyle(includingFractionalSeconds: true))
+        let expectedStartedAt = try Date(
+            "2026-10-06T12:00:00.000Z",
+            strategy: Date.ISO8601FormatStyle(includingFractionalSeconds: true)
+        )
         #expect(active.startedAt == expectedStartedAt)
     }
 
@@ -292,7 +295,11 @@ private final class ItineraryStubNetworkClient: NetworkClient, @unchecked Sendab
         return try JSONDecoder().decode(Response.self, from: Data(responseJSON.utf8))
     }
 
-    func send<Body: Encodable, Response: Decodable>(path: String, method: HTTPMethod, body: Body) async throws -> Response {
+    func send<Body: Encodable, Response: Decodable>(
+        path: String,
+        method: HTTPMethod,
+        body: Body
+    ) async throws -> Response {
         lastSendPath = path
         lastSendMethod = method
         return try JSONDecoder().decode(Response.self, from: Data(responseJSON.utf8))
