@@ -24,6 +24,7 @@ struct ContentView: View {
         .safeAreaInset(edge: .top, spacing: 0) {
             ToastOverlay()
         }
+        .preferredColorScheme(.light)
         .environment(coordinator)
         .environment(authSession)
         .environment(toastPresenter)
