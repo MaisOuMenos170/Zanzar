@@ -2,67 +2,65 @@ import SwiftUI
 
 struct ItineraryCard: View {
     let itinerary: Itinerary
-    var mediaPolicy: PlaceMediaAccessPolicy = .shared
     let onViewDetails: () -> Void
 
-    @ScaledMetric(relativeTo: .body) private var coverHeight = 120
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            if let coverURL {
-                AsyncImage(url: coverURL) { phase in
-                    switch phase {
-                    case .success(let image):
-                        Color.clear
-                            .overlay {
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                            }
-                            .clipped()
-                    case .failure:
-                        Color("PlaceDetailStatsBackground")
-                    case .empty:
-                        ProgressView()
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    @unknown default:
-                        Color("PlaceDetailStatsBackground")
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: coverHeight)
-                .accessibilityHidden(true)
+        HStack(alignment: .top, spacing: 8) {
+            HStack(spacing: 7) {
+                ItineraryMetricPill(
+                    systemImage: "mappin.and.ellipse",
+                    value: itinerary.placesCount,
+                    accessibilityLabel: Text("itinerary.card.placesCount \(itinerary.placesCount)")
+                )
+                ItineraryMetricPill(
+                    systemImage: "figure.walk",
+                    value: itinerary.completedCount,
+                    accessibilityLabel: Text("itinerary.card.completedCount \(itinerary.completedCount)")
+                )
             }
 
-            VStack(alignment: .leading, spacing: 12) {
+            Image("ItineraryRoutePath")
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity, maxHeight: 76)
+                .accessibilityHidden(true)
+
+            VStack(alignment: .trailing, spacing: 8) {
                 Text(itinerary.name)
-                    .font(.headline)
-                    .foregroundStyle(.primary)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("itinerary.card.placesCount \(itinerary.placesCount)")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-
-                    Text("itinerary.card.completedCount \(itinerary.completedCount)")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(Color("PlaceDetailNearbyTitle"))
+                    .multilineTextAlignment(.trailing)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
 
                 Button("itinerary.card.viewDetails", action: onViewDetails)
                     .buttonStyle(.borderedProminent)
+                    .controlSize(.small)
+                    .tint(Color("TabBarSelected"))
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(16)
+            .frame(maxWidth: 120)
         }
-        .background(Color("PlaceDetailNearbyCardBackground"))
-        .clipShape(.rect(cornerRadius: 12))
+        .padding(8)
+        .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 8))
+        .accessibilityElement(children: .contain)
     }
+}
 
-    private var coverURL: URL? {
-        guard mediaPolicy.canLoadRemoteImages,
-              let raw = itinerary.coverImageURL else { return nil }
-        return URL(string: raw)
+private struct ItineraryMetricPill: View {
+    let systemImage: String
+    let value: Int
+    let accessibilityLabel: Text
+
+    var body: some View {
+        HStack(spacing: 2) {
+            Image(systemName: systemImage)
+            Text(value, format: .number)
+        }
+        .font(.caption2)
+        .foregroundStyle(.primary)
+        .padding(.horizontal, 5)
+        .padding(.vertical, 3)
+        .background(Color(.systemBackground), in: .capsule)
+        .accessibilityLabel(accessibilityLabel)
     }
 }
 
@@ -70,11 +68,11 @@ struct ItineraryCard: View {
     ItineraryCard(
         itinerary: Itinerary(
             slug: "centro-historico",
-            name: "Centro Histórico",
+            name: "Bora passear no centro histórico?",
             category: "historic",
             routeType: .fixed,
-            placesCount: 5,
-            completedCount: 42,
+            placesCount: 4,
+            completedCount: 20,
             coverImageURL: nil
         ),
         onViewDetails: {}

@@ -398,6 +398,23 @@
         }
       }
     },
+    "itinerary.detail.eligiblePlaces.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Places in this selection"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lugares desta seleção"
+          }
+        }
+      }
+    },
     "itinerary.detail.suggestedRoute.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -472,13 +489,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Explore routes and nearby places"
+            "value" : "Choose your next route or check in at nearby places."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Explore rotas e lugares perto de você"
+            "value" : "Escolha seu próximo roteiro ou faça check in em lugares próximos."
           }
         }
       }
@@ -530,6 +547,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lugares próximos"
+          }
+        }
+      }
+    },
+    "itinerary.stampTrack.progress %lld %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld of %lld stamps"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld de %lld carimbos"
           }
         }
       }
