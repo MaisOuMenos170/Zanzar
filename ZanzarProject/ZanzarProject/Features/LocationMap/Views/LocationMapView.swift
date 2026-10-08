@@ -9,6 +9,16 @@ struct LocationMapView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
+        MapReader { proxy in
+            map
+                .onTapGesture { point in
+                    guard let coordinate = proxy.convert(point, from: .local) else { return }
+                    selectItem(nearestTo: coordinate)
+                }
+        }
+    }
+
+    private var map: some View {
         Map(position: $viewModel.cameraPosition) {
             userLocationContent
             placeAnnotations
@@ -54,6 +64,8 @@ struct LocationMapView: View {
             }
         }
         .animation(.default, value: ratingPrompt.isPresented)
+        .navigationTitle("mainTab.discoverTab.title")
+        .toolbar(.hidden, for: .navigationBar)
         .task {
             await viewModel.load()
         }
@@ -71,6 +83,19 @@ struct LocationMapView: View {
 
     private static let pinTransition = AnyTransition.opacity.combined(with: .scale(scale: 0.7))
 
+    private func selectItem(nearestTo coordinate: CLLocationCoordinate2D) {
+        guard let item = MapPinClustering.nearestItem(to: coordinate, in: viewModel.displayItems) else { return }
+        switch item {
+        case .place(let place):
+            coordinator.push(.placeDetail(place))
+        case .cluster(let cluster):
+            let region = viewModel.focusRegion(on: cluster)
+            withAnimation(.smooth(duration: 0.45)) {
+                viewModel.applyCameraRegion(region)
+            }
+        }
+    }
+
     private var isMonitoringRating: Bool {
         coordinator.path.isEmpty && scenePhase == .active
     }
@@ -80,50 +105,27 @@ struct LocationMapView: View {
         ForEach(viewModel.displayItems) { item in
             switch item {
             case .place(let place):
-                // The title is drawn on the pin, not passed to `Annotation`. MapKit's title is placed
-                // independently of the marker, so its accessibility frame can sit on a neighboring pin
-                // and the tap opens the wrong place.
+                // The pin does not hit-test itself. Overlapping sprites were opening the neighbor.
+                // The map gesture resolves the tap to the nearest coordinate instead.
                 Annotation("", coordinate: place.coordinate, anchor: .bottom) {
-                    Button {
-                        coordinator.push(.placeDetail(place))
-                    } label: {
-                        LocationPinView(category: place.category, style: place.pinStyle)
-                            .overlay(alignment: .top) {
-                                Text(place.displayName)
-                                    .font(.caption2.weight(.semibold))
-                                    .foregroundStyle(.primary)
-                                    .multilineTextAlignment(.center)
-                                    .lineLimit(2)
-                                    .fixedSize(horizontal: true, vertical: true)
-                                    .frame(maxWidth: 110)
-                                    .offset(y: -16)
-                                    .accessibilityHidden(true)
-                            }
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(place.displayName)
-                    .accessibilityAddTraits(.isButton)
-                    .transition(Self.pinTransition)
+                    LocationPinView(category: place.category, style: place.pinStyle)
+                        .accessibilityLabel(place.displayName)
+                        .accessibilityAddTraits(.isButton)
+                        .allowsHitTesting(false)
+                        .transition(Self.pinTransition)
                 }
                 .annotationTitles(.hidden)
             case .cluster(let cluster):
                 Annotation("", coordinate: cluster.coordinate, anchor: .center) {
-                    Button {
-                        let region = viewModel.focusRegion(on: cluster)
-                        withAnimation(.smooth(duration: 0.45)) {
-                            viewModel.applyCameraRegion(region)
-                        }
-                    } label: {
-                        LocationClusterPinView(count: cluster.count)
-                    }
-                    .buttonStyle(.plain)
-                    .transition(Self.pinTransition)
-                    .accessibilityLabel(
-                        String(
-                            localized: "locationMap.clusterPin.accessibilityLabel \(cluster.count)"
+                    LocationClusterPinView(count: cluster.count)
+                        .accessibilityLabel(
+                            String(
+                                localized: "locationMap.clusterPin.accessibilityLabel \(cluster.count)"
+                            )
                         )
-                    )
+                        .accessibilityAddTraits(.isButton)
+                        .allowsHitTesting(false)
+                        .transition(Self.pinTransition)
                 }
             }
         }

@@ -74,24 +74,16 @@ struct MapPinClusteringTests {
     func chainDoesNotOverCluster() {
         let places = [
             place(id: "a", latitude: -25.430, longitude: -49.270),
-            place(id: "b", latitude: -25.432, longitude: -49.270),
-            place(id: "c", latitude: -25.434, longitude: -49.270)
+            place(id: "b", latitude: -25.438, longitude: -49.270),
+            place(id: "c", latitude: -25.446, longitude: -49.270)
         ]
 
         let items = MapPinClustering.cluster(places: places, region: region(span: 0.05))
 
-        #expect(items.count == 2)
-
-        let cluster = items.compactMap { item -> MapPinCluster? in
-            if case .cluster(let cluster) = item { cluster } else { nil }
-        }.first
-        #expect(cluster?.count == 2)
-
-        let individuals = items.compactMap { item -> MapPlace? in
-            if case .place(let place) = item { place } else { nil }
-        }
-        #expect(individuals.count == 1)
-        #expect(individuals[0].id == "a" || individuals[0].id == "c")
+        #expect(items.count == 3)
+        #expect(items.allSatisfy { item in
+            if case .place = item { true } else { false }
+        })
     }
 
     @Test("Dense overlapping places merge into a single cluster marker")
@@ -111,6 +103,40 @@ struct MapPinClusteringTests {
             #expect(cluster.count == 8)
         } else {
             Issue.record("Expected a single cluster display item")
+        }
+    }
+
+    @Test("Markers that would overlap on screen become one cluster")
+    func overlappingMarkersClusterUntilZoomedIn() {
+        let places = [
+            place(id: "matias", latitude: -25.427014, longitude: -49.273992),
+            place(id: "cavalo", latitude: -25.427493, longitude: -49.273849)
+        ]
+
+        let cityZoom = MapPinClustering.cluster(places: places, region: region(span: 0.009))
+        #expect(cityZoom.count == 1)
+        if case .cluster(let cluster) = cityZoom[0] {
+            #expect(cluster.count == 2)
+        } else {
+            Issue.record("Expected Matias Bar and Cavalo Babão to share a cluster")
+        }
+
+        let streetZoom = MapPinClustering.cluster(places: places, region: region(span: 0.001))
+        #expect(streetZoom.count == 2)
+    }
+
+    @Test("A tap resolves to the marker coordinate, not the overlapping neighbor")
+    func nearestItemPrefersCloserCoordinate() {
+        let matias = place(id: "matias", latitude: -25.427014, longitude: -49.273992)
+        let cavalo = place(id: "cavalo", latitude: -25.427493, longitude: -49.273849)
+        let items = [MapPinDisplayItem.place(matias), .place(cavalo)]
+
+        let nearest = MapPinClustering.nearestItem(to: matias.coordinate, in: items)
+
+        if case .place(let place) = nearest {
+            #expect(place.id == "matias")
+        } else {
+            Issue.record("Expected the tap on Matias Bar's coordinate to choose Matias Bar")
         }
     }
 
