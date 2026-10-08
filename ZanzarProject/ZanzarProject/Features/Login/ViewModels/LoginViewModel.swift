@@ -31,6 +31,20 @@ final class LoginViewModel {
         return emailError == nil && passwordError == nil
     }
 
+    /// Updates only the errors already on screen, so a field clears as soon as its value becomes valid.
+    func refreshShownFieldErrors() {
+        if emailError != nil {
+            emailError = AuthValidation.emailError(
+                for: email,
+                emptyKey: "login.emailField.errorEmpty",
+                invalidKey: "login.emailField.errorInvalid"
+            )
+        }
+        if passwordError != nil {
+            passwordError = password.isEmpty ? "login.passwordField.errorEmpty" : nil
+        }
+    }
+
     func submit(using authSession: AuthSession) async -> Bool {
         guard !isLoading else { return false }
 

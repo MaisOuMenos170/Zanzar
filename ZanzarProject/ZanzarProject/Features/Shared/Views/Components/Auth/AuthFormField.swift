@@ -22,8 +22,10 @@ struct AuthFormField: View {
             }
 
             field
+                .font(.body)
                 .padding(.horizontal, 8)
-                .frame(height: 45)
+                .padding(.vertical, 12)
+                .frame(minHeight: 45, alignment: .leading)
                 .background(Color("AuthFieldBackground"), in: .rect(cornerRadius: 8))
                 .overlay {
                     if errorMessageKey != nil {
@@ -40,7 +42,8 @@ struct AuthFormField: View {
             SecureField(placeholderKey, text: $text)
                 .textContentType(textContentType)
         } else {
-            TextField(placeholderKey, text: $text)
+            TextField(placeholderKey, text: $text, axis: .vertical)
+                .lineLimit(1...3)
                 .textContentType(textContentType)
                 .keyboardType(keyboardType)
                 .textInputAutocapitalization(keyboardType == .emailAddress ? .never : .sentences)
