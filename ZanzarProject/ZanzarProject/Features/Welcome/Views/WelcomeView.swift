@@ -36,7 +36,7 @@ struct WelcomeView: View {
             .padding(.bottom, 24)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.white)
+        .background(Color(.systemBackground))
     }
 }
 

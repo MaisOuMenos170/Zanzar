@@ -50,7 +50,7 @@ struct LoginView: View {
             .padding(.bottom, 24)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.white)
+        .background(Color(.systemBackground))
         .navigationTitle("login.header.title")
         .navigationBarTitleDisplayMode(.large)
         .onChange(of: viewModel.submitError) { _, error in
