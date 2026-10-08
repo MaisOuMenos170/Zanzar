@@ -4,23 +4,16 @@ import SwiftUI
 struct LocationMapView: View {
     @State private var viewModel = LocationMapViewModel()
     @State private var ratingPrompt = RatingPromptViewModel()
-    @State private var selectedPlaceID: String?
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(ToastPresenter.self) private var toasts
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
-        Map(position: $viewModel.cameraPosition, selection: $selectedPlaceID) {
+        Map(position: $viewModel.cameraPosition) {
             userLocationContent
             placeAnnotations
         }
         .tint(.blue)
-        .onChange(of: selectedPlaceID) { _, placeID in
-            guard let placeID,
-                  let place = viewModel.places.first(where: { $0.id == placeID }) else { return }
-            selectedPlaceID = nil
-            coordinator.push(.placeDetail(place))
-        }
         .mapStyle(.standard(elevation: .realistic))
         .mapControls {
             #if !(DEBUG && targetEnvironment(simulator))
@@ -87,13 +80,33 @@ struct LocationMapView: View {
         ForEach(viewModel.displayItems) { item in
             switch item {
             case .place(let place):
-                Annotation(place.displayName, coordinate: place.coordinate, anchor: .bottom) {
-                    LocationPinView(category: place.category, style: place.pinStyle)
-                        .transition(Self.pinTransition)
-                        .accessibilityLabel(place.displayName)
-                        .accessibilityAddTraits(.isButton)
+                // The title is drawn on the pin, not passed to `Annotation`. MapKit's title is placed
+                // independently of the marker, so its accessibility frame can sit on a neighboring pin
+                // and the tap opens the wrong place.
+                Annotation("", coordinate: place.coordinate, anchor: .bottom) {
+                    Button {
+                        coordinator.push(.placeDetail(place))
+                    } label: {
+                        LocationPinView(category: place.category, style: place.pinStyle)
+                            .overlay(alignment: .top) {
+                                Text(place.displayName)
+                                    .font(.caption2.weight(.semibold))
+                                    .foregroundStyle(.primary)
+                                    .multilineTextAlignment(.center)
+                                    .lineLimit(2)
+                                    .fixedSize(horizontal: true, vertical: true)
+                                    .frame(maxWidth: 110)
+                                    .offset(y: -16)
+                                    .accessibilityHidden(true)
+                            }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(place.displayName)
+                    .accessibilityAddTraits(.isButton)
+                    .transition(Self.pinTransition)
                 }
-                .tag(place.id)
+                .annotationTitles(.hidden)
             case .cluster(let cluster):
                 Annotation("", coordinate: cluster.coordinate, anchor: .center) {
                     Button {
