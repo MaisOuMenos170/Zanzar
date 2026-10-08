@@ -171,6 +171,44 @@ struct PlaceDetailNearbyPlaceTests {
         #expect(cardPlace.hasCheckedIn == true)
     }
 
+    @Test("Category chip is not repeated as a case-variant slug")
+    func categoryChipDropsCaseVariantSlug() throws {
+        let categoryLabel = String(localized: "placeDetail.tag.historic")
+        let response = try makeAPIResponse(
+            placeId: "place-historic",
+            name: "Cavalo Babão",
+            lat: -25.43,
+            lng: -49.27,
+            category: "historic",
+            checkInCount: 1,
+            distanceMeters: 100,
+            tags: [categoryLabel.lowercased(), "centro"]
+        )
+
+        let detail = PlaceDetail.make(
+            placeResponse: response,
+            nearbyResponses: [],
+            mapPlace: MapPlace(
+                id: "place-historic",
+                name: "Cavalo Babão",
+                latitude: -25.43,
+                longitude: -49.27,
+                category: .historic,
+                distanceMeters: 100
+            ),
+            hasCheckedIn: false,
+            selectedReactionTag: nil
+        )
+
+        let labels = detail.tags.map(\.label)
+        let categoryChipCount = labels.filter {
+            $0.compare(categoryLabel, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
+        }.count
+        #expect(categoryChipCount == 1)
+        #expect(labels.contains("centro"))
+        #expect(labels.count == 2)
+    }
+
     private func makeAPIResponse(
         placeId: String,
         name: String,
@@ -180,9 +218,11 @@ struct PlaceDetailNearbyPlaceTests {
         category: String,
         checkInCount: Int,
         distanceMeters: Double?,
-        hasCheckedIn: Bool = false
+        hasCheckedIn: Bool = false,
+        tags: [String] = []
     ) throws -> PlaceDetailAPIResponse {
         let nicknameField = nickname.map { ", \"nickname\": \"\($0)\"" } ?? ""
+        let tagsField = tags.map { "\"\($0)\"" }.joined(separator: ", ")
         let userContextField = ", \"userContext\": { \"hasCheckedIn\": \(hasCheckedIn ? "true" : "false"), \"isInActiveItinerary\": false }"
         let json = """
         {
@@ -194,7 +234,7 @@ struct PlaceDetailNearbyPlaceTests {
           "photos": [],
           "zanzar": {
             "category": "\(category)",
-            "tags": [],
+            "tags": [\(tagsField)],
             "checkInCount": \(checkInCount),
             "impressionCounts": { "delighted": 1, "happy": 2 }
           }
