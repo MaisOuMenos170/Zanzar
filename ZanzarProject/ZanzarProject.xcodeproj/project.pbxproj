@@ -19,6 +19,7 @@
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* ZanzarProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZanzarProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		000000000000000000000130 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		C0FFEE000000000000000131 /* Config.Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.Release.xcconfig; sourceTree = "<group>"; };
 		B9A3FCA73059BF17003386A8 /* ZanzarProjectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZanzarProjectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -53,6 +54,7 @@
 			isa = PBXGroup;
 			children = (
 				000000000000000000000130 /* Config.xcconfig */,
+				C0FFEE000000000000000131 /* Config.Release.xcconfig */,
 				000000000000000000000010 /* ZanzarProject */,
 				B9A3FCA83059BF17003386A8 /* ZanzarProjectTests */,
 				000000000000000000000020 /* Products */,
@@ -244,6 +246,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.6.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				VERSIONING_SYSTEM = "apple-generic";
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PROJECT_UNIQUE_VALUE = FF0BKO3I;
@@ -309,6 +312,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.6.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				VERSIONING_SYSTEM = "apple-generic";
 				MTL_FAST_MATH = YES;
 				PROJECT_UNIQUE_VALUE = FF0BKO3I;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -323,9 +327,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 000000000000000000000130 /* Config.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 982D3NRR89;
+				INFOPLIST_KEY_CFBundleDisplayName = Lero;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
@@ -347,7 +353,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.lucasdalprabrascher.ZanzarProject;
+				PRODUCT_BUNDLE_IDENTIFIER = dalpra.Zanzar;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -365,11 +371,13 @@
 		};
 		000000000000000112000000 /* Release configuration for PBXNativeTarget "ZanzarProject" */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 000000000000000000000130 /* Config.xcconfig */;
+			baseConfigurationReference = C0FFEE000000000000000131 /* Config.Release.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YG962GT9NC;
+				DEVELOPMENT_TEAM = 982D3NRR89;
+				INFOPLIST_KEY_CFBundleDisplayName = Lero;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
@@ -390,7 +398,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "devplaceholder.$(PROJECT_UNIQUE_VALUE:identifier).$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = dalpra.Zanzar;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;

@@ -1,0 +1,4 @@
+// Release API base URL. Committed on purpose: this is the public server, not a secret.
+// xcconfig treats // as a comment, so the scheme separator is written as :/$()/.
+// Debug keeps using the gitignored Config.xcconfig (local tunnel or localhost).
+ZANZAR_API_BASE_URL = https:/$()/zanzarbackend-development.up.railway.app
