@@ -1,6 +1,6 @@
 import Foundation
 
-struct ProfileSummary: Hashable {
+nonisolated struct ProfileSummary: Hashable {
     let name: String
     let checkInCount: Int
     let itineraryCount: Int

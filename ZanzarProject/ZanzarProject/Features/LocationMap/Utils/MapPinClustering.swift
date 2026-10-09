@@ -6,7 +6,7 @@ import MapKit
 /// The result is a pure function of the places and a quantized zoom level, so it is stable: panning never
 /// changes it, and every item keeps the same `id` across calls. SwiftUI's `Map` relies on those ids to tell
 /// an annotation that moved from one that was replaced; unstable ids make every pin blink.
-enum MapPinClustering {
+nonisolated enum MapPinClustering {
     /// Span below which every pin is shown individually (~250 m at the equator).
     static let individualSpanThreshold: Double = 0.00225
 
@@ -128,9 +128,11 @@ enum MapPinClustering {
         maxCentroidDistance: Double
     ) -> (first: Int, second: Int)? {
         for first in items.indices {
-            for second in (first + 1) ..< items.count
-            where coordinateDistance(from: items[first].coordinate, to: items[second].coordinate) <= maxCentroidDistance {
-                return (first, second)
+            for second in (first + 1) ..< items.count {
+                let distance = coordinateDistance(from: items[first].coordinate, to: items[second].coordinate)
+                if distance <= maxCentroidDistance {
+                    return (first, second)
+                }
             }
         }
         return nil
@@ -174,7 +176,7 @@ enum MapPinClustering {
     }
 }
 
-private extension MapPinDisplayItem {
+private nonisolated extension MapPinDisplayItem {
     var memberPlaces: [MapPlace] {
         switch self {
         case .place(let place):

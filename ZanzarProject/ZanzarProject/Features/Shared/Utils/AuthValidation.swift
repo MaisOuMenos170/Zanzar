@@ -1,9 +1,9 @@
 import Foundation
 
-enum AuthValidation {
+nonisolated enum AuthValidation {
     static let minimumUsernameLength = 3
     static let minimumPasswordLength = 8
-    private static let passwordPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/
+    private static var passwordPattern: Regex<Substring> { /^(?=.*[A-Za-z])(?=.*\d).{8,}$/ }
 
     static func emailError(
         for email: String,

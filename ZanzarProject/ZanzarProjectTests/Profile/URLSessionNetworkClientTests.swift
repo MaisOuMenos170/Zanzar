@@ -1,4 +1,5 @@
 import Foundation
+import os
 import Testing
 @testable import ZanzarProject
 
@@ -45,30 +46,33 @@ struct URLSessionNetworkClientTests {
 }
 
 nonisolated final class StubURLProtocol: URLProtocol, @unchecked Sendable {
-    private static let lock = NSLock()
-    private static var status = 204
-    private static var body = Data()
-    private static var recordedRequest: URLRequest?
+    private struct State: Sendable {
+        var status = 204
+        var body = Data()
+        var recordedRequest: URLRequest?
+    }
+
+    private static let state = OSAllocatedUnfairLock(initialState: State())
 
     static var lastRequest: URLRequest? {
-        lock.withLock { recordedRequest }
+        state.withLock { $0.recordedRequest }
     }
 
     static func stub(status: Int, body: Data = Data()) {
-        lock.withLock {
-            self.status = status
-            self.body = body
-            recordedRequest = nil
+        state.withLock { state in
+            state.status = status
+            state.body = body
+            state.recordedRequest = nil
         }
     }
 
-    override class func canInit(with request: URLRequest) -> Bool { true }
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override static func canInit(with request: URLRequest) -> Bool { true }
+    override static func canonicalRequest(for request: URLRequest) -> URLRequest { request }
 
     override func startLoading() {
-        let (status, body) = Self.lock.withLock {
-            Self.recordedRequest = request
-            return (Self.status, Self.body)
+        let (status, body) = Self.state.withLock { state in
+            state.recordedRequest = request
+            return (state.status, state.body)
         }
         let response = HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: nil, headerFields: nil)!
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)

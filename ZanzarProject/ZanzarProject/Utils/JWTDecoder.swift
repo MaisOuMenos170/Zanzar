@@ -1,6 +1,6 @@
 import Foundation
 
-enum JWTDecoder {
+nonisolated enum JWTDecoder {
     static func userID(from token: String) -> String? {
         let segments = token.split(separator: ".")
         guard segments.count >= 2 else { return nil }

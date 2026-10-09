@@ -43,10 +43,38 @@ struct ActiveItineraryProgressCard: View {
             targetCount: 4,
             startedAt: .now,
             places: [
-                ItinerarySlot(id: "1", placeID: "a", placeName: "Barigui", isCompleted: true, completedAt: .now, stampID: nil),
-                ItinerarySlot(id: "2", placeID: nil, placeName: nil, isCompleted: false, completedAt: nil, stampID: nil),
-                ItinerarySlot(id: "3", placeID: nil, placeName: nil, isCompleted: false, completedAt: nil, stampID: nil),
-                ItinerarySlot(id: "4", placeID: nil, placeName: nil, isCompleted: false, completedAt: nil, stampID: nil),
+                ItinerarySlot(
+                    id: "1",
+                    placeID: "a",
+                    placeName: "Barigui",
+                    isCompleted: true,
+                    completedAt: .now,
+                    stampID: nil
+                ),
+                ItinerarySlot(
+                    id: "2",
+                    placeID: nil,
+                    placeName: nil,
+                    isCompleted: false,
+                    completedAt: nil,
+                    stampID: nil
+                ),
+                ItinerarySlot(
+                    id: "3",
+                    placeID: nil,
+                    placeName: nil,
+                    isCompleted: false,
+                    completedAt: nil,
+                    stampID: nil
+                ),
+                ItinerarySlot(
+                    id: "4",
+                    placeID: nil,
+                    placeName: nil,
+                    isCompleted: false,
+                    completedAt: nil,
+                    stampID: nil
+                )
             ]
         ),
         onViewDetails: {}

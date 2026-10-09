@@ -1,12 +1,12 @@
 import Foundation
 
-enum AuthErrorMapper {
+nonisolated enum AuthErrorMapper {
     static func loginMessage(for error: APIError) -> String {
         mappedMessage(
             for: error,
             genericKey: "login.submitError.generic",
             statusMessages: [
-                401: "login.submitError.invalidCredentials",
+                401: "login.submitError.invalidCredentials"
             ]
         )
     }
@@ -16,7 +16,7 @@ enum AuthErrorMapper {
             for: error,
             genericKey: "signUp.submitError.generic",
             statusMessages: [
-                409: "signUp.submitError.emailInUse",
+                409: "signUp.submitError.emailInUse"
             ]
         )
     }

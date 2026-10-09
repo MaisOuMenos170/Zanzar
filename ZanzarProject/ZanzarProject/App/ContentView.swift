@@ -20,7 +20,6 @@ struct ContentView: View {
             coordinator.popToRoot()
         }
         .sheet(item: $coordinator.presentedSheet) { coordinator.view(for: $0) }
-        .fullScreenCover(item: $coordinator.presentedFullScreenCover) { coordinator.view(for: $0) }
         .safeAreaInset(edge: .top, spacing: 0) {
             ToastOverlay()
         }

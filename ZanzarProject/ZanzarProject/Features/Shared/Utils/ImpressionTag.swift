@@ -1,6 +1,6 @@
 import Foundation
 
-enum ImpressionTag: String, CaseIterable, Sendable {
+nonisolated enum ImpressionTag: String, CaseIterable, Sendable {
     case delighted
     case happy
     case nauseated

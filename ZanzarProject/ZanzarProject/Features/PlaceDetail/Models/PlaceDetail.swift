@@ -1,7 +1,7 @@
 import CoreLocation
 import Foundation
 
-struct PlaceDetail: Identifiable, Hashable, Sendable {
+nonisolated struct PlaceDetail: Identifiable, Hashable, Sendable {
     let id: String
     let name: String
     let nickname: String?
@@ -25,19 +25,19 @@ struct PlaceDetail: Identifiable, Hashable, Sendable {
     }
 }
 
-struct PlaceDetailTag: Identifiable, Hashable, Sendable {
+nonisolated struct PlaceDetailTag: Identifiable, Hashable, Sendable {
     let id: String
     let label: String
     let style: PlaceDetailTagStyle
 }
 
-enum PlaceDetailTagStyle: Hashable, Sendable {
+nonisolated enum PlaceDetailTagStyle: Hashable, Sendable {
     case park
     case touristSpot
     case category
 }
 
-struct PlaceDetailReaction: Identifiable, Hashable, Sendable {
+nonisolated struct PlaceDetailReaction: Identifiable, Hashable, Sendable {
     let id: String
     let impressionTag: String
     let imageName: String
@@ -59,7 +59,7 @@ struct PlaceDetailReaction: Identifiable, Hashable, Sendable {
     }
 }
 
-struct PlaceDetailNearbyPlace: Identifiable, Hashable, Sendable {
+nonisolated struct PlaceDetailNearbyPlace: Identifiable, Hashable, Sendable {
     let id: String
     let name: String
     let nickname: String?
@@ -89,7 +89,7 @@ struct PlaceDetailNearbyPlace: Identifiable, Hashable, Sendable {
     }
 }
 
-extension PlaceDetailNearbyPlace {
+nonisolated extension PlaceDetailNearbyPlace {
     init(mapPlace: MapPlace) {
         self.init(
             id: mapPlace.id,
@@ -107,13 +107,13 @@ extension PlaceDetailNearbyPlace {
     }
 }
 
-struct PlaceDetailLoadContext: Sendable {
+nonisolated struct PlaceDetailLoadContext: Sendable {
     let place: MapPlace
     let userCoordinate: UserCoordinate?
     let userID: String?
 }
 
-extension PlaceDetail {
+nonisolated extension PlaceDetail {
     static func make(
         placeResponse: PlaceDetailAPIResponse,
         nearbyResponses: [PlaceDetailAPIResponse],
@@ -161,28 +161,30 @@ extension PlaceDetail {
             nearbyPlaces: nearbyResponses
                 .filter { $0.placeId != placeResponse.placeId }
                 .prefix(6)
-                .map { nearby in
-                    PlaceDetailNearbyPlace(
-                        id: nearby.placeId,
-                        name: nearby.name,
-                        nickname: nearby.nickname,
-                        latitude: nearby.geometry.location.lat,
-                        longitude: nearby.geometry.location.lng,
-                        category: ZanzarPlaceCategory(rawCategory: nearby.zanzar.category),
-                        distanceMeters: nearby.distanceMeters ?? 0,
-                        checkInCount: nearby.zanzar.checkInCount,
-                        photoReference: nearby.photos.first?.photoReference,
-                        reactionImageNames: ImpressionTag.topReactionImageNames(from: nearby.zanzar.impressionCounts),
-                        hasCheckedIn: nearby.userContext?.hasCheckedIn ?? false
-                    )
-                },
+                .map(nearbyPlace(from:)),
             hasCheckedIn: hasCheckedIn,
             isInActiveItinerary: placeResponse.userContext?.isInActiveItinerary ?? false,
             selectedReactionTag: selectedReactionTag
         )
     }
 
-    private static func openingHoursText(from openingHours: PlaceDetailAPIResponse.OpeningHours?) -> String {
+    private static func nearbyPlace(from nearby: PlaceDetailAPIResponse) -> PlaceDetailNearbyPlace {
+        PlaceDetailNearbyPlace(
+            id: nearby.placeId,
+            name: nearby.name,
+            nickname: nearby.nickname,
+            latitude: nearby.geometry.location.lat,
+            longitude: nearby.geometry.location.lng,
+            category: ZanzarPlaceCategory(rawCategory: nearby.zanzar.category),
+            distanceMeters: nearby.distanceMeters ?? 0,
+            checkInCount: nearby.zanzar.checkInCount,
+            photoReference: nearby.photos.first?.photoReference,
+            reactionImageNames: ImpressionTag.topReactionImageNames(from: nearby.zanzar.impressionCounts),
+            hasCheckedIn: nearby.userContext?.hasCheckedIn ?? false
+        )
+    }
+
+    private static func openingHoursText(from openingHours: PlaceDetailOpeningHoursResponse?) -> String {
         guard let openingHours else {
             return String(localized: "placeDetail.header.hoursUnavailable")
         }
@@ -227,61 +229,29 @@ extension PlaceDetail {
     private static func categoryTag(for category: String) -> PlaceDetailTag? {
         switch ZanzarPlaceCategory(rawCategory: category) {
         case .park:
-            PlaceDetailTag(
-                id: "category-park",
-                label: String(localized: "placeDetail.tag.park"),
-                style: .park
-            )
+            categoryTag("park", label: String(localized: "placeDetail.tag.park"), style: .park)
         case .tourist:
-            PlaceDetailTag(
-                id: "category-tourist",
-                label: String(localized: "placeDetail.tag.touristSpot"),
-                style: .touristSpot
-            )
+            categoryTag("tourist", label: String(localized: "placeDetail.tag.touristSpot"), style: .touristSpot)
         case .restaurant:
-            PlaceDetailTag(
-                id: "category-restaurant",
-                label: String(localized: "placeDetail.tag.restaurant"),
-                style: .category
-            )
+            categoryTag("restaurant", label: String(localized: "placeDetail.tag.restaurant"), style: .category)
         case .bar:
-            PlaceDetailTag(
-                id: "category-bar",
-                label: String(localized: "placeDetail.tag.bar"),
-                style: .category
-            )
+            categoryTag("bar", label: String(localized: "placeDetail.tag.bar"), style: .category)
         case .cafe:
-            PlaceDetailTag(
-                id: "category-cafe",
-                label: String(localized: "placeDetail.tag.cafe"),
-                style: .category
-            )
+            categoryTag("cafe", label: String(localized: "placeDetail.tag.cafe"), style: .category)
         case .museum:
-            PlaceDetailTag(
-                id: "category-museum",
-                label: String(localized: "placeDetail.tag.museum"),
-                style: .category
-            )
+            categoryTag("museum", label: String(localized: "placeDetail.tag.museum"), style: .category)
         case .historic:
-            PlaceDetailTag(
-                id: "category-historic",
-                label: String(localized: "placeDetail.tag.historic"),
-                style: .touristSpot
-            )
+            categoryTag("historic", label: String(localized: "placeDetail.tag.historic"), style: .touristSpot)
         case .curiosity:
-            PlaceDetailTag(
-                id: "category-curiosity",
-                label: String(localized: "placeDetail.tag.curiosity"),
-                style: .category
-            )
+            categoryTag("curiosity", label: String(localized: "placeDetail.tag.curiosity"), style: .category)
         case .party:
-            PlaceDetailTag(
-                id: "category-party",
-                label: String(localized: "placeDetail.tag.party"),
-                style: .category
-            )
+            categoryTag("party", label: String(localized: "placeDetail.tag.party"), style: .category)
         case .unknown:
             nil
         }
+    }
+
+    private static func categoryTag(_ slug: String, label: String, style: PlaceDetailTagStyle) -> PlaceDetailTag {
+        PlaceDetailTag(id: "category-\(slug)", label: label, style: style)
     }
 }

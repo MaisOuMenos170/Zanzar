@@ -1,6 +1,6 @@
 import Foundation
 
-enum GooglePlacesConfiguration {
+nonisolated enum GooglePlacesConfiguration {
     static func photoURL(reference: String, maxWidth: Int = 800) -> URL? {
         var components = URLComponents(
             url: APIConfiguration.baseURL.appending(path: "places/photo"),
@@ -8,7 +8,7 @@ enum GooglePlacesConfiguration {
         )
         components?.queryItems = [
             URLQueryItem(name: "ref", value: reference),
-            URLQueryItem(name: "maxwidth", value: String(maxWidth)),
+            URLQueryItem(name: "maxwidth", value: String(maxWidth))
         ]
         return components?.url
     }

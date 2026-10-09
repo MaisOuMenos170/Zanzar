@@ -47,13 +47,7 @@ struct ItineraryDetailAPIResponse: Decodable, Sendable {
     struct Place: Decodable, Sendable {
         let placeId: String
         let name: String
-        let location: Location
-
-        struct Location: Decodable, Sendable {
-            let lat: Double
-            let lng: Double
-        }
-
+        let location: PlaceDetailAPIResponse.Location
         let category: String?
     }
 
@@ -122,8 +116,8 @@ struct ActiveItineraryAPIResponse: Decodable, Sendable {
             },
             targetCount: targetCount,
             startedAt: try Self.parseDate(startedAt),
-            places: try places.enumerated().map { index, place in
-                try ItinerarySlot(
+            places: places.enumerated().map { index, place in
+                ItinerarySlot(
                     id: place.placeId ?? "slot-\(index)",
                     placeID: place.placeId,
                     placeName: place.placeName,

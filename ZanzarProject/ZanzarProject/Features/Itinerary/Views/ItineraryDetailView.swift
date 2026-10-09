@@ -39,6 +39,26 @@ struct ItineraryDetailView: View {
         }
     }
 
+    private func countsRow(for detail: ItineraryDetail) -> some View {
+        HStack(alignment: .firstTextBaseline) {
+            Label {
+                Text("itinerary.detail.placesCount \(detail.placesCount)")
+            } icon: {
+                Image(systemName: "mappin.and.ellipse")
+            }
+
+            Spacer(minLength: 8)
+
+            Label {
+                Text("itinerary.detail.completedCount \(detail.completedCount)")
+            } icon: {
+                Image(systemName: "figure.walk")
+            }
+        }
+        .font(.caption)
+        .foregroundStyle(.primary)
+    }
+
     @ViewBuilder
     private func detailContent(for detail: ItineraryDetail) -> some View {
         ScrollView {
@@ -58,23 +78,7 @@ struct ItineraryDetailView: View {
                     ItineraryObjectiveTagsView(objectives: detail.objectives)
                 }
 
-                HStack(alignment: .firstTextBaseline) {
-                    Label {
-                        Text("itinerary.detail.placesCount \(detail.placesCount)")
-                    } icon: {
-                        Image(systemName: "mappin.and.ellipse")
-                    }
-
-                    Spacer(minLength: 8)
-
-                    Label {
-                        Text("itinerary.detail.completedCount \(detail.completedCount)")
-                    } icon: {
-                        Image(systemName: "figure.walk")
-                    }
-                }
-                .font(.caption)
-                .foregroundStyle(.primary)
+                countsRow(for: detail)
 
                 VStack(alignment: .leading, spacing: 32) {
                     VStack(alignment: .leading, spacing: 12) {

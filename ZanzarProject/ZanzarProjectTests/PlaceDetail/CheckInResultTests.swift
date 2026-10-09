@@ -2,6 +2,7 @@ import Foundation
 import Testing
 @testable import ZanzarProject
 
+@MainActor
 @Suite("CheckInResult")
 struct CheckInResultTests {
     private static let responseJSON = """

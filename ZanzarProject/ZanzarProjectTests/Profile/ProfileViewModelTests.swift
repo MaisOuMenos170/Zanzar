@@ -1,4 +1,5 @@
 import SwiftUI
+import os
 import Testing
 @testable import ZanzarProject
 
@@ -8,7 +9,15 @@ struct ProfileViewModelTests {
     private static let profile = Profile(
         summary: ProfileSummary(name: "Bia", checkInCount: 2, itineraryCount: 1, sealCount: 3),
         recentCheckIns: [
-            ProfileCheckIn(id: "p1|d1", placeID: "p1", placeName: "Parque", date: .now, photoReference: nil, sealCategory: .park, impressionTag: nil)
+            ProfileCheckIn(
+                id: "p1|d1",
+                placeID: "p1",
+                placeName: "Parque",
+                date: .now,
+                photoReference: nil,
+                sealCategory: .park,
+                impressionTag: nil
+            )
         ]
     )
 
@@ -68,11 +77,11 @@ struct ProfileViewModelTests {
     @Test("a refresh without a signed-in user drops the stale profile and reports an error")
     func refreshWithoutUserIDClearsProfile() async {
         let service = MockProfileService(fetchResult: .success(Self.profile))
-        var userID: String? = "user-1"
-        let viewModel = ProfileViewModel(service: service, userIDProvider: { userID })
+        let userID = OSAllocatedUnfairLock<String?>(initialState: "user-1")
+        let viewModel = ProfileViewModel(service: service, userIDProvider: { userID.withLock { $0 } })
         await viewModel.load()
 
-        userID = nil
+        userID.withLock { $0 = nil }
         await viewModel.load()
 
         #expect(viewModel.profile == nil)

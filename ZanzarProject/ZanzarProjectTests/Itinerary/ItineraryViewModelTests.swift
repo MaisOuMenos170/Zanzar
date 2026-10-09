@@ -44,7 +44,14 @@ struct ItineraryViewModelTests {
         targetCount: nil,
         startedAt: .now,
         places: [
-            ItinerarySlot(id: "1", placeID: "ChIJ1", placeName: "Paço", isCompleted: true, completedAt: .now, stampID: nil)
+            ItinerarySlot(
+                id: "1",
+                placeID: "ChIJ1",
+                placeName: "Paço",
+                isCompleted: true,
+                completedAt: .now,
+                stampID: nil
+            )
         ]
     )
 

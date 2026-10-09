@@ -2,6 +2,7 @@ import Foundation
 import Testing
 @testable import ZanzarProject
 
+@MainActor
 @Suite("RatingPromptService")
 struct RatingPromptServiceTests {
     @Test("hasRated returns false on 404")
@@ -40,7 +41,11 @@ private final class StubNetworkClient: NetworkClient, @unchecked Sendable {
         try JSONDecoder().decode(Response.self, from: Data(responseJSON.utf8))
     }
 
-    func send<Body: Encodable, Response: Decodable>(path: String, method: HTTPMethod, body: Body) async throws -> Response {
+    func send<Body: Encodable, Response: Decodable>(
+        path: String,
+        method: HTTPMethod,
+        body: Body
+    ) async throws -> Response {
         lastSendPath = path
         return try JSONDecoder().decode(Response.self, from: Data(responseJSON.utf8))
     }
@@ -59,7 +64,11 @@ private final class ThrowingNetworkClient: NetworkClient, @unchecked Sendable {
         throw getError
     }
 
-    func send<Body: Encodable, Response: Decodable>(path: String, method: HTTPMethod, body: Body) async throws -> Response {
+    func send<Body: Encodable, Response: Decodable>(
+        path: String,
+        method: HTTPMethod,
+        body: Body
+    ) async throws -> Response {
         throw getError
     }
 

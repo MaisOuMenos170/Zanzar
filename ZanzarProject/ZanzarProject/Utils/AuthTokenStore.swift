@@ -1,6 +1,7 @@
 import Foundation
 
-final class AuthTokenStore: @unchecked Sendable {
+// Safety invariant for `@unchecked Sendable`: `token` is only read or written while holding `lock`.
+nonisolated final class AuthTokenStore: @unchecked Sendable {
     static let shared = AuthTokenStore()
 
     private let lock = NSLock()
@@ -12,6 +13,10 @@ final class AuthTokenStore: @unchecked Sendable {
         lock.lock()
         defer { lock.unlock() }
         return token
+    }
+
+    var userID: String? {
+        getToken().flatMap(JWTDecoder.userID(from:))
     }
 
     func setToken(_ token: String?) {

@@ -5,16 +5,16 @@ protocol PlaceDetailServicing: Sendable {
     func checkIn(placeID: String, coordinate: UserCoordinate) async throws -> CheckInResult
 }
 
-struct PlaceDetailAPIResponse: Decodable, Sendable {
+nonisolated struct PlaceDetailAPIResponse: Decodable, Sendable {
     let placeId: String
     let name: String
     let nickname: String?
     let formattedAddress: String?
     let geometry: Geometry
     let editorialSummary: EditorialSummary?
-    let openingHours: OpeningHours?
-    let photos: [Photo]
-    let zanzar: Zanzar
+    let openingHours: PlaceDetailOpeningHoursResponse?
+    let photos: [PlaceDetailPhotoResponse]
+    let zanzar: PlaceDetailZanzarResponse
     let distanceMeters: Double?
     let userContext: PlaceUserContext?
 
@@ -32,59 +32,17 @@ struct PlaceDetailAPIResponse: Decodable, Sendable {
         case userContext
     }
 
-    struct Geometry: Decodable, Sendable {
+    nonisolated struct Geometry: Decodable, Sendable {
         let location: Location
     }
 
-    struct Location: Decodable, Sendable {
+    nonisolated struct Location: Decodable, Sendable {
         let lat: Double
         let lng: Double
     }
 
-    struct EditorialSummary: Decodable, Sendable {
+    nonisolated struct EditorialSummary: Decodable, Sendable {
         let overview: String
-    }
-
-    struct OpeningHours: Decodable, Sendable {
-        let openNow: Bool?
-
-        enum CodingKeys: String, CodingKey {
-            case openNow = "open_now"
-        }
-    }
-
-    struct Photo: Decodable, Sendable {
-        let photoReference: String
-        let height: Int
-        let width: Int
-
-        enum CodingKeys: String, CodingKey {
-            case photoReference = "photo_reference"
-            case height
-            case width
-        }
-    }
-
-    struct Zanzar: Decodable, Sendable {
-        let category: String
-        let tags: [String]
-        let checkInCount: Int
-        let impressionCounts: [String: Int]
-
-        init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            category = try container.decode(String.self, forKey: .category)
-            tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
-            checkInCount = try container.decodeIfPresent(Int.self, forKey: .checkInCount) ?? 0
-            impressionCounts = try container.decodeIfPresent([String: Int].self, forKey: .impressionCounts) ?? [:]
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case category
-            case tags
-            case checkInCount
-            case impressionCounts
-        }
     }
 
     init(from decoder: Decoder) throws {
@@ -95,11 +53,53 @@ struct PlaceDetailAPIResponse: Decodable, Sendable {
         formattedAddress = try container.decodeIfPresent(String.self, forKey: .formattedAddress)
         geometry = try container.decode(Geometry.self, forKey: .geometry)
         editorialSummary = try container.decodeIfPresent(EditorialSummary.self, forKey: .editorialSummary)
-        openingHours = try container.decodeIfPresent(OpeningHours.self, forKey: .openingHours)
-        photos = try container.decodeIfPresent([Photo].self, forKey: .photos) ?? []
-        zanzar = try container.decode(Zanzar.self, forKey: .zanzar)
+        openingHours = try container.decodeIfPresent(PlaceDetailOpeningHoursResponse.self, forKey: .openingHours)
+        photos = try container.decodeIfPresent([PlaceDetailPhotoResponse].self, forKey: .photos) ?? []
+        zanzar = try container.decode(PlaceDetailZanzarResponse.self, forKey: .zanzar)
         distanceMeters = try container.decodeIfPresent(Double.self, forKey: .distanceMeters)
         userContext = try container.decodeIfPresent(PlaceUserContext.self, forKey: .userContext)
+    }
+}
+
+nonisolated struct PlaceDetailOpeningHoursResponse: Decodable, Sendable {
+    let openNow: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case openNow = "open_now"
+    }
+}
+
+nonisolated struct PlaceDetailPhotoResponse: Decodable, Sendable {
+    let photoReference: String
+    let height: Int
+    let width: Int
+
+    enum CodingKeys: String, CodingKey {
+        case photoReference = "photo_reference"
+        case height
+        case width
+    }
+}
+
+nonisolated struct PlaceDetailZanzarResponse: Decodable, Sendable {
+    let category: String
+    let tags: [String]
+    let checkInCount: Int
+    let impressionCounts: [String: Int]
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        category = try container.decode(String.self, forKey: .category)
+        tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
+        checkInCount = try container.decodeIfPresent(Int.self, forKey: .checkInCount) ?? 0
+        impressionCounts = try container.decodeIfPresent([String: Int].self, forKey: .impressionCounts) ?? [:]
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case category
+        case tags
+        case checkInCount
+        case impressionCounts
     }
 }
 
@@ -215,7 +215,7 @@ final class PlaceDetailService: PlaceDetailServicing {
                     URLQueryItem(name: "lat", value: String(userCoordinate.latitude)),
                     URLQueryItem(name: "lng", value: String(userCoordinate.longitude)),
                     URLQueryItem(name: "limit", value: "6"),
-                    URLQueryItem(name: "excludePlaceId", value: excludingPlaceID),
+                    URLQueryItem(name: "excludePlaceId", value: excludingPlaceID)
                 ]
             )
         } catch {
@@ -274,4 +274,3 @@ final class PlaceDetailService: PlaceDetailServicing {
         }
     }
 }
-

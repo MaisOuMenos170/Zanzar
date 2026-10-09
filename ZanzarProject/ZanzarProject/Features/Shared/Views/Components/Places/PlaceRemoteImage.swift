@@ -7,11 +7,11 @@ struct PlaceRemoteImage<Placeholder: View>: View {
 
     init(
         photoReference: String?,
-        mediaPolicy: PlaceMediaAccessPolicy = .shared,
+        mediaPolicy: PlaceMediaAccessPolicy? = nil,
         @ViewBuilder placeholder: () -> Placeholder
     ) {
         self.photoReference = photoReference
-        self.mediaPolicy = mediaPolicy
+        self.mediaPolicy = mediaPolicy ?? .shared
         self.placeholder = placeholder()
     }
 
@@ -34,10 +34,12 @@ struct PlaceRemoteImage<Placeholder: View>: View {
                             }
                             .clipped()
                     case .failure:
-                        #if DEBUG
-                        let _ = AppLog.placeDetail.warning("Place photo failed to load ref=\(photoReference)")
-                        #endif
                         placeholder
+                            .onAppear {
+                                #if DEBUG
+                                AppLog.placeDetail.warning("Place photo failed to load ref=\(photoReference)")
+                                #endif
+                            }
                     case .empty:
                         ProgressView()
                             .frame(maxWidth: .infinity, maxHeight: .infinity)

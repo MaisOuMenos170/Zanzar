@@ -2,6 +2,7 @@ import Foundation
 import Testing
 @testable import ZanzarProject
 
+@MainActor
 @Suite("PlaceDetailService")
 struct PlaceDetailServiceTests {
     private static let placeJSON = """
@@ -23,7 +24,7 @@ struct PlaceDetailServiceTests {
                 "places/ChIJ1": Self.placeJSON,
                 "checkIn": #"{"placeId":"ChIJ1"}"#,
                 "rating": #"{"impressionTag":"happy"}"#,
-                "places": "[]",
+                "places": "[]"
             ]
         )
         let service = PlaceDetailService(client: client)
@@ -110,7 +111,11 @@ private final class PathAwareNetworkClient: NetworkClient, @unchecked Sendable {
         return try JSONDecoder().decode(Response.self, from: Data(json.utf8))
     }
 
-    func send<Body: Encodable, Response: Decodable>(path: String, method: HTTPMethod, body: Body) async throws -> Response {
+    func send<Body: Encodable, Response: Decodable>(
+        path: String,
+        method: HTTPMethod,
+        body: Body
+    ) async throws -> Response {
         lastSendPath = path
         lastSendBody = try JSONEncoder().encode(body)
         let json = sendResponseJSON ?? "{}"

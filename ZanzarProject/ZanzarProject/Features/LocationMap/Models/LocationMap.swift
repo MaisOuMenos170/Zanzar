@@ -3,10 +3,10 @@ import Foundation
 
 /// The user's current position on the map — the domain shape the View/ViewModel work with,
 /// distinct from CoreLocation's `CLLocation` (which the Service layer deals with).
-struct UserCoordinate: Hashable, Sendable {
+nonisolated struct UserCoordinate: Hashable, Sendable {
     let latitude: Double
     let longitude: Double
-    var accuracyMeters: Double? = nil
+    var accuracyMeters: Double?
 
     var clLocationCoordinate2D: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
@@ -20,7 +20,7 @@ enum DevLocation {
 }
 #endif
 
-enum ZanzarPlaceCategory: String, Sendable {
+nonisolated enum ZanzarPlaceCategory: String, Sendable {
     case restaurant
     case bar
     case cafe
@@ -89,7 +89,7 @@ enum ZanzarPlaceCategory: String, Sendable {
     }
 }
 
-struct MapPlace: Identifiable, Hashable, Sendable {
+nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
     let id: String
     let name: String
     let nickname: String?
@@ -170,12 +170,12 @@ struct NearbyPlaceZanzar: Decodable, Sendable {
     }
 }
 
-struct PlaceUserContext: Decodable, Sendable {
+nonisolated struct PlaceUserContext: Decodable, Sendable {
     let hasCheckedIn: Bool
     let isInActiveItinerary: Bool
 }
 
-struct PlaceAPIResponse: Decodable, Sendable {
+nonisolated struct PlaceAPIResponse: Decodable, Sendable {
     let placeId: String
     let name: String
     let nickname: String?
@@ -196,11 +196,11 @@ struct PlaceAPIResponse: Decodable, Sendable {
         case userContext
     }
 
-    struct Geometry: Decodable, Sendable {
+    nonisolated struct Geometry: Decodable, Sendable {
         let location: Location
     }
 
-    struct Location: Decodable, Sendable {
+    nonisolated struct Location: Decodable, Sendable {
         let lat: Double
         let lng: Double
     }

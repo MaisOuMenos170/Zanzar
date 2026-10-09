@@ -28,18 +28,18 @@ final class PlaceDetailViewModel {
 
     init(
         place: MapPlace,
-        userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.getToken().flatMap(JWTDecoder.userID(from:)) },
+        userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.userID },
         userCoordinateProvider: @escaping @Sendable () async throws -> UserCoordinate = {
             try await LocationMapService().currentUserLocation()
         },
         service: PlaceDetailServicing = PlaceDetailService(),
-        pendingRatingStore: PendingRatingStoring = UserDefaultsPendingRatingStore()
+        pendingRatingStore: PendingRatingStoring? = nil
     ) {
         self.place = place
         self.userIDProvider = userIDProvider
         self.userCoordinateProvider = userCoordinateProvider
         self.service = service
-        self.pendingRatingStore = pendingRatingStore
+        self.pendingRatingStore = pendingRatingStore ?? UserDefaultsPendingRatingStore()
     }
 
     func load() async {
@@ -109,30 +109,7 @@ final class PlaceDetailViewModel {
         checkInWarning = nil
         defer { isCheckingIn = false }
 
-        let coordinate: UserCoordinate
-        do {
-            coordinate = try await userCoordinateProvider()
-        } catch is CancellationError {
-            return
-        } catch {
-            checkInWarning = .locationRequired
-            return
-        }
-
-        switch CheckInPolicy.verdict(
-            for: coordinate,
-            placeLatitude: currentDetail.latitude,
-            placeLongitude: currentDetail.longitude
-        ) {
-        case .tooFar:
-            checkInWarning = .tooFar
-            return
-        case .uncertain:
-            checkInWarning = .locationUncertain
-            return
-        case .allowed:
-            break
-        }
+        guard let coordinate = await verifiedCheckInCoordinate(for: currentDetail) else { return }
 
         do {
             let result = try await service.checkIn(placeID: currentDetail.id, coordinate: coordinate)
@@ -152,6 +129,35 @@ final class PlaceDetailViewModel {
             checkInWarning = .tooFar
         } catch {
             errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+        }
+    }
+
+    /// The user's position when it is precise enough and close enough to check in; otherwise sets
+    /// `checkInWarning` and returns `nil`.
+    private func verifiedCheckInCoordinate(for detail: PlaceDetail) async -> UserCoordinate? {
+        let coordinate: UserCoordinate
+        do {
+            coordinate = try await userCoordinateProvider()
+        } catch is CancellationError {
+            return nil
+        } catch {
+            checkInWarning = .locationRequired
+            return nil
+        }
+
+        switch CheckInPolicy.verdict(
+            for: coordinate,
+            placeLatitude: detail.latitude,
+            placeLongitude: detail.longitude
+        ) {
+        case .tooFar:
+            checkInWarning = .tooFar
+            return nil
+        case .uncertain:
+            checkInWarning = .locationUncertain
+            return nil
+        case .allowed:
+            return coordinate
         }
     }
 

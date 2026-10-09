@@ -47,7 +47,7 @@ extension APIError: CustomDebugStringConvertible {
     }
 }
 
-private struct APIErrorPayload: Decodable {
+private nonisolated struct APIErrorPayload: Decodable {
     let success: Bool?
     let message: String?
     let errors: String?
@@ -72,7 +72,7 @@ private struct APIErrorPayload: Decodable {
     }
 }
 
-private enum JSONValue: Decodable, CustomStringConvertible {
+private nonisolated enum JSONValue: Decodable, CustomStringConvertible {
     case string(String)
     case number(Double)
     case bool(Bool)

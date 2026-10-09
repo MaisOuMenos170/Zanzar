@@ -1,6 +1,6 @@
 import Foundation
 
-enum APIConfiguration {
+nonisolated enum APIConfiguration {
     private static let bundleKey = "ZanzarAPIBaseURL"
 
     static var baseURL: URL {
