@@ -103,7 +103,7 @@ struct ItineraryStampTrack: View {
         let knownIDs = quietIDs
             .union(pressQueue)
             .union(pressingID.map { [$0] } ?? [])
-        if knownIDs.intersection(currentIDs).isEmpty, !currentIDs.isEmpty, !quietIDs.isEmpty {
+        if knownIDs.isDisjoint(with: currentIDs), !currentIDs.isEmpty, !quietIDs.isEmpty {
             quietIDs = Set(slots.filter(\.isEarned).map(\.id))
             pressQueue.removeAll()
             pressingID = nil
@@ -166,7 +166,7 @@ private struct ItineraryPendingStampView: View {
         .init(id: "1", isEarned: true),
         .init(id: "2", isEarned: false),
         .init(id: "3", isEarned: false),
-        .init(id: "4", isEarned: false),
+        .init(id: "4", isEarned: false)
     ])
     .padding()
     .background(Color("ItineraryProgressBackground"))

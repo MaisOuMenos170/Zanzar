@@ -3,10 +3,10 @@ import Foundation
 
 /// The user's current position on the map — the domain shape the View/ViewModel work with,
 /// distinct from CoreLocation's `CLLocation` (which the Service layer deals with).
-struct UserCoordinate: Hashable, Sendable {
+nonisolated struct UserCoordinate: Hashable, Sendable {
     let latitude: Double
     let longitude: Double
-    var accuracyMeters: Double? = nil
+    var accuracyMeters: Double?
 
     var clLocationCoordinate2D: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
