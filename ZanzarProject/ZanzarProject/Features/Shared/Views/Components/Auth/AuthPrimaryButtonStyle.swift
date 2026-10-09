@@ -5,6 +5,7 @@ struct AuthPrimaryButtonStyle: ButtonStyle {
         configuration.label
             .font(.body)
             .bold()
+            .multilineTextAlignment(.center)
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)

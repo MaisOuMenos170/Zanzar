@@ -147,4 +147,31 @@ struct PlaceAPIResponseTests {
         #expect(place.category == .unknown)
         #expect(place.pinIconName == "mappin")
     }
+
+    @Test("List payload keeps the check-in count and photo shown on nearby cards")
+    func decodesCheckInCountAndPhoto() throws {
+        let jsonString = """
+        {
+          "place_id": "place-mural",
+          "name": "Mural Poty Lazzarotto",
+          "geometry": { "location": { "lat": -25.43, "lng": -49.27 } },
+          "photos": [{ "photo_reference": "photo-1", "height": 400, "width": 600 }],
+          "zanzar": {
+            "category": "historic",
+            "checkInCount": 1,
+            "impressionCounts": { "happy": 2 }
+          },
+          "distanceMeters": 300
+        }
+        """
+        let response = try JSONDecoder().decode(PlaceAPIResponse.self, from: Data(jsonString.utf8))
+        let place = MapPlace(response: response)
+        let card = PlaceDetailNearbyPlace(mapPlace: place)
+
+        #expect(place.checkInCount == 1)
+        #expect(place.photoReference == "photo-1")
+        #expect(card.checkInCount == 1)
+        #expect(card.photoReference == "photo-1")
+        #expect(card.reactionImageNames == [ImpressionTag.happy.imageName])
+    }
 }

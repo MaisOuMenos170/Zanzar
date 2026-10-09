@@ -21,7 +21,10 @@ struct ContentView: View {
         }
         .sheet(item: $coordinator.presentedSheet) { coordinator.view(for: $0) }
         .fullScreenCover(item: $coordinator.presentedFullScreenCover) { coordinator.view(for: $0) }
-        .overlay { ToastOverlay() }
+        .safeAreaInset(edge: .top, spacing: 0) {
+            ToastOverlay()
+        }
+        .preferredColorScheme(.light)
         .environment(coordinator)
         .environment(authSession)
         .environment(toastPresenter)

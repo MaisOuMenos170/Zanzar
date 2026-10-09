@@ -99,9 +99,9 @@ extension PlaceDetailNearbyPlace {
             longitude: mapPlace.longitude,
             category: mapPlace.category,
             distanceMeters: mapPlace.distanceMeters ?? 0,
-            checkInCount: 0,
-            photoReference: nil,
-            reactionImageNames: [],
+            checkInCount: mapPlace.checkInCount,
+            photoReference: mapPlace.photoReference,
+            reactionImageNames: ImpressionTag.topReactionImageNames(from: mapPlace.impressionCounts),
             hasCheckedIn: mapPlace.pinStyle == .checkedIn
         )
     }
@@ -202,7 +202,7 @@ extension PlaceDetail {
             tags.append(categoryTag)
         }
 
-        for tag in response.zanzar.tags.prefix(2) where !tags.contains(where: { $0.label == tag }) {
+        for tag in response.zanzar.tags.prefix(2) where !tags.contains(where: { isSameTag($0.label, tag) }) {
             tags.append(
                 PlaceDetailTag(
                     id: "tag-\(tag)",
@@ -213,6 +213,15 @@ extension PlaceDetail {
         }
 
         return tags
+    }
+
+    /// The API repeats the category as a raw slug ("histórico") next to the localized chip ("Histórico").
+    private static func isSameTag(_ lhs: String, _ rhs: String) -> Bool {
+        normalizedTag(lhs) == normalizedTag(rhs)
+    }
+
+    private static func normalizedTag(_ value: String) -> String {
+        value.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
     }
 
     private static func categoryTag(for category: String) -> PlaceDetailTag? {

@@ -2,7 +2,6 @@ import SwiftUI
 
 struct ItineraryDetailSheet: View {
     let slug: String
-    @Environment(AppCoordinator.self) private var coordinator
     @State private var viewModel: ItineraryDetailViewModel
 
     init(slug: String) {
@@ -15,12 +14,9 @@ struct ItineraryDetailSheet: View {
             ItineraryDetailView(viewModel: viewModel) {
                 // The list tab reloads active progress when this sheet dismisses.
             }
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("itinerary.detail.close", action: coordinator.dismissSheet)
-                }
-            }
+            .toolbar(.hidden, for: .navigationBar)
         }
+        .presentationDragIndicator(.visible)
     }
 }
 

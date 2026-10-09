@@ -41,6 +41,18 @@ struct LoginViewModelTests {
         #expect(viewModel.passwordError == nil)
     }
 
+    @Test("a shown field error clears once that field becomes valid")
+    func shownFieldErrorClearsWhenValueBecomesValid() {
+        let viewModel = LoginViewModel(service: MockLoginService())
+        #expect(viewModel.validateFields() == false)
+
+        viewModel.email = "user@example.com"
+        viewModel.refreshShownFieldErrors()
+
+        #expect(viewModel.emailError == nil)
+        #expect(viewModel.passwordError == "login.passwordField.errorEmpty")
+    }
+
     @Test("submit signs in when login succeeds")
     @MainActor
     func submitSignsInWhenLoginSucceeds() async {

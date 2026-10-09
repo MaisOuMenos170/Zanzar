@@ -29,18 +29,7 @@ struct ItineraryListView: View {
             }
         }
         .background(Color(.systemBackground))
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                VStack(spacing: 2) {
-                    Text("itinerary.list.header.title")
-                        .font(.headline)
-                    Text("itinerary.list.header.subtitle")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-        }
+        .toolbar(.hidden, for: .navigationBar)
         .task {
             await viewModel.load()
         }
@@ -68,23 +57,32 @@ struct ItineraryListView: View {
     private var listContent: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                ActiveItineraryProgressCard(
-                    activeItinerary: viewModel.activeItinerary,
-                    onViewDetails: { slug in
-                        sheetCoordinator.present(sheet: .itineraryDetail(slug: slug))
-                    },
-                    onAbandon: {
-                        Task { await viewModel.abandonActiveItinerary() }
+                VStack(alignment: .leading, spacing: 8) {
+                    if viewModel.activeItinerary == nil {
+                        Text("itinerary.list.header.title")
+                            .font(.title2.bold())
+                        Text("itinerary.list.header.subtitle")
+                            .font(.caption.weight(.light))
+                            .foregroundStyle(.primary)
+                    } else {
+                        Text("itinerary.activeCard.title")
+                            .font(.title2.bold())
                     }
-                )
+                }
+
+                if let activeItinerary = viewModel.activeItinerary {
+                    ActiveItineraryProgressCard(activeItinerary: activeItinerary) {
+                        sheetCoordinator.present(sheet: .itineraryDetail(slug: activeItinerary.slug))
+                    }
+                }
 
                 if !viewModel.itineraries.isEmpty {
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 16) {
                         Text("itinerary.list.sections.itineraries")
-                            .font(.body.bold())
+                            .font(.callout.bold())
 
                         ForEach(viewModel.itineraries) { itinerary in
-                            ItineraryCard(itinerary: itinerary, mediaPolicy: mediaPolicy) {
+                            ItineraryCard(itinerary: itinerary) {
                                 sheetCoordinator.present(sheet: .itineraryDetail(slug: itinerary.slug))
                             }
                         }
@@ -94,7 +92,7 @@ struct ItineraryListView: View {
                 if !viewModel.nearbyPlaces.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("itinerary.list.sections.nearby")
-                            .font(.body.bold())
+                            .font(.callout.bold())
 
                         ScrollView(.horizontal) {
                             HStack(spacing: 8) {

@@ -4,11 +4,16 @@ struct LoginView: View {
     @State private var viewModel = LoginViewModel()
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(AuthSession.self) private var authSession
-    @Environment(ToastPresenter.self) private var toasts
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
-        VStack(spacing: 0) {
+        ScrollView {
             VStack(spacing: 16) {
+                if let submitError = viewModel.submitError {
+                    ErrorBanner(message: submitError)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
                 AuthFormField(
                     labelKey: "login.emailField.label",
                     placeholderKey: "login.emailField.placeholder",
@@ -26,38 +31,51 @@ struct LoginView: View {
                     isSecure: true,
                     textContentType: .password
                 )
+
+                if dynamicTypeSize.isAccessibilitySize {
+                    submitButton
+                }
             }
             .padding(.horizontal, 19)
             .padding(.top, 16)
-
-            Spacer()
-
-            Button("login.submitButton.title") {
-                Task {
-                    if await viewModel.submit(using: authSession) {
-                        coordinator.finishAuthFlow()
-                    }
-                }
-            }
-            .buttonStyle(AuthPrimaryButtonStyle())
-            .disabled(viewModel.isLoading)
-            .overlay {
-                if viewModel.isLoading {
-                    ProgressView()
-                }
-            }
-            .padding(.horizontal, 19)
             .padding(.bottom, 24)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.white)
+        .scrollBounceBehavior(.basedOnSize)
+        .scrollDismissesKeyboard(.interactively)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if !dynamicTypeSize.isAccessibilitySize {
+                submitButton
+                    .padding(.horizontal, 19)
+                    .padding(.vertical, 16)
+                    .background(Color(.systemBackground))
+            }
+        }
+        .background(Color(.systemBackground))
         .navigationTitle("login.header.title")
-        .navigationBarTitleDisplayMode(.large)
-        .onChange(of: viewModel.submitError) { _, error in
-            if let error {
-                toasts.show(error)
-            } else {
-                toasts.dismiss()
+        .navigationBarTitleDisplayMode(dynamicTypeSize.isAccessibilitySize ? .inline : .large)
+        .toolbarBackground(Color(.systemBackground), for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .onChange(of: viewModel.email) {
+            viewModel.refreshShownFieldErrors()
+        }
+        .onChange(of: viewModel.password) {
+            viewModel.refreshShownFieldErrors()
+        }
+    }
+
+    private var submitButton: some View {
+        Button("login.submitButton.title") {
+            Task {
+                if await viewModel.submit(using: authSession) {
+                    coordinator.finishAuthFlow()
+                }
+            }
+        }
+        .buttonStyle(AuthPrimaryButtonStyle())
+        .disabled(viewModel.isLoading)
+        .overlay {
+            if viewModel.isLoading {
+                ProgressView()
             }
         }
     }

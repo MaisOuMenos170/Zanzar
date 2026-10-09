@@ -54,11 +54,7 @@ private struct PlaceDetailReactionItem: View {
         .accessibilityElement(children: .ignore)
         .accessibilityAddTraits(reaction.isSelected ? .isSelected : [])
         .accessibilityLabel(
-            String(
-                format: String(localized: "placeDetail.reactionItem.accessibilityLabel"),
-                locale: Locale.current,
-                reaction.count
-            )
+            Text("placeDetail.reactionItem.accessibilityLabel \(reaction.count)")
         )
     }
 }

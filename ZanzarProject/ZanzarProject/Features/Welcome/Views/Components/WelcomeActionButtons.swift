@@ -19,6 +19,7 @@ private struct WelcomeSecondaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.body)
+            .multilineTextAlignment(.center)
             .foregroundStyle(.primary)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)

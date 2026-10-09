@@ -47,6 +47,32 @@ final class SignUpViewModel {
         return usernameError == nil && emailError == nil && passwordError == nil
     }
 
+    /// Updates only the errors already on screen, so a field clears as soon as its value becomes valid.
+    func refreshShownFieldErrors() {
+        if usernameError != nil {
+            usernameError = AuthValidation.usernameError(
+                for: username,
+                emptyKey: "signUp.usernameField.errorEmpty",
+                tooShortKey: "signUp.usernameField.errorTooShort"
+            )
+        }
+        if emailError != nil {
+            emailError = AuthValidation.emailError(
+                for: email,
+                emptyKey: "signUp.emailField.errorEmpty",
+                invalidKey: "signUp.emailField.errorInvalid"
+            )
+        }
+        if passwordError != nil {
+            passwordError = AuthValidation.passwordError(
+                for: password,
+                emptyKey: "signUp.passwordField.errorEmpty",
+                tooShortKey: "signUp.passwordField.errorTooShort",
+                invalidKey: "signUp.passwordField.errorInvalid"
+            )
+        }
+    }
+
     func submit(using authSession: AuthSession) async -> Bool {
         guard !isLoading else { return false }
 

@@ -102,96 +102,103 @@ struct PlaceDetailView: View {
     }
 
     private func content(for detail: PlaceDetail) -> some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                PlaceDetailHeaderView(
-                    name: detail.displayName,
-                    distanceText: detail.distanceText,
-                    openingHoursText: detail.openingHoursText,
-                    onBack: { coordinator.pop() }
-                )
+        VStack(alignment: .leading, spacing: 0) {
+            PlaceDetailHeaderView(
+                name: detail.displayName,
+                distanceText: detail.distanceText,
+                openingHoursText: detail.openingHoursText,
+                onBack: { coordinator.pop() }
+            )
+            .padding(.top, 8)
+            .padding(.bottom, 12)
+            .background(Color(.systemBackground))
 
-                VStack(alignment: .leading, spacing: 24) {
-                    VStack(alignment: .leading, spacing: 16) {
-                        VStack(alignment: .leading, spacing: 12) {
-                            PlaceDetailHeroImage(
-                                photoReference: detail.heroPhotoReference,
-                                mediaPolicy: mediaPolicy
-                            )
-
-                            if !detail.tags.isEmpty {
-                                HStack(spacing: 8) {
-                                    ForEach(detail.tags) { tag in
-                                        PlaceDetailTagBadge(label: tag.label, style: tag.style)
-                                    }
-                                }
-                            }
-                        }
-
-                        PlaceDetailCheckInButton(
-                            hasCheckedIn: detail.hasCheckedIn,
-                            isLoading: viewModel.isCheckingIn
-                        ) {
-                            viewModel.requestCheckIn()
-                        }
-
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("placeDetail.detailsSection.title")
-                                .font(.headline)
-                                .bold()
-                                .foregroundStyle(.primary)
-
-                            Text(detail.description)
-                                .font(.caption)
-                                .foregroundStyle(.primary)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                    }
-
-                    PlaceDetailStatsCard(
-                        totalCheckIns: detail.totalCheckIns,
-                        category: detail.category,
-                        hasCheckedIn: detail.hasCheckedIn,
-                        isInActiveItinerary: detail.isInActiveItinerary
-                    )
-
-                    PlaceDetailReactionsSection(reactions: detail.reactions)
-
-                    if !detail.nearbyPlaces.isEmpty {
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("placeDetail.nearbySection.title")
-                                .font(.body.weight(.semibold))
-                                .foregroundStyle(.primary)
-
-                            ScrollView(.horizontal) {
-                                HStack(spacing: 8) {
-                                    ForEach(detail.nearbyPlaces) { nearbyPlace in
-                                        PlaceDetailNearbyPlaceCard(
-                                            place: nearbyPlace,
-                                            mediaPolicy: mediaPolicy
-                                        ) {
-                                            coordinator.push(.placeDetail(nearbyPlace.mapPlace))
-                                        }
-                                    }
-                                }
-                            }
-                            .scrollIndicators(.hidden)
-                            // Without this the scroll view clips the cards' shadows at its bounds.
-                            .scrollClipDisabled()
-                        }
-                    }
-
-                    PlaceDetailDirectionsButton(
-                        latitude: detail.latitude,
-                        longitude: detail.longitude,
-                        placeName: detail.displayName
-                    )
-                }
-                .padding(.horizontal, 16)
+            ScrollView {
+                detailBody(for: detail)
+                    .padding(.bottom, 32)
             }
-            .padding(.bottom, 24)
+            .scrollIndicators(.hidden)
         }
-        .scrollIndicators(.hidden)
+    }
+
+    private func detailBody(for detail: PlaceDetail) -> some View {
+        VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 12) {
+                    PlaceDetailHeroImage(
+                        photoReference: detail.heroPhotoReference,
+                        mediaPolicy: mediaPolicy
+                    )
+
+                    if !detail.tags.isEmpty {
+                        HStack(spacing: 8) {
+                            ForEach(detail.tags) { tag in
+                                PlaceDetailTagBadge(label: tag.label, style: tag.style)
+                            }
+                        }
+                    }
+                }
+
+                PlaceDetailCheckInButton(
+                    hasCheckedIn: detail.hasCheckedIn,
+                    isLoading: viewModel.isCheckingIn
+                ) {
+                    viewModel.requestCheckIn()
+                }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("placeDetail.detailsSection.title")
+                        .font(.headline)
+                        .bold()
+                        .foregroundStyle(.primary)
+
+                    Text(detail.description)
+                        .font(.caption)
+                        .foregroundStyle(.primary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+
+            PlaceDetailStatsCard(
+                totalCheckIns: detail.totalCheckIns,
+                category: detail.category,
+                hasCheckedIn: detail.hasCheckedIn,
+                isInActiveItinerary: detail.isInActiveItinerary
+            )
+
+            PlaceDetailReactionsSection(reactions: detail.reactions)
+
+            if !detail.nearbyPlaces.isEmpty {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("placeDetail.nearbySection.title")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(.primary)
+
+                    ScrollView(.horizontal) {
+                        HStack(spacing: 8) {
+                            ForEach(detail.nearbyPlaces) { nearbyPlace in
+                                PlaceDetailNearbyPlaceCard(
+                                    place: nearbyPlace,
+                                    mediaPolicy: mediaPolicy
+                                ) {
+                                    coordinator.push(.placeDetail(nearbyPlace.mapPlace))
+                                }
+                            }
+                        }
+                    }
+                    .scrollIndicators(.hidden)
+                    // Without this the scroll view clips the cards' shadows at its bounds.
+                    .scrollClipDisabled()
+                }
+            }
+
+            PlaceDetailDirectionsButton(
+                latitude: detail.latitude,
+                longitude: detail.longitude,
+                placeName: detail.displayName
+            )
+        }
+        .padding(.horizontal, 16)
     }
 }
 

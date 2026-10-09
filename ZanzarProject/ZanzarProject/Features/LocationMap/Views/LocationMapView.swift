@@ -4,23 +4,26 @@ import SwiftUI
 struct LocationMapView: View {
     @State private var viewModel = LocationMapViewModel()
     @State private var ratingPrompt = RatingPromptViewModel()
-    @State private var selectedPlaceID: String?
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(ToastPresenter.self) private var toasts
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
-        Map(position: $viewModel.cameraPosition, selection: $selectedPlaceID) {
+        MapReader { proxy in
+            map
+                .onTapGesture { point in
+                    guard let coordinate = proxy.convert(point, from: .local) else { return }
+                    selectItem(nearestTo: coordinate)
+                }
+        }
+    }
+
+    private var map: some View {
+        Map(position: $viewModel.cameraPosition) {
             userLocationContent
             placeAnnotations
         }
         .tint(.blue)
-        .onChange(of: selectedPlaceID) { _, placeID in
-            guard let placeID,
-                  let place = viewModel.places.first(where: { $0.id == placeID }) else { return }
-            selectedPlaceID = nil
-            coordinator.push(.placeDetail(place))
-        }
         .mapStyle(.standard(elevation: .realistic))
         .mapControls {
             #if !(DEBUG && targetEnvironment(simulator))
@@ -61,6 +64,8 @@ struct LocationMapView: View {
             }
         }
         .animation(.default, value: ratingPrompt.isPresented)
+        .navigationTitle("mainTab.discoverTab.title")
+        .toolbar(.hidden, for: .navigationBar)
         .task {
             await viewModel.load()
         }
@@ -78,6 +83,19 @@ struct LocationMapView: View {
 
     private static let pinTransition = AnyTransition.opacity.combined(with: .scale(scale: 0.7))
 
+    private func selectItem(nearestTo coordinate: CLLocationCoordinate2D) {
+        guard let item = MapPinClustering.nearestItem(to: coordinate, in: viewModel.displayItems) else { return }
+        switch item {
+        case .place(let place):
+            coordinator.push(.placeDetail(place))
+        case .cluster(let cluster):
+            let region = viewModel.focusRegion(on: cluster)
+            withAnimation(.smooth(duration: 0.45)) {
+                viewModel.applyCameraRegion(region)
+            }
+        }
+    }
+
     private var isMonitoringRating: Bool {
         coordinator.path.isEmpty && scenePhase == .active
     }
@@ -87,30 +105,27 @@ struct LocationMapView: View {
         ForEach(viewModel.displayItems) { item in
             switch item {
             case .place(let place):
-                Annotation(place.displayName, coordinate: place.coordinate, anchor: .bottom) {
+                // The pin does not hit-test itself. Overlapping sprites were opening the neighbor.
+                // The map gesture resolves the tap to the nearest coordinate instead.
+                Annotation("", coordinate: place.coordinate, anchor: .bottom) {
                     LocationPinView(category: place.category, style: place.pinStyle)
-                        .transition(Self.pinTransition)
                         .accessibilityLabel(place.displayName)
                         .accessibilityAddTraits(.isButton)
+                        .allowsHitTesting(false)
+                        .transition(Self.pinTransition)
                 }
-                .tag(place.id)
+                .annotationTitles(.hidden)
             case .cluster(let cluster):
                 Annotation("", coordinate: cluster.coordinate, anchor: .center) {
-                    Button {
-                        let region = viewModel.focusRegion(on: cluster)
-                        withAnimation(.smooth(duration: 0.45)) {
-                            viewModel.applyCameraRegion(region)
-                        }
-                    } label: {
-                        LocationClusterPinView(count: cluster.count)
-                    }
-                    .buttonStyle(.plain)
-                    .transition(Self.pinTransition)
-                    .accessibilityLabel(
-                        String(
-                            localized: "locationMap.clusterPin.accessibilityLabel \(cluster.count)"
+                    LocationClusterPinView(count: cluster.count)
+                        .accessibilityLabel(
+                            String(
+                                localized: "locationMap.clusterPin.accessibilityLabel \(cluster.count)"
+                            )
                         )
-                    )
+                        .accessibilityAddTraits(.isButton)
+                        .allowsHitTesting(false)
+                        .transition(Self.pinTransition)
                 }
             }
         }

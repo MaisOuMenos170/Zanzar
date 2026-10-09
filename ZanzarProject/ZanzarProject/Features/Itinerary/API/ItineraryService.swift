@@ -53,6 +53,8 @@ struct ItineraryDetailAPIResponse: Decodable, Sendable {
             let lat: Double
             let lng: Double
         }
+
+        let category: String?
     }
 
     func makeItineraryDetail() -> ItineraryDetail {
@@ -76,7 +78,8 @@ struct ItineraryDetailAPIResponse: Decodable, Sendable {
                     placeID: $0.placeId,
                     name: $0.name,
                     latitude: $0.location.lat,
-                    longitude: $0.location.lng
+                    longitude: $0.location.lng,
+                    category: $0.category.map { ZanzarPlaceCategory(rawCategory: $0) } ?? .unknown
                 )
             }
         )
