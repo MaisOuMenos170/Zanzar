@@ -15,9 +15,7 @@ struct ProfileRecentCheckInsSection: View {
                 .font(.headline)
 
             if checkIns.isEmpty {
-                Text("profile.recentCheckIns.empty")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                ProfileEmptyCheckInsSheet()
             } else {
                 LazyVGrid(columns: columns, spacing: 8) {
                     ForEach(checkIns) { checkIn in

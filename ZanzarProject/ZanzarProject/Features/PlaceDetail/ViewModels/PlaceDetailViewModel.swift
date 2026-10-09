@@ -21,6 +21,7 @@ final class PlaceDetailViewModel {
     var errorMessage: String?
     var showsCellularImagesPrompt = false
     var showsCheckInConfirmation = false
+    var checkInWarning: CheckInWarning?
     var earnedSealPresentation: EarnedSealPresentation?
     var showsCompletedItineraryAlert = false
     private var pendingCompletedItineraryAlert = false
@@ -105,10 +106,36 @@ final class PlaceDetailViewModel {
 
         isCheckingIn = true
         errorMessage = nil
+        checkInWarning = nil
         defer { isCheckingIn = false }
 
+        let coordinate: UserCoordinate
         do {
-            let result = try await service.checkIn(placeID: currentDetail.id)
+            coordinate = try await userCoordinateProvider()
+        } catch is CancellationError {
+            return
+        } catch {
+            checkInWarning = .locationRequired
+            return
+        }
+
+        switch CheckInPolicy.verdict(
+            for: coordinate,
+            placeLatitude: currentDetail.latitude,
+            placeLongitude: currentDetail.longitude
+        ) {
+        case .tooFar:
+            checkInWarning = .tooFar
+            return
+        case .uncertain:
+            checkInWarning = .locationUncertain
+            return
+        case .allowed:
+            break
+        }
+
+        do {
+            let result = try await service.checkIn(placeID: currentDetail.id, coordinate: coordinate)
             applySuccessfulCheckIn(to: &currentDetail, result: result)
             detail = currentDetail
             queueRatingPrompt(for: currentDetail, userID: userID)
@@ -121,6 +148,8 @@ final class PlaceDetailViewModel {
             currentDetail.hasCheckedIn = true
             detail = currentDetail
             queueRatingPrompt(for: currentDetail, userID: userID)
+        } catch APIError.httpStatus(422, _) {
+            checkInWarning = .tooFar
         } catch {
             errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
         }

@@ -2,7 +2,7 @@ import Foundation
 
 protocol PlaceDetailServicing: Sendable {
     func fetchPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail
-    func checkIn(placeID: String) async throws -> CheckInResult
+    func checkIn(placeID: String, coordinate: UserCoordinate) async throws -> CheckInResult
 }
 
 struct PlaceDetailAPIResponse: Decodable, Sendable {
@@ -103,10 +103,30 @@ struct PlaceDetailAPIResponse: Decodable, Sendable {
     }
 }
 
+private struct CheckInCoordinates: Encodable, Sendable {
+    let lat: Double
+    let lng: Double
+    let accuracyMeters: Double?
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(lat, forKey: .lat)
+        try container.encode(lng, forKey: .lng)
+        try container.encodeIfPresent(accuracyMeters, forKey: .accuracyMeters)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case lat
+        case lng
+        case accuracyMeters
+    }
+}
+
 private struct CheckInCreateRequest: Encodable, Sendable {
     let placeId: String
     let datetime: String
     let clientMutationId: String
+    let coordinates: CheckInCoordinates
 }
 
 private struct CheckInStatusResponse: Decodable, Sendable {
@@ -136,10 +156,10 @@ final class PlaceDetailService: PlaceDetailServicing {
         }
     }
 
-    func checkIn(placeID: String) async throws -> CheckInResult {
+    func checkIn(placeID: String, coordinate: UserCoordinate) async throws -> CheckInResult {
         AppLog.placeDetail.info("Checking in placeId=\(placeID)...")
         do {
-            let result = try await sendCheckIn(placeID: placeID)
+            let result = try await sendCheckIn(placeID: placeID, coordinate: coordinate)
             AppLog.placeDetail.info("Checked in placeId=\(placeID) successfully (isNewStamp=\(result.isNewStamp))")
             return result
         } catch APIError.httpStatus(409, let message) {
@@ -204,14 +224,19 @@ final class PlaceDetailService: PlaceDetailServicing {
         }
     }
 
-    private func sendCheckIn(placeID: String) async throws -> CheckInResult {
+    private func sendCheckIn(placeID: String, coordinate: UserCoordinate) async throws -> CheckInResult {
         let response: CheckInAPIResponse = try await client.send(
             path: "checkIn",
             method: .post,
             body: CheckInCreateRequest(
                 placeId: placeID,
                 datetime: Date().formatted(.iso8601),
-                clientMutationId: UUID().uuidString
+                clientMutationId: UUID().uuidString,
+                coordinates: CheckInCoordinates(
+                    lat: coordinate.latitude,
+                    lng: coordinate.longitude,
+                    accuracyMeters: coordinate.accuracyMeters
+                )
             )
         )
         return response.makeCheckInResult()

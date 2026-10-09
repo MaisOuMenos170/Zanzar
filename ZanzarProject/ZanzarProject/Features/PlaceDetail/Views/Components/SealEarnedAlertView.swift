@@ -6,6 +6,10 @@ struct SealEarnedAlertView: View {
     let onAccept: () -> Void
 
     @AccessibilityFocusState private var isAcceptFocused: Bool
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var phase = PaperStampPhase.lifted
+    @State private var landingCount = 0
+    @State private var didPlayStamp = false
 
     var body: some View {
         ZStack {
@@ -26,6 +30,7 @@ struct SealEarnedAlertView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 PlaceCategorySealView(category: category, state: .earned, size: 120)
+                    .paperStampPress(phase: phase, role: .mark)
 
                 Button("placeDetail.sealEarnedAlert.acceptButton.title", action: onAccept)
                     .buttonStyle(.glassProminent)
@@ -38,10 +43,20 @@ struct SealEarnedAlertView: View {
             .padding(14)
             .frame(width: 300)
             .glassEffect(.regular, in: .rect(cornerRadius: 34))
+            .paperStampPress(phase: phase, role: .sheet)
+            .sensoryFeedback(.impact(flexibility: .rigid, intensity: 0.7), trigger: landingCount)
         }
         .accessibilityAddTraits(.isModal)
         .onAppear {
             isAcceptFocused = true
+            guard !didPlayStamp else { return }
+            didPlayStamp = true
+            PaperStampPhase.play(
+                duration: 0.45,
+                reduceMotion: reduceMotion,
+                update: { phase = $0 },
+                onContact: { landingCount += 1 }
+            )
         }
     }
 

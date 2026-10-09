@@ -48,7 +48,8 @@ final class LocationMapService: LocationMapServicing {
             if let location = update.location {
                 return UserCoordinate(
                     latitude: location.coordinate.latitude,
-                    longitude: location.coordinate.longitude
+                    longitude: location.coordinate.longitude,
+                    accuracyMeters: location.horizontalAccuracy
                 )
             }
         }

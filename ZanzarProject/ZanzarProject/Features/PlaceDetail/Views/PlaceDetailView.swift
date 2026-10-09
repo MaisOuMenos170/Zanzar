@@ -65,6 +65,13 @@ struct PlaceDetailView: View {
                 Text(checkInConfirmationMessage(for: placeName))
             }
         }
+        .alert(checkInWarningTitle, isPresented: checkInWarningIsPresented) {
+            Button("placeDetail.errorAlert.dismissButton.title", role: .cancel) {
+                viewModel.checkInWarning = nil
+            }
+        } message: {
+            Text(checkInWarningMessage)
+        }
         .overlay {
             if let presentation = viewModel.earnedSealPresentation {
                 SealEarnedAlertView(
@@ -88,6 +95,39 @@ struct PlaceDetailView: View {
         return AttributedString(localized: "placeDetail.checkInConfirmation.message.prefix")
             + name
             + AttributedString(localized: "placeDetail.checkInConfirmation.message.suffix")
+    }
+
+    private var checkInWarningIsPresented: Binding<Bool> {
+        Binding(
+            get: { viewModel.checkInWarning != nil },
+            set: { isPresented in
+                if !isPresented {
+                    viewModel.checkInWarning = nil
+                }
+            }
+        )
+    }
+
+    private var checkInWarningTitle: LocalizedStringKey {
+        switch viewModel.checkInWarning {
+        case .tooFar:
+            "placeDetail.checkInWarning.tooFar.title"
+        case .locationRequired:
+            "placeDetail.checkInWarning.locationRequired.title"
+        case .locationUncertain, nil:
+            "placeDetail.checkInWarning.locationUncertain.title"
+        }
+    }
+
+    private var checkInWarningMessage: LocalizedStringKey {
+        switch viewModel.checkInWarning {
+        case .tooFar:
+            "placeDetail.checkInWarning.tooFar.message"
+        case .locationRequired:
+            "placeDetail.checkInWarning.locationRequired.message"
+        case .locationUncertain, nil:
+            "placeDetail.checkInWarning.locationUncertain.message"
+        }
     }
 
     private var errorAlertIsPresented: Binding<Bool> {
