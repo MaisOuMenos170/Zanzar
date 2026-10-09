@@ -6,6 +6,7 @@ import Foundation
 struct UserCoordinate: Hashable, Sendable {
     let latitude: Double
     let longitude: Double
+    var accuracyMeters: Double? = nil
 
     var clLocationCoordinate2D: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)

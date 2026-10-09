@@ -1146,6 +1146,108 @@
         }
       }
     },
+    "placeDetail.checkInWarning.locationRequired.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on location to check in at this place."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ligue a localização para fazer check-in neste lugar."
+          }
+        }
+      }
+    },
+    "placeDetail.checkInWarning.locationRequired.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location needed"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Precisa da localização"
+          }
+        }
+      }
+    },
+    "placeDetail.checkInWarning.locationUncertain.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't confirm you're at this place. Try again closer to it."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu para confirmar que você está neste lugar. Tente de novo mais perto dele."
+          }
+        }
+      }
+    },
+    "placeDetail.checkInWarning.locationUncertain.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't confirm your location"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu para confirmar"
+          }
+        }
+      }
+    },
+    "placeDetail.checkInWarning.tooFar.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get closer to this place to check in."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chegue mais perto deste lugar para fazer check-in."
+          }
+        }
+      }
+    },
+    "placeDetail.checkInWarning.tooFar.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're too far away"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você está longe"
+          }
+        }
+      }
+    },
     "placeDetail.checkInError.notAuthenticated" : {
       "extractionState" : "manual",
       "localizations" : {

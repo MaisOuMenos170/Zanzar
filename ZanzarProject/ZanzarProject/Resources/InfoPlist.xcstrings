@@ -19,13 +19,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zanzar uses your location to center the map on where you are."
+            "value" : "Zanzar uses your location to center the map and confirm you're near a place when you check in."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zanzar usa sua localização para centralizar o mapa onde você está."
+            "value" : "O Zanzar usa sua localização para centralizar o mapa e confirmar que você está perto do lugar no check-in."
           }
         }
       }

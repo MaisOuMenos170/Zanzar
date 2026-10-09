@@ -61,18 +61,34 @@ struct PlaceDetailServiceTests {
         let client = PathAwareNetworkClient(responsesByPathPrefix: [:], sendResponseJSON: checkInJSON)
         let service = PlaceDetailService(client: client)
 
-        let result = try await service.checkIn(placeID: "ChIJ1")
+        let coordinate = UserCoordinate(latitude: -25.43, longitude: -49.27, accuracyMeters: 8)
+        let result = try await service.checkIn(placeID: "ChIJ1", coordinate: coordinate)
 
         #expect(result.isNewStamp)
         #expect(result.sealCategory == .bar)
         #expect(client.lastSendPath == "checkIn")
+        let body = try JSONDecoder().decode(SentCheckInBody.self, from: try #require(client.lastSendBody))
+        #expect(body.coordinates.lat == coordinate.latitude)
+        #expect(body.coordinates.lng == coordinate.longitude)
+        #expect(body.coordinates.accuracyMeters == 8)
     }
+}
+
+private struct SentCheckInBody: Decodable {
+    struct Coordinates: Decodable {
+        let lat: Double
+        let lng: Double
+        let accuracyMeters: Double?
+    }
+
+    let coordinates: Coordinates
 }
 
 private final class PathAwareNetworkClient: NetworkClient, @unchecked Sendable {
     private let responsesByPathPrefix: [String: String]
     private let sendResponseJSON: String?
     private(set) var lastSendPath: String?
+    private(set) var lastSendBody: Data?
 
     init(responsesByPathPrefix: [String: String], sendResponseJSON: String? = nil) {
         self.responsesByPathPrefix = responsesByPathPrefix
@@ -96,6 +112,7 @@ private final class PathAwareNetworkClient: NetworkClient, @unchecked Sendable {
 
     func send<Body: Encodable, Response: Decodable>(path: String, method: HTTPMethod, body: Body) async throws -> Response {
         lastSendPath = path
+        lastSendBody = try JSONEncoder().encode(body)
         let json = sendResponseJSON ?? "{}"
         return try JSONDecoder().decode(Response.self, from: Data(json.utf8))
     }

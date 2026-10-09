@@ -5,6 +5,7 @@ import Testing
 @Suite("PlaceDetailViewModel")
 struct PlaceDetailViewModelTests {
     private let sampleUserCoordinate = UserCoordinate(latitude: -25.4298844, longitude: -49.2719424)
+    private let nearbyUserCoordinate = UserCoordinate(latitude: -25.4, longitude: -49.2, accuracyMeters: 12)
 
     private let samplePlace = MapPlace(
         id: "place-1",
@@ -95,7 +96,7 @@ struct PlaceDetailViewModelTests {
         let viewModel = PlaceDetailViewModel(
             place: samplePlace,
             userIDProvider: { "user-1" },
-            userCoordinateProvider: { self.sampleUserCoordinate },
+            userCoordinateProvider: { self.nearbyUserCoordinate },
             service: service,
             pendingRatingStore: store
         )
@@ -103,6 +104,7 @@ struct PlaceDetailViewModelTests {
         await viewModel.load()
         await viewModel.confirmCheckIn()
 
+        #expect(service.checkInCalls.map(\.coordinate) == [self.nearbyUserCoordinate])
         #expect(viewModel.detail?.hasCheckedIn == true)
         #expect(viewModel.detail?.totalCheckIns == 11)
         #expect(viewModel.isCheckingIn == false)
@@ -129,7 +131,7 @@ struct PlaceDetailViewModelTests {
         let viewModel = PlaceDetailViewModel(
             place: samplePlace,
             userIDProvider: { "user-1" },
-            userCoordinateProvider: { self.sampleUserCoordinate },
+            userCoordinateProvider: { self.nearbyUserCoordinate },
             service: service
         )
 
@@ -157,7 +159,7 @@ struct PlaceDetailViewModelTests {
         let viewModel = PlaceDetailViewModel(
             place: samplePlace,
             userIDProvider: { "user-1" },
-            userCoordinateProvider: { self.sampleUserCoordinate },
+            userCoordinateProvider: { self.nearbyUserCoordinate },
             service: service
         )
 
@@ -186,7 +188,7 @@ struct PlaceDetailViewModelTests {
         let viewModel = PlaceDetailViewModel(
             place: samplePlace,
             userIDProvider: { "user-1" },
-            userCoordinateProvider: { self.sampleUserCoordinate },
+            userCoordinateProvider: { self.nearbyUserCoordinate },
             service: service
         )
 
@@ -212,7 +214,7 @@ struct PlaceDetailViewModelTests {
         let viewModel = PlaceDetailViewModel(
             place: samplePlace,
             userIDProvider: { "user-1" },
-            userCoordinateProvider: { self.sampleUserCoordinate },
+            userCoordinateProvider: { self.nearbyUserCoordinate },
             service: service,
             pendingRatingStore: store
         )
@@ -241,12 +243,107 @@ struct PlaceDetailViewModelTests {
         #expect(service.lastLoadContext?.userCoordinate == nil)
         #expect(viewModel.detail?.name == "Jardim Botânico")
     }
+
+    @Test("confirmCheckIn refuses a far location without calling the API")
+    func confirmCheckInRejectsFarLocation() async {
+        let service = MockPlaceDetailService(
+            fetchResult: .success(sampleDetail()),
+            checkInResult: .success(sampleCheckInResult)
+        )
+        let viewModel = PlaceDetailViewModel(
+            place: samplePlace,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: {
+                UserCoordinate(
+                    latitude: self.sampleUserCoordinate.latitude,
+                    longitude: self.sampleUserCoordinate.longitude,
+                    accuracyMeters: 12
+                )
+            },
+            service: service
+        )
+
+        await viewModel.load()
+        await viewModel.confirmCheckIn()
+
+        #expect(service.checkInCalls.isEmpty)
+        #expect(viewModel.checkInWarning == .tooFar)
+        #expect(viewModel.detail?.hasCheckedIn == false)
+        #expect(viewModel.errorMessage == nil)
+    }
+
+    @Test("a 422 from the server shows the too-far warning")
+    func confirmCheckInMapsServerRejectionToTooFar() async {
+        let service = MockPlaceDetailService(
+            fetchResult: .success(sampleDetail()),
+            checkInResult: .failure(APIError.httpStatus(422, message: "Check-in is too far from the place"))
+        )
+        let viewModel = PlaceDetailViewModel(
+            place: samplePlace,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: { self.nearbyUserCoordinate },
+            service: service
+        )
+
+        await viewModel.load()
+        await viewModel.confirmCheckIn()
+
+        #expect(service.checkInCalls.count == 1)
+        #expect(viewModel.checkInWarning == .tooFar)
+        #expect(viewModel.detail?.hasCheckedIn == false)
+        #expect(viewModel.errorMessage == nil)
+    }
+
+    @Test("confirmCheckIn warns when location is unavailable")
+    func confirmCheckInRequiresLocation() async {
+        let service = MockPlaceDetailService(
+            fetchResult: .success(sampleDetail()),
+            checkInResult: .success(sampleCheckInResult)
+        )
+        let viewModel = PlaceDetailViewModel(
+            place: samplePlace,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: { throw LocationMapError.locationUnavailable },
+            service: service
+        )
+
+        await viewModel.load()
+        await viewModel.confirmCheckIn()
+
+        #expect(service.checkInCalls.isEmpty)
+        #expect(viewModel.checkInWarning == .locationRequired)
+        #expect(viewModel.detail?.hasCheckedIn == false)
+    }
+
+    @Test("confirmCheckIn warns when the location fix is too coarse")
+    func confirmCheckInRejectsUncertainLocation() async {
+        let service = MockPlaceDetailService(
+            fetchResult: .success(sampleDetail()),
+            checkInResult: .success(sampleCheckInResult)
+        )
+        let viewModel = PlaceDetailViewModel(
+            place: samplePlace,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: {
+                UserCoordinate(latitude: -25.4, longitude: -49.2, accuracyMeters: 400)
+            },
+            service: service
+        )
+
+        await viewModel.load()
+        await viewModel.confirmCheckIn()
+
+        #expect(service.checkInCalls.isEmpty)
+        #expect(viewModel.checkInWarning == .locationUncertain)
+        #expect(viewModel.detail?.hasCheckedIn == false)
+    }
 }
 
 final class MockPlaceDetailService: PlaceDetailServicing, @unchecked Sendable {
     var fetchResult: Result<PlaceDetail, Error>
     var checkInResult: Result<CheckInResult, Error>?
     private(set) var lastLoadContext: PlaceDetailLoadContext?
+    private(set) var checkInCalls: [(placeID: String, coordinate: UserCoordinate)] = []
 
     init(
         fetchResult: Result<PlaceDetail, Error>,
@@ -261,8 +358,8 @@ final class MockPlaceDetailService: PlaceDetailServicing, @unchecked Sendable {
         return try fetchResult.get()
     }
 
-    func checkIn(placeID: String) async throws -> CheckInResult {
-        _ = placeID
+    func checkIn(placeID: String, coordinate: UserCoordinate) async throws -> CheckInResult {
+        checkInCalls.append((placeID, coordinate))
         guard let checkInResult else {
             fatalError("MockPlaceDetailService.checkInResult not configured")
         }

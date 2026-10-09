@@ -7,9 +7,30 @@ struct PlaceDetailStatsCard: View {
     let isInActiveItinerary: Bool
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Earned seals already on the card stay put. The press runs only when check-in flips on screen.
+    @State private var showsEarned: Bool
+    @State private var phase = PaperStampPhase.settled
+    @State private var landingCount = 0
+    @State private var isVisible = false
+
+    private let stampTravel: CGFloat = 14
+    private let stampDuration: TimeInterval = 0.35
+
+    init(
+        totalCheckIns: Int,
+        category: ZanzarPlaceCategory,
+        hasCheckedIn: Bool,
+        isInActiveItinerary: Bool
+    ) {
+        self.totalCheckIns = totalCheckIns
+        self.category = category
+        self.hasCheckedIn = hasCheckedIn
+        self.isInActiveItinerary = isInActiveItinerary
+        _showsEarned = State(initialValue: hasCheckedIn)
+    }
 
     private var sealState: PlaceCategorySealState {
-        hasCheckedIn ? .earned : .preview
+        showsEarned ? .earned : .preview
     }
 
     private var sealSize: CGFloat {
@@ -37,18 +58,50 @@ struct PlaceDetailStatsCard: View {
 
             HStack(spacing: 12) {
                 PlaceCategorySealView(category: category, state: sealState, size: sealSize)
+                    .paperStampPress(phase: phase, role: .mark, travel: stampTravel)
                     .accessibilityLabel(categorySealAccessibilityLabel)
 
                 if isInActiveItinerary {
                     ItineraryStampView(state: sealState, size: sealSize)
+                        .paperStampPress(phase: phase, role: .mark, travel: stampTravel)
                         .accessibilityLabel(itinerarySealAccessibilityLabel)
                 }
             }
         }
-        .animation(reduceMotion ? nil : .spring(duration: 0.45), value: hasCheckedIn)
         .padding(.horizontal, isInActiveItinerary ? 24 : 36)
         .padding(.vertical, 16)
         .background(Color("PlaceDetailStatsBackground"), in: .rect(cornerRadius: 16))
+        .paperStampPress(phase: phase, role: .sheet, travel: stampTravel)
+        .sensoryFeedback(.impact(flexibility: .rigid, intensity: 0.7), trigger: landingCount)
+        .onAppear {
+            isVisible = true
+        }
+        .onDisappear {
+            isVisible = false
+        }
+        .onChange(of: hasCheckedIn) { _, checkedIn in
+            guard checkedIn, !showsEarned else { return }
+            guard isVisible, !reduceMotion else {
+                showsEarned = true
+                phase = .settled
+                return
+            }
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) {
+                phase = .lifted
+                showsEarned = true
+            }
+        }
+        .onChange(of: showsEarned) { _, earned in
+            guard earned, phase == .lifted else { return }
+            PaperStampPhase.play(
+                duration: stampDuration,
+                reduceMotion: reduceMotion,
+                update: { phase = $0 },
+                onContact: { landingCount += 1 }
+            )
+        }
     }
 
     private var categoryLabel: String {
