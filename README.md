@@ -105,7 +105,7 @@ Updated ZANZAR_API_BASE_URL in Config.xcconfig -> https://invest-plaza-assessed-
 
 O script escreve `ZANZAR_API_BASE_URL` em `ZanzarProject/Config.xcconfig` (arquivo local, ignorado pelo git; veja `Config.xcconfig.example`). O `ZanzarProject/Info.plist` expõe esse valor como `ZanzarAPIBaseURL`, e em runtime `APIConfiguration.baseURL` o lê de lá. Chaves customizadas não funcionam via `INFOPLIST_KEY_*`, por isso o `Info.plist` separado.
 
-> Builds **Release** não usam essa URL de túnel — a URL de produção precisa ser configurada separadamente.
+> Builds **Release** não usam essa URL de túnel. Eles leem `ZanzarProject/Config.Release.xcconfig`, que aponta para `https://zanzarbackend-development.up.railway.app`.
 
 ### Depois de rodar o script
 
