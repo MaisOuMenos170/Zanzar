@@ -34,7 +34,7 @@ final class LocationMapService: LocationMapServicing {
 
     func currentUserLocation() async throws -> UserCoordinate {
         #if DEBUG && targetEnvironment(simulator)
-        return DevLocation.pucPr
+        return DevLocation.historicCenter
         #else
         if manager.authorizationStatus == .notDetermined {
             manager.requestWhenInUseAuthorization()

@@ -7,6 +7,7 @@ struct LocationMapView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(ToastPresenter.self) private var toasts
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         MapReader { proxy in
@@ -35,7 +36,7 @@ struct LocationMapView: View {
             viewModel.updateVisibleRegion(context.region)
         }
         // Pins fade and scale in and out when the grouping changes instead of popping.
-        .animation(.smooth(duration: 0.3), value: viewModel.displayItems)
+        .animation(reduceMotion ? nil : .smooth(duration: 0.3), value: viewModel.displayItems)
         // The error is handed to the app-level toast and consumed, so a repeated failure shows it again.
         .onChange(of: viewModel.errorMessage) { _, message in
             guard let message else { return }
@@ -63,7 +64,7 @@ struct LocationMapView: View {
                 .transition(.opacity)
             }
         }
-        .animation(.default, value: ratingPrompt.isPresented)
+        .animation(reduceMotion ? nil : .default, value: ratingPrompt.isPresented)
         .navigationTitle("mainTab.discoverTab.title")
         .toolbar(.hidden, for: .navigationBar)
         .task {
@@ -74,6 +75,9 @@ struct LocationMapView: View {
         .task(id: isMonitoringRating) {
             guard isMonitoringRating else { return }
             await ratingPrompt.monitorLeaving()
+            // `monitorLeaving` swallows cancellation and returns. A reload started after that
+            // is the request URLSession then cancels, which used to toast "couldn't load places".
+            guard !Task.isCancelled, isMonitoringRating else { return }
             await viewModel.reloadPlaces()
         }
         .onReceive(NotificationCenter.default.publisher(for: AppNotification.activeItineraryDidChange)) { _ in
@@ -81,7 +85,9 @@ struct LocationMapView: View {
         }
     }
 
-    private static let pinTransition = AnyTransition.opacity.combined(with: .scale(scale: 0.7))
+    private var pinTransition: AnyTransition {
+        reduceMotion ? .opacity : .opacity.combined(with: .scale(scale: 0.7))
+    }
 
     private func selectItem(nearestTo coordinate: CLLocationCoordinate2D) {
         guard let item = MapPinClustering.nearestItem(to: coordinate, in: viewModel.displayItems) else { return }
@@ -90,8 +96,12 @@ struct LocationMapView: View {
             coordinator.push(.placeDetail(place))
         case .cluster(let cluster):
             let region = viewModel.focusRegion(on: cluster)
-            withAnimation(.smooth(duration: 0.45)) {
+            if reduceMotion {
                 viewModel.applyCameraRegion(region)
+            } else {
+                withAnimation(.smooth(duration: 0.45)) {
+                    viewModel.applyCameraRegion(region)
+                }
             }
         }
     }
@@ -112,7 +122,7 @@ struct LocationMapView: View {
                         .accessibilityLabel(place.displayName)
                         .accessibilityAddTraits(.isButton)
                         .allowsHitTesting(false)
-                        .transition(Self.pinTransition)
+                        .transition(pinTransition)
                 }
                 .annotationTitles(.hidden)
             case .cluster(let cluster):
@@ -125,7 +135,7 @@ struct LocationMapView: View {
                         )
                         .accessibilityAddTraits(.isButton)
                         .allowsHitTesting(false)
-                        .transition(Self.pinTransition)
+                        .transition(pinTransition)
                 }
             }
         }

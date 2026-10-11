@@ -9,7 +9,7 @@ struct ProfileStatsView: View {
             Divider()
             ProfileStatItem(value: summary.itineraryCount, label: "profile.stats.itinerariesLabel")
             Divider()
-            ProfileStatItem(value: summary.sealCount, label: "profile.stats.sealsLabel", animatesValue: true)
+            ProfileStatItem(value: summary.sealCount, label: "profile.stats.sealsLabel")
         }
         .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: .infinity)
@@ -19,15 +19,15 @@ struct ProfileStatsView: View {
 private struct ProfileStatItem: View {
     let value: Int
     let label: LocalizedStringKey
-    var animatesValue = false
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(spacing: 0) {
             Text(value, format: .number)
-                .contentTransition(animatesValue ? .numericText(value: Double(value)) : .identity)
-                .animation(animatesValue && !reduceMotion ? .default : nil, value: value)
+                // Check-ins, itineraries, and seals share this transition on purpose.
+                .contentTransition(reduceMotion ? .identity : .numericText(value: Double(value)))
+                .animation(reduceMotion ? nil : .default, value: value)
                 .font(.title2.bold())
             Text(label)
                 .font(.caption)

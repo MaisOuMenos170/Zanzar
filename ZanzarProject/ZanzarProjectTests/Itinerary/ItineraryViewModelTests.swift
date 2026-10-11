@@ -64,7 +64,7 @@ struct ItineraryViewModelTests {
             activeItineraryResult: .success(Self.sampleActive)
         )
         let locationService = MockLocationMapService()
-        locationService.locationResult = .success(DevLocation.pucPr)
+        locationService.locationResult = .success(DevLocation.historicCenter)
         locationService.placesResult = .success([
             MapPlace(
                 id: "ChIJ9",

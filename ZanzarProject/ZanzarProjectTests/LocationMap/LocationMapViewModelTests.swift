@@ -269,6 +269,66 @@ struct LocationMapViewModelTests {
         #expect(viewModel.isLoading == false)
         #expect(viewModel.errorMessage == String(localized: "locationMap.placesLoadError"))
     }
+
+    @Test("A cancelled places fetch during the initial load does not toast")
+    func cancelledPlacesLoadDoesNotToast() async {
+        let coordinate = UserCoordinate(latitude: -25.4098994, longitude: -49.2670599)
+        let service = MockLocationMapService()
+        service.locationResult = .success(coordinate)
+        service.placesResult = .failure(URLError(.cancelled))
+        let viewModel = LocationMapViewModel(service: service)
+
+        await viewModel.load()
+
+        #expect(viewModel.userCoordinate == coordinate)
+        #expect(viewModel.places.isEmpty)
+        #expect(viewModel.isLoading == false)
+        #expect(viewModel.errorMessage == nil)
+    }
+
+    @Test("A places fetch cancelled as NSError during the initial load does not toast")
+    func cancelledPlacesLoadAsNSErrorDoesNotToast() async {
+        let coordinate = UserCoordinate(latitude: -25.4098994, longitude: -49.2670599)
+        let service = MockLocationMapService()
+        service.locationResult = .success(coordinate)
+        service.placesResult = .failure(
+            NSError(domain: NSURLErrorDomain, code: NSURLErrorCancelled)
+        )
+        let viewModel = LocationMapViewModel(service: service)
+
+        await viewModel.load()
+
+        #expect(viewModel.userCoordinate == coordinate)
+        #expect(viewModel.places.isEmpty)
+        #expect(viewModel.isLoading == false)
+        #expect(viewModel.errorMessage == nil)
+    }
+
+    @Test("A cancelled places reload keeps the pins and does not toast")
+    func cancelledReloadDoesNotToast() async {
+        let coordinate = UserCoordinate(latitude: -25.4098994, longitude: -49.2670599)
+        let initialPlaces = [
+            MapPlace(
+                id: "initial",
+                name: "Initial",
+                latitude: -25.4098994,
+                longitude: -49.2670599,
+                category: .museum,
+                distanceMeters: 0
+            )
+        ]
+        let service = MockLocationMapService()
+        service.locationResult = .success(coordinate)
+        service.placesResult = .success(initialPlaces)
+        let viewModel = LocationMapViewModel(service: service)
+
+        await viewModel.load()
+        service.placesResult = .failure(URLError(.cancelled))
+        await viewModel.reloadPlaces()
+
+        #expect(viewModel.places == initialPlaces)
+        #expect(viewModel.errorMessage == nil)
+    }
 }
 
 @MainActor
