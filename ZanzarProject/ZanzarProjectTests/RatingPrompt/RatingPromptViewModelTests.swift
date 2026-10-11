@@ -23,7 +23,7 @@ struct RatingPromptViewModelTests {
     }
 
     private func makeViewModel(
-        service: MockRatingPromptService = MockRatingPromptService(),
+        service: MockRatingPromptService,
         store: InMemoryPendingRatingStore,
         userID: String? = "user-1",
         coordinate: UserCoordinate? = nil
@@ -134,7 +134,7 @@ struct RatingPromptViewModelTests {
 
     @Test("refresh does nothing without a pending rating")
     func refreshWithoutPending() async {
-        let viewModel = makeViewModel(store: InMemoryPendingRatingStore())
+        let viewModel = makeViewModel(service: MockRatingPromptService(), store: InMemoryPendingRatingStore())
 
         await viewModel.refresh()
 
@@ -144,7 +144,7 @@ struct RatingPromptViewModelTests {
     @Test("refresh keeps waiting while the user is still near the place")
     func refreshWhileNearPlace() async {
         let store = InMemoryPendingRatingStore(stored: pending())
-        let viewModel = makeViewModel(store: store, coordinate: nearPlace)
+        let viewModel = makeViewModel(service: MockRatingPromptService(), store: store, coordinate: nearPlace)
 
         await viewModel.refresh()
 
@@ -170,7 +170,7 @@ struct RatingPromptViewModelTests {
         let store = InMemoryPendingRatingStore(
             stored: pending(checkedInAgo: RatingPromptPolicy.validityWindow + 1)
         )
-        let viewModel = makeViewModel(store: store)
+        let viewModel = makeViewModel(service: MockRatingPromptService(), store: store)
 
         await viewModel.refresh()
 
@@ -193,7 +193,7 @@ struct RatingPromptViewModelTests {
     @Test("refresh ignores a pending rating that belongs to another user")
     func refreshOtherUser() async {
         let store = InMemoryPendingRatingStore(stored: pending(userID: "someone-else"))
-        let viewModel = makeViewModel(store: store)
+        let viewModel = makeViewModel(service: MockRatingPromptService(), store: store)
 
         await viewModel.refresh()
 

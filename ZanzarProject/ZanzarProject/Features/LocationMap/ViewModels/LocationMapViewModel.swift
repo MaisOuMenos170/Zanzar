@@ -54,10 +54,8 @@ final class LocationMapViewModel {
             )
             setRegion(region)
             cameraPosition = .region(region)
-        } catch is CancellationError {
-            return
         } catch {
-            guard generation == loadGeneration else { return }
+            guard generation == loadGeneration, !Self.isCancellation(error) else { return }
 
             userCoordinate = nil
             setPlaces([])
@@ -71,10 +69,8 @@ final class LocationMapViewModel {
             let nearbyPlaces = try await service.fetchNearbyPlaces(from: userCoordinate)
             guard generation == loadGeneration else { return }
             setPlaces(nearbyPlaces)
-        } catch is CancellationError {
-            return
         } catch {
-            guard generation == loadGeneration else { return }
+            guard generation == loadGeneration, !Self.isCancellation(error) else { return }
 
             setPlaces([])
             errorMessage = String(localized: "locationMap.placesLoadError")
@@ -129,12 +125,16 @@ final class LocationMapViewModel {
             let refreshedPlaces = try await service.fetchNearbyPlaces(from: userCoordinate)
             guard generation == loadGeneration else { return }
             setPlaces(refreshedPlaces)
-        } catch is CancellationError {
-            return
         } catch {
-            guard generation == loadGeneration else { return }
+            guard generation == loadGeneration, !Self.isCancellation(error) else { return }
             errorMessage = String(localized: "locationMap.placesLoadError")
         }
+    }
+
+    /// URLSession reports a cancelled task as `URLError.cancelled`, not `CancellationError`.
+    /// Leaving the map cancels the in-flight places reload; that must not become a toast.
+    private static func isCancellation(_ error: Error) -> Bool {
+        error is CancellationError || (error as? URLError)?.code == .cancelled
     }
 
     // MARK: - Pin grouping

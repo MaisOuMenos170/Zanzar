@@ -15,8 +15,9 @@ nonisolated struct UserCoordinate: Hashable, Sendable {
 
 #if DEBUG
 enum DevLocation {
-    /// PUC-PR (Campus Curitiba) — fixed simulator position for local map testing.
-    static let pucPr = UserCoordinate(latitude: -25.4298844, longitude: -49.2719424)
+    /// Historic center, about 40 m south of Al Beek.
+    /// The campus point sat more than 150 m from every catalog place, so a simulator check-in always failed.
+    static let historicCenter = UserCoordinate(latitude: -25.428951, longitude: -49.2728171)
 }
 #endif
 

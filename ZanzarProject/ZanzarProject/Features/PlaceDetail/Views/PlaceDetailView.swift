@@ -6,6 +6,7 @@ struct PlaceDetailView: View {
     @State private var viewModel: PlaceDetailViewModel
     @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     init(place: MapPlace) {
         self.place = place
         _viewModel = State(initialValue: PlaceDetailViewModel(place: place))
@@ -85,8 +86,8 @@ struct PlaceDetailView: View {
                     .transition(.opacity)
             }
         }
-        .animation(.default, value: viewModel.earnedSealPresentation != nil)
-        .animation(.default, value: viewModel.showsCompletedItineraryAlert)
+        .animation(reduceMotion ? nil : .default, value: viewModel.earnedSealPresentation != nil)
+        .animation(reduceMotion ? nil : .default, value: viewModel.showsCompletedItineraryAlert)
     }
 
     private func checkInConfirmationMessage(for placeName: String) -> AttributedString {
