@@ -25,6 +25,7 @@ private struct ProfileStatItem: View {
     var body: some View {
         VStack(spacing: 0) {
             Text(value, format: .number)
+                // Check-ins, itineraries, and seals share this transition on purpose.
                 .contentTransition(reduceMotion ? .identity : .numericText(value: Double(value)))
                 .animation(reduceMotion ? nil : .default, value: value)
                 .font(.title2.bold())

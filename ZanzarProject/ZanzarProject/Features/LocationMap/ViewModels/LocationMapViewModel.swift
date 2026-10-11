@@ -131,10 +131,14 @@ final class LocationMapViewModel {
         }
     }
 
-    /// URLSession reports a cancelled task as `URLError.cancelled`, not `CancellationError`.
+    /// URLSession reports a cancelled task as `URLError.cancelled`, which also bridges to
+    /// `NSError` (`NSURLErrorDomain` / `NSURLErrorCancelled`), not `CancellationError`.
     /// Leaving the map cancels the in-flight places reload; that must not become a toast.
     private static func isCancellation(_ error: Error) -> Bool {
-        error is CancellationError || (error as? URLError)?.code == .cancelled
+        if error is CancellationError { return true }
+        if (error as? URLError)?.code == .cancelled { return true }
+        let nsError = error as NSError
+        return nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled
     }
 
     // MARK: - Pin grouping
