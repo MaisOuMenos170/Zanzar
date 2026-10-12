@@ -1,4 +1,5 @@
 name: Zanzar CI
+
 on:
   pull_request:
     branches:
@@ -7,28 +8,40 @@ on:
     branches:
       - develop
   workflow_dispatch:
-  
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   test:
     name: Test iOS
     runs-on: macos-latest
     steps:
-      - name: Checkout to main
+      - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Install dependencies
+      - name: Install SwiftLint
+        env:
+          SWIFTLINT_VERSION: "0.65.1"
         run: |
-          brew install swiftlint
-          brew install xcbeautify
+          curl -fsSL -o "$RUNNER_TEMP/swiftlint.zip" \
+            "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/portable_swiftlint.zip"
+          unzip -q "$RUNNER_TEMP/swiftlint.zip" -d "$RUNNER_TEMP/swiftlint"
+          echo "$RUNNER_TEMP/swiftlint" >> "$GITHUB_PATH"
 
       - name: Run SwiftLint
-        run: swiftlint lint
+        run: swiftlint lint --reporter github-actions-logging
 
-      - name: Show project info
+      - name: Choose simulator
+        id: simulator
         run: |
-          xcodebuild -version
-          xcodebuild -project ./ZanzarProject/ZanzarProject.xcodeproj -list
-          xcodebuild -project ./ZanzarProject/ZanzarProject.xcodeproj -scheme ZanzarProject -showdestinations
+          destination=$(./scripts/select-ios-simulator.sh)
+          echo "destination=$destination" >> "$GITHUB_OUTPUT"
+          echo "Using $destination"
 
       - name: Create Config.xcconfig
         run: |
@@ -36,6 +49,7 @@ jobs:
           ZANZAR_API_BASE_URL = http://127.0.0.1:3000
           EOF
 
-      - name: Run and test project
+      - name: Test
         run: |
-          set -o pipefail && xcodebuild -project ./ZanzarProject/ZanzarProject.xcodeproj -scheme ZanzarProject -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest,arch=arm64' test | xcbeautify
+          set -o pipefail
+          xcodebuild -project ./ZanzarProject/ZanzarProject.xcodeproj -scheme ZanzarProject -destination "${{ steps.simulator.outputs.destination }}" test
