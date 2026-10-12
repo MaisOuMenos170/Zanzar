@@ -1,0 +1,117 @@
+name: TestFlight preflight
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    name: Apple binary checks
+    runs-on: ubuntu-latest
+    outputs:
+      release_url: ${{ steps.gate.outputs.release_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Check the tree can be processed by TestFlight
+        id: gate
+        run: |
+          set -o pipefail
+          ./scripts/testflight-preflight.sh | tee "$RUNNER_TEMP/preflight.txt"
+          grep '^release_url=' "$RUNNER_TEMP/preflight.txt" >> "$GITHUB_OUTPUT"
+
+  test:
+    name: Unit tests
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install SwiftLint
+        env:
+          SWIFTLINT_VERSION: "0.65.1"
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/swiftlint.zip" \
+            "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/portable_swiftlint.zip"
+          unzip -q "$RUNNER_TEMP/swiftlint.zip" -d "$RUNNER_TEMP/swiftlint"
+          echo "$RUNNER_TEMP/swiftlint" >> "$GITHUB_PATH"
+
+      - name: Run SwiftLint
+        run: swiftlint lint --reporter github-actions-logging
+
+      - name: Choose simulator
+        id: simulator
+        run: |
+          destination=$(./scripts/select-ios-simulator.sh)
+          echo "destination=$destination" >> "$GITHUB_OUTPUT"
+          echo "Using $destination"
+
+      - name: Create Config.xcconfig
+        run: |
+          cat > ZanzarProject/Config.xcconfig <<EOF
+          ZANZAR_API_BASE_URL = http://127.0.0.1:3000
+          EOF
+
+      - name: Test
+        run: |
+          set -o pipefail
+          xcodebuild -project ./ZanzarProject/ZanzarProject.xcodeproj -scheme ZanzarProject -destination "${{ steps.simulator.outputs.destination }}" test
+
+  production:
+    name: Production API and review login
+    if: github.event_name == 'workflow_dispatch'
+    needs: preflight
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Production health
+        env:
+          RELEASE_URL: ${{ needs.preflight.outputs.release_url }}
+        run: |
+          set -eu
+          curl -fsS "$RELEASE_URL/health"
+          echo
+
+      - name: Review account can log in
+        env:
+          RELEASE_URL: ${{ needs.preflight.outputs.release_url }}
+          APP_REVIEW_PASSWORD: ${{ secrets.APP_REVIEW_PASSWORD }}
+        run: |
+          set -eu
+          if [ -z "$APP_REVIEW_PASSWORD" ]; then
+            echo "error: set the APP_REVIEW_PASSWORD secret to the review account password"
+            exit 1
+          fi
+          email=$(sed -n 's/^email: //p' docs/app-review.md)
+          if [ -z "$email" ]; then
+            echo "error: docs/app-review.md must contain an email: line"
+            exit 1
+          fi
+          export REVIEW_EMAIL="$email"
+          body=$(python3 -c 'import json,os; print(json.dumps({"email": os.environ["REVIEW_EMAIL"], "password": os.environ["APP_REVIEW_PASSWORD"]}))')
+          code=$(curl -sS -o "$RUNNER_TEMP/login.json" -w '%{http_code}' \
+            -X POST "$RELEASE_URL/login" \
+            -H 'Content-Type: application/json' \
+            -d "$body")
+          if [ "$code" != "200" ]; then
+            echo "error: review login failed with HTTP $code"
+            python3 -c 'import json,sys; data=json.load(open(sys.argv[1])); data.pop("token", None); print(data)' "$RUNNER_TEMP/login.json" || true
+            exit 1
+          fi
+          python3 -c 'import json,sys; data=json.load(open(sys.argv[1])); assert isinstance(data.get("token"), str) and data["token"]' "$RUNNER_TEMP/login.json"
+          echo "review login ok"

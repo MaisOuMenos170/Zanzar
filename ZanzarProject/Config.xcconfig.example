@@ -2,6 +2,6 @@
 // Config.xcconfig is gitignored — never commit secrets.
 
 // API base URL. xcconfig treats // as a comment, so write the scheme as https:/$()/host.
-// Debug falls back to http://127.0.0.1:3000 when empty; Release requires an https URL
-// and crashes at launch otherwise.
+// Debug falls back to http://127.0.0.1:3000 when empty.
+// Release does not use this file. It uses Config.Release.xcconfig.
 ZANZAR_API_BASE_URL =

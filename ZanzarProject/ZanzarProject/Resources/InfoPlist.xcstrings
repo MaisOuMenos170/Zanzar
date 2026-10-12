@@ -1,6 +1,24 @@
 {
   "sourceLanguage" : "pt-BR",
   "strings" : {
+    "CFBundleDisplayName" : {
+      "comment" : "Name shown on the Home Screen",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lero"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lero"
+          }
+        }
+      }
+    },
     "CFBundleName" : {
       "comment" : "Bundle name",
       "extractionState" : "extracted_with_value",
@@ -19,13 +37,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zanzar uses your location to center the map and confirm you're near a place when you check in."
+            "value" : "Lero uses your location to center the map and confirm you're near a place when you check in."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zanzar usa sua localização para centralizar o mapa e confirmar que você está perto do lugar no check-in."
+            "value" : "O Lero usa sua localização para centralizar o mapa e confirmar que você está perto do lugar no check-in."
           }
         }
       }
