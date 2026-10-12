@@ -1,21 +1,13 @@
 import Foundation
 
 enum Route: Hashable {
-    // TODO: add one case per pushed destination, e.g. `case issueReport`
+    case signUp
+    case login
+    case placeDetail(MapPlace)
 }
 
 enum Sheet: Identifiable, Hashable {
-    // TODO: add one case per presented sheet
+    case itineraryDetail(slug: String)
 
-    var id: Self {
-        switch self {}
-    }
-}
-
-enum FullScreenCover: Identifiable, Hashable {
-    // TODO: add one case per presented full-screen cover
-
-    var id: Self {
-        switch self {}
-    }
+    var id: Self { self }
 }
