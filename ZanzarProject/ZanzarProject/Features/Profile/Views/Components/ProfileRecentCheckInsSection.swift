@@ -31,12 +31,14 @@ struct ProfileRecentCheckInsSection: View {
     }
 }
 
+#if DEBUG
 #Preview {
     NavigationStack {
         ProfileRecentCheckInsSection(checkIns: Profile.preview.recentCheckIns, mediaPolicy: .shared)
             .padding()
     }
 }
+#endif
 
 #Preview("Empty") {
     ProfileRecentCheckInsSection(checkIns: [], mediaPolicy: .shared)

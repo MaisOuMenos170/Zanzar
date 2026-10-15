@@ -37,7 +37,9 @@ private struct ProfileStatItem: View {
     }
 }
 
+#if DEBUG
 #Preview {
     ProfileStatsView(summary: Profile.preview.summary)
         .padding()
 }
+#endif
