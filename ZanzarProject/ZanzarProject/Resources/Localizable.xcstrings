@@ -1,12 +1,6 @@
 {
   "sourceLanguage" : "pt-BR",
   "strings" : {
-    "?" : {
-
-    },
-    "%lld" : {
-
-    },
     "backButton.accessibilityLabel" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -296,6 +290,23 @@
         }
       }
     },
+    "itinerary.detail.eligiblePlaces.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Places in this selection"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lugares desta seleção"
+          }
+        }
+      }
+    },
     "itinerary.detail.errorState.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -394,23 +405,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Começar roteiro"
-          }
-        }
-      }
-    },
-    "itinerary.detail.eligiblePlaces.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Places in this selection"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lugares desta seleção"
           }
         }
       }
@@ -551,23 +545,6 @@
         }
       }
     },
-    "itinerary.stampTrack.progress %lld %lld" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld of %lld stamps"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld de %lld carimbos"
-          }
-        }
-      }
-    },
     "itinerary.loadingIndicator.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -581,6 +558,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Carregando…"
+          }
+        }
+      }
+    },
+    "itinerary.stampTrack.progress %lld %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld of %lld stamps"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld de %lld carimbos"
           }
         }
       }
@@ -1112,6 +1106,23 @@
         }
       }
     },
+    "placeDetail.checkInError.notAuthenticated" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in to check in at this place."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entre na conta para fazer check-in neste lugar."
+          }
+        }
+      }
+    },
     "placeDetail.checkInWarning.locationRequired.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1210,23 +1221,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você está longe"
-          }
-        }
-      }
-    },
-    "placeDetail.checkInError.notAuthenticated" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sign in to check in at this place."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entre na conta para fazer check-in neste lugar."
           }
         }
       }
