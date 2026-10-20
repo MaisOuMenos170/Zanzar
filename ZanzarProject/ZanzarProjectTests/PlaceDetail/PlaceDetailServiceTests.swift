@@ -39,7 +39,8 @@ struct PlaceDetailServiceTests {
                 pinStyle: .available
             ),
             userCoordinate: UserCoordinate(latitude: -25.43, longitude: -49.27),
-            userID: "user-1"
+            userID: "user-1",
+            nearbyPlaces: []
         )
 
         let detail = try await service.fetchPlaceDetail(context: context)
@@ -47,6 +48,39 @@ struct PlaceDetailServiceTests {
         #expect(detail.id == "ChIJ1")
         #expect(detail.heroPhotoReference == "AUacSh")
         #expect(detail.category == .bar)
+    }
+
+    @Test("fetchPlaceDetail picks nearby places from the context instead of asking the server")
+    func nearbyPlacesComeFromContext() async throws {
+        let client = PathAwareNetworkClient(responsesByPathPrefix: ["places/ChIJ1": Self.placeJSON])
+        let service = PlaceDetailService(client: client)
+        let place = MapPlace(
+            id: "ChIJ1",
+            name: "Bar do Zé",
+            latitude: -25.43,
+            longitude: -49.27,
+            category: .bar,
+            distanceMeters: 50
+        )
+        let neighbour = MapPlace(
+            id: "ChIJ2",
+            name: "Parque",
+            latitude: -25.44,
+            longitude: -49.28,
+            category: .park,
+            distanceMeters: 300
+        )
+        let context = PlaceDetailLoadContext(
+            place: place,
+            userCoordinate: UserCoordinate(latitude: -25.43, longitude: -49.27),
+            userID: "user-1",
+            nearbyPlaces: [place, neighbour]
+        )
+
+        let detail = try await service.fetchPlaceDetail(context: context)
+
+        #expect(detail.nearbyPlaces.map(\.id) == ["ChIJ2"])
+        #expect(!client.getPaths.contains("places"))
     }
 
     @Test("checkIn decodes the synchronous payload")
@@ -90,6 +124,7 @@ private final class PathAwareNetworkClient: NetworkClient, @unchecked Sendable {
     private let sendResponseJSON: String?
     private(set) var lastSendPath: String?
     private(set) var lastSendBody: Data?
+    private(set) var getPaths: [String] = []
 
     init(responsesByPathPrefix: [String: String], sendResponseJSON: String? = nil) {
         self.responsesByPathPrefix = responsesByPathPrefix
@@ -97,6 +132,7 @@ private final class PathAwareNetworkClient: NetworkClient, @unchecked Sendable {
     }
 
     func get<Response: Decodable>(path: String, queryItems: [URLQueryItem]) async throws -> Response {
+        getPaths.append(path)
         if path.hasPrefix("checkIn") || path == "checkIn" {
             throw APIError.httpStatus(404, message: nil)
         }

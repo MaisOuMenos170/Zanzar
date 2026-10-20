@@ -4,8 +4,8 @@ import Testing
 
 @Suite("PlaceDetail nearby places")
 struct PlaceDetailNearbyPlaceTests {
-    @Test("Nearby places map from API responses with navigation metadata")
-    func nearbyPlacesMapFromAPIResponses() throws {
+    @Test("Nearby places map from the shared places with navigation metadata")
+    func nearbyPlacesMapFromSharedPlaces() throws {
         let mainPlace = try makeAPIResponse(
             APIResponseFixture(
                 placeId: "place-main",
@@ -17,21 +17,20 @@ struct PlaceDetailNearbyPlaceTests {
                 distanceMeters: nil
             )
         )
-        let nearbyPlace = try makeAPIResponse(
-            APIResponseFixture(
-                placeId: "place-nearby",
-                name: "Parque Barigui",
-                lat: -25.42,
-                lng: -49.31,
-                category: "park",
-                checkInCount: 21,
-                distanceMeters: 850
-            )
+        let nearbyPlace = MapPlace(
+            id: "place-nearby",
+            name: "Parque Barigui",
+            latitude: -25.42,
+            longitude: -49.31,
+            category: .park,
+            distanceMeters: 850,
+            checkInCount: 21,
+            impressionCounts: ["delighted": 1, "happy": 2]
         )
 
         let detail = PlaceDetail.make(
             placeResponse: mainPlace,
-            nearbyResponses: [nearbyPlace],
+            nearbyPlaces: [nearbyPlace],
             mapPlace: MapPlace(
                 id: "place-main",
                 name: "Museu",
@@ -73,21 +72,18 @@ struct PlaceDetailNearbyPlaceTests {
                 distanceMeters: nil
             )
         )
-        let duplicateNearby = try makeAPIResponse(
-            APIResponseFixture(
-                placeId: "place-main",
-                name: "Museu",
-                lat: -25.41,
-                lng: -49.27,
-                category: "museum",
-                checkInCount: 5,
-                distanceMeters: 100
-            )
+        let duplicateNearby = MapPlace(
+            id: "place-main",
+            name: "Museu",
+            latitude: -25.41,
+            longitude: -49.27,
+            category: .museum,
+            distanceMeters: 100
         )
 
         let detail = PlaceDetail.make(
             placeResponse: mainPlace,
-            nearbyResponses: [duplicateNearby],
+            nearbyPlaces: [duplicateNearby],
             mapPlace: MapPlace(
                 id: "place-main",
                 name: "Museu",
@@ -120,7 +116,7 @@ struct PlaceDetailNearbyPlaceTests {
 
         let detail = PlaceDetail.make(
             placeResponse: mainPlace,
-            nearbyResponses: [],
+            nearbyPlaces: [],
             mapPlace: MapPlace(
                 id: "place-main",
                 name: "Oscar Niemeyer Museum",
@@ -138,7 +134,7 @@ struct PlaceDetailNearbyPlaceTests {
         #expect(detail.name == "Oscar Niemeyer Museum")
     }
 
-    @Test("Nearby places prefer nickname and decode userContext check-in state")
+    @Test("Nearby places prefer nickname and carry the check-in state of the pin")
     func nearbyPlacesPreferNicknameAndCheckInState() throws {
         let mainPlace = try makeAPIResponse(
             APIResponseFixture(
@@ -151,23 +147,21 @@ struct PlaceDetailNearbyPlaceTests {
                 distanceMeters: nil
             )
         )
-        let nearbyPlace = try makeAPIResponse(
-            APIResponseFixture(
-                placeId: "place-nearby",
-                name: "Oscar Niemeyer Museum",
-                nickname: "MON",
-                lat: -25.42,
-                lng: -49.31,
-                category: "museum",
-                checkInCount: 21,
-                distanceMeters: 850,
-                hasCheckedIn: true
-            )
+        let nearbyPlace = MapPlace(
+            id: "place-nearby",
+            name: "Oscar Niemeyer Museum",
+            nickname: "MON",
+            latitude: -25.42,
+            longitude: -49.31,
+            category: .museum,
+            distanceMeters: 850,
+            pinStyle: .checkedIn,
+            checkInCount: 21
         )
 
         let detail = PlaceDetail.make(
             placeResponse: mainPlace,
-            nearbyResponses: [nearbyPlace],
+            nearbyPlaces: [nearbyPlace],
             mapPlace: MapPlace(
                 id: "place-main",
                 name: "Museu",
@@ -203,7 +197,7 @@ struct PlaceDetailNearbyPlaceTests {
 
         let detail = PlaceDetail.make(
             placeResponse: response,
-            nearbyResponses: [],
+            nearbyPlaces: [],
             mapPlace: MapPlace(
                 id: "place-historic",
                 name: "Cavalo Babão",

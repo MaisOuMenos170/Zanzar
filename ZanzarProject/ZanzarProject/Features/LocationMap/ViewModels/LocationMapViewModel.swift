@@ -4,7 +4,7 @@ import SwiftUI
 
 @Observable
 final class LocationMapViewModel {
-    private let service: LocationMapServicing
+    private let store: NearbyPlacesStore
     private var loadGeneration = 0
 
     var cameraPosition: MapCameraPosition = .automatic
@@ -24,10 +24,14 @@ final class LocationMapViewModel {
     private(set) var displayItems: [MapPinDisplayItem] = []
     private var zoomLevel = MapPinClustering.zoomLevel(forSpan: 0.01, previous: nil)
 
-    init(service: LocationMapServicing = LocationMapService()) {
-        self.service = service
+    /// The app passes the store it shares with the other tabs; without one (tests, previews) the view model
+    /// builds its own on top of `service`.
+    init(service: LocationMapServicing? = nil, store: NearbyPlacesStore? = nil) {
+        self.store = store ?? NearbyPlacesStore(service: service ?? LocationMapService())
     }
 
+    /// Centers the camera on the user and shows the places. Goes to the server only when the shared store
+    /// has nothing fresh, so coming back to the screen does not cost a request.
     func load() async {
         loadGeneration += 1
         let generation = loadGeneration
@@ -43,38 +47,33 @@ final class LocationMapViewModel {
         }
 
         do {
-            let coordinate = try await service.currentUserLocation()
+            try await store.refreshIfNeeded()
             guard generation == loadGeneration else { return }
 
-            userCoordinate = coordinate
-            let region = MKCoordinateRegion(
-                center: coordinate.clLocationCoordinate2D,
-                latitudinalMeters: 1000,
-                longitudinalMeters: 1000
-            )
-            setRegion(region)
-            cameraPosition = .region(region)
-        } catch {
-            guard generation == loadGeneration, !Self.isCancellation(error) else { return }
+            centerCamera(on: store.userCoordinate)
+            setPlaces(store.places)
+        } catch let error as LocationMapError {
+            guard generation == loadGeneration else { return }
 
             userCoordinate = nil
             setPlaces([])
-            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            return
-        }
-
-        guard let userCoordinate else { return }
-
-        do {
-            let nearbyPlaces = try await service.fetchNearbyPlaces(from: userCoordinate)
-            guard generation == loadGeneration else { return }
-            setPlaces(nearbyPlaces)
+            errorMessage = error.errorDescription ?? error.localizedDescription
         } catch {
-            guard generation == loadGeneration, !Self.isCancellation(error) else { return }
+            guard generation == loadGeneration else { return }
 
-            setPlaces([])
-            errorMessage = String(localized: "locationMap.placesLoadError")
+            // The position is known (the fetch is what failed), so the camera still goes to the user.
+            centerCamera(on: store.userCoordinate)
+            guard !Self.isCancellation(error) else { return }
+
+            setPlaces(store.places)
+            errorMessage = APIError.rateLimitedMessage(for: error) ?? String(localized: "locationMap.placesLoadError")
         }
+    }
+
+    /// Mirrors the shared store into the pins, e.g. after another screen refreshed it.
+    func syncPlaces() {
+        guard places != store.places else { return }
+        setPlaces(store.places)
     }
 
     func updateVisibleRegion(_ region: MKCoordinateRegion) {
@@ -114,21 +113,37 @@ final class LocationMapViewModel {
         cameraPosition = .region(region)
     }
 
-    func reloadPlaces() async {
+    /// Refreshes the pins after the map becomes visible again. Skipped while the data is fresh unless `force`.
+    func reloadPlaces(force: Bool = false) async {
         guard acceptsVisibleRegionUpdates else { return }
-        guard let userCoordinate else { return }
 
         loadGeneration += 1
         let generation = loadGeneration
 
         do {
-            let refreshedPlaces = try await service.fetchNearbyPlaces(from: userCoordinate)
+            if force {
+                try await store.refresh()
+            } else {
+                try await store.refreshIfNeeded()
+            }
             guard generation == loadGeneration else { return }
-            setPlaces(refreshedPlaces)
+            setPlaces(store.places)
         } catch {
             guard generation == loadGeneration, !Self.isCancellation(error) else { return }
-            errorMessage = String(localized: "locationMap.placesLoadError")
+            errorMessage = APIError.rateLimitedMessage(for: error) ?? String(localized: "locationMap.placesLoadError")
         }
+    }
+
+    private func centerCamera(on coordinate: UserCoordinate?) {
+        guard let coordinate else { return }
+        userCoordinate = coordinate
+        let region = MKCoordinateRegion(
+            center: coordinate.clLocationCoordinate2D,
+            latitudinalMeters: 1000,
+            longitudinalMeters: 1000
+        )
+        setRegion(region)
+        cameraPosition = .region(region)
     }
 
     /// URLSession reports a cancelled task as `URLError.cancelled`, which also bridges to

@@ -16,6 +16,14 @@ struct AuthErrorMapperTests {
         #expect(message == String(localized: "signUp.submitError.emailInUse"))
     }
 
+    @Test("explains a rate limit on login and sign-up instead of the generic message")
+    func rateLimited() {
+        let error = APIError.rateLimited(retryAfter: 600)
+
+        #expect(AuthErrorMapper.loginMessage(for: error) == error.errorDescription)
+        #expect(AuthErrorMapper.signUpMessage(for: error) == error.errorDescription)
+    }
+
     @Test("falls back to generic message for unknown status codes")
     func genericFallback() {
         let message = AuthErrorMapper.loginMessage(for: .httpStatus(500, message: nil))

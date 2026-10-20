@@ -5,6 +5,8 @@ enum APIError: Error, Sendable {
     case decodingFailed
     case invalidResponse
     case invalidRequest
+    /// The server answered 429, or the client is still inside the `Retry-After` window of an earlier 429.
+    case rateLimited(retryAfter: TimeInterval)
 
     static func from(data: Data, statusCode: Int) -> APIError {
         if let payload = try? JSONDecoder().decode(APIErrorPayload.self, from: data) {
@@ -24,9 +26,26 @@ extension APIError: LocalizedError {
         switch self {
         case .httpStatus(_, let message):
             message
+        case .rateLimited(let retryAfter):
+            Self.rateLimitedDescription(retryAfter: retryAfter)
         case .decodingFailed, .invalidResponse, .invalidRequest:
             nil
         }
+    }
+
+    /// The user-facing text when `error` is a rate limit, `nil` for any other error, so callers can
+    /// write `APIError.rateLimitedMessage(for: error) ?? genericMessage`.
+    static func rateLimitedMessage(for error: Error) -> String? {
+        guard case .rateLimited? = error as? APIError else { return nil }
+        return (error as? LocalizedError)?.errorDescription
+    }
+
+    private static func rateLimitedDescription(retryAfter: TimeInterval) -> String {
+        guard retryAfter > 30 else {
+            return String(localized: "error.rateLimited.soon")
+        }
+        let minutes = Int((retryAfter / 60).rounded(.up))
+        return String(localized: "error.rateLimited.message \(minutes)")
     }
 }
 
@@ -43,6 +62,8 @@ extension APIError: CustomDebugStringConvertible {
             "APIError.invalidResponse"
         case .invalidRequest:
             "APIError.invalidRequest"
+        case .rateLimited:
+            "APIError.rateLimited"
         }
     }
 }

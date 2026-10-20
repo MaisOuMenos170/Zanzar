@@ -6,6 +6,7 @@ struct PlaceDetailView: View {
     @State private var viewModel: PlaceDetailViewModel
     @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(NearbyPlacesStore.self) private var nearbyPlaces
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     init(place: MapPlace) {
         self.place = place
@@ -30,7 +31,9 @@ struct PlaceDetailView: View {
         .background(.background)
         .navigationBarBackButtonHidden()
         .task {
-            await viewModel.load()
+            // The view reappears when a nested detail is popped; what is already on screen is still current.
+            guard viewModel.detail == nil else { return }
+            await viewModel.load(nearbyPlaces: nearbyPlaces.places)
             viewModel.updateCellularImagesPromptIfNeeded(using: mediaPolicy)
         }
         .onChange(of: mediaPolicy.usesCellular) { _, _ in
@@ -223,4 +226,5 @@ struct PlaceDetailView: View {
         )
     }
     .environment(AppCoordinator())
+    .environment(NearbyPlacesStore())
 }

@@ -184,44 +184,18 @@ final class PlaceDetailService: PlaceDetailServicing {
             placeID: context.place.id,
             userID: context.userID
         )
-        async let nearbyResponses = fetchNearbyPlaces(
-            userCoordinate: context.userCoordinate,
-            excludingPlaceID: context.place.id
-        )
 
         let endpointCheckedIn = try await checkInFromEndpoint
         let hasCheckedIn = placeResponse.userContext?.hasCheckedIn == true || endpointCheckedIn
 
         return PlaceDetail.make(
             placeResponse: placeResponse,
-            nearbyResponses: await nearbyResponses,
+            nearbyPlaces: context.nearbyPlaces,
             mapPlace: context.place,
             hasCheckedIn: hasCheckedIn,
             selectedReactionTag: try await selectedReactionTag,
             userCoordinate: context.userCoordinate
         )
-    }
-
-    private func fetchNearbyPlaces(
-        userCoordinate: UserCoordinate?,
-        excludingPlaceID: String
-    ) async -> [PlaceDetailAPIResponse] {
-        guard let userCoordinate else { return [] }
-
-        do {
-            return try await client.get(
-                path: "places",
-                queryItems: [
-                    URLQueryItem(name: "lat", value: String(userCoordinate.latitude)),
-                    URLQueryItem(name: "lng", value: String(userCoordinate.longitude)),
-                    URLQueryItem(name: "limit", value: "6"),
-                    URLQueryItem(name: "excludePlaceId", value: excludingPlaceID)
-                ]
-            )
-        } catch {
-            AppLog.placeDetail.warning("Failed to fetch nearby places for placeId=\(excludingPlaceID); showing none")
-            return []
-        }
     }
 
     private func sendCheckIn(placeID: String, coordinate: UserCoordinate) async throws -> CheckInResult {
