@@ -57,27 +57,14 @@ struct ItineraryViewModelTests {
 
     // MARK: - List
 
-    @Test("load fetches itineraries, nearby places, and active progress")
+    @Test("load fetches itineraries and active progress")
     func listLoadSuccess() async {
         let itineraryService = MockItineraryService(
             itinerariesResult: .success([Self.sampleItinerary]),
             activeItineraryResult: .success(Self.sampleActive)
         )
-        let locationService = MockLocationMapService()
-        locationService.locationResult = .success(DevLocation.historicCenter)
-        locationService.placesResult = .success([
-            MapPlace(
-                id: "ChIJ9",
-                name: "Parque",
-                latitude: -25.43,
-                longitude: -49.27,
-                category: .park,
-                distanceMeters: 120
-            )
-        ])
         let viewModel = ItineraryListViewModel(
             itineraryService: itineraryService,
-            locationService: locationService,
             userIDProvider: { "user-1" }
         )
 
@@ -85,9 +72,34 @@ struct ItineraryViewModelTests {
 
         #expect(viewModel.itineraries == [Self.sampleItinerary])
         #expect(viewModel.activeItinerary == Self.sampleActive)
-        #expect(viewModel.nearbyPlaces.count == 1)
         #expect(viewModel.errorMessage == nil)
         #expect(itineraryService.fetchActiveItineraryUserID == "user-1")
+    }
+
+    @Test("load inside the freshness window keeps what is shown; force and the window's end refetch")
+    func listLoadRespectsFreshnessWindow() async {
+        let itineraryService = MockItineraryService(
+            itinerariesResult: .success([Self.sampleItinerary]),
+            activeItineraryResult: .success(Self.sampleActive)
+        )
+        let clock = TestClock(Date(timeIntervalSince1970: 1_000))
+        let viewModel = ItineraryListViewModel(
+            itineraryService: itineraryService,
+            userIDProvider: { "user-1" },
+            now: { clock.date }
+        )
+
+        await viewModel.load()
+        clock.advance(by: 30)
+        await viewModel.load()
+        #expect(itineraryService.fetchItinerariesCount == 1)
+
+        await viewModel.load(force: true)
+        #expect(itineraryService.fetchItinerariesCount == 2)
+
+        clock.advance(by: 91)
+        await viewModel.load()
+        #expect(itineraryService.fetchItinerariesCount == 3)
     }
 
     @Test("load keeps itineraries when active itinerary fetch fails")
@@ -98,7 +110,6 @@ struct ItineraryViewModelTests {
         )
         let viewModel = ItineraryListViewModel(
             itineraryService: itineraryService,
-            locationService: MockLocationMapService.nearbyUnavailable(),
             userIDProvider: { "user-1" }
         )
 
@@ -117,7 +128,6 @@ struct ItineraryViewModelTests {
         )
         let viewModel = ItineraryListViewModel(
             itineraryService: itineraryService,
-            locationService: MockLocationMapService.nearbyUnavailable(),
             userIDProvider: { "user-1" }
         )
         await viewModel.load()
@@ -137,7 +147,6 @@ struct ItineraryViewModelTests {
         itineraryService.abandonError = APIError.invalidResponse
         let viewModel = ItineraryListViewModel(
             itineraryService: itineraryService,
-            locationService: MockLocationMapService.nearbyUnavailable(),
             userIDProvider: { "user-1" }
         )
         await viewModel.load()
@@ -225,6 +234,7 @@ final class MockItineraryService: ItineraryServicing, @unchecked Sendable {
     private(set) var lastActivatedSlug: String?
     private(set) var fetchActiveItineraryUserID: String?
     private(set) var abandonCount = 0
+    private(set) var fetchItinerariesCount = 0
 
     init(
         itinerariesResult: Result<[Itinerary], Error> = .success([]),
@@ -239,7 +249,8 @@ final class MockItineraryService: ItineraryServicing, @unchecked Sendable {
     }
 
     func fetchItineraries() async throws -> [Itinerary] {
-        try itinerariesResult.get()
+        fetchItinerariesCount += 1
+        return try itinerariesResult.get()
     }
 
     func fetchItineraryDetail(slug: String) async throws -> ItineraryDetail {

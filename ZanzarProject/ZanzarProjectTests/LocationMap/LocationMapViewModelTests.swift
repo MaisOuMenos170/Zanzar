@@ -236,7 +236,7 @@ struct LocationMapViewModelTests {
 
         await viewModel.load()
         service.placesResult = .success(refreshedPlaces)
-        await viewModel.reloadPlaces()
+        await viewModel.reloadPlaces(force: true)
 
         #expect(viewModel.places == refreshedPlaces)
     }
@@ -324,7 +324,7 @@ struct LocationMapViewModelTests {
 
         await viewModel.load()
         service.placesResult = .failure(URLError(.cancelled))
-        await viewModel.reloadPlaces()
+        await viewModel.reloadPlaces(force: true)
 
         #expect(viewModel.places == initialPlaces)
         #expect(viewModel.errorMessage == nil)
@@ -335,17 +335,14 @@ struct LocationMapViewModelTests {
 final class MockLocationMapService: LocationMapServicing {
     var locationResult: Result<UserCoordinate, Error> = .failure(URLError(.notConnectedToInternet))
     var placesResult: Result<[MapPlace], Error> = .success([])
-
-    /// Stub for tests that trigger nearby fetch but do not care about location data.
-    static func nearbyUnavailable() -> MockLocationMapService {
-        MockLocationMapService()
-    }
+    private(set) var fetchCount = 0
 
     func currentUserLocation() async throws -> UserCoordinate {
         try locationResult.get()
     }
 
     func fetchNearbyPlaces(from coordinate: UserCoordinate) async throws -> [MapPlace] {
-        try placesResult.get()
+        fetchCount += 1
+        return try placesResult.get()
     }
 }

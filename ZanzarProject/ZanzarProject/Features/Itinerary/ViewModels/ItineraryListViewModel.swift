@@ -4,12 +4,12 @@ import Observation
 @Observable
 final class ItineraryListViewModel {
     private let itineraryService: ItineraryServicing
-    private let locationService: LocationMapServicing
     private let userIDProvider: @Sendable () -> String?
+    private let now: () -> Date
     private var loadGeneration = 0
+    private var lastLoadedAt: Date?
 
     var itineraries: [Itinerary] = []
-    var nearbyPlaces: [PlaceDetailNearbyPlace] = []
     var activeItinerary: ActiveItinerary?
     var isLoading = false
     var errorMessage: String?
@@ -22,15 +22,22 @@ final class ItineraryListViewModel {
 
     init(
         itineraryService: ItineraryServicing = ItineraryService(),
-        locationService: LocationMapServicing = LocationMapService(),
-        userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.userID }
+        userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.userID },
+        now: @escaping () -> Date = { Date() }
     ) {
         self.itineraryService = itineraryService
-        self.locationService = locationService
         self.userIDProvider = userIDProvider
+        self.now = now
     }
 
-    func load() async {
+    /// Re-entering the tab within `DataFreshness.screenMaxAge` keeps what is shown (the active itinerary is
+    /// kept current by `refreshActiveItinerary`); pull-to-refresh and retry pass `force`.
+    func load(force: Bool = false) async {
+        if !force, !itineraries.isEmpty, let lastLoadedAt,
+           now().timeIntervalSince(lastLoadedAt) < DataFreshness.screenMaxAge / .seconds(1) {
+            return
+        }
+
         loadGeneration += 1
         let generation = loadGeneration
 
@@ -44,7 +51,6 @@ final class ItineraryListViewModel {
 
         async let itinerariesTask = itineraryService.fetchItineraries()
         async let activeTask = fetchActiveItineraryIfAuthenticated()
-        async let nearbyTask = fetchNearbyPlaces()
 
         do {
             let loadedItineraries = try await itinerariesTask
@@ -54,7 +60,7 @@ final class ItineraryListViewModel {
             return
         } catch {
             guard generation == loadGeneration, itineraries.isEmpty else { return }
-            errorMessage = String(localized: "itinerary.errorState.message")
+            errorMessage = APIError.rateLimitedMessage(for: error) ?? String(localized: "itinerary.errorState.message")
             return
         }
 
@@ -62,15 +68,12 @@ final class ItineraryListViewModel {
             let loadedActive = try await activeTask
             guard generation == loadGeneration else { return }
             activeItinerary = loadedActive
+            lastLoadedAt = now()
         } catch is CancellationError {
             return
         } catch {
             AppLog.itinerary.warning("Failed to fetch active itinerary")
         }
-
-        let loadedNearby = await nearbyTask
-        guard generation == loadGeneration else { return }
-        nearbyPlaces = loadedNearby
     }
 
     func refreshActiveItinerary() async {
@@ -93,25 +96,13 @@ final class ItineraryListViewModel {
             return
         } catch {
             AppLog.itinerary.error("Failed to abandon active itinerary", error: error)
-            actionErrorMessage = String(localized: "itinerary.detail.actionError.generic")
+            actionErrorMessage = APIError.rateLimitedMessage(for: error)
+                ?? String(localized: "itinerary.detail.actionError.generic")
         }
     }
 
     private func fetchActiveItineraryIfAuthenticated() async throws -> ActiveItinerary? {
         guard let userID = userIDProvider() else { return nil }
         return try await itineraryService.fetchActiveItinerary(userID: userID)
-    }
-
-    private func fetchNearbyPlaces() async -> [PlaceDetailNearbyPlace] {
-        do {
-            let coordinate = try await locationService.currentUserLocation()
-            let places = try await locationService.fetchNearbyPlaces(from: coordinate)
-            return places.map(PlaceDetailNearbyPlace.init(mapPlace:))
-        } catch is CancellationError {
-            return []
-        } catch {
-            AppLog.itinerary.warning("Nearby places unavailable on check-in tab")
-            return []
-        }
     }
 }

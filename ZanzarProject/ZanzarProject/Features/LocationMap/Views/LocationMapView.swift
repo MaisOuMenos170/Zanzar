@@ -2,12 +2,19 @@ import MapKit
 import SwiftUI
 
 struct LocationMapView: View {
-    @State private var viewModel = LocationMapViewModel()
+    let store: NearbyPlacesStore
+
+    @State private var viewModel: LocationMapViewModel
     @State private var ratingPrompt = RatingPromptViewModel()
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(ToastPresenter.self) private var toasts
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    init(store: NearbyPlacesStore) {
+        self.store = store
+        _viewModel = State(initialValue: LocationMapViewModel(store: store))
+    }
 
     var body: some View {
         MapReader { proxy in
@@ -80,8 +87,17 @@ struct LocationMapView: View {
             guard !Task.isCancelled, isMonitoringRating else { return }
             await viewModel.reloadPlaces()
         }
+        // Another screen (or the tab bar) may have refreshed the shared places while the map was out of sight.
+        .onChange(of: store.lastFetchedAt) {
+            viewModel.syncPlaces()
+        }
+        // The pins carry the check-in and itinerary state, so they are refetched the next time the map is
+        // visible (`reloadPlaces` above), not while it is hidden underneath another screen.
         .onReceive(NotificationCenter.default.publisher(for: AppNotification.activeItineraryDidChange)) { _ in
-            Task { await viewModel.reloadPlaces() }
+            store.markDirty()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: AppNotification.checkInDidSucceed)) { _ in
+            store.markDirty()
         }
     }
 
@@ -157,7 +173,7 @@ struct LocationMapView: View {
 }
 
 #Preview {
-    LocationMapView()
+    LocationMapView(store: NearbyPlacesStore())
         .environment(AppCoordinator())
         .environment(ToastPresenter())
 }

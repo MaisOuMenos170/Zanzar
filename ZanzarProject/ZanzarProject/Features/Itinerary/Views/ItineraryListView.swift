@@ -6,6 +6,10 @@ struct ItineraryListView: View {
     @State private var viewModel = ItineraryListViewModel()
     @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(NearbyPlacesStore.self) private var nearbyPlacesStore
+
+    /// The carousel only needs the closest places; each card loads a photo from the API.
+    private static let nearbyPlacesLimit = 10
 
     var body: some View {
         @Bindable var viewModel = viewModel
@@ -20,7 +24,7 @@ struct ItineraryListView: View {
                     Text(errorMessage)
                 } actions: {
                     Button("itinerary.errorState.retryButton.title") {
-                        Task { await viewModel.load() }
+                        Task { await viewModel.load(force: true) }
                     }
                     .disabled(viewModel.isLoading)
                 }
@@ -31,15 +35,18 @@ struct ItineraryListView: View {
         .background(Color(.systemBackground))
         .toolbar(.hidden, for: .navigationBar)
         .task {
+            // The map normally has the places already; this only fetches if it has not, or they went stale.
+            async let places: Void = refreshNearbyPlaces()
             await viewModel.load()
+            await places
         }
         .refreshable {
-            await viewModel.load()
+            async let places: Void = refreshNearbyPlaces(force: true)
+            await viewModel.load(force: true)
+            await places
         }
-        .onChange(of: sheetCoordinator.presentedSheet) { _, newValue in
-            guard newValue == nil else { return }
-            Task { await viewModel.refreshActiveItinerary() }
-        }
+        // Activating or abandoning an itinerary posts this once; it is the only trigger, so the progress card
+        // is not fetched a second time when the sheet closes.
         .onReceive(NotificationCenter.default.publisher(for: AppNotification.activeItineraryDidChange)) { _ in
             Task { await viewModel.refreshActiveItinerary() }
         }
@@ -51,6 +58,21 @@ struct ItineraryListView: View {
             if let actionErrorMessage = viewModel.actionErrorMessage {
                 Text(actionErrorMessage)
             }
+        }
+    }
+
+    private var nearbyPlaces: [PlaceDetailNearbyPlace] {
+        nearbyPlacesStore.places
+            .sorted { ($0.distanceMeters ?? .infinity) < ($1.distanceMeters ?? .infinity) }
+            .prefix(Self.nearbyPlacesLimit)
+            .map(PlaceDetailNearbyPlace.init(mapPlace:))
+    }
+
+    private func refreshNearbyPlaces(force: Bool = false) async {
+        if force {
+            try? await nearbyPlacesStore.refresh()
+        } else {
+            try? await nearbyPlacesStore.refreshIfNeeded()
         }
     }
 
@@ -89,14 +111,14 @@ struct ItineraryListView: View {
                     }
                 }
 
-                if !viewModel.nearbyPlaces.isEmpty {
+                if !nearbyPlaces.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("itinerary.list.sections.nearby")
                             .font(.callout.bold())
 
                         ScrollView(.horizontal) {
-                            HStack(spacing: 8) {
-                                ForEach(viewModel.nearbyPlaces) { place in
+                            LazyHStack(spacing: 8) {
+                                ForEach(nearbyPlaces) { place in
                                     PlaceDetailNearbyPlaceCard(
                                         place: place,
                                         mediaPolicy: mediaPolicy
@@ -120,5 +142,6 @@ struct ItineraryListView: View {
     NavigationStack {
         ItineraryListView(sheetCoordinator: AppCoordinator())
             .environment(AppCoordinator())
+            .environment(NearbyPlacesStore())
     }
 }

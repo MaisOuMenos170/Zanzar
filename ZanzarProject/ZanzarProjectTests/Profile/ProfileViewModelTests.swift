@@ -68,7 +68,7 @@ struct ProfileViewModelTests {
         await viewModel.load()
 
         service.fetchResult = .failure(APIError.httpStatus(500, message: "boom"))
-        await viewModel.load()
+        await viewModel.load(force: true)
 
         #expect(viewModel.profile == Self.profile)
         #expect(viewModel.errorMessage == nil)
@@ -82,11 +82,71 @@ struct ProfileViewModelTests {
         await viewModel.load()
 
         userID.withLock { $0 = nil }
-        await viewModel.load()
+        await viewModel.load(force: true)
 
         #expect(viewModel.profile == nil)
         #expect(viewModel.errorMessage == String(localized: "profile.loadError.notAuthenticated"))
         #expect(service.fetchCount == 1)
+    }
+
+    @Test("re-entering inside the freshness window keeps the profile; the window's end refetches")
+    func loadRespectsFreshnessWindow() async {
+        let service = MockProfileService(fetchResult: .success(Self.profile))
+        let clock = TestClock()
+        let viewModel = ProfileViewModel(service: service, userIDProvider: { "user-1" }, now: { clock.date })
+
+        await viewModel.load()
+        clock.advance(by: 89)
+        await viewModel.load()
+        #expect(service.fetchCount == 1)
+
+        clock.advance(by: 2)
+        await viewModel.load()
+        #expect(service.fetchCount == 2)
+    }
+
+    @Test("force and a stale mark skip the freshness window")
+    func forceAndStaleSkipTheWindow() async {
+        let service = MockProfileService(fetchResult: .success(Self.profile))
+        let viewModel = ProfileViewModel(service: service, userIDProvider: { "user-1" })
+        await viewModel.load()
+
+        await viewModel.load(force: true)
+        #expect(service.fetchCount == 2)
+
+        viewModel.markStale()
+        await viewModel.load()
+        #expect(service.fetchCount == 3)
+
+        await viewModel.load()
+        #expect(service.fetchCount == 3)
+    }
+
+    @Test("a refresh that fails keeps the profile marked stale so the next entry retries")
+    func failedRefreshStaysStale() async {
+        let service = MockProfileService(fetchResult: .success(Self.profile))
+        let viewModel = ProfileViewModel(service: service, userIDProvider: { "user-1" })
+        await viewModel.load()
+
+        viewModel.markStale()
+        service.fetchResult = .failure(URLError(.notConnectedToInternet))
+        await viewModel.load()
+        service.fetchResult = .success(Self.profile)
+        await viewModel.load()
+
+        #expect(service.fetchCount == 3)
+    }
+
+    @Test("a rate limited first load explains the wait instead of the generic message")
+    func rateLimitedFirstLoad() async {
+        let error = APIError.rateLimited(retryAfter: 300)
+        let service = MockProfileService(fetchResult: .failure(error))
+        let viewModel = ProfileViewModel(service: service, userIDProvider: { "user-1" })
+
+        await viewModel.load()
+
+        #expect(viewModel.errorMessage == error.errorDescription)
+        #expect(viewModel.errorMessage != String(localized: "profile.errorState.message"))
     }
 
     // MARK: - signOut

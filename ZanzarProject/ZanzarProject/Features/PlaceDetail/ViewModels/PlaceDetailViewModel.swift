@@ -42,7 +42,8 @@ final class PlaceDetailViewModel {
         self.pendingRatingStore = pendingRatingStore ?? UserDefaultsPendingRatingStore()
     }
 
-    func load() async {
+    /// `nearbyPlaces` are the places the map already loaded; the "nearby" section is picked from them.
+    func load(nearbyPlaces: [MapPlace] = []) async {
         loadGeneration += 1
         let generation = loadGeneration
 
@@ -61,7 +62,8 @@ final class PlaceDetailViewModel {
                 context: PlaceDetailLoadContext(
                     place: place,
                     userCoordinate: await userCoordinateTask.value,
-                    userID: userIDProvider()
+                    userID: userIDProvider(),
+                    nearbyPlaces: nearbyPlaces
                 )
             )
             guard generation == loadGeneration else { return }
@@ -119,12 +121,14 @@ final class PlaceDetailViewModel {
             presentEarnedSealIfNeeded(for: currentDetail, result: result)
             presentCompletedItineraryIfNeeded(result: result)
             notifyItineraryChangeIfNeeded(result: result)
+            NotificationCenter.default.post(name: AppNotification.checkInDidSucceed, object: nil)
         } catch is CancellationError {
             return
         } catch APIError.httpStatus(409, _) {
             currentDetail.hasCheckedIn = true
             detail = currentDetail
             queueRatingPrompt(for: currentDetail, userID: userID)
+            NotificationCenter.default.post(name: AppNotification.checkInDidSucceed, object: nil)
         } catch APIError.httpStatus(422, _) {
             checkInWarning = .tooFar
         } catch {

@@ -68,7 +68,8 @@ final class ItineraryDetailViewModel {
             return
         } catch {
             guard generation == loadGeneration else { return }
-            errorMessage = String(localized: "itinerary.detail.errorState.message")
+            errorMessage = APIError.rateLimitedMessage(for: error)
+                ?? String(localized: "itinerary.detail.errorState.message")
         }
     }
 
@@ -110,7 +111,8 @@ final class ItineraryDetailViewModel {
         } catch is CancellationError {
             return false
         } catch {
-            actionErrorMessage = String(localized: "itinerary.detail.actionError.generic")
+            actionErrorMessage = APIError.rateLimitedMessage(for: error)
+                ?? String(localized: "itinerary.detail.actionError.generic")
             return false
         }
     }
@@ -124,7 +126,7 @@ final class ItineraryDetailViewModel {
         if case .httpStatus(409, _) = error {
             String(localized: "itinerary.detail.actionError.alreadyActive")
         } else {
-            String(localized: "itinerary.detail.actionError.generic")
+            APIError.rateLimitedMessage(for: error) ?? String(localized: "itinerary.detail.actionError.generic")
         }
     }
 }

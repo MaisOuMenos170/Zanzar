@@ -111,12 +111,17 @@ nonisolated struct PlaceDetailLoadContext: Sendable {
     let place: MapPlace
     let userCoordinate: UserCoordinate?
     let userID: String?
+    /// The places around the user already loaded by the map; the detail picks its "nearby" section from them
+    /// instead of asking the server again.
+    let nearbyPlaces: [MapPlace]
 }
 
 nonisolated extension PlaceDetail {
+    static let nearbyPlacesLimit = 6
+
     static func make(
         placeResponse: PlaceDetailAPIResponse,
-        nearbyResponses: [PlaceDetailAPIResponse],
+        nearbyPlaces: [MapPlace],
         mapPlace: MapPlace,
         hasCheckedIn: Bool,
         selectedReactionTag: String?,
@@ -158,30 +163,23 @@ nonisolated extension PlaceDetail {
                 from: placeResponse.zanzar.impressionCounts,
                 selectedTag: selectedReactionTag
             ),
-            nearbyPlaces: nearbyResponses
-                .filter { $0.placeId != placeResponse.placeId }
-                .prefix(6)
-                .map(nearbyPlace(from:)),
+            nearbyPlaces: closestNearbyPlaces(from: nearbyPlaces, excluding: placeResponse.placeId),
             hasCheckedIn: hasCheckedIn,
             isInActiveItinerary: placeResponse.userContext?.isInActiveItinerary ?? false,
             selectedReactionTag: selectedReactionTag
         )
     }
 
-    private static func nearbyPlace(from nearby: PlaceDetailAPIResponse) -> PlaceDetailNearbyPlace {
-        PlaceDetailNearbyPlace(
-            id: nearby.placeId,
-            name: nearby.name,
-            nickname: nearby.nickname,
-            latitude: nearby.geometry.location.lat,
-            longitude: nearby.geometry.location.lng,
-            category: ZanzarPlaceCategory(rawCategory: nearby.zanzar.category),
-            distanceMeters: nearby.distanceMeters ?? 0,
-            checkInCount: nearby.zanzar.checkInCount,
-            photoReference: nearby.photos.first?.photoReference,
-            reactionImageNames: ImpressionTag.topReactionImageNames(from: nearby.zanzar.impressionCounts),
-            hasCheckedIn: nearby.userContext?.hasCheckedIn ?? false
-        )
+    /// The closest places to the user, other than this one, as the "nearby" section shows them.
+    private static func closestNearbyPlaces(
+        from places: [MapPlace],
+        excluding placeID: String
+    ) -> [PlaceDetailNearbyPlace] {
+        places
+            .filter { $0.id != placeID }
+            .sorted { ($0.distanceMeters ?? .infinity) < ($1.distanceMeters ?? .infinity) }
+            .prefix(nearbyPlacesLimit)
+            .map(PlaceDetailNearbyPlace.init(mapPlace:))
     }
 
     private static func openingHoursText(from openingHours: PlaceDetailOpeningHoursResponse?) -> String {

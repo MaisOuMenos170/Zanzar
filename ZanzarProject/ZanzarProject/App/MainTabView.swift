@@ -7,6 +7,8 @@ struct MainTabView: View {
     @State private var profileCoordinator = AppCoordinator()
     /// The check-in tab keeps its own navigation path and uses the root coordinator for sheets.
     @State private var checkInCoordinator = AppCoordinator()
+    /// The places around the user, shared by Discover, the check-in tab and every place detail.
+    @State private var nearbyPlaces = NearbyPlacesStore()
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -20,6 +22,12 @@ struct MainTabView: View {
             }
         }
         .tint(.tabBarSelected)
+        .environment(nearbyPlaces)
+        // Pins and the carousel read the shared places; coming back to a tab refetches them only if stale.
+        .onChange(of: selectedTab) { _, tab in
+            guard tab != .profile else { return }
+            Task { try? await nearbyPlaces.refreshIfNeeded() }
+        }
     }
 
     @ViewBuilder
@@ -27,7 +35,7 @@ struct MainTabView: View {
         switch tab {
         case .discover:
             NavigationStack(path: Bindable(coordinator).path) {
-                LocationMapView()
+                LocationMapView(store: nearbyPlaces)
                     .navigationDestination(for: Route.self) { coordinator.view(for: $0) }
             }
         case .checkIn:

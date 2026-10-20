@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 enum HTTPMethod: String {
     case get = "GET"
@@ -39,15 +40,24 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
     private let authTokenProvider: @Sendable () -> String?
+    private let now: @Sendable () -> Date
+    /// End of the `Retry-After` window of the last 429. While it lies in the future no request leaves the device.
+    private let blockedUntil = OSAllocatedUnfairLock<Date?>(initialState: nil)
+
+    /// Used when a 429 carries no usable `Retry-After`.
+    static let defaultRetryAfter: TimeInterval = 60
+    private static let retryAfterRange: ClosedRange<TimeInterval> = 1...3600
 
     init(
         baseURL: URL,
         session: URLSession = .shared,
-        authTokenProvider: @escaping @Sendable () -> String? = { nil }
+        authTokenProvider: @escaping @Sendable () -> String? = { nil },
+        now: @escaping @Sendable () -> Date = { Date() }
     ) {
         self.baseURL = baseURL
         self.session = session
         self.authTokenProvider = authTokenProvider
+        self.now = now
     }
 
     func get<Response: Decodable>(path: String, queryItems: [URLQueryItem]) async throws -> Response {
@@ -137,6 +147,7 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
     /// Runs the request and validates the status; returns the raw body plus a log summary line.
     private func performRequest(_ request: URLRequest) async throws -> (data: Data, summary: String) {
         let label = "\(request.httpMethod ?? "?") \(Self.redactedPath(request.url?.path ?? "?"))"
+        try failIfRateLimited(label: label)
         let start = ContinuousClock.now
         AppLog.network.info("\(label) started")
 
@@ -162,6 +173,15 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         let status = httpResponse.statusCode
         let summary = "\(label) -> \(status) (\(elapsedMs)ms) reqId=\(requestID)"
 
+        if status == 429 {
+            let current = now()
+            let retryAfter = Self.retryAfter(from: httpResponse, now: current)
+            let until = current.addingTimeInterval(retryAfter)
+            blockedUntil.withLock { $0 = until }
+            AppLog.network.warning("\(summary) | rate limited, holding requests for \(Int(retryAfter))s")
+            throw APIError.rateLimited(retryAfter: retryAfter)
+        }
+
         guard (200..<300).contains(status) else {
             let apiError = APIError.from(data: data, statusCode: status)
             if status >= 500 {
@@ -173,5 +193,44 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         }
 
         return (data, summary)
+    }
+
+    /// Fails fast, without touching the network, while the window of an earlier 429 is still open.
+    private func failIfRateLimited(label: String) throws {
+        let current = now()
+        let remaining: TimeInterval? = blockedUntil.withLock { blocked in
+            guard let until = blocked else { return nil }
+            let remaining = until.timeIntervalSince(current)
+            if remaining > 0 { return remaining }
+            blocked = nil
+            return nil
+        }
+        guard let remaining else { return }
+        AppLog.network.info("\(label) skipped, rate limited for \(Int(remaining.rounded(.up)))s more")
+        throw APIError.rateLimited(retryAfter: remaining)
+    }
+
+    /// Seconds to wait after a 429: `Retry-After` (delta-seconds or HTTP date), else `RateLimit-Reset`
+    /// (delta-seconds), else `defaultRetryAfter`; clamped so a bad header can't lock the app for long.
+    static func retryAfter(from response: HTTPURLResponse, now: Date) -> TimeInterval {
+        let seconds: TimeInterval
+        if let value = response.value(forHTTPHeaderField: "Retry-After")?.trimmingCharacters(in: .whitespaces),
+           let parsed = TimeInterval(value) ?? httpDate(value).map({ $0.timeIntervalSince(now) }) {
+            seconds = parsed
+        } else if let value = response.value(forHTTPHeaderField: "RateLimit-Reset"),
+                  let parsed = TimeInterval(value.trimmingCharacters(in: .whitespaces)) {
+            seconds = parsed
+        } else {
+            seconds = defaultRetryAfter
+        }
+        return min(max(seconds, retryAfterRange.lowerBound), retryAfterRange.upperBound)
+    }
+
+    private static func httpDate(_ value: String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(identifier: "GMT")
+        formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
+        return formatter.date(from: value)
     }
 }

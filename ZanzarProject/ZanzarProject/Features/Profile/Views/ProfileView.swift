@@ -35,10 +35,14 @@ struct ProfileView: View {
                     viewModel.signOutFailed = false
                 }
             }
-            // Restarts when a pushed place detail is popped, so a check-in made there shows up here.
+            // Restarts when a pushed place detail is popped; a check-in made there shows up here (see `markStale`).
             .task(id: coordinator.path.isEmpty) {
                 guard coordinator.path.isEmpty else { return }
                 await viewModel.load()
+            }
+            // A check-in makes the loaded profile outdated; the load above then skips its freshness window.
+            .onReceive(NotificationCenter.default.publisher(for: AppNotification.checkInDidSucceed)) { _ in
+                viewModel.markStale()
             }
     }
 
@@ -56,7 +60,7 @@ struct ProfileView: View {
                 }
                 .padding(16)
             }
-            .refreshable { await viewModel.load() }
+            .refreshable { await viewModel.load(force: true) }
         } else if let errorMessage = viewModel.errorMessage {
             ContentUnavailableView {
                 Label("profile.errorState.title", systemImage: "exclamationmark.triangle")
@@ -64,7 +68,7 @@ struct ProfileView: View {
                 Text(errorMessage)
             } actions: {
                 Button("profile.errorState.retryButton.title") {
-                    Task { await viewModel.load() }
+                    Task { await viewModel.load(force: true) }
                 }
                 .disabled(viewModel.isLoading)
             }
