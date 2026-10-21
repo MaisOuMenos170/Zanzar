@@ -17,16 +17,6 @@ struct LocationMapView: View {
     }
 
     var body: some View {
-        MapReader { proxy in
-            map
-                .onTapGesture { point in
-                    guard let coordinate = proxy.convert(point, from: .local) else { return }
-                    selectItem(nearestTo: coordinate)
-                }
-        }
-    }
-
-    private var map: some View {
         Map(position: $viewModel.cameraPosition) {
             userLocationContent
             placeAnnotations
@@ -105,19 +95,17 @@ struct LocationMapView: View {
         reduceMotion ? .opacity : .opacity.combined(with: .scale(scale: 0.7))
     }
 
-    private func selectItem(nearestTo coordinate: CLLocationCoordinate2D) {
-        guard let item = MapPinClustering.nearestItem(to: coordinate, in: viewModel.displayItems) else { return }
-        switch item {
-        case .place(let place):
-            coordinator.push(.placeDetail(place))
-        case .cluster(let cluster):
-            let region = viewModel.focusRegion(on: cluster)
-            if reduceMotion {
+    private func open(_ place: MapPlace) {
+        coordinator.push(.placeDetail(place))
+    }
+
+    private func expand(_ cluster: MapPinCluster) {
+        let region = viewModel.focusRegion(on: cluster)
+        if reduceMotion {
+            viewModel.applyCameraRegion(region)
+        } else {
+            withAnimation(.smooth(duration: 0.45)) {
                 viewModel.applyCameraRegion(region)
-            } else {
-                withAnimation(.smooth(duration: 0.45)) {
-                    viewModel.applyCameraRegion(region)
-                }
             }
         }
     }
@@ -131,27 +119,31 @@ struct LocationMapView: View {
         ForEach(viewModel.displayItems) { item in
             switch item {
             case .place(let place):
-                // The pin does not hit-test itself. Overlapping sprites were opening the neighbor.
-                // The map gesture resolves the tap to the nearest coordinate instead.
                 Annotation("", coordinate: place.coordinate, anchor: .bottom) {
-                    LocationPinView(category: place.category, style: place.pinStyle)
-                        .accessibilityLabel(place.displayName)
-                        .accessibilityAddTraits(.isButton)
-                        .allowsHitTesting(false)
-                        .transition(pinTransition)
+                    Button {
+                        open(place)
+                    } label: {
+                        LocationPinView(category: place.category, style: place.pinStyle)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(place.displayName)
+                    .transition(pinTransition)
                 }
                 .annotationTitles(.hidden)
             case .cluster(let cluster):
                 Annotation("", coordinate: cluster.coordinate, anchor: .center) {
-                    LocationClusterPinView(count: cluster.count)
-                        .accessibilityLabel(
-                            String(
-                                localized: "locationMap.clusterPin.accessibilityLabel \(cluster.count)"
-                            )
+                    Button {
+                        expand(cluster)
+                    } label: {
+                        LocationClusterPinView(count: cluster.count)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(
+                        String(
+                            localized: "locationMap.clusterPin.accessibilityLabel \(cluster.count)"
                         )
-                        .accessibilityAddTraits(.isButton)
-                        .allowsHitTesting(false)
-                        .transition(pinTransition)
+                    )
+                    .transition(pinTransition)
                 }
             }
         }

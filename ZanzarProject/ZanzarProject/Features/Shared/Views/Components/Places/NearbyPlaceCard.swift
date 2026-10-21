@@ -20,8 +20,6 @@ struct NearbyPlaceCard: View {
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 0) {
-                // The image only ever fills this box: as an overlay it cannot change the card's size, whatever
-                // size the photo or the placeholder reports.
                 Color.clear
                     .frame(height: imageHeight)
                     .overlay {
