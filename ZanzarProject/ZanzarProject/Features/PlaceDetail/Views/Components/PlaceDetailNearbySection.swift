@@ -11,21 +11,7 @@ struct PlaceDetailNearbySection: View {
                 .font(.body.weight(.semibold))
                 .foregroundStyle(.primary)
 
-            ScrollView(.horizontal) {
-                HStack(spacing: 8) {
-                    ForEach(places) { nearbyPlace in
-                        PlaceDetailNearbyPlaceCard(
-                            place: nearbyPlace,
-                            mediaPolicy: mediaPolicy
-                        ) {
-                            onSelect(nearbyPlace.mapPlace)
-                        }
-                    }
-                }
-            }
-            .scrollIndicators(.hidden)
-            // Without this the scroll view clips the cards' shadows at its bounds.
-            .scrollClipDisabled()
+            NearbyPlacesCarousel(places: places, mediaPolicy: mediaPolicy, onSelect: onSelect)
         }
     }
 }

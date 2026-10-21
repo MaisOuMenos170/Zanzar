@@ -50,6 +50,7 @@ struct LocationPinView: View {
                 .offset(y: Metrics.innerCircleCenterYOffset)
         }
         .frame(width: Metrics.width, height: Metrics.height)
+        .contentShape(LocationPinShape())
         .accessibilityHidden(true)
     }
 

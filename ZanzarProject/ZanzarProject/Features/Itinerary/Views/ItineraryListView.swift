@@ -116,19 +116,9 @@ struct ItineraryListView: View {
                         Text("itinerary.list.sections.nearby")
                             .font(.callout.bold())
 
-                        ScrollView(.horizontal) {
-                            LazyHStack(spacing: 8) {
-                                ForEach(nearbyPlaces) { place in
-                                    PlaceDetailNearbyPlaceCard(
-                                        place: place,
-                                        mediaPolicy: mediaPolicy
-                                    ) {
-                                        coordinator.push(.placeDetail(place.mapPlace))
-                                    }
-                                }
-                            }
+                        NearbyPlacesCarousel(places: nearbyPlaces, mediaPolicy: mediaPolicy) { place in
+                            coordinator.push(.placeDetail(place))
                         }
-                        .scrollIndicators(.hidden)
                     }
                 }
             }
