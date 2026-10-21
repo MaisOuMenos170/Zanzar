@@ -6,6 +6,7 @@ import SwiftUI
 final class LocationMapViewModel {
     private let store: NearbyPlacesStore
     private var loadGeneration = 0
+    private var hasCenteredOnUser = false
 
     var cameraPosition: MapCameraPosition = .automatic
     var userCoordinate: UserCoordinate?
@@ -30,8 +31,9 @@ final class LocationMapViewModel {
         self.store = store ?? NearbyPlacesStore(service: service ?? LocationMapService())
     }
 
-    /// Centers the camera on the user and shows the places. Goes to the server only when the shared store
-    /// has nothing fresh, so coming back to the screen does not cost a request.
+    /// Centers the camera on the user the first time and shows the places. Later loads leave the camera where
+    /// the user left it. Goes to the server only when the shared store has nothing fresh, so coming back to
+    /// the screen does not cost a request.
     func load() async {
         loadGeneration += 1
         let generation = loadGeneration
@@ -137,6 +139,8 @@ final class LocationMapViewModel {
     private func centerCamera(on coordinate: UserCoordinate?) {
         guard let coordinate else { return }
         userCoordinate = coordinate
+        guard !hasCenteredOnUser else { return }
+        hasCenteredOnUser = true
         let region = MKCoordinateRegion(
             center: coordinate.clLocationCoordinate2D,
             latitudinalMeters: 1000,

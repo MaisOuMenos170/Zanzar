@@ -36,6 +36,44 @@ struct LocationMapViewModelTests {
         #expect(region.center.longitude == coordinate.longitude)
     }
 
+    @Test("Loading again keeps the camera where the user left it")
+    func reloadKeepsCamera() async throws {
+        let coordinate = UserCoordinate(latitude: -25.4098994, longitude: -49.2670599)
+        let service = MockLocationMapService()
+        service.locationResult = .success(coordinate)
+        service.placesResult = .success([])
+        let viewModel = LocationMapViewModel(service: service)
+        await viewModel.load()
+
+        let farAway = MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: -23.55, longitude: -46.63),
+            span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+        )
+        viewModel.applyCameraRegion(farAway)
+        await viewModel.load()
+
+        let region = try #require(viewModel.cameraPosition.region)
+        #expect(region.center.latitude == farAway.center.latitude)
+        #expect(region.center.longitude == farAway.center.longitude)
+        #expect(viewModel.userCoordinate == coordinate)
+    }
+
+    @Test("A failed first load still centers on the user once a later load succeeds")
+    func centersAfterInitialFailure() async throws {
+        let coordinate = UserCoordinate(latitude: -25.4098994, longitude: -49.2670599)
+        let service = MockLocationMapService()
+        service.locationResult = .failure(LocationMapError.authorizationDenied)
+        let viewModel = LocationMapViewModel(service: service)
+        await viewModel.load()
+
+        service.locationResult = .success(coordinate)
+        service.placesResult = .success([])
+        await viewModel.load()
+
+        let region = try #require(viewModel.cameraPosition.region)
+        #expect(region.center.latitude == coordinate.latitude)
+    }
+
     @Test("Failed location fetch sets an error message and clears places")
     func failedLocationLoad() async {
         let service = MockLocationMapService()
