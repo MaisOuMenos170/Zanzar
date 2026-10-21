@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct PlaceDetailNearbyPlaceCard: View {
+struct NearbyPlaceCard: View {
     let place: PlaceDetailNearbyPlace
     let mediaPolicy: PlaceMediaAccessPolicy
     let onTap: () -> Void
@@ -20,23 +20,29 @@ struct PlaceDetailNearbyPlaceCard: View {
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 0) {
-                PlaceRemoteImage(photoReference: place.photoReference, mediaPolicy: mediaPolicy) {
-                    ZStack {
-                        LinearGradient(
-                            colors: [Color("PlaceDetailTagGreenBackground"), Color("PlaceDetailStatsBackground")],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
+                // The image only ever fills this box: as an overlay it cannot change the card's size, whatever
+                // size the photo or the placeholder reports.
+                Color.clear
+                    .frame(height: imageHeight)
+                    .overlay {
+                        PlaceRemoteImage(photoReference: place.photoReference, mediaPolicy: mediaPolicy) {
+                            ZStack {
+                                LinearGradient(
+                                    colors: [Color("PlaceDetailTagGreenBackground"), Color("PlaceDetailStatsBackground")],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
 
-                        PlaceCategorySealView(
-                            category: place.category,
-                            state: sealState,
-                            size: 32
-                        )
+                                PlaceCategorySealView(
+                                    category: place.category,
+                                    state: sealState,
+                                    size: 32
+                                )
+                            }
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-                }
-                .frame(height: imageHeight)
-                .frame(maxWidth: .infinity)
+                    .clipped()
 
                 VStack(alignment: .trailing, spacing: 8) {
                     VStack(alignment: .trailing, spacing: 0) {
@@ -46,8 +52,8 @@ struct PlaceDetailNearbyPlaceCard: View {
                             .lineLimit(1)
 
                         Text(checkInsText)
-                        .font(.caption2)
-                        .foregroundStyle(Color("PlaceDetailNearbySubtitle"))
+                            .font(.caption2)
+                            .foregroundStyle(Color("PlaceDetailNearbySubtitle"))
                     }
 
                     HStack(spacing: 2) {
@@ -65,9 +71,9 @@ struct PlaceDetailNearbyPlaceCard: View {
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .background(Color("PlaceDetailNearbyCardBackground"))
             }
+            .frame(width: cardWidth)
             .clipShape(.rect(cornerRadius: 8))
             .shadow(color: .black.opacity(0.25), radius: 1, x: 1, y: 1)
-            .frame(width: cardWidth)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text("placeDetail.nearbyPlace.accessibilityLabel \(place.displayName) \(checkInsText)"))
