@@ -44,6 +44,10 @@ struct ProfileView: View {
             .onReceive(NotificationCenter.default.publisher(for: AppNotification.checkInDidSucceed)) { _ in
                 viewModel.markStale()
             }
+            // An itinerary being activated or abandoned changes the profile stats; refresh so the count updates.
+            .onReceive(NotificationCenter.default.publisher(for: AppNotification.activeItineraryDidChange)) { _ in
+                viewModel.markStale()
+            }
     }
 
     @ViewBuilder

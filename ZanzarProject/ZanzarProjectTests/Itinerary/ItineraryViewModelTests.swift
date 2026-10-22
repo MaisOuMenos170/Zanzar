@@ -222,6 +222,32 @@ struct ItineraryViewModelTests {
         #expect(viewModel.activeItinerary == nil)
         #expect(itineraryService.abandonCount == 1)
     }
+
+    @Test("abandon failure on detail screen exposes an action error message")
+    func detailAbandonFailure() async {
+        let itineraryService = MockItineraryService(
+            detailResult: .success(Self.sampleDetail),
+            activeItineraryResult: .success(Self.sampleActive)
+        )
+        itineraryService.abandonError = APIError.invalidResponse
+        let viewModel = ItineraryDetailViewModel(
+            slug: "centro-historico",
+            service: itineraryService,
+            userIDProvider: { "user-1" }
+        )
+        await viewModel.load()
+
+        let succeeded = await viewModel.abandonItinerary()
+
+        #expect(!succeeded)
+        #expect(viewModel.activeItinerary == Self.sampleActive)
+        #expect(itineraryService.abandonCount == 1)
+        #expect(viewModel.actionErrorMessage == String(localized: "itinerary.detail.actionError.generic"))
+        #expect(viewModel.showsActionError)
+        viewModel.showsActionError = false
+        #expect(viewModel.actionErrorMessage == nil)
+        #expect(viewModel.showsActionError == false)
+    }
 }
 
 final class MockItineraryService: ItineraryServicing, @unchecked Sendable {
