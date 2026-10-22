@@ -9,6 +9,7 @@ nonisolated struct PlaceDetail: Identifiable, Hashable, Sendable {
     let longitude: Double
     let distanceText: String?
     let openingHoursText: String
+    let isOpen: Bool?
     let tags: [PlaceDetailTag]
     let category: ZanzarPlaceCategory
     let description: String
@@ -146,6 +147,8 @@ nonisolated extension PlaceDetail {
             ?? placeResponse.formattedAddress
             ?? String(localized: "placeDetail.details.fallbackDescription")
 
+        let openingHours = openingHoursText(from: placeResponse.openingHours)
+
         return PlaceDetail(
             id: placeResponse.placeId,
             name: placeResponse.name,
@@ -153,7 +156,8 @@ nonisolated extension PlaceDetail {
             latitude: placeResponse.geometry.location.lat,
             longitude: placeResponse.geometry.location.lng,
             distanceText: distanceText,
-            openingHoursText: openingHoursText(from: placeResponse.openingHours),
+            openingHoursText: openingHours.text,
+            isOpen: openingHours.isOpen,
             tags: tags(from: placeResponse),
             category: ZanzarPlaceCategory(rawCategory: placeResponse.zanzar.category),
             description: description,
@@ -182,17 +186,17 @@ nonisolated extension PlaceDetail {
             .map(PlaceDetailNearbyPlace.init(mapPlace:))
     }
 
-    private static func openingHoursText(from openingHours: PlaceDetailOpeningHoursResponse?) -> String {
+    private static func openingHoursText(from openingHours: PlaceDetailOpeningHoursResponse?) -> (text: String, isOpen: Bool?) {
         guard let openingHours else {
-            return String(localized: "placeDetail.header.hoursUnavailable")
+            return (String(localized: "placeDetail.header.hoursUnavailable"), nil)
         }
         if openingHours.openNow == true {
-            return String(localized: "placeDetail.header.openNow")
+            return (String(localized: "placeDetail.header.openNow"), true)
         }
         if openingHours.openNow == false {
-            return String(localized: "placeDetail.header.closedNow")
+            return (String(localized: "placeDetail.header.closedNow"), false)
         }
-        return String(localized: "placeDetail.header.hoursUnavailable")
+        return (String(localized: "placeDetail.header.hoursUnavailable"), nil)
     }
 
     private static func tags(from response: PlaceDetailAPIResponse) -> [PlaceDetailTag] {

@@ -151,6 +151,7 @@ struct PlaceDetailView: View {
                 name: detail.displayName,
                 distanceText: detail.distanceText,
                 openingHoursText: detail.openingHoursText,
+                isOpen: detail.isOpen,
                 onBack: { coordinator.pop() }
             )
             .padding(.top, 8)

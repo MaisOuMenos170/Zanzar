@@ -154,36 +154,36 @@
         }
       }
     },
-    "itinerary.card.completedCount %lld" : {
+    "itinerary.card.completedCount %d" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld people completed"
+            "value" : "%d people completed"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld pessoas completaram"
+            "value" : "%d pessoas completaram"
           }
         }
       }
     },
-    "itinerary.card.placesCount %lld" : {
+    "itinerary.card.placesCount %d" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld places to visit"
+            "value" : "%d places to visit"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld lugares para conhecer"
+            "value" : "%d lugares para conhecer"
           }
         }
       }
@@ -307,19 +307,19 @@
         }
       }
     },
-    "itinerary.detail.completedCount %lld" : {
+    "itinerary.detail.completedCount %d" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld people completed"
+            "value" : "%d people completed"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld pessoas completaram"
+            "value" : "%d pessoas completaram"
           }
         }
       }
@@ -409,19 +409,19 @@
         }
       }
     },
-    "itinerary.detail.placesCount %lld" : {
+    "itinerary.detail.placesCount %d" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld places to visit"
+            "value" : "%d places to visit"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld lugares para conhecer"
+            "value" : "%d lugares para conhecer"
           }
         }
       }
