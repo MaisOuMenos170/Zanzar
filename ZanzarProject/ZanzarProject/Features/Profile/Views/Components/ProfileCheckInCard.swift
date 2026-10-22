@@ -67,6 +67,7 @@ struct ProfileCheckInCard: View {
     }
 }
 
+#if DEBUG
 #Preview {
     HStack {
         ProfileCheckInCard(checkIn: Profile.preview.recentCheckIns[0], mediaPolicy: .shared)
@@ -74,3 +75,4 @@ struct ProfileCheckInCard: View {
     }
     .padding()
 }
+#endif
