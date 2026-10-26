@@ -60,7 +60,7 @@ final class LoginViewModel {
             let response = try await service.submitLogin(
                 LoginRequest(email: trimmedEmail, password: password)
             )
-            try authSession.signIn(token: response.token)
+            try authSession.signIn(accessToken: response.token, refreshToken: response.refreshToken)
             return true
         } catch let error as APIError {
             submitError = AuthErrorMapper.loginMessage(for: error)

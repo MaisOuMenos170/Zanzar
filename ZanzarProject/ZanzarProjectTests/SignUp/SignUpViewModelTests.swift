@@ -126,7 +126,7 @@ struct SignUpViewModelTests {
         let signUpService = MockSignUpService()
         signUpService.submitSignUpResult = .success(SignUpResponse(id: "user-id"))
         let loginService = MockLoginService()
-        loginService.submitLoginResult = .success(LoginResponse(token: "jwt-token"))
+        loginService.submitLoginResult = .success(LoginResponse(token: "jwt-token", refreshToken: "refresh-token"))
         let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
         let viewModel = SignUpViewModel(
             signUpService: signUpService,

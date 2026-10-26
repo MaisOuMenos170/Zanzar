@@ -1,6 +1,57 @@
 {
   "sourceLanguage" : "pt-BR",
   "strings" : {
+    "auth.sessionExpired.dismissButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
+    "auth.sessionExpired.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your session has expired. Please sign in again to continue."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua sessão expirou. Entre novamente para continuar."
+          }
+        }
+      }
+    },
+    "auth.sessionExpired.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session expired"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessão expirada"
+          }
+        }
+      }
+    },
     "backButton.accessibilityLabel" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -171,6 +222,9 @@
         }
       }
     },
+    "itinerary.card.completedCount %lld" : {
+
+    },
     "itinerary.card.placesCount %d" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -187,6 +241,9 @@
           }
         }
       }
+    },
+    "itinerary.card.placesCount %lld" : {
+
     },
     "itinerary.card.viewDetails" : {
       "extractionState" : "manual",
@@ -324,6 +381,9 @@
         }
       }
     },
+    "itinerary.detail.completedCount %lld" : {
+
+    },
     "itinerary.detail.eligiblePlaces.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -425,6 +485,9 @@
           }
         }
       }
+    },
+    "itinerary.detail.placesCount %lld" : {
+
     },
     "itinerary.detail.startButton" : {
       "extractionState" : "manual",

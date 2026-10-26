@@ -8,11 +8,7 @@ enum AuthSessionError: Error, Sendable {
 @MainActor
 @Observable
 final class AuthSession {
-    private(set) var token: String?
-
-    var isAuthenticated: Bool {
-        token != nil
-    }
+    private(set) var isAuthenticated = false
 
     private let keychain: AuthTokenPersisting
     private let tokenStore: AuthTokenStore
@@ -27,40 +23,43 @@ final class AuthSession {
     }
 
     func restore() {
-        guard let storedToken = keychain.readToken(), !storedToken.isEmpty else {
+        guard let tokens = keychain.readTokens() else {
             return
         }
-        token = storedToken
-        tokenStore.setToken(storedToken)
+        tokenStore.setTokens(tokens)
+        isAuthenticated = true
         AppLog.auth.info("Session restored from keychain")
     }
 
-    func signIn(token: String) throws {
-        let trimmedToken = token.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedToken.isEmpty else {
+    func signIn(accessToken: String, refreshToken: String) throws {
+        guard let tokens = AuthTokens(accessToken: accessToken, refreshToken: refreshToken) else {
             AppLog.auth.error("Sign in rejected: empty token", error: AuthSessionError.invalidToken)
             throw AuthSessionError.invalidToken
         }
         do {
-            try keychain.saveToken(trimmedToken)
+            try keychain.saveTokens(tokens)
         } catch {
-            AppLog.auth.error("Failed to save token to keychain", error: error)
+            AppLog.auth.error("Failed to save tokens to keychain", error: error)
             throw error
         }
-        self.token = trimmedToken
-        tokenStore.setToken(trimmedToken)
-        AppLog.auth.info("Signed in, token saved to keychain")
+        tokenStore.setTokens(tokens)
+        isAuthenticated = true
+        AppLog.auth.info("Signed in, tokens saved to keychain")
     }
 
     func signOut() throws {
         do {
-            try keychain.deleteToken()
+            try keychain.deleteTokens()
         } catch {
-            AppLog.auth.error("Failed to delete token from keychain", error: error)
+            AppLog.auth.error("Failed to delete tokens from keychain", error: error)
             throw error
         }
-        token = nil
-        tokenStore.setToken(nil)
+        tokenStore.setTokens(nil)
+        isAuthenticated = false
         AppLog.auth.info("Signed out")
+    }
+
+    func handleSessionExpired() {
+        isAuthenticated = false
     }
 }

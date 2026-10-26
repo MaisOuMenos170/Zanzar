@@ -28,12 +28,16 @@ extension NetworkClient {
 final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
     static let shared = URLSessionNetworkClient(
         baseURL: APIConfiguration.baseURL,
-        authTokenProvider: { AuthTokenStore.shared.getToken() }
+        authTokenProvider: { AuthTokenStore.shared.getToken() },
+        refresher: .shared
     )
 
     // `/places` is intentionally omitted: the backend accepts anonymous reads but enriches
     // responses when a Bearer token is available (optional auth).
     private static let publicPaths: Set<String> = ["login", "register", "health"]
+    // A 401 here never triggers a token refresh: `login`/`register` reject credentials rather than a token,
+    // `refresh` would recurse, and `logout` is best effort (the app signs out locally either way).
+    private static let noRefreshPaths: Set<String> = publicPaths.union(["refresh", "logout"])
 
     private let baseURL: URL
     private let session: URLSession
@@ -41,23 +45,26 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
     private let encoder = JSONEncoder()
     private let authTokenProvider: @Sendable () -> String?
     private let now: @Sendable () -> Date
+    private let refresher: SessionRefresher?
     /// End of the `Retry-After` window of the last 429. While it lies in the future no request leaves the device.
     private let blockedUntil = OSAllocatedUnfairLock<Date?>(initialState: nil)
 
     /// Used when a 429 carries no usable `Retry-After`.
-    static let defaultRetryAfter: TimeInterval = 60
-    private static let retryAfterRange: ClosedRange<TimeInterval> = 1...3600
+    nonisolated static let defaultRetryAfter: TimeInterval = 60
+    private nonisolated static let retryAfterRange: ClosedRange<TimeInterval> = 1...3600
 
     init(
         baseURL: URL,
         session: URLSession = .shared,
         authTokenProvider: @escaping @Sendable () -> String? = { nil },
-        now: @escaping @Sendable () -> Date = { Date() }
+        now: @escaping @Sendable () -> Date = { Date() },
+        refresher: SessionRefresher? = nil
     ) {
         self.baseURL = baseURL
         self.session = session
         self.authTokenProvider = authTokenProvider
         self.now = now
+        self.refresher = refresher
     }
 
     func get<Response: Decodable>(path: String, queryItems: [URLQueryItem]) async throws -> Response {
@@ -68,7 +75,7 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
 
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.get.rawValue
-        return try await perform(authorizedRequest(from: request, path: normalizedPath))
+        return try await perform(request, path: normalizedPath)
     }
 
     func send<Body: Encodable, Response: Decodable>(
@@ -84,7 +91,7 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         request.httpMethod = method.rawValue
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try encoder.encode(body)
-        return try await perform(authorizedRequest(from: request, path: normalizedPath))
+        return try await perform(request, path: normalizedPath)
     }
 
     func sendWithoutResponse(path: String, method: HTTPMethod) async throws {
@@ -94,7 +101,7 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         }
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
-        let (_, summary) = try await performRequest(authorizedRequest(from: request, path: normalizedPath))
+        let (_, summary) = try await execute(request, path: normalizedPath)
         AppLog.network.info(summary)
     }
 
@@ -132,8 +139,8 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         return request
     }
 
-    private func perform<Response: Decodable>(_ request: URLRequest) async throws -> Response {
-        let (data, summary) = try await performRequest(request)
+    private func perform<Response: Decodable>(_ request: URLRequest, path: String) async throws -> Response {
+        let (data, summary) = try await execute(request, path: path)
         do {
             let decoded = try decoder.decode(Response.self, from: data)
             AppLog.network.info(summary)
@@ -142,6 +149,37 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
             AppLog.network.error("\(summary) | decoding failed, body=\(data.count) bytes", error: error)
             throw APIError.decodingFailed
         }
+    }
+
+    private func execute(_ request: URLRequest, path: String) async throws -> (data: Data, summary: String) {
+        let authorized = authorizedRequest(from: request, path: path)
+        do {
+            return try await performRequest(authorized)
+        } catch let error as APIError {
+            guard case .httpStatus(401, _) = error,
+                  let refresher,
+                  !Self.noRefreshPaths.contains(path),
+                  let rejectedToken = Self.bearerToken(of: authorized) else {
+                throw error
+            }
+
+            try await refresher.refresh(after: rejectedToken)
+
+            do {
+                return try await performRequest(authorizedRequest(from: request, path: path))
+            } catch let retryError as APIError {
+                if case .httpStatus(401, _) = retryError {
+                    await refresher.expireSession()
+                }
+                throw retryError
+            }
+        }
+    }
+
+    private static func bearerToken(of request: URLRequest) -> String? {
+        guard let header = request.value(forHTTPHeaderField: "Authorization"),
+              header.hasPrefix("Bearer ") else { return nil }
+        return String(header.dropFirst("Bearer ".count))
     }
 
     /// Runs the request and validates the status; returns the raw body plus a log summary line.
@@ -212,7 +250,7 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
 
     /// Seconds to wait after a 429: `Retry-After` (delta-seconds or HTTP date), else `RateLimit-Reset`
     /// (delta-seconds), else `defaultRetryAfter`; clamped so a bad header can't lock the app for long.
-    static func retryAfter(from response: HTTPURLResponse, now: Date) -> TimeInterval {
+    nonisolated static func retryAfter(from response: HTTPURLResponse, now: Date) -> TimeInterval {
         let seconds: TimeInterval
         if let value = response.value(forHTTPHeaderField: "Retry-After")?.trimmingCharacters(in: .whitespaces),
            let parsed = TimeInterval(value) ?? httpDate(value).map({ $0.timeIntervalSince(now) }) {
@@ -226,7 +264,7 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         return min(max(seconds, retryAfterRange.lowerBound), retryAfterRange.upperBound)
     }
 
-    private static func httpDate(_ value: String) -> Date? {
+    private nonisolated static func httpDate(_ value: String) -> Date? {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(identifier: "GMT")

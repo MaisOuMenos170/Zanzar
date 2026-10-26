@@ -58,7 +58,7 @@ struct LoginViewModelTests {
     @MainActor
     func submitSignsInWhenLoginSucceeds() async {
         let mockService = MockLoginService()
-        mockService.submitLoginResult = .success(LoginResponse(token: "jwt-token"))
+        mockService.submitLoginResult = .success(LoginResponse(token: "jwt-token", refreshToken: "refresh-token"))
         let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
         let viewModel = LoginViewModel(service: mockService)
         viewModel.email = "user@example.com"
@@ -92,7 +92,7 @@ struct LoginViewModelTests {
     @MainActor
     func submitIgnoresDuplicateRequestsWhileLoading() async {
         let mockService = MockLoginService()
-        mockService.submitLoginResult = .success(LoginResponse(token: "jwt-token"))
+        mockService.submitLoginResult = .success(LoginResponse(token: "jwt-token", refreshToken: "refresh-token"))
         let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
         let viewModel = LoginViewModel(service: mockService)
         viewModel.email = "user@example.com"

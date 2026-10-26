@@ -106,7 +106,7 @@ final class SignUpViewModel {
             let loginResponse = try await loginService.submitLogin(
                 LoginRequest(email: trimmedEmail, password: password)
             )
-            try authSession.signIn(token: loginResponse.token)
+            try authSession.signIn(accessToken: loginResponse.token, refreshToken: loginResponse.refreshToken)
             return true
         } catch {
             submitError = String(localized: "signUp.submitError.accountCreatedLoginRequired")

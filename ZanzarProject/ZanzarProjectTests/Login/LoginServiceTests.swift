@@ -5,9 +5,9 @@ import Testing
 @MainActor
 @Suite("LoginService")
 struct LoginServiceTests {
-    @Test("submitLogin posts credentials and decodes the token")
+    @Test("submitLogin posts credentials and decodes the tokens")
     func submitLogin() async throws {
-        let client = StubNetworkClient(responseJSON: #"{"token":"jwt-token"}"#)
+        let client = StubNetworkClient(responseJSON: #"{"token":"jwt-token","refreshToken":"refresh-token"}"#)
         let service = LoginService(client: client)
 
         let response = try await service.submitLogin(
@@ -15,6 +15,7 @@ struct LoginServiceTests {
         )
 
         #expect(response.token == "jwt-token")
+        #expect(response.refreshToken == "refresh-token")
         #expect(client.lastSendPath == "login")
         #expect(client.lastSendMethod == .post)
     }

@@ -61,7 +61,7 @@ python3 scripts/scaffold_feature.py <FeatureName>
 
 `<FeatureName>` must be PascalCase. The script:
 - Auto-detects the repo root by locating `ZanzarProject/ZanzarProject.xcodeproj` (override with `--repo-root` if run from elsewhere)
-- On the very first run in this repo, bootstraps `App/`, `Coordinator/` (`AppCoordinator.swift`, `Routes.swift`), `Utils/NetworkClient.swift`, `Features/Shared/{Views/Components,Utils}`, and `Resources/` (moves `Assets.xcassets` in, creates an empty `Localizable.xcstrings`), and moves the existing `ContentView.swift`/`MyApp.swift` into `App/`
+- On the very first run in this repo, bootstraps `App/`, `Coordinator/` (`AppCoordinator.swift`, `Routes.swift`), `Features/HTTP/API/NetworkClient.swift`, `Features/Shared/{Views/Components,Utils}`, and `Resources/` (moves `Assets.xcassets` in, creates an empty `Localizable.xcstrings`), and moves the existing `ContentView.swift`/`MyApp.swift` into `App/`
 - Creates `Features/<FeatureName>/{API,Models,ViewModels,Views,Views/Components}` with boilerplate files
 - Creates `ZanzarProjectTests/<FeatureName>/<FeatureName>ViewModelTests.swift`
 - Never overwrites a file that already exists — reruns are safe, existing work is never clobbered

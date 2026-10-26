@@ -6,7 +6,7 @@ import os
 ///
 /// doesn't print emails, passwords or tokens in a message
 /// log ids, counts and status codes
-enum AppLog: String {
+nonisolated enum AppLog: String {
     case network
     case auth
     case login

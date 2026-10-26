@@ -154,7 +154,7 @@ struct ProfileViewModelTests {
     @Test("signOut revokes the token on the server before ending the local session")
     func signOutCallsServerFirst() async throws {
         let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
-        try authSession.signIn(token: "token")
+        try authSession.signIn(accessToken: "token", refreshToken: "refresh")
         let service = MockProfileService()
         var wasAuthenticatedDuringLogout: Bool?
         service.onLogout = { wasAuthenticatedDuringLogout = authSession.isAuthenticated }
@@ -175,7 +175,7 @@ struct ProfileViewModelTests {
     @Test("signOut still ends the local session when the server logout fails")
     func signOutContinuesAfterServerFailure() async throws {
         let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
-        try authSession.signIn(token: "token")
+        try authSession.signIn(accessToken: "token", refreshToken: "refresh")
         let service = MockProfileService(logoutResult: .failure(URLError(.notConnectedToInternet)))
         let coordinator = AppCoordinator()
         coordinator.push(.login)
@@ -191,7 +191,7 @@ struct ProfileViewModelTests {
     @Test("a Keychain failure keeps the session and the navigation path")
     func keychainFailureKeepsState() async throws {
         let authSession = AuthSession(keychain: FailingDeleteTokenStore())
-        try authSession.signIn(token: "token")
+        try authSession.signIn(accessToken: "token", refreshToken: "refresh")
         let coordinator = AppCoordinator()
         coordinator.push(.login)
         let viewModel = ProfileViewModel(service: MockProfileService())
@@ -207,7 +207,7 @@ struct ProfileViewModelTests {
     func newAttemptClearsPreviousFailure() async throws {
         let store = FailingDeleteTokenStore()
         let authSession = AuthSession(keychain: store)
-        try authSession.signIn(token: "token")
+        try authSession.signIn(accessToken: "token", refreshToken: "refresh")
         let viewModel = ProfileViewModel(service: MockProfileService())
 
         await viewModel.signOut(using: authSession, coordinator: AppCoordinator())
@@ -223,7 +223,7 @@ struct ProfileViewModelTests {
     @Test("overlapping signOut calls send a single logout request")
     func overlappingSignOutCallsRunOnce() async throws {
         let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
-        try authSession.signIn(token: "token")
+        try authSession.signIn(accessToken: "token", refreshToken: "refresh")
         let service = MockProfileService()
         service.suspendsDuringLogout = true
         let coordinator = AppCoordinator()
@@ -279,9 +279,9 @@ private final class FailingDeleteTokenStore: AuthTokenPersisting, @unchecked Sen
 
     var shouldFail = true
 
-    func saveToken(_ token: String) throws {}
-    func readToken() -> String? { nil }
-    func deleteToken() throws {
+    func saveTokens(_ tokens: AuthTokens) throws {}
+    func readTokens() -> AuthTokens? { nil }
+    func deleteTokens() throws {
         if shouldFail { throw DeleteFailure() }
     }
 }
