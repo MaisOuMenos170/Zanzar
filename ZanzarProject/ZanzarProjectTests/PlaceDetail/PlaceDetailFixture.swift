@@ -35,6 +35,7 @@ enum PlaceDetailFixture {
             longitude: place.longitude,
             distanceText: "1.3 km",
             openingHoursText: "Open now",
+            isOpen: true,
             tags: [],
             category: .park,
             description: "Description",

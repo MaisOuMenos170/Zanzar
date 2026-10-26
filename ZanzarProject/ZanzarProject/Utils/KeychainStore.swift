@@ -6,17 +6,18 @@ enum KeychainError: Error, Sendable {
     case deleteFailed(OSStatus)
 }
 
-protocol AuthTokenPersisting: Sendable {
-    func saveToken(_ token: String) throws
-    func readToken() -> String?
-    func deleteToken() throws
+nonisolated protocol AuthTokenPersisting: Sendable {
+    func saveTokens(_ tokens: AuthTokens) throws
+    func readTokens() -> AuthTokens?
+    func deleteTokens() throws
 }
 
 nonisolated struct KeychainStore: AuthTokenPersisting {
     private let service = "com.zanzar.auth"
-    private let account = "authToken"
+    private let accessAccount = "authToken"
+    private let refreshAccount = "refreshToken"
 
-    private var query: [String: Any] {
+    private func query(account: String) -> [String: Any] {
         [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -31,11 +32,32 @@ nonisolated struct KeychainStore: AuthTokenPersisting {
         ]
     }
 
-    func saveToken(_ token: String) throws {
-        let data = Data(token.utf8)
+    func saveTokens(_ tokens: AuthTokens) throws {
+        try save(tokens.accessToken, account: accessAccount)
+        try save(tokens.refreshToken, account: refreshAccount)
+    }
 
+    func readTokens() -> AuthTokens? {
+        guard let access = read(account: accessAccount),
+              let refresh = read(account: refreshAccount),
+              let tokens = AuthTokens(accessToken: access, refreshToken: refresh) else {
+            try? deleteTokens()
+            return nil
+        }
+        return tokens
+    }
+
+    func deleteTokens() throws {
+        let accessResult = Result { try delete(account: accessAccount) }
+        let refreshResult = Result { try delete(account: refreshAccount) }
+        try accessResult.get()
+        try refreshResult.get()
+    }
+
+    private func save(_ value: String, account: String) throws {
+        let query = query(account: account)
         let attributes: [String: Any] = [
-            kSecValueData as String: data
+            kSecValueData as String: Data(value.utf8)
         ].merging(protectedAttributes) { current, _ in current }
 
         let updateStatus = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
@@ -55,8 +77,8 @@ nonisolated struct KeychainStore: AuthTokenPersisting {
         throw KeychainError.saveFailed(updateStatus)
     }
 
-    func readToken() -> String? {
-        var readQuery = query
+    private func read(account: String) -> String? {
+        var readQuery = query(account: account)
         readQuery[kSecReturnData as String] = true
         readQuery[kSecMatchLimit as String] = kSecMatchLimitOne
 
@@ -64,15 +86,15 @@ nonisolated struct KeychainStore: AuthTokenPersisting {
         let status = SecItemCopyMatching(readQuery as CFDictionary, &item)
         guard status == errSecSuccess,
               let data = item as? Data,
-              let token = String(data: data, encoding: .utf8),
-              !token.isEmpty else {
+              let value = String(data: data, encoding: .utf8),
+              !value.isEmpty else {
             return nil
         }
-        return token
+        return value
     }
 
-    func deleteToken() throws {
-        let status = SecItemDelete(query as CFDictionary)
+    private func delete(account: String) throws {
+        let status = SecItemDelete(query(account: account) as CFDictionary)
         guard status == errSecSuccess || status == errSecItemNotFound else {
             throw KeychainError.deleteFailed(status)
         }

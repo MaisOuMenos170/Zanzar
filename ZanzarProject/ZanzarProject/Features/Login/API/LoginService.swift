@@ -11,6 +11,7 @@ struct LoginRequest: Encodable, Sendable {
 
 struct LoginResponse: Decodable, Sendable {
     let token: String
+    let refreshToken: String
 }
 
 final class LoginService: LoginServicing {
