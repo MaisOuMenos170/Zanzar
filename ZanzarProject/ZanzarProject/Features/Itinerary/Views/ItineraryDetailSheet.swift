@@ -12,7 +12,8 @@ struct ItineraryDetailSheet: View {
     var body: some View {
         NavigationStack {
             ItineraryDetailView(viewModel: viewModel) {
-                // The list tab reloads active progress when this sheet dismisses.
+                // The list tab reloads active progress when this sheet dismisses via notification,
+                // but we also call the callback for any immediate UI updates the presenter may need.
             }
             .toolbar(.hidden, for: .navigationBar)
         }

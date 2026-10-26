@@ -4,6 +4,7 @@ struct PlaceDetailHeaderView: View {
     let name: String
     let distanceText: String?
     let openingHoursText: String
+    let isOpen: Bool?
     let onBack: () -> Void
 
     var body: some View {
@@ -26,15 +27,23 @@ struct PlaceDetailHeaderView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "clock")
                         .font(.caption2)
-                        .foregroundStyle(Color("PlaceDetailOpenStatus"))
+                        .foregroundStyle(statusColor)
 
                     Text(openingHoursText)
                         .font(.caption2.weight(.medium))
-                        .foregroundStyle(Color("PlaceDetailOpenStatus"))
+                        .foregroundStyle(statusColor)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, 16)
+    }
+
+    private var statusColor: Color {
+        switch isOpen {
+        case true: return Color("PlaceDetailOpenStatus")
+        case false: return Color("PlaceDetailClosedStatus")
+        case nil: return Color("PlaceDetailOpenStatus")
+        }
     }
 }
