@@ -9,7 +9,7 @@ View <-> ViewModel <-> Service (protocol) <-> NetworkClient (protocol, shared)
 - **View**: SwiftUI struct. Owns a `@State private var viewModel`. Reads `AppCoordinator` via `@Environment` for navigation — never builds its own `NavigationStack` logic or talks to a Service directly.
 - **ViewModel**: `@Observable final class`. Owns all state and business logic for the feature. Depends on the feature's `Servicing` protocol (never a concrete `URLSessionNetworkClient` and never the feature's own network types). Default-initializes the concrete Service in `init(service: Servicing = ConcreteService())` so previews/call sites don't need to pass one, but tests inject a mock.
 - **Service**: one per feature, in `API/<Feature>Service.swift`. Defines a `<Feature>Servicing` protocol + concrete `<Feature>Service` implementation, plus the wire-format `Request`/`Response` structs. Calls the shared `NetworkClient`, never `URLSession` directly.
-- **NetworkClient**: one shared instance for the whole app, at `Utils/NetworkClient.swift`. Every feature's Service depends on it through the `NetworkClient` protocol, not the concrete `URLSessionNetworkClient` (except as a default-argument value, same pattern as Service above).
+- **NetworkClient**: one shared instance for the whole app, at `Features/HTTP/API/NetworkClient.swift`. Every feature's Service depends on it through the `NetworkClient` protocol, not the concrete `URLSessionNetworkClient` (except as a default-argument value, same pattern as Service above).
 
 ## Folder contract
 
