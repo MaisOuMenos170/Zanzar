@@ -31,6 +31,8 @@ struct LocationClusterPinView: View {
                     .strokeBorder(.white, lineWidth: 2.5)
             }
             .shadow(color: .black.opacity(0.18), radius: 3, y: 1)
+            .frame(minWidth: 44, minHeight: 44)
+            .contentShape(.circle)
             .accessibilityHidden(true)
     }
 }

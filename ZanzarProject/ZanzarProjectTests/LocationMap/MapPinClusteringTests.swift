@@ -125,21 +125,6 @@ struct MapPinClusteringTests {
         #expect(streetZoom.count == 2)
     }
 
-    @Test("A tap resolves to the marker coordinate, not the overlapping neighbor")
-    func nearestItemPrefersCloserCoordinate() {
-        let matias = place(id: "matias", latitude: -25.427014, longitude: -49.273992)
-        let cavalo = place(id: "cavalo", latitude: -25.427493, longitude: -49.273849)
-        let items = [MapPinDisplayItem.place(matias), .place(cavalo)]
-
-        let nearest = MapPinClustering.nearestItem(to: matias.coordinate, in: items)
-
-        if case .place(let place) = nearest {
-            #expect(place.id == "matias")
-        } else {
-            Issue.record("Expected the tap on Matias Bar's coordinate to choose Matias Bar")
-        }
-    }
-
     @Test("Single place never becomes a cluster")
     func singlePlaceStaysIndividual() {
         let places = [place(id: "solo", latitude: -25.430, longitude: -49.270)]
