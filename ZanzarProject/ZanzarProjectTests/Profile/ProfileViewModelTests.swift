@@ -57,7 +57,7 @@ struct ProfileViewModelTests {
         await viewModel.load()
 
         #expect(viewModel.profile == nil)
-        #expect(viewModel.errorMessage == String(localized: "profile.errorState.message"))
+        #expect(viewModel.errorMessage == L10n.string("profile.errorState.message"))
         #expect(!viewModel.isLoading)
     }
 
@@ -85,7 +85,7 @@ struct ProfileViewModelTests {
         await viewModel.load(force: true)
 
         #expect(viewModel.profile == nil)
-        #expect(viewModel.errorMessage == String(localized: "profile.loadError.notAuthenticated"))
+        #expect(viewModel.errorMessage == L10n.string("profile.loadError.notAuthenticated"))
         #expect(service.fetchCount == 1)
     }
 

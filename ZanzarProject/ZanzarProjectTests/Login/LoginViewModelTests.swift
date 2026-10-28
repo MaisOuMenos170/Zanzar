@@ -85,7 +85,7 @@ struct LoginViewModelTests {
 
         #expect(didSubmit == false)
         #expect(authSession.isAuthenticated == false)
-        #expect(viewModel.submitError == String(localized: "login.submitError.invalidCredentials"))
+        #expect(viewModel.submitError == L10n.string("login.submitError.invalidCredentials"))
     }
 
     @Test("submit ignores duplicate requests while loading")

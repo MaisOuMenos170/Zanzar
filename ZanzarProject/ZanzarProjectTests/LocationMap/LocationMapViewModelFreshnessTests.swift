@@ -41,6 +41,6 @@ struct LocationMapViewModelFreshnessTests {
         await viewModel.load()
 
         #expect(viewModel.errorMessage == APIError.rateLimited(retryAfter: 120).errorDescription)
-        #expect(viewModel.errorMessage != String(localized: "locationMap.placesLoadError"))
+        #expect(viewModel.errorMessage != L10n.string("locationMap.placesLoadError"))
     }
 }
