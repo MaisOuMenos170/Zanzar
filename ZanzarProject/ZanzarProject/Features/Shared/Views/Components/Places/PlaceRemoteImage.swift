@@ -54,7 +54,7 @@ struct PlaceRemoteImage<Placeholder: View>: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .onAppear {
                                 #if DEBUG
-                                AppLog.placeDetail.debug("Place photo loading started ref=\(photoReference)")
+                                AppLog.placeDetail.info("Place photo loading started ref=\(photoReference)")
                                 #endif
                             }
                     @unknown default:
@@ -94,11 +94,11 @@ struct PlaceRemoteImage<Placeholder: View>: View {
     private func logSkipReason(photoReference: String?) {
         #if DEBUG
         if photoReference == nil {
-            AppLog.placeDetail.debug("Place photo skipped: no photo reference")
+            AppLog.placeDetail.info("Place photo skipped: no photo reference")
         } else if !mediaPolicy.canLoadRemoteImages {
-            AppLog.placeDetail.debug("Place photo skipped: cellular images not allowed ref=\(photoReference!)")
+            AppLog.placeDetail.info("Place photo skipped: cellular images not allowed ref=\(photoReference!)")
         } else {
-            AppLog.placeDetail.debug("Place photo skipped: invalid URL ref=\(photoReference!)")
+            AppLog.placeDetail.info("Place photo skipped: invalid URL ref=\(photoReference!)")
         }
         #endif
     }
