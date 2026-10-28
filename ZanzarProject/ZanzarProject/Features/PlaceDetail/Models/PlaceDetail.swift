@@ -1,13 +1,6 @@
 import CoreLocation
 import Foundation
 
-// Localization helper for non-SwiftUI contexts
-private enum L10n {
-    static func string(_ key: String, _ arguments: CVarArg...) -> String {
-        String(format: NSLocalizedString(key, comment: ""), locale: Locale.current, arguments: arguments)
-    }
-}
-
 nonisolated struct PlaceDetail: Identifiable, Hashable, Sendable {
     let id: String
     let name: String

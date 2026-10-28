@@ -1,12 +1,5 @@
 import Foundation
 
-// Localization helper for non-SwiftUI contexts
-private enum L10n {
-    static func string(_ key: String, _ arguments: CVarArg...) -> String {
-        String(format: NSLocalizedString(key, comment: ""), locale: Locale.current, arguments: arguments)
-    }
-}
-
 enum APIError: Error, Sendable {
     case httpStatus(Int, message: String?)
     case decodingFailed

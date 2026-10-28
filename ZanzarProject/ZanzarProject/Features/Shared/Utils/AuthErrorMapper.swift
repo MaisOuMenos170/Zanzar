@@ -1,12 +1,5 @@
 import Foundation
 
-// Localization helper for non-SwiftUI contexts
-private enum L10n {
-    static func string(_ key: String) -> String {
-        NSLocalizedString(key, comment: "")
-    }
-}
-
 nonisolated enum AuthErrorMapper {
     static func loginMessage(for error: APIError) -> String {
         mappedMessage(

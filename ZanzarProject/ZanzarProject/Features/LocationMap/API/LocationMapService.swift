@@ -1,13 +1,6 @@
 import CoreLocation
 import Foundation
 
-// Localization helper for non-SwiftUI contexts
-private enum L10n {
-    static func string(_ key: String) -> String {
-        NSLocalizedString(key, comment: "")
-    }
-}
-
 enum LocationMapError: Error, Sendable {
     case authorizationDenied
     case locationUnavailable
