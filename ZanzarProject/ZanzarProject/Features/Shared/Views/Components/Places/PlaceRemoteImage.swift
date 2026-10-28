@@ -10,6 +10,7 @@ struct PlaceRemoteImage<Placeholder: View>: View {
     @State private var loadAttempts = 0
     @State private var currentURL: URL?
     @State private var shouldReload = false
+    @State private var lastError: Error?
 
     init(
         photoReference: String?,

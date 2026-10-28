@@ -14,10 +14,9 @@ enum L10n {
 
     /// Private class used only to locate the app bundle.
     private final class BundleLocator {}
-
     /// Returns the localized string for the given key.
     /// Falls back to the key itself if localization fails.
-    static func string(_ key: String, tableName: String? = nil, bundle: Bundle = bundle, comment: String = "") -> String {
+    static func string(_ key: String, tableName: String? = nil, bundle: Bundle = .main, comment: String = "") -> String {
         NSLocalizedString(key, tableName: tableName, bundle: bundle, comment: comment)
     }
 
