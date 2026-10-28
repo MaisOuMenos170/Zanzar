@@ -34,6 +34,7 @@ enum PlaceDetailFixture {
             latitude: place.latitude,
             longitude: place.longitude,
             distanceText: "1.3 km",
+            walkingTimeText: "16 min a pé",
             openingHoursText: "Open now",
             isOpen: true,
             tags: [],

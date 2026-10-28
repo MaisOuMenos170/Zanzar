@@ -154,7 +154,7 @@ struct ItineraryViewModelTests {
         await viewModel.abandonActiveItinerary()
 
         #expect(viewModel.activeItinerary == Self.sampleActive)
-        #expect(viewModel.actionErrorMessage == String(localized: "itinerary.detail.actionError.generic"))
+        #expect(viewModel.actionErrorMessage == L10n.string("itinerary.detail.actionError.generic"))
         #expect(viewModel.showsActionError)
         viewModel.showsActionError = false
         #expect(viewModel.actionErrorMessage == nil)
@@ -200,7 +200,7 @@ struct ItineraryViewModelTests {
         let succeeded = await viewModel.activateItinerary()
 
         #expect(!succeeded)
-        #expect(viewModel.actionErrorMessage == String(localized: "itinerary.detail.actionError.alreadyActive"))
+        #expect(viewModel.actionErrorMessage == L10n.string("itinerary.detail.actionError.alreadyActive"))
     }
 
     @Test("abandon clears the active itinerary on the detail screen")
@@ -242,7 +242,7 @@ struct ItineraryViewModelTests {
         #expect(!succeeded)
         #expect(viewModel.activeItinerary == Self.sampleActive)
         #expect(itineraryService.abandonCount == 1)
-        #expect(viewModel.actionErrorMessage == String(localized: "itinerary.detail.actionError.generic"))
+        #expect(viewModel.actionErrorMessage == L10n.string("itinerary.detail.actionError.generic"))
         #expect(viewModel.showsActionError)
         viewModel.showsActionError = false
         #expect(viewModel.actionErrorMessage == nil)

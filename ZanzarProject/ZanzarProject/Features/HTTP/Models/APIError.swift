@@ -42,10 +42,10 @@ extension APIError: LocalizedError {
 
     private static func rateLimitedDescription(retryAfter: TimeInterval) -> String {
         guard retryAfter > 30 else {
-            return String(localized: "error.rateLimited.soon")
+            return L10n.string("error.rateLimited.soon")
         }
         let minutes = Int((retryAfter / 60).rounded(.up))
-        return String(localized: "error.rateLimited.message \(minutes)")
+        return L10n.string("error.rateLimited.message", minutes)
     }
 }
 

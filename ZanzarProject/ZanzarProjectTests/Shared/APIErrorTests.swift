@@ -6,23 +6,23 @@ import Testing
 struct APIErrorTests {
     @Test("a short wait asks the user to try again in a moment")
     func shortWait() {
-        #expect(APIError.rateLimited(retryAfter: 20).errorDescription == String(localized: "error.rateLimited.soon"))
-        #expect(APIError.rateLimited(retryAfter: 30).errorDescription == String(localized: "error.rateLimited.soon"))
+        #expect(APIError.rateLimited(retryAfter: 20).errorDescription == L10n.string("error.rateLimited.soon"))
+        #expect(APIError.rateLimited(retryAfter: 30).errorDescription == L10n.string("error.rateLimited.soon"))
     }
 
     @Test("a longer wait is rounded up to whole minutes")
     func minutesRoundUp() {
         #expect(
             APIError.rateLimited(retryAfter: 31).errorDescription
-                == String(localized: "error.rateLimited.message \(1)")
+                == L10n.string("error.rateLimited.message", 1)
         )
         #expect(
             APIError.rateLimited(retryAfter: 61).errorDescription
-                == String(localized: "error.rateLimited.message \(2)")
+                == L10n.string("error.rateLimited.message", 2)
         )
         #expect(
             APIError.rateLimited(retryAfter: 900).errorDescription
-                == String(localized: "error.rateLimited.message \(15)")
+                == L10n.string("error.rateLimited.message", 15)
         )
     }
 

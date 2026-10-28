@@ -85,7 +85,7 @@ struct LocationMapViewModelTests {
         #expect(viewModel.userCoordinate == nil)
         #expect(viewModel.places.isEmpty)
         #expect(viewModel.isLoading == false)
-        #expect(viewModel.errorMessage == String(localized: "locationMap.locationAccessDenied"))
+        #expect(viewModel.errorMessage == L10n.string("locationMap.locationAccessDenied"))
     }
 
     @Test("Cancelled load does not surface an error message")
@@ -305,7 +305,7 @@ struct LocationMapViewModelTests {
         #expect(viewModel.userCoordinate == coordinate)
         #expect(viewModel.places.isEmpty)
         #expect(viewModel.isLoading == false)
-        #expect(viewModel.errorMessage == String(localized: "locationMap.placesLoadError"))
+        #expect(viewModel.errorMessage == L10n.string("locationMap.placesLoadError"))
     }
 
     @Test("A cancelled places fetch during the initial load does not toast")

@@ -23,24 +23,24 @@ nonisolated enum AuthErrorMapper {
 
     private static func mappedMessage(
         for error: APIError,
-        genericKey: String.LocalizationValue,
-        statusMessages: [Int: String.LocalizationValue]
+        genericKey: String,
+        statusMessages: [Int: String]
     ) -> String {
         switch error {
         case .httpStatus(let statusCode, let message):
             if let localizedKey = statusMessages[statusCode] {
-                return String(localized: localizedKey)
+                return L10n.string(localizedKey)
             }
             #if DEBUG
             if let message, !message.isEmpty {
                 return message
             }
             #endif
-            return String(localized: genericKey)
+            return L10n.string(genericKey)
         case .rateLimited:
-            return error.errorDescription ?? String(localized: genericKey)
+            return error.errorDescription ?? L10n.string(genericKey)
         case .decodingFailed, .invalidResponse, .invalidRequest:
-            return String(localized: genericKey)
+            return L10n.string(genericKey)
         }
     }
 }

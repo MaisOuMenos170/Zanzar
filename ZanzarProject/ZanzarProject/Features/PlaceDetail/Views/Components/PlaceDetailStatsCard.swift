@@ -107,40 +107,40 @@ struct PlaceDetailStatsCard: View {
     private var categoryLabel: String {
         switch category {
         case .restaurant:
-            String(localized: "placeDetail.tag.restaurant")
+            L10n.string("placeDetail.tag.restaurant")
         case .bar:
-            String(localized: "placeDetail.tag.bar")
+            L10n.string("placeDetail.tag.bar")
         case .cafe:
-            String(localized: "placeDetail.tag.cafe")
+            L10n.string("placeDetail.tag.cafe")
         case .museum:
-            String(localized: "placeDetail.tag.museum")
+            L10n.string("placeDetail.tag.museum")
         case .park:
-            String(localized: "placeDetail.tag.park")
+            L10n.string("placeDetail.tag.park")
         case .tourist:
-            String(localized: "placeDetail.tag.touristSpot")
+            L10n.string("placeDetail.tag.touristSpot")
         case .historic:
-            String(localized: "placeDetail.tag.historic")
+            L10n.string("placeDetail.tag.historic")
         case .curiosity:
-            String(localized: "placeDetail.tag.curiosity")
+            L10n.string("placeDetail.tag.curiosity")
         case .party:
-            String(localized: "placeDetail.tag.party")
+            L10n.string("placeDetail.tag.party")
         case .unknown:
-            String(localized: "placeDetail.statsCard.categoryUnknown")
+            L10n.string("placeDetail.statsCard.categoryUnknown")
         }
     }
 
     private var categorySealAccessibilityLabel: String {
         if hasCheckedIn {
-            String(format: String(localized: "placeDetail.statsCard.sealEarnedAccessibilityLabel"), categoryLabel)
+            L10n.string("placeDetail.statsCard.sealEarnedAccessibilityLabel", categoryLabel)
         } else {
-            String(format: String(localized: "placeDetail.statsCard.sealPreviewAccessibilityLabel"), categoryLabel)
+            L10n.string("placeDetail.statsCard.sealPreviewAccessibilityLabel", categoryLabel)
         }
     }
 
     private var itinerarySealAccessibilityLabel: String {
         hasCheckedIn
-            ? String(localized: "placeDetail.statsCard.itinerarySealEarnedAccessibilityLabel")
-            : String(localized: "placeDetail.statsCard.itinerarySealPreviewAccessibilityLabel")
+            ? L10n.string("placeDetail.statsCard.itinerarySealEarnedAccessibilityLabel")
+            : L10n.string("placeDetail.statsCard.itinerarySealPreviewAccessibilityLabel")
     }
 }
 

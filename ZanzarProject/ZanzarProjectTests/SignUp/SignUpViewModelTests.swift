@@ -159,7 +159,7 @@ struct SignUpViewModelTests {
         let didSubmit = await viewModel.submit(using: AuthSession(keychain: InMemoryAuthTokenStore()))
 
         #expect(didSubmit == false)
-        #expect(viewModel.submitError == String(localized: "signUp.submitError.emailInUse"))
+        #expect(viewModel.submitError == L10n.string("signUp.submitError.emailInUse"))
     }
 
     @Test("submit prompts login when register succeeds but login fails")
@@ -181,7 +181,7 @@ struct SignUpViewModelTests {
 
         #expect(didSubmit == false)
         #expect(viewModel.shouldNavigateToLogin == true)
-        #expect(viewModel.submitError == String(localized: "signUp.submitError.accountCreatedLoginRequired"))
+        #expect(viewModel.submitError == L10n.string("signUp.submitError.accountCreatedLoginRequired"))
     }
 }
 

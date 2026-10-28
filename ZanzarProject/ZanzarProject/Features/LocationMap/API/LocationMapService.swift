@@ -10,9 +10,9 @@ extension LocationMapError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .authorizationDenied:
-            String(localized: "locationMap.locationAccessDenied")
+            L10n.string("locationMap.locationAccessDenied")
         case .locationUnavailable:
-            String(localized: "locationMap.locationUnavailable")
+            L10n.string("locationMap.locationUnavailable")
         }
     }
 }

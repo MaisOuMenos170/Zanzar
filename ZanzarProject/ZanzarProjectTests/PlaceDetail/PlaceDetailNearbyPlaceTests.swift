@@ -181,7 +181,7 @@ struct PlaceDetailNearbyPlaceTests {
 
     @Test("Category chip is not repeated as a case-variant slug")
     func categoryChipDropsCaseVariantSlug() throws {
-        let categoryLabel = String(localized: "placeDetail.tag.historic")
+        let categoryLabel = L10n.string("placeDetail.tag.historic")
         let response = try makeAPIResponse(
             APIResponseFixture(
                 placeId: "place-historic",
