@@ -1,6 +1,13 @@
 import CoreLocation
 import Foundation
 
+// Localization helper for non-SwiftUI contexts
+private enum L10n {
+    static func string(_ key: String, _ arguments: CVarArg...) -> String {
+        String(format: NSLocalizedString(key, comment: ""), locale: Locale.current, arguments: arguments)
+    }
+}
+
 nonisolated struct PlaceDetail: Identifiable, Hashable, Sendable {
     let id: String
     let name: String
@@ -115,6 +122,9 @@ nonisolated struct PlaceDetailLoadContext: Sendable {
 }
 
 nonisolated extension PlaceDetail {
+    /// Average walking speed in meters per second (5 km/h ≈ 1.39 m/s)
+    private static let walkingSpeedMetersPerSecond: Double = 1.39
+
     /// Average walking speed in meters per second (5 km/h ≈ 1.39 m/s)
     private static let walkingSpeedMetersPerSecond: Double = 1.39
 
