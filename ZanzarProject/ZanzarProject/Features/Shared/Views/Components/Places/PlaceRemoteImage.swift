@@ -9,7 +9,7 @@ struct PlaceRemoteImage<Placeholder: View>: View {
 
     @State private var loadAttempts = 0
     @State private var currentURL: URL?
-    @State private var lastError: Error?
+    @State private var shouldReload = false
 
     init(
         photoReference: String?,
@@ -28,7 +28,8 @@ struct PlaceRemoteImage<Placeholder: View>: View {
             if let photoReference,
                mediaPolicy.canLoadRemoteImages,
                let url = GooglePlacesConfiguration.photoURL(reference: photoReference, maxWidth: maxWidth) {
-                AsyncImage(url: url, transaction: Transaction(animation: .easeInOut(duration: 0.2))) { phase in
+                // Use a state variable to force AsyncImage to reload on retry
+                AsyncImage(url: shouldReload ? currentURL ?? url : url, transaction: Transaction(animation: .easeInOut(duration: 0.2))) { phase in
                     switch phase {
                     case .success(let image):
                         // Reset error state on success
@@ -37,7 +38,8 @@ struct PlaceRemoteImage<Placeholder: View>: View {
                             .scaledToFill()
                             .onAppear {
                                 loadAttempts = 0
-                                lastError = nil
+                                shouldReload = false
+                                currentURL = nil
                                 #if DEBUG
                                 AppLog.placeDetail.info("Place photo loaded successfully ref=\(photoReference)")
                                 #endif
@@ -69,7 +71,6 @@ struct PlaceRemoteImage<Placeholder: View>: View {
     }
 
     private func handleError(_ error: Error, photoReference: String, url: URL) {
-        lastError = error
         loadAttempts += 1
 
         #if DEBUG
@@ -81,9 +82,10 @@ struct PlaceRemoteImage<Placeholder: View>: View {
             let delay = UInt64(pow(2.0, Double(loadAttempts)) * 1_000_000_000) // 2s, 4s
             Task {
                 try? await Task.sleep(nanoseconds: delay)
-                // Trigger a reload by updating the URL
+                // Trigger a reload by updating the URL state
                 await MainActor.run {
                     currentURL = url
+                    shouldReload = true
                 }
             }
         }
