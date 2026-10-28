@@ -1,5 +1,12 @@
 import Foundation
 
+// Localization helper for non-SwiftUI contexts
+private enum L10n {
+    static func string(_ key: String, _ arguments: CVarArg...) -> String {
+        String(format: NSLocalizedString(key, comment: ""), locale: Locale.current, arguments: arguments)
+    }
+}
+
 enum APIError: Error, Sendable {
     case httpStatus(Int, message: String?)
     case decodingFailed
@@ -42,10 +49,10 @@ extension APIError: LocalizedError {
 
     private static func rateLimitedDescription(retryAfter: TimeInterval) -> String {
         guard retryAfter > 30 else {
-            return String(localized: "error.rateLimited.soon")
+            return L10n.string("error.rateLimited.soon")
         }
         let minutes = Int((retryAfter / 60).rounded(.up))
-        return String(localized: "error.rateLimited.message \(minutes)")
+        return L10n.string("error.rateLimited.message", minutes)
     }
 }
 

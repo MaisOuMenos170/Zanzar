@@ -14,7 +14,7 @@ struct NearbyPlaceCard: View {
     }
 
     private var checkInsText: String {
-        String(localized: "placeDetail.nearbyPlace.checkInsCount \(place.checkInCount)")
+        L10n.string("placeDetail.nearbyPlace.checkInsCount", place.checkInCount)
     }
 
     var body: some View {

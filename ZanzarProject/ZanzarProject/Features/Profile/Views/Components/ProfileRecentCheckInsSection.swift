@@ -30,15 +30,3 @@ struct ProfileRecentCheckInsSection: View {
         }
     }
 }
-
-#Preview {
-    NavigationStack {
-        ProfileRecentCheckInsSection(checkIns: Profile.preview.recentCheckIns, mediaPolicy: .shared)
-            .padding()
-    }
-}
-
-#Preview("Empty") {
-    ProfileRecentCheckInsSection(checkIns: [], mediaPolicy: .shared)
-        .padding()
-}

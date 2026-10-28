@@ -1,6 +1,13 @@
 import CoreLocation
 import Foundation
 
+// Localization helper for non-SwiftUI contexts
+private enum L10n {
+    static func string(_ key: String, _ arguments: CVarArg...) -> String {
+        String(format: NSLocalizedString(key, comment: ""), locale: Locale.current, arguments: arguments)
+    }
+}
+
 nonisolated struct PlaceDetail: Identifiable, Hashable, Sendable {
     let id: String
     let name: String
@@ -8,6 +15,7 @@ nonisolated struct PlaceDetail: Identifiable, Hashable, Sendable {
     let latitude: Double
     let longitude: Double
     let distanceText: String?
+    let walkingTimeText: String?
     let openingHoursText: String
     let isOpen: Bool?
     let tags: [PlaceDetailTag]
@@ -120,6 +128,9 @@ nonisolated struct PlaceDetailLoadContext: Sendable {
 nonisolated extension PlaceDetail {
     static let nearbyPlacesLimit = 6
 
+    /// Average walking speed in meters per second (5 km/h ≈ 1.39 m/s)
+    private static let walkingSpeedMetersPerSecond: Double = 1.39
+
     static func make(
         placeResponse: PlaceDetailAPIResponse,
         nearbyPlaces: [MapPlace],
@@ -136,16 +147,33 @@ nonisolated extension PlaceDetail {
                     .distance(from: CLLocation(latitude: location.lat, longitude: location.lng))
             }
         let distanceText = distanceMeters.map {
-            String(
-                format: String(localized: "placeDetail.header.distanceFormat"),
-                locale: Locale.current,
-                $0 / 1000
-            )
+            L10n.string("placeDetail.header.distanceFormat", $0 / 1000)
+        }
+        let walkingTimeText = distanceMeters.map { meters in
+            let walkingTimeSeconds = meters / walkingSpeedMetersPerSecond
+            let minutes = Int(walkingTimeSeconds / 60)
+            if minutes < 1 {
+                return L10n.string("placeDetail.header.walkingTimeLessThanMinute")
+            } else if minutes == 1 {
+                return L10n.string("placeDetail.header.walkingTimeOneMinute")
+            } else if minutes < 60 {
+                return L10n.string("placeDetail.header.walkingTimeMinutes", minutes)
+            } else {
+                let hours = minutes / 60
+                let remainingMinutes = minutes % 60
+                if remainingMinutes == 0 {
+                    return hours == 1
+                        ? L10n.string("placeDetail.header.walkingTimeOneHour")
+                        : L10n.string("placeDetail.header.walkingTimeHours", hours)
+                } else {
+                    return L10n.string("placeDetail.header.walkingTimeHoursMinutes", hours, remainingMinutes)
+                }
+            }
         }
 
         let description = placeResponse.editorialSummary?.overview
             ?? placeResponse.formattedAddress
-            ?? String(localized: "placeDetail.details.fallbackDescription")
+            ?? L10n.string("placeDetail.details.fallbackDescription")
 
         let openingHours = openingHoursText(from: placeResponse.openingHours)
 
@@ -156,6 +184,7 @@ nonisolated extension PlaceDetail {
             latitude: placeResponse.geometry.location.lat,
             longitude: placeResponse.geometry.location.lng,
             distanceText: distanceText,
+            walkingTimeText: walkingTimeText,
             openingHoursText: openingHours.text,
             isOpen: openingHours.isOpen,
             tags: tags(from: placeResponse),
@@ -188,15 +217,15 @@ nonisolated extension PlaceDetail {
 
     private static func openingHoursText(from openingHours: PlaceDetailOpeningHoursResponse?) -> (text: String, isOpen: Bool?) {
         guard let openingHours else {
-            return (String(localized: "placeDetail.header.hoursUnavailable"), nil)
+            return (L10n.string("placeDetail.header.hoursUnavailable"), nil)
         }
         if openingHours.openNow == true {
-            return (String(localized: "placeDetail.header.openNow"), true)
+            return (L10n.string("placeDetail.header.openNow"), true)
         }
         if openingHours.openNow == false {
-            return (String(localized: "placeDetail.header.closedNow"), false)
+            return (L10n.string("placeDetail.header.closedNow"), false)
         }
-        return (String(localized: "placeDetail.header.hoursUnavailable"), nil)
+        return (L10n.string("placeDetail.header.hoursUnavailable"), nil)
     }
 
     private static func tags(from response: PlaceDetailAPIResponse) -> [PlaceDetailTag] {
@@ -231,23 +260,23 @@ nonisolated extension PlaceDetail {
     private static func categoryTag(for category: String) -> PlaceDetailTag? {
         switch ZanzarPlaceCategory(rawCategory: category) {
         case .park:
-            categoryTag("park", label: String(localized: "placeDetail.tag.park"), style: .park)
+            categoryTag("park", label: L10n.string("placeDetail.tag.park"), style: .park)
         case .tourist:
-            categoryTag("tourist", label: String(localized: "placeDetail.tag.touristSpot"), style: .touristSpot)
+            categoryTag("tourist", label: L10n.string("placeDetail.tag.touristSpot"), style: .touristSpot)
         case .restaurant:
-            categoryTag("restaurant", label: String(localized: "placeDetail.tag.restaurant"), style: .category)
+            categoryTag("restaurant", label: L10n.string("placeDetail.tag.restaurant"), style: .category)
         case .bar:
-            categoryTag("bar", label: String(localized: "placeDetail.tag.bar"), style: .category)
+            categoryTag("bar", label: L10n.string("placeDetail.tag.bar"), style: .category)
         case .cafe:
-            categoryTag("cafe", label: String(localized: "placeDetail.tag.cafe"), style: .category)
+            categoryTag("cafe", label: L10n.string("placeDetail.tag.cafe"), style: .category)
         case .museum:
-            categoryTag("museum", label: String(localized: "placeDetail.tag.museum"), style: .category)
+            categoryTag("museum", label: L10n.string("placeDetail.tag.museum"), style: .category)
         case .historic:
-            categoryTag("historic", label: String(localized: "placeDetail.tag.historic"), style: .touristSpot)
+            categoryTag("historic", label: L10n.string("placeDetail.tag.historic"), style: .touristSpot)
         case .curiosity:
-            categoryTag("curiosity", label: String(localized: "placeDetail.tag.curiosity"), style: .category)
+            categoryTag("curiosity", label: L10n.string("placeDetail.tag.curiosity"), style: .category)
         case .party:
-            categoryTag("party", label: String(localized: "placeDetail.tag.party"), style: .category)
+            categoryTag("party", label: L10n.string("placeDetail.tag.party"), style: .category)
         case .unknown:
             nil
         }

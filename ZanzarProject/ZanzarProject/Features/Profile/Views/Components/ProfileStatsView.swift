@@ -36,8 +36,3 @@ private struct ProfileStatItem: View {
         .accessibilityElement(children: .combine)
     }
 }
-
-#Preview {
-    ProfileStatsView(summary: Profile.preview.summary)
-        .padding()
-}

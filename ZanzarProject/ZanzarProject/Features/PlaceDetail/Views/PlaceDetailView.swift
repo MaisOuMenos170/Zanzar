@@ -150,6 +150,7 @@ struct PlaceDetailView: View {
             PlaceDetailHeaderView(
                 name: detail.displayName,
                 distanceText: detail.distanceText,
+                walkingTimeText: detail.walkingTimeText,
                 openingHoursText: detail.openingHoursText,
                 isOpen: detail.isOpen,
                 onBack: { coordinator.pop() }

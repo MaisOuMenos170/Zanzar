@@ -19,8 +19,8 @@
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* ZanzarProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZanzarProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		000000000000000000000130 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
-		C0FFEE000000000000000131 /* Config.Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.Release.xcconfig; sourceTree = "<group>"; };
 		B9A3FCA73059BF17003386A8 /* ZanzarProjectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZanzarProjectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0FFEE000000000000000131 /* Config.Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.Release.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -246,7 +246,6 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.6.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				VERSIONING_SYSTEM = "apple-generic";
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PROJECT_UNIQUE_VALUE = FF0BKO3I;
@@ -254,6 +253,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TVOS_DEPLOYMENT_TARGET = 27.0;
+				VERSIONING_SYSTEM = "apple-generic";
 				WATCHOS_DEPLOYMENT_TARGET = 27.0;
 				XROS_DEPLOYMENT_TARGET = 27.0;
 			};
@@ -312,12 +312,12 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.6.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				VERSIONING_SYSTEM = "apple-generic";
 				MTL_FAST_MATH = YES;
 				PROJECT_UNIQUE_VALUE = FF0BKO3I;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				TVOS_DEPLOYMENT_TARGET = 27.0;
+				VERSIONING_SYSTEM = "apple-generic";
 				WATCHOS_DEPLOYMENT_TARGET = 27.0;
 				XROS_DEPLOYMENT_TARGET = 27.0;
 			};
@@ -328,17 +328,21 @@
 			baseConfigurationReference = 000000000000000000000130 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ZanzarProject/ZanzarProject.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 982D3NRR89;
-				INFOPLIST_KEY_CFBundleDisplayName = Lero;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDevelopmentRegion = "pt-BR";
+				INFOPLIST_KEY_CFBundleDisplayName = Lero;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsLocalNetworking = YES;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "O Lero usa sua localização para centralizar o mapa e confirmar que você está perto do lugar no check-in.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -374,16 +378,20 @@
 			baseConfigurationReference = C0FFEE000000000000000131 /* Config.Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ZanzarProject/ZanzarProject.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 982D3NRR89;
-				INFOPLIST_KEY_CFBundleDisplayName = Lero;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDevelopmentRegion = "pt-BR";
+				INFOPLIST_KEY_CFBundleDisplayName = Lero;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "O Lero usa sua localização para centralizar o mapa e confirmar que você está perto do lugar no check-in.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

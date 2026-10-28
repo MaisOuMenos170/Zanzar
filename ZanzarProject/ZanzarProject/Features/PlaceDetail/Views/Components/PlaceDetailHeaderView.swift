@@ -3,6 +3,7 @@ import SwiftUI
 struct PlaceDetailHeaderView: View {
     let name: String
     let distanceText: String?
+    let walkingTimeText: String?
     let openingHoursText: String
     let isOpen: Bool?
     let onBack: () -> Void
@@ -22,6 +23,18 @@ struct PlaceDetailHeaderView: View {
                     Text(distanceText)
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.primary)
+                }
+
+                if let walkingTimeText {
+                    HStack(spacing: 4) {
+                        Image(systemName: "figure.walk")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+
+                        Text(walkingTimeText)
+                            .font(.caption2.weight(.medium))
+                            .foregroundStyle(.secondary)
+                    }
                 }
 
                 HStack(spacing: 4) {

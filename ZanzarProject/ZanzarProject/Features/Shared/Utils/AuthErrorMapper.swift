@@ -1,5 +1,12 @@
 import Foundation
 
+// Localization helper for non-SwiftUI contexts
+private enum L10n {
+    static func string(_ key: String) -> String {
+        NSLocalizedString(key, comment: "")
+    }
+}
+
 nonisolated enum AuthErrorMapper {
     static func loginMessage(for error: APIError) -> String {
         mappedMessage(
@@ -23,24 +30,24 @@ nonisolated enum AuthErrorMapper {
 
     private static func mappedMessage(
         for error: APIError,
-        genericKey: String.LocalizationValue,
-        statusMessages: [Int: String.LocalizationValue]
+        genericKey: String,
+        statusMessages: [Int: String]
     ) -> String {
         switch error {
         case .httpStatus(let statusCode, let message):
             if let localizedKey = statusMessages[statusCode] {
-                return String(localized: localizedKey)
+                return L10n.string(localizedKey)
             }
             #if DEBUG
             if let message, !message.isEmpty {
                 return message
             }
             #endif
-            return String(localized: genericKey)
+            return L10n.string(genericKey)
         case .rateLimited:
-            return error.errorDescription ?? String(localized: genericKey)
+            return error.errorDescription ?? L10n.string(genericKey)
         case .decodingFailed, .invalidResponse, .invalidRequest:
-            return String(localized: genericKey)
+            return L10n.string(genericKey)
         }
     }
 }
