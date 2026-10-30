@@ -16,6 +16,20 @@ struct AuthErrorMapperTests {
         #expect(message == L10n.string("signUp.submitError.emailInUse"))
     }
 
+    @Test("maps each Apple login status the backend answers to its own message")
+    func appleLoginStatuses() {
+        let expected: [(Int, String)] = [
+            (400, String(localized: "login.apple.error.missingEmail")),
+            (401, String(localized: "login.apple.error.invalidToken")),
+            (403, String(localized: "login.apple.error.signupDisabled")),
+            (409, String(localized: "login.apple.error.emailInUse")),
+            (500, String(localized: "login.apple.error.generic"))
+        ]
+        for (status, message) in expected {
+            #expect(AuthErrorMapper.appleLoginMessage(for: .httpStatus(status, message: nil)) == message)
+        }
+    }
+
     @Test("explains a rate limit on login and sign-up instead of the generic message")
     func rateLimited() {
         let error = APIError.rateLimited(retryAfter: 600)

@@ -778,6 +778,91 @@
         }
       }
     },
+    "login.apple.error.emailInUse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An account with this email already exists and Apple couldn't confirm it's yours. Log in with email and password."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Já existe uma conta com esse email e a Apple não confirmou que ele é seu. Entre com email e senha."
+          }
+        }
+      }
+    },
+    "login.apple.error.generic" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't sign in with Apple. Please try again."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível entrar com a Apple. Tente novamente."
+          }
+        }
+      }
+    },
+    "login.apple.error.invalidToken" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't verify your Apple account. Please try again."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível validar sua conta Apple. Tente novamente."
+          }
+        }
+      }
+    },
+    "login.apple.error.missingEmail" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple didn't share your email, which we need to create your account. Try again or log in with email and password."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A Apple não compartilhou seu email, que precisamos para criar sua conta. Tente novamente ou entre com email e senha."
+          }
+        }
+      }
+    },
+    "login.apple.error.signupDisabled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creating new accounts is unavailable right now."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A criação de novas contas está indisponível no momento."
+          }
+        }
+      }
+    },
     "login.emailField.errorEmpty" : {
       "extractionState" : "manual",
       "localizations" : {

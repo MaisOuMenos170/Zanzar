@@ -11,6 +11,19 @@ nonisolated enum AuthErrorMapper {
         )
     }
 
+    static func appleLoginMessage(for error: APIError) -> String {
+        mappedMessage(
+            for: error,
+            genericKey: "login.apple.error.generic",
+            statusMessages: [
+                400: "login.apple.error.missingEmail",
+                401: "login.apple.error.invalidToken",
+                403: "login.apple.error.signupDisabled",
+                409: "login.apple.error.emailInUse"
+            ]
+        )
+    }
+
     static func signUpMessage(for error: APIError) -> String {
         mappedMessage(
             for: error,

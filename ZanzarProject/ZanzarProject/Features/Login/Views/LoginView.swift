@@ -1,3 +1,4 @@
+import AuthenticationServices
 import SwiftUI
 
 struct LoginView: View {
@@ -33,7 +34,7 @@ struct LoginView: View {
                 )
 
                 if dynamicTypeSize.isAccessibilitySize {
-                    submitButton
+                    actionButtons
                 }
             }
             .padding(.horizontal, 19)
@@ -44,7 +45,7 @@ struct LoginView: View {
         .scrollDismissesKeyboard(.interactively)
         .safeAreaInset(edge: .bottom, spacing: 0) {
             if !dynamicTypeSize.isAccessibilitySize {
-                submitButton
+                actionButtons
                     .padding(.horizontal, 19)
                     .padding(.vertical, 16)
                     .background(Color(.systemBackground))
@@ -61,6 +62,29 @@ struct LoginView: View {
         .onChange(of: viewModel.password) {
             viewModel.refreshShownFieldErrors()
         }
+    }
+
+    private var actionButtons: some View {
+        VStack(spacing: 12) {
+            submitButton
+            appleSignInButton
+        }
+    }
+
+    private var appleSignInButton: some View {
+        SignInWithAppleButton(.signIn) { request in
+            viewModel.configureAppleRequest(request)
+        } onCompletion: { result in
+            Task {
+                if await viewModel.completeAppleSignIn(result, using: authSession) {
+                    coordinator.finishAuthFlow()
+                }
+            }
+        }
+        .signInWithAppleButtonStyle(.black)
+        .frame(height: 52)
+        .clipShape(.capsule)
+        .disabled(viewModel.isLoading)
     }
 
     private var submitButton: some View {
