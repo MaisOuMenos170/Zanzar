@@ -2,103 +2,86 @@ import SwiftUI
 
 /// A remote image view for place photos with proper error handling, retry logic, and caching.
 struct PlaceRemoteImage<Placeholder: View>: View {
-    let photoReference: String?
+    let photoURL: URL?
     let mediaPolicy: PlaceMediaAccessPolicy
     let placeholder: Placeholder
-    let maxWidth: Int
 
-    @State private var loadAttempts = 0
-    @State private var currentURL: URL?
-    @State private var shouldReload = false
+    /// Failed loads so far. It is the `AsyncImage` identity: `AsyncImage` only fetches again when its URL
+    /// or its identity changes, and a retry uses the same URL.
+    @State private var failedAttempts = 0
 
     init(
-        photoReference: String?,
+        photoURL: URL?,
         mediaPolicy: PlaceMediaAccessPolicy? = nil,
-        maxWidth: Int = 800,
         @ViewBuilder placeholder: () -> Placeholder
     ) {
-        self.photoReference = photoReference
+        self.photoURL = photoURL
         self.mediaPolicy = mediaPolicy ?? .shared
-        self.maxWidth = maxWidth
         self.placeholder = placeholder()
     }
 
     var body: some View {
         Group {
-            if let photoReference,
-               mediaPolicy.canLoadRemoteImages,
-               let url = GooglePlacesConfiguration.photoURL(reference: photoReference, maxWidth: maxWidth) {
-                // Use a state variable to force AsyncImage to reload on retry
-                AsyncImage(url: shouldReload ? currentURL ?? url : url, transaction: Transaction(animation: .easeInOut(duration: 0.2))) { phase in
+            if let url = photoURL, mediaPolicy.canLoadRemoteImages {
+                AsyncImage(url: url, transaction: Transaction(animation: .easeInOut(duration: 0.2))) { phase in
                     switch phase {
                     case .success(let image):
-                        // Reset error state on success
                         image
                             .resizable()
                             .scaledToFill()
                             .onAppear {
-                                loadAttempts = 0
-                                shouldReload = false
-                                currentURL = nil
                                 #if DEBUG
-                                AppLog.placeDetail.info("Place photo loaded successfully ref=\(photoReference)")
+                                AppLog.placeDetail.info("Place photo loaded successfully url=\(url.lastPathComponent)")
                                 #endif
                             }
                     case .failure(let error):
                         placeholder
-                            .onAppear {
-                                handleError(error, photoReference: photoReference, url: url)
+                            // Cancelled with the view, so leaving the screen ends the wait.
+                            .task {
+                                await retryAfterFailure(error, url: url)
                             }
                     case .empty:
                         ProgressView()
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .onAppear {
-                                #if DEBUG
-                                AppLog.placeDetail.info("Place photo loading started ref=\(photoReference)")
-                                #endif
-                            }
                     @unknown default:
                         placeholder
                     }
                 }
+                .id(failedAttempts)
+                .onChange(of: photoURL) {
+                    failedAttempts = 0
+                }
             } else {
                 placeholder
                     .onAppear {
-                        logSkipReason(photoReference: photoReference)
+                        logSkipReason()
                     }
             }
         }
     }
 
-    private func handleError(_ error: Error, photoReference: String, url: URL) {
-        loadAttempts += 1
+    private func retryAfterFailure(_ error: Error, url: URL) async {
+        let failed = failedAttempts + 1
 
         #if DEBUG
-        AppLog.placeDetail.warning("Place photo failed to load (attempt \(loadAttempts)) ref=\(photoReference) error=\(error.localizedDescription)")
+        AppLog.placeDetail.warning("Place photo failed to load (attempt \(failed)) url=\(url.lastPathComponent) error=\(error.localizedDescription)")
         #endif
 
-        // Retry up to 2 times with exponential backoff
-        if loadAttempts <= 2 {
-            let delay = UInt64(pow(2.0, Double(loadAttempts)) * 1_000_000_000) // 2s, 4s
-            Task {
-                try? await Task.sleep(nanoseconds: delay)
-                // Trigger a reload by updating the URL state
-                await MainActor.run {
-                    currentURL = url
-                    shouldReload = true
-                }
-            }
+        guard let delay = PhotoRetryPolicy.delay(afterFailedAttempts: failed) else { return }
+        do {
+            try await Task.sleep(for: delay)
+        } catch {
+            return
         }
+        failedAttempts = failed
     }
 
-    private func logSkipReason(photoReference: String?) {
+    private func logSkipReason() {
         #if DEBUG
-        if photoReference == nil {
-            AppLog.placeDetail.info("Place photo skipped: no photo reference")
-        } else if !mediaPolicy.canLoadRemoteImages {
-            AppLog.placeDetail.info("Place photo skipped: cellular images not allowed ref=\(photoReference!)")
+        if photoURL == nil {
+            AppLog.placeDetail.info("Place photo skipped: no photo URL")
         } else {
-            AppLog.placeDetail.info("Place photo skipped: invalid URL ref=\(photoReference!)")
+            AppLog.placeDetail.info("Place photo skipped: remote images are not allowed on this network")
         }
         #endif
     }
@@ -107,15 +90,13 @@ struct PlaceRemoteImage<Placeholder: View>: View {
 extension PlaceRemoteImage where Placeholder == Color {
     /// Convenience initializer with a simple color placeholder
     init(
-        photoReference: String?,
+        photoURL: URL?,
         mediaPolicy: PlaceMediaAccessPolicy? = nil,
-        maxWidth: Int = 800,
         placeholderColor: Color = .gray.opacity(0.2)
     ) {
         self.init(
-            photoReference: photoReference,
+            photoURL: photoURL,
             mediaPolicy: mediaPolicy,
-            maxWidth: maxWidth,
             placeholder: { placeholderColor }
         )
     }

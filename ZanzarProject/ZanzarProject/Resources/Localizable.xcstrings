@@ -1783,6 +1783,40 @@
         }
       }
     },
+    "placeDetail.photo.accessibilityLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo %lld of %lld, %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto %lld de %lld, %@"
+          }
+        }
+      }
+    },
+    "placeDetail.photo.credit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo: %@ · %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto: %@ · %@"
+          }
+        }
+      }
+    },
     "placeDetail.reactionItem.accessibilityLabel %lld" : {
       "extractionState" : "manual",
       "localizations" : {

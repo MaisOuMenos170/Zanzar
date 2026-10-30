@@ -23,7 +23,7 @@ struct NearbyPlaceCard: View {
                 Color.clear
                     .frame(height: imageHeight)
                     .overlay {
-                        PlaceRemoteImage(photoReference: place.photoReference, mediaPolicy: mediaPolicy) {
+                        PlaceRemoteImage(photoURL: place.photoURL, mediaPolicy: mediaPolicy) {
                             ZStack {
                                 LinearGradient(
                                     colors: [Color("PlaceDetailTagGreenBackground"), Color("PlaceDetailStatsBackground")],

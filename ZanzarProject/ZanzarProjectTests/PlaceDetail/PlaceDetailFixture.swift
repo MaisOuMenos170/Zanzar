@@ -40,7 +40,7 @@ enum PlaceDetailFixture {
             tags: [],
             category: .park,
             description: "Description",
-            heroPhotoReference: "photo-ref",
+            photos: [PlacePhoto(url: URL(string: "https://img.example/photo.jpg")!, credit: nil)],
             totalCheckIns: 10,
             reactions: ImpressionTag.reactions(from: [:], selectedTag: selectedReactionTag),
             nearbyPlaces: [],

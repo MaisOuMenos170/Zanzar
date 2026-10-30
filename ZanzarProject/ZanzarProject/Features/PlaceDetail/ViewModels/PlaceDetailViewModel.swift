@@ -172,7 +172,7 @@ final class PlaceDetailViewModel {
 
     func updateCellularImagesPromptIfNeeded(using mediaPolicy: PlaceMediaAccessPolicy) {
         if mediaPolicy.needsCellularPermissionPrompt,
-           detail?.heroPhotoReference != nil {
+           detail?.photos.isEmpty == false {
             showsCellularImagesPrompt = true
         }
     }

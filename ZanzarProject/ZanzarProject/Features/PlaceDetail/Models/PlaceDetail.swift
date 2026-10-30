@@ -14,13 +14,17 @@ nonisolated struct PlaceDetail: Identifiable, Hashable, Sendable {
     let tags: [PlaceDetailTag]
     let category: ZanzarPlaceCategory
     let description: String
-    let heroPhotoReference: String?
+    /// Photos of the place in the order the backend sends them, at most `maximumPhotoCount`.
+    let photos: [PlacePhoto]
     var totalCheckIns: Int
     var reactions: [PlaceDetailReaction]
     let nearbyPlaces: [PlaceDetailNearbyPlace]
     var hasCheckedIn: Bool
     var isInActiveItinerary: Bool
     var selectedReactionTag: String?
+
+    /// The detail shows only the first few photos; each one is a request when it scrolls into view.
+    static let maximumPhotoCount = 5
 
     var displayName: String {
         PlaceDisplayNameResolver.displayName(nickname: nickname, name: name)
@@ -70,7 +74,7 @@ nonisolated struct PlaceDetailNearbyPlace: Identifiable, Hashable, Sendable {
     let category: ZanzarPlaceCategory
     let distanceMeters: Double
     let checkInCount: Int
-    let photoReference: String?
+    let photoURL: URL?
     let reactionImageNames: [String]
     let hasCheckedIn: Bool
 
@@ -102,7 +106,7 @@ nonisolated extension PlaceDetailNearbyPlace {
             category: mapPlace.category,
             distanceMeters: mapPlace.distanceMeters ?? 0,
             checkInCount: mapPlace.checkInCount,
-            photoReference: mapPlace.photoReference,
+            photoURL: mapPlace.photoURL,
             reactionImageNames: ImpressionTag.topReactionImageNames(from: mapPlace.impressionCounts),
             hasCheckedIn: mapPlace.pinStyle == .checkedIn
         )
@@ -183,7 +187,7 @@ nonisolated extension PlaceDetail {
             tags: tags(from: placeResponse),
             category: ZanzarPlaceCategory(rawCategory: placeResponse.zanzar.category),
             description: description,
-            heroPhotoReference: placeResponse.photos.first?.photoReference,
+            photos: Array(placeResponse.photos.prefix(PlaceDetail.maximumPhotoCount)),
             totalCheckIns: placeResponse.zanzar.checkInCount,
             reactions: ImpressionTag.reactions(
                 from: placeResponse.zanzar.impressionCounts,
