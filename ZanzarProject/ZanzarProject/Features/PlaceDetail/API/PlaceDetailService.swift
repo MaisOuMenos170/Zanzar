@@ -13,7 +13,7 @@ nonisolated struct PlaceDetailAPIResponse: Decodable, Sendable {
     let geometry: Geometry
     let editorialSummary: EditorialSummary?
     let openingHours: PlaceDetailOpeningHoursResponse?
-    let photos: [PlaceDetailPhotoResponse]
+    let photos: [PlacePhoto]
     let zanzar: PlaceDetailZanzarResponse
     let distanceMeters: Double?
     let userContext: PlaceUserContext?
@@ -26,7 +26,7 @@ nonisolated struct PlaceDetailAPIResponse: Decodable, Sendable {
         case geometry
         case editorialSummary = "editorial_summary"
         case openingHours = "opening_hours"
-        case photos
+        case images
         case zanzar
         case distanceMeters
         case userContext
@@ -54,7 +54,9 @@ nonisolated struct PlaceDetailAPIResponse: Decodable, Sendable {
         geometry = try container.decode(Geometry.self, forKey: .geometry)
         editorialSummary = try container.decodeIfPresent(EditorialSummary.self, forKey: .editorialSummary)
         openingHours = try container.decodeIfPresent(PlaceDetailOpeningHoursResponse.self, forKey: .openingHours)
-        photos = try container.decodeIfPresent([PlaceDetailPhotoResponse].self, forKey: .photos) ?? []
+        photos = PlaceImageAPIResponse.photos(
+            from: try container.decodeIfPresent([FailableDecodable<PlaceImageAPIResponse>].self, forKey: .images)
+        )
         zanzar = try container.decode(PlaceDetailZanzarResponse.self, forKey: .zanzar)
         distanceMeters = try container.decodeIfPresent(Double.self, forKey: .distanceMeters)
         userContext = try container.decodeIfPresent(PlaceUserContext.self, forKey: .userContext)
@@ -66,18 +68,6 @@ nonisolated struct PlaceDetailOpeningHoursResponse: Decodable, Sendable {
 
     enum CodingKeys: String, CodingKey {
         case openNow = "open_now"
-    }
-}
-
-nonisolated struct PlaceDetailPhotoResponse: Decodable, Sendable {
-    let photoReference: String
-    let height: Int
-    let width: Int
-
-    enum CodingKeys: String, CodingKey {
-        case photoReference = "photo_reference"
-        case height
-        case width
     }
 }
 

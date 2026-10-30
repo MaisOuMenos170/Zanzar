@@ -78,7 +78,7 @@ struct RecentCheckInAPIResponse: Decodable, Sendable {
     let placeId: String
     let placeName: String?
     let datetime: String
-    let photoReference: String?
+    let imageUrl: String?
     let stamp: StampAPIResponse?
     let impressionTag: String?
 
@@ -93,7 +93,7 @@ struct RecentCheckInAPIResponse: Decodable, Sendable {
             placeID: placeId,
             placeName: placeName,
             date: try Self.parseDate(datetime),
-            photoReference: photoReference,
+            photoURL: imageUrl.flatMap(PlaceImageAPIResponse.httpsURL),
             sealCategory: stamp.flatMap { Self.sealCategory(forStampID: $0.stampId) },
             impressionTag: impressionTag.flatMap(ImpressionTag.init(rawValue:))
         )
