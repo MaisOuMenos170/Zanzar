@@ -9,7 +9,7 @@ struct ProfileCheckInCard: View {
             Color("ProfileReactionPlaceholder")
                 .frame(height: 78)
                 .overlay {
-                    PlaceRemoteImage(photoReference: checkIn.photoReference, mediaPolicy: mediaPolicy) {
+                    PlaceRemoteImage(photoURL: checkIn.photoURL, mediaPolicy: mediaPolicy) {
                         Color("ProfileReactionPlaceholder")
                     }
                 }

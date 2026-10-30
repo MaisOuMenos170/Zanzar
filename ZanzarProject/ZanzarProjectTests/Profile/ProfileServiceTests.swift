@@ -16,7 +16,7 @@ struct ProfileServiceTests {
           "placeId": "ChIJ1",
           "placeName": "Bar do Zé",
           "datetime": "2026-10-05T18:30:00.000Z",
-          "photoReference": "AUacSh",
+          "imageUrl": "https://img.example/a.jpg",
           "stamp": { "stampId": "stamp_bar", "imageUrl": "/assets/stamps/bar.png" },
           "impressionTag": "happy"
         },
@@ -24,14 +24,14 @@ struct ProfileServiceTests {
           "placeId": "ChIJ2",
           "placeName": null,
           "datetime": "2026-10-04T10:00:00Z",
-          "photoReference": null,
+          "imageUrl": null,
           "stamp": null
         },
         {
           "placeId": "ChIJ3",
           "placeName": "Lugar novo",
           "datetime": "2026-10-03T10:00:00.000Z",
-          "photoReference": null,
+          "imageUrl": null,
           "stamp": { "stampId": "stamp_future", "imageUrl": "/assets/stamps/future.png" }
         }
       ]
@@ -98,13 +98,13 @@ struct ProfileServiceTests {
         let checkIns = try Self.decodeProfile(Self.readmeJSON).recentCheckIns
 
         #expect(checkIns[0].placeName == "Bar do Zé")
-        #expect(checkIns[0].photoReference == "AUacSh")
+        #expect(checkIns[0].photoURL == URL(string: "https://img.example/a.jpg"))
         #expect(checkIns[0].sealCategory == .bar)
         #expect(checkIns[0].impressionTag == .happy)
         #expect(checkIns[0].date == Date(timeIntervalSince1970: 1_791_225_000))
 
         #expect(checkIns[1].placeName == nil)
-        #expect(checkIns[1].photoReference == nil)
+        #expect(checkIns[1].photoURL == nil)
         #expect(checkIns[1].sealCategory == nil)
         #expect(checkIns[1].date == Date(timeIntervalSince1970: 1_791_108_000))
     }
