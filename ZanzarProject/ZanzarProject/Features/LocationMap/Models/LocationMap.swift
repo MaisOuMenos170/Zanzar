@@ -103,7 +103,7 @@ nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
     let pinStyle: LocationPinStyle
     /// Total check-ins at the place. The list endpoint includes this; callers that only have a pin default to 0.
     let checkInCount: Int
-    let photoReference: String?
+    let photoURL: URL?
     let impressionCounts: [String: Int]
 
     var displayName: String {
@@ -128,7 +128,7 @@ nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
         distanceMeters: Double?,
         pinStyle: LocationPinStyle = .available,
         checkInCount: Int = 0,
-        photoReference: String? = nil,
+        photoURL: URL? = nil,
         impressionCounts: [String: Int] = [:]
     ) {
         self.id = id
@@ -140,16 +140,8 @@ nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
         self.distanceMeters = distanceMeters
         self.pinStyle = pinStyle
         self.checkInCount = checkInCount
-        self.photoReference = photoReference
+        self.photoURL = photoURL
         self.impressionCounts = impressionCounts
-    }
-}
-
-struct NearbyPlacePhoto: Decodable, Sendable {
-    let photoReference: String
-
-    enum CodingKeys: String, CodingKey {
-        case photoReference = "photo_reference"
     }
 }
 
@@ -182,7 +174,7 @@ nonisolated struct PlaceAPIResponse: Decodable, Sendable {
     let name: String
     let nickname: String?
     let geometry: Geometry
-    let photos: [NearbyPlacePhoto]
+    let photos: [PlacePhoto]
     let zanzar: NearbyPlaceZanzar
     let distanceMeters: Double
     let userContext: PlaceUserContext?
@@ -192,7 +184,7 @@ nonisolated struct PlaceAPIResponse: Decodable, Sendable {
         case name
         case nickname
         case geometry
-        case photos
+        case images
         case zanzar
         case distanceMeters
         case userContext
@@ -213,7 +205,9 @@ nonisolated struct PlaceAPIResponse: Decodable, Sendable {
         name = try container.decode(String.self, forKey: .name)
         nickname = try container.decodeIfPresent(String.self, forKey: .nickname)
         geometry = try container.decode(Geometry.self, forKey: .geometry)
-        photos = try container.decodeIfPresent([NearbyPlacePhoto].self, forKey: .photos) ?? []
+        photos = PlaceImageAPIResponse.photos(
+            from: try container.decodeIfPresent([FailableDecodable<PlaceImageAPIResponse>].self, forKey: .images)
+        )
         zanzar = try container.decode(NearbyPlaceZanzar.self, forKey: .zanzar)
         distanceMeters = try container.decode(Double.self, forKey: .distanceMeters)
         userContext = try container.decodeIfPresent(PlaceUserContext.self, forKey: .userContext)
@@ -231,7 +225,7 @@ extension MapPlace {
         distanceMeters = response.distanceMeters
         pinStyle = Self.pinStyle(from: response.userContext)
         checkInCount = response.zanzar.checkInCount
-        photoReference = response.photos.first?.photoReference
+        photoURL = response.photos.first?.url
         impressionCounts = response.zanzar.impressionCounts
     }
 

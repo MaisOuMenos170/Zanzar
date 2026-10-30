@@ -9,7 +9,7 @@ struct ProfileCheckInTests {
         placeID: "ChIJ1",
         placeName: "Parque",
         date: .now,
-        photoReference: "AUacSh",
+        photoURL: URL(string: "https://img.example/a.jpg"),
         sealCategory: .park,
         impressionTag: .happy
     )

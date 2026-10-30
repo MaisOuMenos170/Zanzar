@@ -39,7 +39,7 @@ struct PlaceDetailView: View {
         .onChange(of: mediaPolicy.usesCellular) { _, _ in
             viewModel.updateCellularImagesPromptIfNeeded(using: mediaPolicy)
         }
-        .onChange(of: viewModel.detail?.heroPhotoReference) { _, _ in
+        .onChange(of: viewModel.detail?.photos) { _, _ in
             viewModel.updateCellularImagesPromptIfNeeded(using: mediaPolicy)
         }
         .alert("placeDetail.cellularPrompt.title", isPresented: $viewModel.showsCellularImagesPrompt) {
@@ -171,7 +171,8 @@ struct PlaceDetailView: View {
         VStack(alignment: .leading, spacing: 24) {
             VStack(alignment: .leading, spacing: 16) {
                 PlaceDetailHeroSection(
-                    photoReference: detail.heroPhotoReference,
+                    photos: detail.photos,
+                    placeName: detail.displayName,
                     tags: detail.tags,
                     mediaPolicy: mediaPolicy
                 )

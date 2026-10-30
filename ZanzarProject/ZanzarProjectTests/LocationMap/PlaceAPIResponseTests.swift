@@ -155,7 +155,7 @@ struct PlaceAPIResponseTests {
           "place_id": "place-mural",
           "name": "Mural Poty Lazzarotto",
           "geometry": { "location": { "lat": -25.43, "lng": -49.27 } },
-          "photos": [{ "photo_reference": "photo-1", "height": 400, "width": 600 }],
+          "images": [{ "url": "https://img.example/photo-1.jpg", "credit": { "author": "Ana", "license": "CC BY 4.0", "sourceUrl": "https://commons.example/File:1.jpg" } }],
           "zanzar": {
             "category": "historic",
             "checkInCount": 1,
@@ -169,9 +169,9 @@ struct PlaceAPIResponseTests {
         let card = PlaceDetailNearbyPlace(mapPlace: place)
 
         #expect(place.checkInCount == 1)
-        #expect(place.photoReference == "photo-1")
+        #expect(place.photoURL == URL(string: "https://img.example/photo-1.jpg"))
         #expect(card.checkInCount == 1)
-        #expect(card.photoReference == "photo-1")
+        #expect(card.photoURL == URL(string: "https://img.example/photo-1.jpg"))
         #expect(card.reactionImageNames == [ImpressionTag.happy.imageName])
     }
 }

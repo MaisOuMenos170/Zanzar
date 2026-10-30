@@ -15,7 +15,7 @@ nonisolated extension Profile {
                 placeID: "place-1",
                 placeName: "Parque Tanguá",
                 date: .now,
-                photoReference: nil,
+                photoURL: nil,
                 sealCategory: .park,
                 impressionTag: .happy
             ),
@@ -24,7 +24,7 @@ nonisolated extension Profile {
                 placeID: "place-2",
                 placeName: "Museu Oscar Niemeyer",
                 date: .now,
-                photoReference: nil,
+                photoURL: nil,
                 sealCategory: .museum,
                 impressionTag: .delighted
             ),
@@ -33,7 +33,7 @@ nonisolated extension Profile {
                 placeID: "place-3",
                 placeName: nil,
                 date: .now,
-                photoReference: nil,
+                photoURL: nil,
                 sealCategory: nil,
                 impressionTag: nil
             ),
@@ -42,7 +42,7 @@ nonisolated extension Profile {
                 placeID: "place-4",
                 placeName: "Bar do Zé",
                 date: .now,
-                photoReference: nil,
+                photoURL: nil,
                 sealCategory: .bar,
                 impressionTag: nil
             )
