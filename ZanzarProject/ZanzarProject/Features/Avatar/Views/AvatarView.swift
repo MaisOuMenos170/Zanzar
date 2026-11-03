@@ -17,7 +17,7 @@ struct AvatarView: View {
     @ViewBuilder
     private var content: some View {
         if let avatar = viewModel.avatar {
-            AvatarFaceView(avatar: avatar)
+            AvatarPortraitView(avatar: avatar)
                 .padding(32)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if viewModel.hasNoAvatar {

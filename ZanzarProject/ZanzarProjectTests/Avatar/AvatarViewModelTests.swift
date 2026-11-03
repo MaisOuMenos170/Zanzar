@@ -1,11 +1,12 @@
 import Foundation
+import SwiftUI
 import Testing
 @testable import ZanzarProject
 
 @MainActor
 @Suite("AvatarViewModel")
 struct AvatarViewModelTests {
-    private static let avatar = Avatar(skin: 3, eyes: 2, eyebrow: 5, hair: 7)
+    private static let avatar = Avatar(skin: 3, eyes: 2, eyebrow: 5, hair: 7, background: "#112233")
 
     @Test("load fetches the signed-in user's avatar")
     func loadFetchesAvatar() async {
@@ -107,18 +108,25 @@ struct AvatarViewModelTests {
 
     @Test("the create request carries every layer")
     func encodesRequest() throws {
-        let data = try JSONEncoder().encode(AvatarAPIRequest(avatar: Avatar(skin: 1, eyes: 2, eyebrow: 3, hair: 4)))
-        let json = try #require(try JSONSerialization.jsonObject(with: data) as? [String: Int])
+        let data = try JSONEncoder().encode(AvatarAPIRequest(avatar: Avatar(skin: 1, eyes: 2, eyebrow: 3, hair: 4, background: "#FFAA00")))
+        let json = try #require(try JSONSerialization.jsonObject(with: data) as? [String: AnyHashable])
 
-        #expect(json == ["skin": 1, "eyes": 2, "eyebrow": 3, "hair": 4])
+        #expect(json == ["skin": 1, "eyes": 2, "eyebrow": 3, "hair": 4, "background": "#FFAA00"])
+    }
+
+    @Test("parses #RRGGBB and rejects anything else", arguments: [
+        ("#FFAA00", true), ("#00ff7f", true), ("FFAA00", false), ("#FA0", false), ("#GGGGGG", false), ("", false)
+    ])
+    func parsesHexColor(hex: String, isValid: Bool) {
+        #expect((Color(hex: hex) != nil) == isValid)
     }
 
     @Test("the response payload maps to the domain avatar")
     func mapsResponse() throws {
-        let json = #"{ "skin": 1, "eyes": 6, "eyebrow": 4, "hair": 2 }"#
+        let json = ##"{ "skin": 1, "eyes": 6, "eyebrow": 4, "hair": 2, "background": "#00FF7F" }"##
         let response = try JSONDecoder().decode(AvatarAPIResponse.self, from: Data(json.utf8))
 
-        #expect(response.makeAvatar() == Avatar(skin: 1, eyes: 6, eyebrow: 4, hair: 2))
+        #expect(response.makeAvatar() == Avatar(skin: 1, eyes: 6, eyebrow: 4, hair: 2, background: "#00FF7F"))
     }
 }
 

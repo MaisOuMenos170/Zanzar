@@ -48,6 +48,6 @@ struct AvatarFaceView: View {
 }
 
 #Preview {
-    AvatarFaceView(avatar: Avatar(skin: 1, eyes: 1, eyebrow: 1, hair: 1))
+    AvatarFaceView(avatar: .placeholder)
         .padding()
 }

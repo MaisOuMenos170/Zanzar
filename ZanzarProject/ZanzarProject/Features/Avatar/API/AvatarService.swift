@@ -11,12 +11,14 @@ struct AvatarAPIRequest: Encodable, Sendable {
     let eyes: Int
     let eyebrow: Int
     let hair: Int
+    let background: String
 
     init(avatar: Avatar) {
         skin = avatar.skin
         eyes = avatar.eyes
         eyebrow = avatar.eyebrow
         hair = avatar.hair
+        background = avatar.background
     }
 }
 
@@ -26,9 +28,10 @@ struct AvatarAPIResponse: Decodable, Sendable {
     let eyes: Int
     let eyebrow: Int
     let hair: Int
+    let background: String
 
     func makeAvatar() -> Avatar {
-        Avatar(skin: skin, eyes: eyes, eyebrow: eyebrow, hair: hair)
+        Avatar(skin: skin, eyes: eyes, eyebrow: eyebrow, hair: hair, background: background)
     }
 }
 

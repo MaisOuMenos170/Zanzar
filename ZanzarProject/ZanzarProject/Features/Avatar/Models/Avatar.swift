@@ -7,6 +7,8 @@ struct Avatar: Hashable, Sendable {
     let eyes: Int
     let eyebrow: Int
     let hair: Int
+    /// Hex color `#RRGGBB` of the circle drawn behind the face.
+    let background: String
 
-    static let placeholder = Avatar(skin: 1, eyes: 1, eyebrow: 1, hair: 1)
+    static let placeholder = Avatar(skin: 1, eyes: 1, eyebrow: 1, hair: 1, background: "#FFD166")
 }
