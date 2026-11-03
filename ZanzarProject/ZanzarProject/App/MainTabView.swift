@@ -22,6 +22,14 @@ struct MainTabView: View {
             }
         }
         .tint(.tabBarSelected)
+        // Presented here, not by ContentView, so the sheet sees the shared places and can open a place
+        // on the check-in tab's path once it closes.
+        .sheet(item: Bindable(coordinator).presentedSheet) { sheet in
+            coordinator.view(for: sheet) { place in
+                coordinator.dismissSheet()
+                checkInCoordinator.push(.placeDetail(place))
+            }
+        }
         .environment(nearbyPlaces)
         // Pins and the carousel read the shared places; coming back to a tab refetches them only if stale.
         .onChange(of: selectedTab) { _, tab in

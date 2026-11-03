@@ -56,6 +56,26 @@ struct ItineraryDetail: Hashable, Sendable {
     let places: [ItineraryDetailPlace]
 }
 
+extension ItineraryDetail {
+    /// Cards for the places of this itinerary. A place the map already loaded brings its photo, check-ins and
+    /// reactions; one it does not know is still shown, from what the itinerary itself says about it.
+    func placeCards(from mapPlaces: [MapPlace]) -> [PlaceDetailNearbyPlace] {
+        let mapPlacesByID = Dictionary(mapPlaces.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return places.map { place in
+            PlaceDetailNearbyPlace(
+                mapPlace: mapPlacesByID[place.placeID] ?? MapPlace(
+                    id: place.placeID,
+                    name: place.name,
+                    latitude: place.latitude,
+                    longitude: place.longitude,
+                    category: place.category,
+                    distanceMeters: nil
+                )
+            )
+        }
+    }
+}
+
 struct ItinerarySlot: Hashable, Sendable, Identifiable {
     let id: String
     let placeID: String?

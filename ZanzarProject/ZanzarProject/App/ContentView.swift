@@ -20,7 +20,6 @@ struct ContentView: View {
         .onChange(of: authSession.isAuthenticated) {
             coordinator.popToRoot()
         }
-        .sheet(item: $coordinator.presentedSheet) { coordinator.view(for: $0) }
         .alert("auth.sessionExpired.title", isPresented: $showsSessionExpiredAlert) {
             Button("auth.sessionExpired.dismissButton.title", role: .cancel) {}
         } message: {

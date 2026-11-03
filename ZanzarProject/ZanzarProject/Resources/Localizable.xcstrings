@@ -477,6 +477,23 @@
         }
       }
     },
+    "itinerary.detail.sections.places" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itinerary places"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lugares do roteiro"
+          }
+        }
+      }
+    },
     "itinerary.detail.startButton" : {
       "extractionState" : "manual",
       "localizations" : {
