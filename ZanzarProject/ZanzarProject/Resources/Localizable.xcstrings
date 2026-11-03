@@ -625,19 +625,19 @@
         }
       }
     },
-    "itinerary.list.sections.nearby" : {
+    "itinerary.list.sections.places" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nearby places"
+            "value" : "Itinerary places"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lugares próximos"
+            "value" : "Lugares do roteiro"
           }
         }
       }
@@ -1847,23 +1847,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "placeDetail.nearbySection.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nearby places"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lugares próximos"
           }
         }
       }

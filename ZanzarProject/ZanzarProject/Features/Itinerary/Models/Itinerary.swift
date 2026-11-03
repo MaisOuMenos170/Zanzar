@@ -78,3 +78,16 @@ struct ActiveItinerary: Hashable, Sendable {
     let startedAt: Date
     let places: [ItinerarySlot]
 }
+
+extension ActiveItinerary {
+    /// Cards for the places of this itinerary, in route order, built from the places the map already loaded.
+    /// Slots without a place yet (free routes) and places the map does not know are left out.
+    func placeCards(from mapPlaces: [MapPlace]) -> [PlaceDetailNearbyPlace] {
+        let mapPlacesByID = Dictionary(mapPlaces.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return places.compactMap { slot in
+            slot.placeID
+                .flatMap { mapPlacesByID[$0] }
+                .map(PlaceDetailNearbyPlace.init(mapPlace:))
+        }
+    }
+}

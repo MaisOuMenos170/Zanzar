@@ -17,7 +17,6 @@ nonisolated struct PlaceDetail: Identifiable, Hashable, Sendable {
     let heroPhotoReference: String?
     var totalCheckIns: Int
     var reactions: [PlaceDetailReaction]
-    let nearbyPlaces: [PlaceDetailNearbyPlace]
     var hasCheckedIn: Bool
     var isInActiveItinerary: Bool
     var selectedReactionTag: String?
@@ -113,20 +112,14 @@ nonisolated struct PlaceDetailLoadContext: Sendable {
     let place: MapPlace
     let userCoordinate: UserCoordinate?
     let userID: String?
-    /// The places around the user already loaded by the map; the detail picks its "nearby" section from them
-    /// instead of asking the server again.
-    let nearbyPlaces: [MapPlace]
 }
 
 nonisolated extension PlaceDetail {
-    static let nearbyPlacesLimit = 6
-
     /// Average walking speed in meters per second (5 km/h ≈ 1.39 m/s)
     private static let walkingSpeedMetersPerSecond: Double = 1.39
 
     static func make(
         placeResponse: PlaceDetailAPIResponse,
-        nearbyPlaces: [MapPlace],
         mapPlace: MapPlace,
         hasCheckedIn: Bool,
         selectedReactionTag: String?,
@@ -189,23 +182,10 @@ nonisolated extension PlaceDetail {
                 from: placeResponse.zanzar.impressionCounts,
                 selectedTag: selectedReactionTag
             ),
-            nearbyPlaces: closestNearbyPlaces(from: nearbyPlaces, excluding: placeResponse.placeId),
             hasCheckedIn: hasCheckedIn,
             isInActiveItinerary: placeResponse.userContext?.isInActiveItinerary ?? false,
             selectedReactionTag: selectedReactionTag
         )
-    }
-
-    /// The closest places to the user, other than this one, as the "nearby" section shows them.
-    private static func closestNearbyPlaces(
-        from places: [MapPlace],
-        excluding placeID: String
-    ) -> [PlaceDetailNearbyPlace] {
-        places
-            .filter { $0.id != placeID }
-            .sorted { ($0.distanceMeters ?? .infinity) < ($1.distanceMeters ?? .infinity) }
-            .prefix(nearbyPlacesLimit)
-            .map(PlaceDetailNearbyPlace.init(mapPlace:))
     }
 
     private static func openingHoursText(from openingHours: PlaceDetailOpeningHoursResponse?) -> (text: String, isOpen: Bool?) {

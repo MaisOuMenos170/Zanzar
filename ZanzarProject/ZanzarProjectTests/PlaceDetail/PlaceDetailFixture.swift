@@ -43,7 +43,6 @@ enum PlaceDetailFixture {
             heroPhotoReference: "photo-ref",
             totalCheckIns: 10,
             reactions: ImpressionTag.reactions(from: [:], selectedTag: selectedReactionTag),
-            nearbyPlaces: [],
             hasCheckedIn: hasCheckedIn,
             isInActiveItinerary: isInActiveItinerary,
             selectedReactionTag: selectedReactionTag

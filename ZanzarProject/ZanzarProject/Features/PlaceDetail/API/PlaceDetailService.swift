@@ -190,7 +190,6 @@ final class PlaceDetailService: PlaceDetailServicing {
 
         return PlaceDetail.make(
             placeResponse: placeResponse,
-            nearbyPlaces: context.nearbyPlaces,
             mapPlace: context.place,
             hasCheckedIn: hasCheckedIn,
             selectedReactionTag: try await selectedReactionTag,
