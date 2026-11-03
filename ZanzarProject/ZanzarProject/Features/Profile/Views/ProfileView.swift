@@ -12,6 +12,11 @@ struct ProfileView: View {
             .navigationTitle("mainTab.profileTab.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("profile.avatarButton.accessibilityLabel", systemImage: "face.smiling") {
+                        coordinator.push(.avatar)
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(
                         "profile.header.signOutAccessibilityLabel",

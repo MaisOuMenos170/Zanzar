@@ -4,6 +4,7 @@ enum Route: Hashable {
     case signUp
     case login
     case placeDetail(MapPlace)
+    case avatar
 }
 
 enum Sheet: Identifiable, Hashable {

@@ -39,6 +39,8 @@ final class AppCoordinator {
             LoginView()
         case .placeDetail(let place):
             PlaceDetailView(place: place)
+        case .avatar:
+            AvatarView()
         }
     }
 
