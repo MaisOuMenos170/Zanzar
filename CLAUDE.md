@@ -29,7 +29,7 @@ docs/             app-review.md
 .agents/skills/   skills do projeto (create-feature, swiftui-pro, swift-concurrency, swift-testing-expert...)
 ```
 
-`stacklit.json`, `DEPENDENCIES.md` e `stacklit.html` na raiz são o mapa gerado por `stacklit init`.
+`stacklit.json`, `DEPENDENCIES.md` e `stacklit.html` na raiz são o mapa gerado por `stacklit init`. Ficam fora do git (`.gitignore`); rode `stacklit init` para recriar.
 
 ## Compilar e testar
 
