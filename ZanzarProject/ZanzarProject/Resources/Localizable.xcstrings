@@ -2219,13 +2219,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Photo: %@ · %@"
+            "value" : "Photo: %@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Foto: %@ · %@"
+            "value" : "Foto: %@"
           }
         }
       }
