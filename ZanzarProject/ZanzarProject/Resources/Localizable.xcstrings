@@ -69,7 +69,7 @@
         }
       }
     },
-    "error.rateLimited.message %lld" : {
+    "error.rateLimited.message" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -205,45 +205,39 @@
         }
       }
     },
-    "itinerary.card.completedCount %d" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d people completed"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d pessoas completaram"
-          }
-        }
-      }
-    },
     "itinerary.card.completedCount %lld" : {
-
-    },
-    "itinerary.card.placesCount %d" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d places to visit"
+            "value" : "%lld people completed"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d lugares para conhecer"
+            "value" : "%lld pessoas completaram"
           }
         }
       }
     },
     "itinerary.card.placesCount %lld" : {
-
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld places to visit"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld lugares para conhecer"
+          }
+        }
+      }
     },
     "itinerary.card.viewDetails" : {
       "extractionState" : "manual",
@@ -364,25 +358,22 @@
         }
       }
     },
-    "itinerary.detail.completedCount %d" : {
+    "itinerary.detail.completedCount %lld" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d people completed"
+            "value" : "%lld people completed"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d pessoas completaram"
+            "value" : "%lld pessoas completaram"
           }
         }
       }
-    },
-    "itinerary.detail.completedCount %lld" : {
-
     },
     "itinerary.detail.eligiblePlaces.title" : {
       "extractionState" : "manual",
@@ -469,25 +460,22 @@
         }
       }
     },
-    "itinerary.detail.placesCount %d" : {
+    "itinerary.detail.placesCount %lld" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d places to visit"
+            "value" : "%lld places to visit"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d lugares para conhecer"
+            "value" : "%lld lugares para conhecer"
           }
         }
       }
-    },
-    "itinerary.detail.placesCount %lld" : {
-
     },
     "itinerary.detail.startButton" : {
       "extractionState" : "manual",
@@ -1798,7 +1786,7 @@
         }
       }
     },
-    "placeDetail.nearbyPlace.checkInsCount %lld" : {
+    "placeDetail.nearbyPlace.checkInsCount" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
