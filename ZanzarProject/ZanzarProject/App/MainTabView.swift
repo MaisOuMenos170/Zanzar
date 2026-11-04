@@ -9,6 +9,10 @@ struct MainTabView: View {
     @State private var checkInCoordinator = AppCoordinator()
     /// The places around the user, shared by Discover, the check-in tab and every place detail.
     @State private var nearbyPlaces = NearbyPlacesStore()
+    /// Held until the sheet is fully dismissed so the alert is not lost mid-dismissal.
+    @State private var pendingSuggestionOutcome: PlaceSuggestionOutcome?
+    @State private var shownSuggestionOutcome: PlaceSuggestionOutcome?
+    @State private var showsSuggestionAlert = false
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -24,18 +28,33 @@ struct MainTabView: View {
         .tint(.tabBarSelected)
         // Presented here, not by ContentView, so the sheet sees the shared places and can open a place
         // on the check-in tab's path once it closes.
-        .sheet(item: Bindable(coordinator).presentedSheet) { sheet in
-            coordinator.view(for: sheet) { place in
-                coordinator.dismissSheet()
-                checkInCoordinator.push(.placeDetail(place))
-            }
+        .sheet(item: Bindable(coordinator).presentedSheet, onDismiss: presentPendingSuggestionAlert) { sheet in
+            coordinator.view(
+                for: sheet,
+                onSelectPlace: { place in
+                    coordinator.dismissSheet()
+                    checkInCoordinator.push(.placeDetail(place))
+                },
+                onPlaceSuggestionFinished: { outcome in
+                    pendingSuggestionOutcome = outcome
+                    coordinator.dismissSheet()
+                }
+            )
         }
+        .placeSuggestionOutcomeAlert(isPresented: $showsSuggestionAlert, outcome: shownSuggestionOutcome)
         .environment(nearbyPlaces)
         // Pins and the carousel read the shared places; coming back to a tab refetches them only if stale.
         .onChange(of: selectedTab) { _, tab in
             guard tab != .profile else { return }
             Task { try? await nearbyPlaces.refreshIfNeeded() }
         }
+    }
+
+    private func presentPendingSuggestionAlert() {
+        guard let outcome = pendingSuggestionOutcome else { return }
+        pendingSuggestionOutcome = nil
+        shownSuggestionOutcome = outcome
+        showsSuggestionAlert = true
     }
 
     @ViewBuilder

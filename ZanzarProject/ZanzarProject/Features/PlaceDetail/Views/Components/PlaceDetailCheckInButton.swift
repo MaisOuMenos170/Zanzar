@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct PlaceDetailCheckInButton: View {
+    let titleKey: LocalizedStringKey
     let hasCheckedIn: Bool
     let isLoading: Bool
     let action: () -> Void
@@ -15,7 +16,13 @@ struct PlaceDetailCheckInButton: View {
     private let stampTravel: CGFloat = 8
     private let stampDuration: TimeInterval = 0.35
 
-    init(hasCheckedIn: Bool, isLoading: Bool, action: @escaping () -> Void) {
+    init(
+        titleKey: LocalizedStringKey = "placeDetail.checkInButton.title",
+        hasCheckedIn: Bool,
+        isLoading: Bool,
+        action: @escaping () -> Void
+    ) {
+        self.titleKey = titleKey
         self.hasCheckedIn = hasCheckedIn
         self.isLoading = isLoading
         self.action = action
@@ -40,7 +47,7 @@ struct PlaceDetailCheckInButton: View {
                     .sensoryFeedback(.impact(flexibility: .rigid, intensity: 0.55), trigger: landingCount)
                     .accessibilityAddTraits(.isStaticText)
             } else {
-                Button("placeDetail.checkInButton.title", action: action)
+                Button(titleKey, action: action)
                     .buttonStyle(AuthPrimaryButtonStyle())
                     .disabled(isLoading)
                     .overlay {
