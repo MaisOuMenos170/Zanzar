@@ -16,10 +16,10 @@ struct PlaceDetailReactionsSection: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             } else {
-                HStack {
+                HStack(alignment: .top, spacing: 12) {
                     ForEach(displayedReactions) { reaction in
                         PlaceDetailReactionItem(reaction: reaction)
-                        if reaction.id != displayedReactions.last?.id {
+                        if isShowingAllReactions, reaction != displayedReactions.last {
                             Spacer(minLength: 0)
                         }
                     }
@@ -30,6 +30,12 @@ struct PlaceDetailReactionsSection: View {
 
     private var displayedReactions: [PlaceDetailReaction] {
         PlaceDetailReaction.displayed(reactions)
+    }
+
+    /// With every emotion present the row spreads edge to edge; otherwise the items stay
+    /// grouped at the leading edge.
+    private var isShowingAllReactions: Bool {
+        displayedReactions.count == ImpressionTag.allCases.count
     }
 }
 
