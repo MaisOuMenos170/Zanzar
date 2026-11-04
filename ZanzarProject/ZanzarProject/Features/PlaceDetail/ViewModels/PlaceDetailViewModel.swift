@@ -42,8 +42,7 @@ final class PlaceDetailViewModel {
         self.pendingRatingStore = pendingRatingStore ?? UserDefaultsPendingRatingStore()
     }
 
-    /// `nearbyPlaces` are the places the map already loaded; the "nearby" section is picked from them.
-    func load(nearbyPlaces: [MapPlace] = []) async {
+    func load() async {
         loadGeneration += 1
         let generation = loadGeneration
 
@@ -62,8 +61,7 @@ final class PlaceDetailViewModel {
                 context: PlaceDetailLoadContext(
                     place: place,
                     userCoordinate: await userCoordinateTask.value,
-                    userID: userIDProvider(),
-                    nearbyPlaces: nearbyPlaces
+                    userID: userIDProvider()
                 )
             )
             guard generation == loadGeneration else { return }

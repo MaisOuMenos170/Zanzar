@@ -27,7 +27,6 @@ struct PlaceDetailDistanceTests {
     ) -> PlaceDetail {
         PlaceDetail.make(
             placeResponse: response,
-            nearbyPlaces: [],
             mapPlace: MapPlace(
                 id: "place-1",
                 name: "Museu",

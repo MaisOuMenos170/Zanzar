@@ -56,6 +56,26 @@ struct ItineraryDetail: Hashable, Sendable {
     let places: [ItineraryDetailPlace]
 }
 
+extension ItineraryDetail {
+    /// Cards for the places of this itinerary. A place the map already loaded brings its photo, check-ins and
+    /// reactions; one it does not know is still shown, from what the itinerary itself says about it.
+    func placeCards(from mapPlaces: [MapPlace]) -> [PlaceDetailNearbyPlace] {
+        let mapPlacesByID = Dictionary(mapPlaces.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return places.map { place in
+            PlaceDetailNearbyPlace(
+                mapPlace: mapPlacesByID[place.placeID] ?? MapPlace(
+                    id: place.placeID,
+                    name: place.name,
+                    latitude: place.latitude,
+                    longitude: place.longitude,
+                    category: place.category,
+                    distanceMeters: nil
+                )
+            )
+        }
+    }
+}
+
 struct ItinerarySlot: Hashable, Sendable, Identifiable {
     let id: String
     let placeID: String?
@@ -77,4 +97,17 @@ struct ActiveItinerary: Hashable, Sendable {
     let targetCount: Int?
     let startedAt: Date
     let places: [ItinerarySlot]
+}
+
+extension ActiveItinerary {
+    /// Cards for the places of this itinerary, in route order, built from the places the map already loaded.
+    /// Slots without a place yet (free routes) and places the map does not know are left out.
+    func placeCards(from mapPlaces: [MapPlace]) -> [PlaceDetailNearbyPlace] {
+        let mapPlacesByID = Dictionary(mapPlaces.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return places.compactMap { slot in
+            slot.placeID
+                .flatMap { mapPlacesByID[$0] }
+                .map(PlaceDetailNearbyPlace.init(mapPlace:))
+        }
+    }
 }

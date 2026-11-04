@@ -8,9 +8,6 @@ struct ItineraryListView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(NearbyPlacesStore.self) private var nearbyPlacesStore
 
-    /// The carousel only needs the closest places; each card loads a photo from the API.
-    private static let nearbyPlacesLimit = 10
-
     var body: some View {
         @Bindable var viewModel = viewModel
         Group {
@@ -61,11 +58,8 @@ struct ItineraryListView: View {
         }
     }
 
-    private var nearbyPlaces: [PlaceDetailNearbyPlace] {
-        nearbyPlacesStore.places
-            .sorted { ($0.distanceMeters ?? .infinity) < ($1.distanceMeters ?? .infinity) }
-            .prefix(Self.nearbyPlacesLimit)
-            .map(PlaceDetailNearbyPlace.init(mapPlace:))
+    private var itineraryPlaces: [PlaceDetailNearbyPlace] {
+        viewModel.activeItinerary?.placeCards(from: nearbyPlacesStore.places) ?? []
     }
 
     private func refreshNearbyPlaces(force: Bool = false) async {
@@ -111,12 +105,12 @@ struct ItineraryListView: View {
                     }
                 }
 
-                if !nearbyPlaces.isEmpty {
+                if !itineraryPlaces.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("itinerary.list.sections.nearby")
+                        Text("itinerary.list.sections.places")
                             .font(.callout.bold())
 
-                        NearbyPlacesCarousel(places: nearbyPlaces, mediaPolicy: mediaPolicy) { place in
+                        NearbyPlacesCarousel(places: itineraryPlaces, mediaPolicy: mediaPolicy) { place in
                             coordinator.push(.placeDetail(place))
                         }
                     }

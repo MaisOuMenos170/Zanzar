@@ -2,22 +2,11 @@ import Foundation
 import Testing
 @testable import ZanzarProject
 
-@Suite("PlaceDetail nearby places")
+@Suite("PlaceDetail place card and main place")
 struct PlaceDetailNearbyPlaceTests {
-    @Test("Nearby places map from the shared places with navigation metadata")
-    func nearbyPlacesMapFromSharedPlaces() throws {
-        let mainPlace = try makeAPIResponse(
-            APIResponseFixture(
-                placeId: "place-main",
-                name: "Museu",
-                lat: -25.41,
-                lng: -49.27,
-                category: "museum",
-                checkInCount: 5,
-                distanceMeters: nil
-            )
-        )
-        let nearbyPlace = MapPlace(
+    @Test("Place card maps from a map place with navigation metadata")
+    func cardMapsFromMapPlace() {
+        let place = MapPlace(
             id: "place-nearby",
             name: "Parque Barigui",
             latitude: -25.42,
@@ -28,24 +17,8 @@ struct PlaceDetailNearbyPlaceTests {
             impressionCounts: ["delighted": 1, "happy": 2]
         )
 
-        let detail = PlaceDetail.make(
-            placeResponse: mainPlace,
-            nearbyPlaces: [nearbyPlace],
-            mapPlace: MapPlace(
-                id: "place-main",
-                name: "Museu",
-                latitude: -25.41,
-                longitude: -49.27,
-                category: .museum,
-                distanceMeters: 1200
-            ),
-            hasCheckedIn: false,
-            selectedReactionTag: nil
-        )
+        let cardPlace = PlaceDetailNearbyPlace(mapPlace: place)
 
-        #expect(detail.nearbyPlaces.count == 1)
-
-        let cardPlace = detail.nearbyPlaces[0]
         #expect(cardPlace.name == "Parque Barigui")
         #expect(cardPlace.displayName == "Parque Barigui")
         #expect(cardPlace.hasCheckedIn == false)
@@ -57,46 +30,6 @@ struct PlaceDetailNearbyPlaceTests {
         // Fixture ratings are happy: 2, delighted: 1 — only rated emotions, most rated first.
         #expect(cardPlace.reactionImageNames == [ImpressionTag.happy.imageName, ImpressionTag.delighted.imageName])
         #expect(cardPlace.mapPlace.id == "place-nearby")
-    }
-
-    @Test("Nearby places exclude the place currently being viewed")
-    func nearbyPlacesExcludeCurrentPlace() throws {
-        let mainPlace = try makeAPIResponse(
-            APIResponseFixture(
-                placeId: "place-main",
-                name: "Museu",
-                lat: -25.41,
-                lng: -49.27,
-                category: "museum",
-                checkInCount: 5,
-                distanceMeters: nil
-            )
-        )
-        let duplicateNearby = MapPlace(
-            id: "place-main",
-            name: "Museu",
-            latitude: -25.41,
-            longitude: -49.27,
-            category: .museum,
-            distanceMeters: 100
-        )
-
-        let detail = PlaceDetail.make(
-            placeResponse: mainPlace,
-            nearbyPlaces: [duplicateNearby],
-            mapPlace: MapPlace(
-                id: "place-main",
-                name: "Museu",
-                latitude: -25.41,
-                longitude: -49.27,
-                category: .museum,
-                distanceMeters: 1200
-            ),
-            hasCheckedIn: false,
-            selectedReactionTag: nil
-        )
-
-        #expect(detail.nearbyPlaces.isEmpty)
     }
 
     @Test("Main place uses nickname for displayName")
@@ -116,7 +49,6 @@ struct PlaceDetailNearbyPlaceTests {
 
         let detail = PlaceDetail.make(
             placeResponse: mainPlace,
-            nearbyPlaces: [],
             mapPlace: MapPlace(
                 id: "place-main",
                 name: "Oscar Niemeyer Museum",
@@ -134,20 +66,9 @@ struct PlaceDetailNearbyPlaceTests {
         #expect(detail.name == "Oscar Niemeyer Museum")
     }
 
-    @Test("Nearby places prefer nickname and carry the check-in state of the pin")
-    func nearbyPlacesPreferNicknameAndCheckInState() throws {
-        let mainPlace = try makeAPIResponse(
-            APIResponseFixture(
-                placeId: "place-main",
-                name: "Museu",
-                lat: -25.41,
-                lng: -49.27,
-                category: "museum",
-                checkInCount: 5,
-                distanceMeters: nil
-            )
-        )
-        let nearbyPlace = MapPlace(
+    @Test("Place card prefers nickname and carries the check-in state of the pin")
+    func cardPrefersNicknameAndCheckInState() {
+        let place = MapPlace(
             id: "place-nearby",
             name: "Oscar Niemeyer Museum",
             nickname: "MON",
@@ -159,22 +80,8 @@ struct PlaceDetailNearbyPlaceTests {
             checkInCount: 21
         )
 
-        let detail = PlaceDetail.make(
-            placeResponse: mainPlace,
-            nearbyPlaces: [nearbyPlace],
-            mapPlace: MapPlace(
-                id: "place-main",
-                name: "Museu",
-                latitude: -25.41,
-                longitude: -49.27,
-                category: .museum,
-                distanceMeters: 1200
-            ),
-            hasCheckedIn: false,
-            selectedReactionTag: nil
-        )
+        let cardPlace = PlaceDetailNearbyPlace(mapPlace: place)
 
-        let cardPlace = detail.nearbyPlaces[0]
         #expect(cardPlace.displayName == "MON")
         #expect(cardPlace.hasCheckedIn == true)
     }
@@ -197,7 +104,6 @@ struct PlaceDetailNearbyPlaceTests {
 
         let detail = PlaceDetail.make(
             placeResponse: response,
-            nearbyPlaces: [],
             mapPlace: MapPlace(
                 id: "place-historic",
                 name: "Cavalo Babão",

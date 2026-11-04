@@ -4,7 +4,10 @@ import SwiftUI
 struct ItineraryDetailView: View {
     @Bindable var viewModel: ItineraryDetailViewModel
     let onItineraryChanged: () -> Void
+    let onSelectPlace: (MapPlace) -> Void
+    @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(NearbyPlacesStore.self) private var nearbyPlacesStore
 
     var body: some View {
         Group {
@@ -101,11 +104,27 @@ struct ItineraryDetailView: View {
                     }
 
                     actionButtons
+
+                    placesSection(for: detail)
                 }
             }
             .padding(16)
         }
         .scrollIndicators(.hidden)
+    }
+
+    /// Free routes have no map or route list, so their places are shown as cards, as in the design.
+    @ViewBuilder
+    private func placesSection(for detail: ItineraryDetail) -> some View {
+        let cards = detail.placeCards(from: nearbyPlacesStore.places)
+        if detail.routeType == .free, !cards.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("itinerary.detail.sections.places")
+                    .font(.callout.bold())
+
+                NearbyPlacesCarousel(places: cards, mediaPolicy: mediaPolicy, onSelect: onSelectPlace)
+            }
+        }
     }
 
     @ViewBuilder
@@ -275,8 +294,10 @@ private extension ItineraryDetailPlace {
     NavigationStack {
         ItineraryDetailView(
             viewModel: ItineraryDetailViewModel(slug: "centro-historico"),
-            onItineraryChanged: {}
+            onItineraryChanged: {},
+            onSelectPlace: { _ in }
         )
     }
     .environment(AppCoordinator())
+    .environment(NearbyPlacesStore())
 }

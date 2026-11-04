@@ -45,10 +45,10 @@ final class AppCoordinator {
     }
 
     @ViewBuilder
-    func view(for sheet: Sheet) -> some View {
+    func view(for sheet: Sheet, onSelectPlace: @escaping (MapPlace) -> Void) -> some View {
         switch sheet {
         case .itineraryDetail(let slug):
-            ItineraryDetailSheet(slug: slug)
+            ItineraryDetailSheet(slug: slug, onSelectPlace: onSelectPlace)
         }
     }
 }
