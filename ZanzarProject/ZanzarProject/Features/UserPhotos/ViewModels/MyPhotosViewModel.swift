@@ -38,8 +38,9 @@ final class MyPhotosViewModel {
         }
     }
 
-    func confirmDeletion() async {
-        guard let photo = photoPendingDeletion else { return }
+    /// Deletes the photo the user confirmed. Takes the photo itself: the alert clears `photoPendingDeletion`
+    /// before its button runs.
+    func delete(_ photo: UserPhoto) async {
         photoPendingDeletion = nil
         do {
             try await service.deletePhoto(photo.id, placeID: photo.placeID)

@@ -22,12 +22,23 @@ struct PhotoTermsView: View {
                     Text("userPhotos.terms.birthDate.message")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
-                    DatePicker(
-                        "userPhotos.terms.birthDate.label",
-                        selection: birthDateBinding,
-                        in: ...Self.latestBirthDate,
-                        displayedComponents: .date
-                    )
+                    // Nothing is preselected: the user has to state a date, or there is no declaration.
+                    if viewModel.birthDate == nil {
+                        Button("userPhotos.terms.birthDate.chooseButton.title", systemImage: "calendar") {
+                            viewModel.birthDate = Self.suggestedBirthDate
+                        }
+                        .buttonStyle(.bordered)
+                    } else {
+                        DatePicker(
+                            "userPhotos.terms.birthDate.label",
+                            selection: birthDateBinding,
+                            in: ...Self.latestBirthDate,
+                            displayedComponents: .date
+                        )
+                        .datePickerStyle(.wheel)
+                        .labelsHidden()
+                        .frame(maxWidth: .infinity)
+                    }
                 }
 
                 VStack(alignment: .leading, spacing: 12) {

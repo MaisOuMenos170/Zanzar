@@ -8,8 +8,9 @@ struct PhotoTermsContent: View {
         let id: String
         let symbol: String
 
-        var title: LocalizedStringKey { LocalizedStringKey("userPhotos.terms.\(id).title") }
-        var body: LocalizedStringKey { LocalizedStringKey("userPhotos.terms.\(id).body") }
+        // Built as a plain String first: an interpolated literal would become a format key ("…%@.title").
+        var title: LocalizedStringKey { LocalizedStringKey(String("userPhotos.terms." + id + ".title")) }
+        var body: LocalizedStringKey { LocalizedStringKey(String("userPhotos.terms." + id + ".body")) }
     }
 
     private let sections = [

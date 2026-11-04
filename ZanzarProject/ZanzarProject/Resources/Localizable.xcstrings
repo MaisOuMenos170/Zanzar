@@ -4587,6 +4587,23 @@
         }
       }
     },
+    "userPhotos.terms.birthDate.chooseButton.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter your date of birth"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informar data de nascimento"
+          }
+        }
+      }
+    },
     "userPhotos.terms.birthDate.label": {
       "extractionState": "manual",
       "localizations": {

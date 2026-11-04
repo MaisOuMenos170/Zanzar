@@ -31,12 +31,16 @@ struct MyPhotosView: View {
         .navigationTitle("userPhotos.myPhotos.title")
         .task { await viewModel.load() }
         .refreshable { await viewModel.load() }
-        .alert("userPhotos.myPhotos.deleteConfirmation.title", isPresented: deletionIsPresented) {
+        .alert(
+            "userPhotos.myPhotos.deleteConfirmation.title",
+            isPresented: deletionIsPresented,
+            presenting: viewModel.photoPendingDeletion
+        ) { photo in
             Button("userPhotos.myPhotos.deleteConfirmation.confirmButton.title", role: .destructive) {
-                Task { await viewModel.confirmDeletion() }
+                Task { await viewModel.delete(photo) }
             }
             Button("userPhotos.myPhotos.deleteConfirmation.cancelButton.title", role: .cancel) {}
-        } message: {
+        } message: { _ in
             Text("userPhotos.myPhotos.deleteConfirmation.message")
         }
         .alert("userPhotos.myPhotos.errorAlert.title", isPresented: errorIsPresented) {
