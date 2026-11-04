@@ -76,6 +76,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Too many requests. Try again in %lld min."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muitas requisições. Tente novamente em %lld min."
+          }
+        }
+      }
+    },
     "avatar.createErrorAlert.title": {
       "extractionState": "manual",
       "localizations": {
@@ -253,6 +263,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "View details"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver detalhes"
+          }
+        }
+      }
+    },
     "avatar.loadError.notAuthenticated": {
       "extractionState": "manual",
       "localizations": {
@@ -568,6 +588,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Places in this selection"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lugares desta seleção"
+          }
+        }
+      }
+    },
     "itinerary.detail.actionError.dismissButton.title": {
       "extractionState": "manual",
       "localizations": {
@@ -718,6 +748,10 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lugares do roteiro"
+          }
+        }
+      }
+    },
     "itinerary.detail.errorState.retryButton.title": {
       "extractionState": "manual",
       "localizations": {
@@ -902,6 +936,10 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lugares do roteiro"
+          }
+        }
+      }
+    },
     "itinerary.list.header.title": {
       "extractionState": "manual",
       "localizations": {
@@ -2085,6 +2123,49 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld check-in"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld check-ins"
+                }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld check-ins"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld check-in"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld check-ins"
+                }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld check-ins"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "placeDetail.navigationSheet.title": {
       "extractionState": "manual",
       "localizations": {
@@ -2172,16 +2253,6 @@
         }
       }
     },
-    "placeDetail.reactionItem.accessibilityLabel %lld" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld reaction"
     "placeDetail.nearbySection.title": {
       "extractionState": "manual",
       "localizations": {
