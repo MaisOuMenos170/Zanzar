@@ -27,7 +27,7 @@ nonisolated enum AuthErrorMapper {
         statusMessages: [Int: String]
     ) -> String {
         switch error {
-        case .httpStatus(let statusCode, let message):
+        case .httpStatus(let statusCode, let message), .rejected(let statusCode, _, let message):
             if let localizedKey = statusMessages[statusCode] {
                 return L10n.string(localizedKey)
             }

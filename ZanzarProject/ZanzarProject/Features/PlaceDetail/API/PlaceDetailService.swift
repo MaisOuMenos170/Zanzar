@@ -3,6 +3,12 @@ import Foundation
 protocol PlaceDetailServicing: Sendable {
     func fetchPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail
     func checkIn(placeID: String, coordinate: UserCoordinate) async throws -> CheckInResult
+    /// Photos users sent of the place: approved ones, plus the signed-in user's own under review.
+    func fetchUserPhotos(placeID: String) async throws -> [PlacePhoto]
+}
+
+extension PlaceDetailServicing {
+    func fetchUserPhotos(placeID: String) async throws -> [PlacePhoto] { [] }
 }
 
 nonisolated struct PlaceDetailAPIResponse: Decodable, Sendable {
@@ -159,6 +165,13 @@ final class PlaceDetailService: PlaceDetailServicing {
             AppLog.placeDetail.error("Failed to check in placeId=\(placeID)", error: error)
             throw error
         }
+    }
+
+    func fetchUserPhotos(placeID: String) async throws -> [PlacePhoto] {
+        let response: PlaceUserPhotoListAPIResponse = try await client.get(path: "places/\(placeID)/photos")
+        let photos = response.placePhotos
+        AppLog.placeDetail.info("Fetched \(photos.count) user photos placeId=\(placeID)")
+        return photos
     }
 
     private func loadPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail {

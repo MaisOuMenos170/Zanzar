@@ -16,6 +16,7 @@ nonisolated enum AppLog: String {
     case ratingPrompt
     case profile
     case itinerary
+    case userPhotos
 
     private static let subsystem = Bundle.main.bundleIdentifier ?? "ZanzarProject"
 

@@ -18,6 +18,8 @@ final class PlaceDetailViewModel {
     private var loadGeneration = 0
 
     var detail: PlaceDetail?
+    /// Photos users sent; loaded after the detail and never blocking it.
+    private(set) var userPhotos: [PlacePhoto] = []
     var isLoading = false
     var isCheckingIn = false
     var errorMessage: String?
@@ -98,11 +100,28 @@ final class PlaceDetailViewModel {
             )
             guard generation == loadGeneration else { return }
             detail = loadedDetail
+            await loadUserPhotos()
         } catch is CancellationError {
             return
         } catch {
             guard generation == loadGeneration else { return }
             errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+        }
+    }
+
+    /// Curated photos first, then users' photos (see `PlacePhotoMixer`).
+    var displayedPhotos: [PlacePhoto] {
+        PlacePhotoMixer.mix(curated: detail?.photos ?? [], user: userPhotos, limit: PlaceDetail.maximumPhotoCount)
+    }
+
+    /// Reloads users' photos, e.g. after the user sent one. A failure keeps the curated photos on screen.
+    func loadUserPhotos() async {
+        do {
+            userPhotos = try await service.fetchUserPhotos(placeID: place.id)
+        } catch is CancellationError {
+            return
+        } catch {
+            AppLog.placeDetail.warning("User photos unavailable placeId=\(place.id)")
         }
     }
 

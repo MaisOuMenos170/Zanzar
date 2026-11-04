@@ -9,6 +9,9 @@ struct MainTabView: View {
     @State private var checkInCoordinator = AppCoordinator()
     /// The places around the user, shared by Discover, the check-in tab and every place detail.
     @State private var nearbyPlaces = NearbyPlacesStore()
+    @State private var photoStatusNotice = PhotoStatusNoticeViewModel()
+    @Environment(ToastPresenter.self) private var toastPresenter
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -24,6 +27,11 @@ struct MainTabView: View {
         .tint(.tabBarSelected)
         .environment(nearbyPlaces)
         // Pins and the carousel read the shared places; coming back to a tab refetches them only if stale.
+        // Tells the user when a review of one of their photos finished, each time the app comes to the front.
+        .task(id: scenePhase) {
+            guard scenePhase == .active, let message = await photoStatusNotice.checkForChanges() else { return }
+            toastPresenter.show(message)
+        }
         .onChange(of: selectedTab) { _, tab in
             guard tab != .profile else { return }
             Task { try? await nearbyPlaces.refreshIfNeeded() }

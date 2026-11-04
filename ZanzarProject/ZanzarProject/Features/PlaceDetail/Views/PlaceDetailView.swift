@@ -8,6 +8,7 @@ struct PlaceDetailView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(NearbyPlacesStore.self) private var nearbyPlaces
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var showsPhotoUpload = false
     init(place: MapPlace) {
         self.place = place
         _viewModel = State(initialValue: PlaceDetailViewModel(place: place))
@@ -39,9 +40,15 @@ struct PlaceDetailView: View {
         .onChange(of: mediaPolicy.usesCellular) { _, _ in
             viewModel.updateCellularImagesPromptIfNeeded(using: mediaPolicy)
         }
-        .onChange(of: viewModel.detail?.photos) { _, _ in
+        .onChange(of: viewModel.displayedPhotos) { _, _ in
             viewModel.updateCellularImagesPromptIfNeeded(using: mediaPolicy)
         }
+        .modifier(PlaceDetailUserPhotoFlows(
+            showsPhotoUpload: $showsPhotoUpload,
+            placeID: place.id,
+            detail: viewModel.detail,
+            reloadUserPhotos: viewModel.loadUserPhotos
+        ))
         .alert("placeDetail.cellularPrompt.title", isPresented: $viewModel.showsCellularImagesPrompt) {
             Button("placeDetail.cellularPrompt.allowButton.title") {
                 viewModel.allowCellularImages()
@@ -171,7 +178,7 @@ struct PlaceDetailView: View {
         VStack(alignment: .leading, spacing: 24) {
             VStack(alignment: .leading, spacing: 16) {
                 PlaceDetailHeroSection(
-                    photos: detail.photos,
+                    photos: viewModel.displayedPhotos,
                     placeName: detail.displayName,
                     tags: detail.tags,
                     mediaPolicy: mediaPolicy
@@ -182,6 +189,10 @@ struct PlaceDetailView: View {
                     isLoading: viewModel.isCheckingIn
                 ) {
                     viewModel.requestCheckIn()
+                }
+
+                PlaceDetailAddPhotoButton(hasCheckedIn: detail.hasCheckedIn) {
+                    showsPhotoUpload = true
                 }
 
                 PlaceDetailDescriptionSection(description: detail.description)
@@ -230,4 +241,5 @@ struct PlaceDetailView: View {
     }
     .environment(AppCoordinator())
     .environment(NearbyPlacesStore())
+    .environment(ToastPresenter())
 }

@@ -17,11 +17,34 @@ protocol NetworkClient: Sendable {
     ) async throws -> Response
     /// For endpoints that answer with an empty body (e.g. `204 No Content`) and take no payload.
     func sendWithoutResponse(path: String, method: HTTPMethod) async throws
+    /// POSTs raw bytes (e.g. an image) as the body, with `queryItems` as options.
+    func upload<Response: Decodable>(
+        path: String,
+        queryItems: [URLQueryItem],
+        data: Data,
+        contentType: String
+    ) async throws -> Response
+    /// Sends a JSON body to an endpoint that answers with an empty body.
+    func sendWithoutResponse<Body: Encodable>(path: String, method: HTTPMethod, body: Body) async throws
 }
 
 extension NetworkClient {
     func get<Response: Decodable>(path: String, queryItems: [URLQueryItem] = []) async throws -> Response {
         try await get(path: path, queryItems: queryItems)
+    }
+
+    // Defaults so test doubles that never upload don't have to implement these.
+    func upload<Response: Decodable>(
+        path: String,
+        queryItems: [URLQueryItem],
+        data: Data,
+        contentType: String
+    ) async throws -> Response {
+        throw APIError.invalidRequest
+    }
+
+    func sendWithoutResponse<Body: Encodable>(path: String, method: HTTPMethod, body: Body) async throws {
+        throw APIError.invalidRequest
     }
 }
 
@@ -101,6 +124,36 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         }
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
+        let (_, summary) = try await execute(request, path: normalizedPath)
+        AppLog.network.info(summary)
+    }
+
+    func upload<Response: Decodable>(
+        path: String,
+        queryItems: [URLQueryItem],
+        data: Data,
+        contentType: String
+    ) async throws -> Response {
+        let normalizedPath = normalizedPath(path)
+        guard let url = buildURL(path: normalizedPath, queryItems: queryItems) else {
+            throw APIError.invalidResponse
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.post.rawValue
+        request.setValue(contentType, forHTTPHeaderField: "Content-Type")
+        request.httpBody = data
+        return try await perform(request, path: normalizedPath)
+    }
+
+    func sendWithoutResponse<Body: Encodable>(path: String, method: HTTPMethod, body: Body) async throws {
+        let normalizedPath = normalizedPath(path)
+        guard let url = buildURL(path: normalizedPath, queryItems: []) else {
+            throw APIError.invalidResponse
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = method.rawValue
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try encoder.encode(body)
         let (_, summary) = try await execute(request, path: normalizedPath)
         AppLog.network.info(summary)
     }
