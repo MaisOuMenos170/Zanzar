@@ -5,6 +5,8 @@ enum Route: Hashable {
     case login
     case placeDetail(MapPlace)
     case avatar
+    case myPhotos
+    case photoPrivacy
 }
 
 enum Sheet: Identifiable, Hashable {

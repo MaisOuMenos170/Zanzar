@@ -41,6 +41,10 @@ final class AppCoordinator {
             PlaceDetailView(place: place)
         case .avatar:
             AvatarView()
+        case .myPhotos:
+            MyPhotosView()
+        case .photoPrivacy:
+            PhotoPrivacyView()
         }
     }
 
