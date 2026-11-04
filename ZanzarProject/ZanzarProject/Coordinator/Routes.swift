@@ -9,6 +9,7 @@ enum Route: Hashable {
 
 enum Sheet: Identifiable, Hashable {
     case itineraryDetail(slug: String)
+    case suggestPlace
 
     var id: Self { self }
 }

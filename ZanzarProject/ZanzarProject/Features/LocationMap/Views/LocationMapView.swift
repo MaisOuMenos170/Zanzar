@@ -63,7 +63,17 @@ struct LocationMapView: View {
         }
         .animation(reduceMotion ? nil : .default, value: ratingPrompt.isPresented)
         .navigationTitle("mainTab.discoverTab.title")
-        .toolbar(.hidden, for: .navigationBar)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(removing: .title)
+        .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("placeSuggestion.toolbarButton.label", systemImage: "plus.bubble") {
+                    coordinator.present(sheet: .suggestPlace)
+                }
+                .labelStyle(.iconOnly)
+            }
+        }
         .task {
             await viewModel.load()
         }
