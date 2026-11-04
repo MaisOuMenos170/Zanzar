@@ -1,25 +1,33 @@
 import Foundation
 
-/// Remembers the last status seen for each of the user's photos, so a change (published, not approved,
-/// removed) can be told once when the app opens. Only photo ids and statuses are kept on the device.
+/// Remembers the last status seen for each of the user's photos and when the app last looked, so a finished
+/// review (published, not approved, removed) is told once when the app opens. Only photo ids, statuses and one
+/// date are kept on the device.
 protocol UserPhotoStatusStoring: AnyObject {
     func lastSeenStatuses() -> [String: String]
-    func save(_ statuses: [String: String])
+    func lastCheckedAt() -> Date?
+    func save(_ statuses: [String: String], checkedAt: Date)
 }
 
 final class UserDefaultsUserPhotoStatusStore: UserPhotoStatusStoring {
     private let defaults: UserDefaults
-    private static let key = "userPhotos.lastSeenStatuses"
+    private static let statusesKey = "userPhotos.lastSeenStatuses"
+    private static let checkedAtKey = "userPhotos.lastCheckedAt"
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
     }
 
     func lastSeenStatuses() -> [String: String] {
-        defaults.dictionary(forKey: Self.key) as? [String: String] ?? [:]
+        defaults.dictionary(forKey: Self.statusesKey) as? [String: String] ?? [:]
     }
 
-    func save(_ statuses: [String: String]) {
-        defaults.set(statuses, forKey: Self.key)
+    func lastCheckedAt() -> Date? {
+        defaults.object(forKey: Self.checkedAtKey) as? Date
+    }
+
+    func save(_ statuses: [String: String], checkedAt: Date) {
+        defaults.set(statuses, forKey: Self.statusesKey)
+        defaults.set(checkedAt, forKey: Self.checkedAtKey)
     }
 }

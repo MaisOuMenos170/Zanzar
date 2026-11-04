@@ -41,15 +41,15 @@ struct PlaceDetailUserPhotoFlows: ViewModifier {
             .confirmationDialog(
                 "placeDetail.photoBlock.confirmation.title",
                 isPresented: blockConfirmationIsPresented,
-                titleVisibility: .visible
-            ) {
+                titleVisibility: .visible,
+                presenting: photoToBlock
+            ) { attribution in
+                // The dialog clears `photoToBlock` before this runs, so the photo comes from `presenting`.
                 Button("placeDetail.photoBlock.confirmation.confirmButton.title", role: .destructive) {
-                    if let attribution = photoToBlock {
-                        Task { await block(attribution) }
-                    }
+                    Task { await block(attribution) }
                 }
                 Button("placeDetail.photoBlock.confirmation.cancelButton.title", role: .cancel) {}
-            } message: {
+            } message: { _ in
                 Text("placeDetail.photoBlock.confirmation.message")
             }
     }

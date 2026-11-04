@@ -6,28 +6,34 @@ import Testing
 @Suite("My photos, reporting and status notices")
 struct UserPhotosListsViewModelTests {
     @Test("deleting asks first and then removes the photo from the list")
-    func deletePhoto() async {
+    func deletePhoto() async throws {
         let service = MockUserPhotosService()
         service.myPhotos = .success([.fixture(id: "a"), .fixture(id: "b", status: .approved)])
         let viewModel = MyPhotosViewModel(service: service, userIDProvider: { "user-1" })
         await viewModel.load()
 
         viewModel.photoPendingDeletion = viewModel.photos.first
-        await viewModel.confirmDeletion()
+        // The alert clears the pending photo before its button runs, as SwiftUI does.
+        let confirmed = try #require(viewModel.photoPendingDeletion)
+        viewModel.photoPendingDeletion = nil
+        await viewModel.delete(confirmed)
 
         #expect(service.deletedPhotoIDs == ["a"])
         #expect(viewModel.photos.map(\.id) == ["b"])
     }
 
     @Test("a failed delete keeps the photo and explains it")
-    func failedDelete() async {
+    func failedDelete() async throws {
         let service = MockUserPhotosService()
         service.myPhotos = .success([.fixture(id: "a")])
         service.deleteError = APIError.httpStatus(500, message: nil)
         let viewModel = MyPhotosViewModel(service: service, userIDProvider: { "user-1" })
         await viewModel.load()
         viewModel.photoPendingDeletion = viewModel.photos.first
-        await viewModel.confirmDeletion()
+        // The alert clears the pending photo before its button runs, as SwiftUI does.
+        let confirmed = try #require(viewModel.photoPendingDeletion)
+        viewModel.photoPendingDeletion = nil
+        await viewModel.delete(confirmed)
         #expect(viewModel.photos.count == 1)
         #expect(viewModel.errorMessage != nil)
     }
@@ -67,10 +73,35 @@ struct UserPhotosListsViewModelTests {
 
         #expect(await viewModel.checkForChanges() == nil)
     }
+
+    @Test("a photo sent and reviewed since the last check is told even though it was never seen pending")
+    func noticeForPhotoSentInSession() async {
+        let service = MockUserPhotosService()
+        let store = MemoryStatusStore()
+        var clock = Date(timeIntervalSince1970: 1_800_000_000)
+        let viewModel = PhotoStatusNoticeViewModel(service: service, store: store, userIDProvider: { "user-1" }, now: { clock })
+
+        service.myPhotos = .success([])
+        #expect(await viewModel.checkForChanges() == nil)
+
+        clock = clock.addingTimeInterval(3600)
+        let rejected = UserPhoto(
+            id: "new", placeID: "p", placeName: nil, status: .rejected, isVerifiedCheckIn: false, showsAuthorName: true,
+            thumbnailURL: nil, decisionReason: .personalData, createdAt: clock.addingTimeInterval(-600),
+            decidedAt: clock.addingTimeInterval(-60)
+        )
+        service.myPhotos = .success([rejected])
+        #expect(await viewModel.checkForChanges() == L10n.string("userPhotos.notice.notApproved", 1))
+    }
 }
 
 private final class MemoryStatusStore: UserPhotoStatusStoring {
     private var statuses: [String: String] = [:]
+    private var checkedAt: Date?
     func lastSeenStatuses() -> [String: String] { statuses }
-    func save(_ statuses: [String: String]) { self.statuses = statuses }
+    func lastCheckedAt() -> Date? { checkedAt }
+    func save(_ statuses: [String: String], checkedAt: Date) {
+        self.statuses = statuses
+        self.checkedAt = checkedAt
+    }
 }
