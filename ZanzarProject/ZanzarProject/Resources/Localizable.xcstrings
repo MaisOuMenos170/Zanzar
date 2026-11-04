@@ -2560,23 +2560,6 @@
         }
       }
     },
-    "placeSuggestion.error.placeNotFound" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "We couldn't find that place. Check the name or address and try again."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não encontramos esse lugar. Confira o nome ou endereço e tente novamente."
-          }
-        }
-      }
-    },
     "placeSuggestion.failureAlert.title" : {
       "extractionState" : "manual",
       "localizations" : {

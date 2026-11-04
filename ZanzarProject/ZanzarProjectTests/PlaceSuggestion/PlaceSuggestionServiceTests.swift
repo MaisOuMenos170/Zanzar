@@ -139,44 +139,6 @@ struct PlaceSuggestionServiceTests {
         }
     }
 
-    @Test("resolveLocation keeps the typed text and adds the address MapKit found")
-    func resolveLocationCombinesTypedTextAndMatch() async throws {
-        let geocoder = PlaceSuggestionStubGeocoder(
-            match: SuggestedLocation(latitude: -25.4, longitude: -49.2, address: "R. Azul, 123, Curitiba")
-        )
-        let service = makeService(geocoder: geocoder)
-
-        let location = try await service.resolveLocation(query: "  Restaurante Spaghetto ", near: Self.curitiba)
-
-        #expect(location.latitude == -25.4)
-        #expect(location.longitude == -49.2)
-        #expect(location.address == "Restaurante Spaghetto — R. Azul, 123, Curitiba")
-        #expect(geocoder.lastQuery == "Restaurante Spaghetto")
-        #expect(geocoder.lastNearCoordinate?.latitude == -25.43)
-    }
-
-    @Test("resolveLocation does not repeat the text when MapKit returns exactly what was typed")
-    func resolveLocationDoesNotDuplicateAddress() async throws {
-        let geocoder = PlaceSuggestionStubGeocoder(
-            match: SuggestedLocation(latitude: 1, longitude: 2, address: "Rua das Flores, 10")
-        )
-        let service = makeService(geocoder: geocoder)
-
-        let location = try await service.resolveLocation(query: "Rua das Flores, 10", near: nil)
-
-        #expect(location.address == "Rua das Flores, 10")
-        #expect(geocoder.lastNearCoordinate == nil)
-    }
-
-    @Test("resolveLocation throws placeNotFound when nothing matches")
-    func resolveLocationThrowsWhenNothingMatches() async {
-        let service = makeService(geocoder: PlaceSuggestionStubGeocoder(match: nil))
-
-        await #expect(throws: PlaceSuggestionError.self) {
-            try await service.resolveLocation(query: "asdfghjkl", near: nil)
-        }
-    }
-
     @Test("the response decodes the Mongo _id")
     func responseDecodesMongoID() throws {
         let response = try JSONDecoder().decode(PlaceSuggestionResponse.self, from: Data(Self.createdJSON.utf8))
@@ -239,26 +201,14 @@ private final class PlaceSuggestionStubLocationService: LocationMapServicing, @u
 
 private final class PlaceSuggestionStubGeocoder: PlaceGeocoding, @unchecked Sendable {
     var address: String?
-    var match: SuggestedLocation?
     var error: Error?
 
-    private(set) var lastQuery: String?
-    private(set) var lastNearCoordinate: CLLocationCoordinate2D?
-
-    init(address: String? = nil, match: SuggestedLocation? = nil) {
+    init(address: String? = nil) {
         self.address = address
-        self.match = match
     }
 
     func address(for coordinate: CLLocationCoordinate2D) async throws -> String? {
         if let error { throw error }
         return address
-    }
-
-    func firstMatch(for query: String, near coordinate: CLLocationCoordinate2D?) async throws -> SuggestedLocation? {
-        lastQuery = query
-        lastNearCoordinate = coordinate
-        if let error { throw error }
-        return match
     }
 }

@@ -10,11 +10,6 @@ struct PlaceSuggestionViewModelTests {
         longitude: -49.27,
         address: "Rua XV de Novembro, 1200"
     )
-    private static let spaghetto = SuggestedLocation(
-        latitude: -25.4,
-        longitude: -49.2,
-        address: "Spaghetto — R. Azul, 123"
-    )
 
     private func makeViewModel(
         service: MockPlaceSuggestionService = MockPlaceSuggestionService()
@@ -128,15 +123,12 @@ struct PlaceSuggestionViewModelTests {
         #expect(viewModel.outcome == .success)
         #expect(!viewModel.isSubmitting)
         #expect(service.submitted == [PlaceSuggestion(location: Self.home, note: "Vale a pena")])
-        #expect(service.resolveCalls.isEmpty)
     }
 
-    @Test("submitting another place resolves the typed text first, near the current position")
-    func submitOtherPlaceResolvesQuery() async {
+    @Test("submitting another place sends the typed address with zero coordinates and no lookup")
+    func submitOtherPlaceSendsTypedAddress() async {
         let service = MockPlaceSuggestionService()
-        service.resolveResult = .success(Self.spaghetto)
         let viewModel = makeViewModel(service: service)
-        await viewModel.loadCurrentLocation()
         viewModel.mode = .otherPlace
         viewModel.placeQuery = "  Restaurante Spaghetto "
         viewModel.note = "A comida é muito boa"
@@ -144,24 +136,13 @@ struct PlaceSuggestionViewModelTests {
         let succeeded = await viewModel.submit()
 
         #expect(succeeded)
-        #expect(service.resolveCalls == [.init(query: "Restaurante Spaghetto", near: Self.home)])
-        #expect(service.submitted == [PlaceSuggestion(location: Self.spaghetto, note: "A comida é muito boa")])
-    }
-
-    @Test("a place that cannot be found shows a message and sends nothing")
-    func submitPlaceNotFound() async {
-        let service = MockPlaceSuggestionService()
-        service.resolveResult = .failure(PlaceSuggestionError.placeNotFound)
-        let viewModel = makeViewModel(service: service)
-        viewModel.mode = .otherPlace
-        viewModel.placeQuery = "asdfghjkl"
-        viewModel.note = "Vale a pena"
-
-        let succeeded = await viewModel.submit()
-
-        #expect(!succeeded)
-        #expect(viewModel.outcome == .failure(message: L10n.string("placeSuggestion.error.placeNotFound")))
-        #expect(service.submitted.isEmpty)
+        #expect(viewModel.outcome == .success)
+        #expect(service.currentLocationCalls == 0)
+        let expected = PlaceSuggestion(
+            location: SuggestedLocation(latitude: 0, longitude: 0, address: "Restaurante Spaghetto"),
+            note: "A comida é muito boa"
+        )
+        #expect(service.submitted == [expected])
     }
 
     @Test("a server failure keeps the form and shows an error")
@@ -220,29 +201,17 @@ struct PlaceSuggestionViewModelTests {
 }
 
 final class MockPlaceSuggestionService: PlaceSuggestionServicing, @unchecked Sendable {
-    struct ResolveCall: Equatable {
-        let query: String
-        let near: SuggestedLocation?
-    }
-
     var currentLocationResult: Result<SuggestedLocation, Error> = .success(
         SuggestedLocation(latitude: -25.43, longitude: -49.27, address: "Rua XV de Novembro, 1200")
     )
-    var resolveResult: Result<SuggestedLocation, Error> = .failure(PlaceSuggestionError.placeNotFound)
     var submitResult: Result<Void, Error> = .success(())
 
     private(set) var currentLocationCalls = 0
-    private(set) var resolveCalls: [ResolveCall] = []
     private(set) var submitted: [PlaceSuggestion] = []
 
     func currentLocation() async throws -> SuggestedLocation {
         currentLocationCalls += 1
         return try currentLocationResult.get()
-    }
-
-    func resolveLocation(query: String, near location: SuggestedLocation?) async throws -> SuggestedLocation {
-        resolveCalls.append(ResolveCall(query: query, near: location))
-        return try resolveResult.get()
     }
 
     func submit(_ suggestion: PlaceSuggestion) async throws {

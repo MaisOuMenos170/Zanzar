@@ -10,7 +10,3 @@ nonisolated enum PlaceSuggestionLimits {
     static let addressMaxLength = 300
     static let noteMaxLength = 1000
 }
-
-nonisolated enum PlaceSuggestionError: Error, Sendable {
-    case placeNotFound
-}

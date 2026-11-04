@@ -15,12 +15,6 @@ enum PlaceSuggestionErrorMapper {
     }
 
     static func submitMessage(for error: Error) -> String {
-        if let suggestionError = error as? PlaceSuggestionError {
-            switch suggestionError {
-            case .placeNotFound:
-                return L10n.string("placeSuggestion.error.placeNotFound")
-            }
-        }
         if let locationError = error as? LocationMapError {
             return locationMessage(for: locationError)
         }

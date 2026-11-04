@@ -79,7 +79,7 @@ final class PlaceSuggestionViewModel {
             if let currentLocation { return currentLocation }
             return try await service.currentLocation()
         case .otherPlace:
-            return try await service.resolveLocation(query: trimmedQuery, near: currentLocation)
+            return .typed(address: trimmedQuery)
         }
     }
 }

@@ -2,7 +2,6 @@ import Foundation
 
 protocol PlaceSuggestionServicing: Sendable {
     func currentLocation() async throws -> SuggestedLocation
-    func resolveLocation(query: String, near location: SuggestedLocation?) async throws -> SuggestedLocation
     func submit(_ suggestion: PlaceSuggestion) async throws
 }
 
@@ -50,20 +49,6 @@ final class PlaceSuggestionService: PlaceSuggestionServicing {
         return SuggestedLocation(
             latitude: position.latitude,
             longitude: position.longitude,
-            address: Self.truncated(address)
-        )
-    }
-
-    func resolveLocation(query: String, near location: SuggestedLocation?) async throws -> SuggestedLocation {
-        let typed = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let match = try await geocoder.firstMatch(for: typed, near: location?.clLocationCoordinate2D) else {
-            throw PlaceSuggestionError.placeNotFound
-        }
-        // Keep the typed text (usually the name) and add the address MapKit found.
-        let address = match.address == typed ? typed : "\(typed) — \(match.address)"
-        return SuggestedLocation(
-            latitude: match.latitude,
-            longitude: match.longitude,
             address: Self.truncated(address)
         )
     }
