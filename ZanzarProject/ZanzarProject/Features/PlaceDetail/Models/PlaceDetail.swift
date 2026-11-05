@@ -122,9 +122,6 @@ nonisolated extension PlaceDetail {
     /// Average walking speed in meters per second (5 km/h ≈ 1.39 m/s)
     private static let walkingSpeedMetersPerSecond: Double = 1.39
 
-    /// Average walking speed in meters per second (5 km/h ≈ 1.39 m/s)
-    private static let walkingSpeedMetersPerSecond: Double = 1.39
-
     static func make(
         placeResponse: PlaceDetailAPIResponse,
         mapPlace: MapPlace,
