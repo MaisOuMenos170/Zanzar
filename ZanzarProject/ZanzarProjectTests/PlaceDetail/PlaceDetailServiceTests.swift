@@ -57,8 +57,7 @@ struct PlaceDetailServiceTests {
                 pinStyle: .available
             ),
             userCoordinate: UserCoordinate(latitude: -25.43, longitude: -49.27),
-            userID: "user-1",
-            nearbyPlaces: []
+            userID: "user-1"
         )
         return try await service.fetchPlaceDetail(context: context)
     }
@@ -151,39 +150,6 @@ struct PlaceDetailServiceTests {
         let detail = try await fetchDetail(placeJSON: json)
 
         #expect(detail.photos.isEmpty)
-    }
-
-    @Test("fetchPlaceDetail picks nearby places from the context instead of asking the server")
-    func nearbyPlacesComeFromContext() async throws {
-        let client = PathAwareNetworkClient(responsesByPathPrefix: ["places/ChIJ1": Self.placeJSON])
-        let service = PlaceDetailService(client: client)
-        let place = MapPlace(
-            id: "ChIJ1",
-            name: "Bar do Zé",
-            latitude: -25.43,
-            longitude: -49.27,
-            category: .bar,
-            distanceMeters: 50
-        )
-        let neighbour = MapPlace(
-            id: "ChIJ2",
-            name: "Parque",
-            latitude: -25.44,
-            longitude: -49.28,
-            category: .park,
-            distanceMeters: 300
-        )
-        let context = PlaceDetailLoadContext(
-            place: place,
-            userCoordinate: UserCoordinate(latitude: -25.43, longitude: -49.27),
-            userID: "user-1",
-            nearbyPlaces: [place, neighbour]
-        )
-
-        let detail = try await service.fetchPlaceDetail(context: context)
-
-        #expect(detail.nearbyPlaces.map(\.id) == ["ChIJ2"])
-        #expect(!client.getPaths.contains("places"))
     }
 
     @Test("checkIn decodes the synchronous payload")
