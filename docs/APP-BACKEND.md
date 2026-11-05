@@ -30,6 +30,11 @@ O app é o único cliente. O backend não serve telas, só JSON (e um proxy de f
 Sem uso no app hoje: `GET /user/:id`, `GET /stamps/:stampId`, `GET /places/photo` (proxy do Google, aposentado), `GET /health` (só o Railway). A collection `sync_mutations` e `modules/sync` não têm rota. A revisão de fotos (`/admin`, `/admin/api/photos`) é usada só pela página da equipe, não pelo app.
 
 Erros das rotas de foto trazem `code` (ex.: `duplicate_photo`, `terms_required`), que o app lê como `APIError.rejected`.
+| `PlaceDetailService` | `GET /places/:id`, `POST` e `GET /checkIn`, `GET /rating` | `place`, `checkin`, `rating` |
+| `RatingPromptService` | `GET` e `POST /rating` | `rating.routes` |
+| `ItineraryService` | `GET /itineraries`, `GET /itineraries/:slug`, `POST /itineraries/:slug/activate`, `POST /itineraries/active/abandon`, `GET /user/:id/itinerary` | `itinerary.routes`, `user.routes` |
+
+Sem uso no app hoje: `GET /user/:id`, `GET /stamps/:stampId`, `GET /places/photo` (proxy do Google, aposentado), `GET /health` (só o Railway). A collection `sync_mutations` e `modules/sync` não têm rota.
 
 ## Fonte da verdade do formato
 
