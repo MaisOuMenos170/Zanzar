@@ -79,7 +79,9 @@ struct UserPhotosListsViewModelTests {
         let service = MockUserPhotosService()
         let store = MemoryStatusStore()
         var clock = Date(timeIntervalSince1970: 1_800_000_000)
-        let viewModel = PhotoStatusNoticeViewModel(service: service, store: store, userIDProvider: { "user-1" }, now: { clock })
+        let viewModel = PhotoStatusNoticeViewModel(
+            service: service, store: store, userIDProvider: { "user-1" }, now: { clock }
+        )
 
         service.myPhotos = .success([])
         #expect(await viewModel.checkForChanges() == nil)

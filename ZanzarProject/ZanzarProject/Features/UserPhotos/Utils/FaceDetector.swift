@@ -23,10 +23,14 @@ nonisolated enum FaceDetector {
 
     private static func detect(in image: CGImage, cpuOnly: Bool) throws -> [CGRect] {
         let request = VNDetectFaceRectanglesRequest()
-        if cpuOnly, let cpu = MLComputeDevice.allComputeDevices.first(where: { if case .cpu = $0 { true } else { false } }) {
+        if cpuOnly, let cpu = MLComputeDevice.allComputeDevices.first(where: Self.isCPU) {
             request.setComputeDevice(cpu, for: .main)
         }
         try VNImageRequestHandler(cgImage: image, options: [:]).perform([request])
         return (request.results ?? []).map(\.boundingBox)
+    }
+
+    private static func isCPU(_ device: MLComputeDevice) -> Bool {
+        if case .cpu = device { true } else { false }
     }
 }
