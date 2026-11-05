@@ -5,7 +5,7 @@ nonisolated struct ProfileCheckIn: Identifiable, Hashable {
     let placeID: String
     let placeName: String?
     let date: Date
-    let photoReference: String?
+    let photoURL: URL?
     let sealCategory: ZanzarPlaceCategory?
     let impressionTag: ImpressionTag?
 }
@@ -17,7 +17,7 @@ nonisolated extension ProfileCheckIn {
             placeID: placeID,
             placeName: placeName,
             date: date,
-            photoReference: photoReference,
+            photoURL: photoURL,
             sealCategory: sealCategory,
             impressionTag: impressionTag
         )

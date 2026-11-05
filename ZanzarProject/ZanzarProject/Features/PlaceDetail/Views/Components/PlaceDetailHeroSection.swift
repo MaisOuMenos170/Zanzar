@@ -1,14 +1,16 @@
 import SwiftUI
 
 struct PlaceDetailHeroSection: View {
-    let photoReference: String?
+    let photos: [PlacePhoto]
+    let placeName: String
     let tags: [PlaceDetailTag]
     let mediaPolicy: PlaceMediaAccessPolicy
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            PlaceDetailHeroImage(
-                photoReference: photoReference,
+            PlaceDetailPhotoCarousel(
+                photos: photos,
+                placeName: placeName,
                 mediaPolicy: mediaPolicy
             )
 
