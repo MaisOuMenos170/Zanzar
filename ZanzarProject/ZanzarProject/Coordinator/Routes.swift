@@ -5,6 +5,8 @@ enum Route: Hashable {
     case login
     case placeDetail(MapPlace)
     case avatar
+    case avatarEditor
+    case passportIntro(avatar: Avatar, username: String?)
     case myPhotos
     case photoPrivacy
 }

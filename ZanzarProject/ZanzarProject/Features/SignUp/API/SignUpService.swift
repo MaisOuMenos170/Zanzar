@@ -10,11 +10,14 @@ struct SignUpRequest: Encodable, Sendable {
     let password: String
 }
 
+/// The created user as the backend returns it (`201`); the app only needs the id and the username.
 struct SignUpResponse: Decodable, Sendable {
     let id: String
+    let username: String?
 
     private enum CodingKeys: String, CodingKey {
         case id = "_id"
+        case username
     }
 }
 

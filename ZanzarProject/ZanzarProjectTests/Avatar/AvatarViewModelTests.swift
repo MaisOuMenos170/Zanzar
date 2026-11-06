@@ -6,7 +6,7 @@ import Testing
 @MainActor
 @Suite("AvatarViewModel")
 struct AvatarViewModelTests {
-    private static let avatar = Avatar(skin: 3, eyes: 2, eyebrow: 5, hair: 7, background: "#112233")
+    private static let avatar = Avatar(skin: 3, eyes: 2, eyebrow: 5, eyelash: 4, hair: 7, background: "#112233")
 
     @Test("load fetches the signed-in user's avatar")
     func loadFetchesAvatar() async {
@@ -108,10 +108,14 @@ struct AvatarViewModelTests {
 
     @Test("the create request carries every layer")
     func encodesRequest() throws {
-        let data = try JSONEncoder().encode(AvatarAPIRequest(avatar: Avatar(skin: 1, eyes: 2, eyebrow: 3, hair: 4, background: "#FFAA00")))
+        let avatar = Avatar(skin: 1, eyes: 2, eyebrow: 3, eyelash: 0, hair: 4, background: "#FFAA00")
+        let data = try JSONEncoder().encode(AvatarAPIRequest(avatar: avatar))
         let json = try #require(try JSONSerialization.jsonObject(with: data) as? [String: AnyHashable])
 
-        #expect(json == ["skin": 1, "eyes": 2, "eyebrow": 3, "hair": 4, "background": "#FFAA00"])
+        let expected: [String: AnyHashable] = [
+            "skin": 1, "eyes": 2, "eyebrow": 3, "eyelash": 0, "hair": 4, "background": "#FFAA00"
+        ]
+        #expect(json == expected)
     }
 
     @Test("parses #RRGGBB and rejects anything else", arguments: [
@@ -123,10 +127,34 @@ struct AvatarViewModelTests {
 
     @Test("the response payload maps to the domain avatar")
     func mapsResponse() throws {
+        let json = ##"{ "skin": 1, "eyes": 6, "eyebrow": 4, "eyelash": 3, "hair": 0, "background": "#00FF7F" }"##
+        let response = try JSONDecoder().decode(AvatarAPIResponse.self, from: Data(json.utf8))
+
+        let expected = Avatar(skin: 1, eyes: 6, eyebrow: 4, eyelash: 3, hair: 0, background: "#00FF7F")
+        #expect(response.makeAvatar() == expected)
+    }
+
+    @Test("a body with no avatar layers means the user has no avatar", arguments: ["null", "{}", #"{"skin": 1}"#])
+    func emptyBodyMeansNoAvatar(json: String) throws {
+        let response = try JSONDecoder().decode(OptionalAvatarAPIResponse.self, from: Data(json.utf8))
+
+        #expect(response.avatar == nil)
+    }
+
+    @Test("a complete body is read as an avatar")
+    func completeBodyIsAnAvatar() throws {
+        let json = ##"{ "skin": 1, "eyes": 6, "eyebrow": 4, "eyelash": 3, "hair": 0, "background": "#00FF7F" }"##
+        let response = try JSONDecoder().decode(OptionalAvatarAPIResponse.self, from: Data(json.utf8))
+
+        #expect(response.avatar?.skin == 1)
+    }
+
+    @Test("an avatar saved before eyelashes existed keeps the first eyelash it was drawn with")
+    func legacyResponseDefaultsEyelash() throws {
         let json = ##"{ "skin": 1, "eyes": 6, "eyebrow": 4, "hair": 2, "background": "#00FF7F" }"##
         let response = try JSONDecoder().decode(AvatarAPIResponse.self, from: Data(json.utf8))
 
-        #expect(response.makeAvatar() == Avatar(skin: 1, eyes: 6, eyebrow: 4, hair: 2, background: "#00FF7F"))
+        #expect(response.makeAvatar().eyelash == 1)
     }
 }
 
@@ -137,6 +165,8 @@ final class MockAvatarService: AvatarServicing, @unchecked Sendable {
     private(set) var fetchCount = 0
     private(set) var lastUserID: String?
     private(set) var lastCreated: Avatar?
+    private(set) var lastUpdated: Avatar?
+    var updateResult: Result<Avatar, Error> = .failure(APIError.invalidResponse)
 
     init(
         fetchResult: Result<Avatar?, Error> = .success(nil),
@@ -150,6 +180,12 @@ final class MockAvatarService: AvatarServicing, @unchecked Sendable {
         lastUserID = userID
         lastCreated = avatar
         return try createResult.get()
+    }
+
+    func updateAvatar(userID: String, avatar: Avatar) async throws -> Avatar {
+        lastUserID = userID
+        lastUpdated = avatar
+        return try updateResult.get()
     }
 
     func fetchAvatar(userID: String) async throws -> Avatar? {

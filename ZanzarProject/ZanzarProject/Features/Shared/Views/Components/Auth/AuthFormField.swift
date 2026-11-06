@@ -23,10 +23,9 @@ struct AuthFormField: View {
 
             field
                 .font(.body)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 12)
-                .frame(minHeight: 45, alignment: .leading)
-                .background(Color("AuthFieldBackground"), in: .rect(cornerRadius: 8))
+                .padding(16)
+                .frame(minHeight: 51, alignment: .leading)
+                .background(Color.brandNeutral50, in: .rect(cornerRadius: 8))
                 .overlay {
                     if errorMessageKey != nil {
                         RoundedRectangle(cornerRadius: 8)
@@ -36,13 +35,17 @@ struct AuthFormField: View {
         }
     }
 
+    private var prompt: Text {
+        Text(placeholderKey).foregroundStyle(Color.brandNeutral300)
+    }
+
     @ViewBuilder
     private var field: some View {
         if isSecure {
-            SecureField(placeholderKey, text: $text)
+            SecureField(placeholderKey, text: $text, prompt: prompt)
                 .textContentType(textContentType)
         } else {
-            TextField(placeholderKey, text: $text, axis: .vertical)
+            TextField(placeholderKey, text: $text, prompt: prompt, axis: .vertical)
                 .lineLimit(1...3)
                 .textContentType(textContentType)
                 .keyboardType(keyboardType)

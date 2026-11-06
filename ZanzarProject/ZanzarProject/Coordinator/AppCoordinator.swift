@@ -9,6 +9,12 @@ final class AppCoordinator {
         popToRoot()
     }
 
+    /// Replaces the auth stack with the avatar editor, the first step after creating an account.
+    func startOnboarding() {
+        popToRoot()
+        push(.avatarEditor)
+    }
+
     func push(_ route: Route) {
         path.append(route)
     }
@@ -41,6 +47,10 @@ final class AppCoordinator {
             PlaceDetailView(place: place)
         case .avatar:
             AvatarView()
+        case .avatarEditor:
+            AvatarEditorView()
+        case .passportIntro(let avatar, let username):
+            PassportIntroView(avatar: avatar, username: username)
         case .myPhotos:
             MyPhotosView()
         case .photoPrivacy:

@@ -5,57 +5,14 @@ struct LoginView: View {
     @State private var viewModel = LoginViewModel()
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(AuthSession.self) private var authSession
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(OnboardingGate.self) private var onboarding
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                if let submitError = viewModel.submitError {
-                    ErrorBanner(message: submitError)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-
-                AuthFormField(
-                    labelKey: "login.emailField.label",
-                    placeholderKey: "login.emailField.placeholder",
-                    text: $viewModel.email,
-                    errorMessageKey: viewModel.emailError,
-                    textContentType: .emailAddress,
-                    keyboardType: .emailAddress
-                )
-
-                AuthFormField(
-                    labelKey: "login.passwordField.label",
-                    placeholderKey: "login.passwordField.placeholder",
-                    text: $viewModel.password,
-                    errorMessageKey: viewModel.passwordError,
-                    isSecure: true,
-                    textContentType: .password
-                )
-
-                if dynamicTypeSize.isAccessibilitySize {
-                    actionButtons
-                }
-            }
-            .padding(.horizontal, 19)
-            .padding(.top, 16)
-            .padding(.bottom, 24)
+        AuthScreenScaffold(titleKey: "login.header.title") {
+            form
+        } actions: {
+            actions
         }
-        .scrollBounceBehavior(.basedOnSize)
-        .scrollDismissesKeyboard(.interactively)
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            if !dynamicTypeSize.isAccessibilitySize {
-                actionButtons
-                    .padding(.horizontal, 19)
-                    .padding(.vertical, 16)
-                    .background(Color(.systemBackground))
-            }
-        }
-        .background(Color(.systemBackground))
-        .navigationTitle("login.header.title")
-        .navigationBarTitleDisplayMode(dynamicTypeSize.isAccessibilitySize ? .inline : .large)
-        .toolbarBackground(Color(.systemBackground), for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
         .onChange(of: viewModel.email) {
             viewModel.refreshShownFieldErrors()
         }
@@ -64,36 +21,59 @@ struct LoginView: View {
         }
     }
 
-    private var actionButtons: some View {
-        VStack(spacing: 12) {
-            submitButton
-            appleSignInButton
+    private var form: some View {
+        VStack(spacing: 16) {
+            if let submitError = viewModel.submitError {
+                ErrorBanner(message: submitError)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            AuthFormField(
+                labelKey: "login.emailField.label",
+                placeholderKey: "login.emailField.placeholder",
+                text: $viewModel.email,
+                errorMessageKey: viewModel.emailError,
+                textContentType: .emailAddress,
+                keyboardType: .emailAddress
+            )
+
+            AuthFormField(
+                labelKey: "login.passwordField.label",
+                placeholderKey: "login.passwordField.placeholder",
+                text: $viewModel.password,
+                errorMessageKey: viewModel.passwordError,
+                isSecure: true,
+                textContentType: .password
+            )
         }
     }
 
-    private var appleSignInButton: some View {
-        SignInWithAppleButton(.signIn) { request in
-            viewModel.configureAppleRequest(request)
-        } onCompletion: { result in
-            Task {
-                if await viewModel.completeAppleSignIn(result, using: authSession) {
-                    coordinator.finishAuthFlow()
-                }
+    private var actions: some View {
+        VStack(spacing: 16) {
+            submitButton
+
+            AuthOrDivider()
+
+            AuthAppleButton { request in
+                viewModel.configureAppleRequest(request)
+            } onCompletion: { result in
+                Task { await completeAppleSignIn(result) }
+            }
+            .disabled(viewModel.isLoading)
+
+            AuthSwitchLink(
+                promptKey: "auth.switch.noAccount.prompt",
+                actionKey: "auth.switch.noAccount.action"
+            ) {
+                coordinator.pop()
+                coordinator.push(.signUp)
             }
         }
-        .signInWithAppleButtonStyle(.black)
-        .frame(height: 52)
-        .clipShape(.capsule)
-        .disabled(viewModel.isLoading)
     }
 
     private var submitButton: some View {
         Button("login.submitButton.title") {
-            Task {
-                if await viewModel.submit(using: authSession) {
-                    coordinator.finishAuthFlow()
-                }
-            }
+            Task { await submit() }
         }
         .buttonStyle(AuthPrimaryButtonStyle())
         .disabled(viewModel.isLoading)
@@ -103,6 +83,33 @@ struct LoginView: View {
             }
         }
     }
+
+    private func submit() async {
+        // A user whose avatar was never created goes to the editor, so the gate holds the auth stack until known.
+        onboarding.begin()
+        guard await viewModel.submit(using: authSession) else {
+            onboarding.finish()
+            return
+        }
+        await routeAfterSignIn()
+    }
+
+    private func routeAfterSignIn() async {
+        if await onboarding.resolveAfterSignIn() {
+            coordinator.startOnboarding()
+        } else {
+            coordinator.finishAuthFlow()
+        }
+    }
+
+    private func completeAppleSignIn(_ result: Result<ASAuthorization, Error>) async {
+        onboarding.begin()
+        guard await viewModel.completeAppleSignIn(result, using: authSession) else {
+            onboarding.finish()
+            return
+        }
+        await routeAfterSignIn()
+    }
 }
 
 #Preview("Empty") {
@@ -110,6 +117,7 @@ struct LoginView: View {
         LoginView()
             .environment(AppCoordinator())
             .environment(AuthSession())
+            .environment(OnboardingGate())
             .environment(ToastPresenter())
     }
 }
