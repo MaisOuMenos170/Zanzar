@@ -111,3 +111,16 @@ extension ActiveItinerary {
         }
     }
 }
+
+extension ActiveItinerary {
+    /// Tells one run of a roteiro from the next, so abandoning and starting it again alerts its stops again.
+    var runID: String {
+        "\(templateID)@\(Int(startedAt.timeIntervalSince1970))"
+    }
+
+    /// The stop the user should go to next: the first slot that has a place and is not completed yet.
+    /// Free routes have no place per slot until the user checks in, so they have none.
+    var nextPendingPlaceID: String? {
+        places.first { $0.placeID != nil && !$0.isCompleted }?.placeID
+    }
+}

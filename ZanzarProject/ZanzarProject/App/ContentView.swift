@@ -19,6 +19,9 @@ struct ContentView: View {
         }
         .onChange(of: authSession.isAuthenticated) {
             coordinator.popToRoot()
+            if !authSession.isAuthenticated {
+                Task { await ProximityAlertCoordinator.shared.stop() }
+            }
         }
         .alert("auth.sessionExpired.title", isPresented: $showsSessionExpiredAlert) {
             Button("auth.sessionExpired.dismissButton.title", role: .cancel) {}

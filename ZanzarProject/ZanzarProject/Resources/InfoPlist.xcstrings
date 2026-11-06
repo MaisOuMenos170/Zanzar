@@ -1,6 +1,23 @@
 {
   "sourceLanguage" : "pt-BR",
   "strings" : {
+    "NSLocationAlwaysAndWhenInUseUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lero uses your location, even when the app is closed, to let you know when you pass near a place or the next stop on your route."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Lero usa sua localização, mesmo com o app fechado, para avisar quando você passar perto de um lugar ou da próxima parada do seu roteiro."
+          }
+        }
+      }
+    },
     "CFBundleDisplayName" : {
       "comment" : "Name shown on the Home Screen",
       "extractionState" : "manual",
