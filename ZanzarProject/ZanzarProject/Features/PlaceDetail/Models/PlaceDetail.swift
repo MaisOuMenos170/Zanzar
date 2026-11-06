@@ -122,7 +122,7 @@ nonisolated extension PlaceDetail {
     /// Average walking speed in meters per second (5 km/h ≈ 1.39 m/s)
     private static let walkingSpeedMetersPerSecond: Double = 1.39
 
-    static func make(
+    @MainActor static func make(
         placeResponse: PlaceDetailAPIResponse,
         mapPlace: MapPlace,
         hasCheckedIn: Bool,
@@ -192,7 +192,7 @@ nonisolated extension PlaceDetail {
         )
     }
 
-    private static func openingHoursText(from openingHours: PlaceDetailOpeningHoursResponse?) -> (text: String, isOpen: Bool?) {
+    @MainActor private static func openingHoursText(from openingHours: PlaceDetailOpeningHoursResponse?) -> (text: String, isOpen: Bool?) {
         guard let openingHours else {
             return (L10n.string("placeDetail.header.hoursUnavailable"), nil)
         }
@@ -205,7 +205,7 @@ nonisolated extension PlaceDetail {
         return (L10n.string("placeDetail.header.hoursUnavailable"), nil)
     }
 
-    private static func tags(from response: PlaceDetailAPIResponse) -> [PlaceDetailTag] {
+    @MainActor private static func tags(from response: PlaceDetailAPIResponse) -> [PlaceDetailTag] {
         var tags: [PlaceDetailTag] = []
 
         if let categoryTag = categoryTag(for: response.zanzar.category) {
@@ -234,7 +234,7 @@ nonisolated extension PlaceDetail {
         value.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
     }
 
-    private static func categoryTag(for category: String) -> PlaceDetailTag? {
+    @MainActor private static func categoryTag(for category: String) -> PlaceDetailTag? {
         switch ZanzarPlaceCategory(rawCategory: category) {
         case .park:
             categoryTag("park", label: L10n.string("placeDetail.tag.park"), style: .park)
