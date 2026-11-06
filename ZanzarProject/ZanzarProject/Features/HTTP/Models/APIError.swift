@@ -2,6 +2,8 @@ import Foundation
 
 enum APIError: Error, Sendable {
     case httpStatus(Int, message: String?)
+    /// A refusal the backend tagged with a stable machine-readable `code` (e.g. `duplicate_photo`).
+    case rejected(Int, code: String, message: String?)
     case decodingFailed
     case invalidResponse
     case invalidRequest
@@ -10,6 +12,9 @@ enum APIError: Error, Sendable {
 
     static func from(data: Data, statusCode: Int) -> APIError {
         if let payload = try? JSONDecoder().decode(APIErrorPayload.self, from: data) {
+            if let code = payload.code, !code.isEmpty {
+                return .rejected(statusCode, code: code, message: payload.message)
+            }
             if let message = payload.message, !message.isEmpty {
                 return .httpStatus(statusCode, message: message)
             }
@@ -24,7 +29,7 @@ enum APIError: Error, Sendable {
 extension APIError: LocalizedError {
     var errorDescription: String? {
         switch self {
-        case .httpStatus(_, let message):
+        case .httpStatus(_, let message), .rejected(_, _, let message):
             message
         case .rateLimited(let retryAfter):
             Self.rateLimitedDescription(retryAfter: retryAfter)
@@ -56,6 +61,8 @@ extension APIError: CustomDebugStringConvertible {
         switch self {
         case .httpStatus(let status, _):
             "APIError.httpStatus(\(status))"
+        case .rejected(let status, let code, _):
+            "APIError.rejected(\(status), \(code))"
         case .decodingFailed:
             "APIError.decodingFailed"
         case .invalidResponse:
@@ -71,12 +78,14 @@ extension APIError: CustomDebugStringConvertible {
 private nonisolated struct APIErrorPayload: Decodable {
     let success: Bool?
     let message: String?
+    let code: String?
     let errors: String?
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         success = try container.decodeIfPresent(Bool.self, forKey: .success)
         message = try container.decodeIfPresent(String.self, forKey: .message)
+        code = try container.decodeIfPresent(String.self, forKey: .code)
         if let errorsString = try? container.decode(String.self, forKey: .errors) {
             errors = errorsString
         } else if container.contains(.errors) {
@@ -89,6 +98,7 @@ private nonisolated struct APIErrorPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case success
         case message
+        case code
         case errors
     }
 }

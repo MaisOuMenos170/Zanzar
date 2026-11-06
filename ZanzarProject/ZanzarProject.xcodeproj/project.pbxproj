@@ -341,7 +341,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Lero;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsLocalNetworking = YES;
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "O Lero usa a câmera só quando você escolhe tirar uma foto de um lugar para enviar. A foto passa por análise antes de aparecer no app.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "O Lero usa sua localização para centralizar o mapa e confirmar que você está perto do lugar no check-in.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -390,7 +390,7 @@
 				INFOPLIST_KEY_CFBundleDevelopmentRegion = "pt-BR";
 				INFOPLIST_KEY_CFBundleDisplayName = Lero;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "O Lero usa a câmera só quando você escolhe tirar uma foto de um lugar para enviar. A foto passa por análise antes de aparecer no app.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "O Lero usa sua localização para centralizar o mapa e confirmar que você está perto do lugar no check-in.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;

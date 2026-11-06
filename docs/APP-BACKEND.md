@@ -22,6 +22,14 @@ O app é o único cliente. O backend não serve telas, só JSON (e um proxy de f
 | `SessionRefresher` | `POST /refresh` | só em `origin/develop` (ver abaixo) |
 | `ProfileService` | `POST /logout`, `GET /user/:id/profile` | `auth`, `users` |
 | `LocationMapService` | `GET /places` | `place.routes` |
+| `PlaceDetailService` | `GET /places/:id`, `POST` e `GET /checkIn`, `GET /rating`, `GET /places/:id/photos` | `place`, `checkin`, `rating`, `user-photo-community` |
+| `RatingPromptService` | `GET` e `POST /rating` | `rating.routes` |
+| `UserPhotosService` | `POST /places/:id/photos` (corpo = JPEG; `?fromCheckIn=&showAuthorName=`), `DELETE /places/:id/photos/:photoId`, `POST /places/:id/photos/:photoId/reports`, `GET` e `POST /user/:id/photo-terms`, `GET /user/:id/photos`, `GET`, `POST` e `DELETE /user/:id/blocks` | `user-photos` (ver `docs/fotos-de-usuario-decisao.md`) |
+| `ItineraryService` | `GET /itineraries`, `GET /itineraries/:slug`, `POST /itineraries/:slug/activate`, `POST /itineraries/active/abandon`, `GET /user/:id/itinerary` | `itinerary.routes`, `user.routes` |
+
+Sem uso no app hoje: `GET /user/:id`, `GET /stamps/:stampId`, `GET /places/photo` (proxy do Google, aposentado), `GET /health` (só o Railway). A collection `sync_mutations` e `modules/sync` não têm rota. A revisão de fotos (`/admin`, `/admin/api/photos`) é usada só pela página da equipe, não pelo app.
+
+Erros das rotas de foto trazem `code` (ex.: `duplicate_photo`, `terms_required`), que o app lê como `APIError.rejected`.
 | `PlaceDetailService` | `GET /places/:id`, `POST` e `GET /checkIn`, `GET /rating` | `place`, `checkin`, `rating` |
 | `RatingPromptService` | `GET` e `POST /rating` | `rating.routes` |
 | `ItineraryService` | `GET /itineraries`, `GET /itineraries/:slug`, `POST /itineraries/:slug/activate`, `POST /itineraries/active/abandon`, `GET /user/:id/itinerary` | `itinerary.routes`, `user.routes` |

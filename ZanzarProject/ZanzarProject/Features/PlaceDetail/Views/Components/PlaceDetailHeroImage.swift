@@ -13,6 +13,9 @@ struct PlaceDetailHeroImage: View {
                 if let credit = photo?.credit {
                     PlacePhotoCreditView(credit: credit)
                         .padding(8)
+                } else if let attribution = photo?.userAttribution {
+                    UserPhotoAttributionView(attribution: attribution)
+                        .padding(8)
                 }
             }
     }

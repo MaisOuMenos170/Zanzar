@@ -60,6 +60,10 @@ struct ProfileView: View {
                     VStack(alignment: .leading, spacing: 32) {
                         ProfileStatsView(summary: profile.summary)
                         ProfileRecentCheckInsSection(checkIns: profile.recentCheckIns, mediaPolicy: mediaPolicy)
+                        ProfilePhotosSection(
+                            onOpenMyPhotos: { coordinator.push(.myPhotos) },
+                            onOpenPrivacy: { coordinator.push(.photoPrivacy) }
+                        )
                     }
                 }
                 .padding(16)
