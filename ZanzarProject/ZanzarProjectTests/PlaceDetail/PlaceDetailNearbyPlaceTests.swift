@@ -2,6 +2,7 @@ import Foundation
 import Testing
 @testable import ZanzarProject
 
+@MainActor
 @Suite("PlaceDetail place card and main place")
 struct PlaceDetailNearbyPlaceTests {
     @Test("Place card maps from a map place with navigation metadata")

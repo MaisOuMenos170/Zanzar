@@ -10,7 +10,7 @@ struct PlacePhotoCreditView: View {
             HStack(spacing: 0) {
                 Text(L10n.string("placeDetail.photo.credit", credit.author))
                     .lineLimit(1)
-                Text(" · \(credit.license)")
+                Text(verbatim: " · \(credit.license)")
                     .lineLimit(1)
                     .fixedSize()
             }
