@@ -8,6 +8,8 @@ struct AuthFormField: View {
     var isSecure = false
     var textContentType: UITextContentType?
     var keyboardType: UIKeyboardType = .default
+    /// The return key: `.next` on every field but the last, which uses `.go` and submits the form.
+    var submitLabel: SubmitLabel = .next
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -44,13 +46,16 @@ struct AuthFormField: View {
         if isSecure {
             SecureField(placeholderKey, text: $text, prompt: prompt)
                 .textContentType(textContentType)
+                .submitLabel(submitLabel)
         } else {
-            TextField(placeholderKey, text: $text, prompt: prompt, axis: .vertical)
-                .lineLimit(1...3)
+            // A single-line field: with a vertical axis the return key would add a line instead of submitting.
+            TextField(placeholderKey, text: $text, prompt: prompt)
                 .textContentType(textContentType)
                 .keyboardType(keyboardType)
-                .textInputAutocapitalization(keyboardType == .emailAddress ? .never : .sentences)
-                .autocorrectionDisabled(keyboardType == .emailAddress)
+                .submitLabel(submitLabel)
+                // Names and e-mails are typed as they are: no forced capital letter and no autocorrect.
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
         }
     }
 }

@@ -8,6 +8,11 @@ struct SignUpView: View {
     @Environment(AuthSession.self) private var authSession
     @Environment(OnboardingGate.self) private var onboarding
     @Environment(\.authorizationController) private var authorizationController
+    @FocusState private var focusedField: Field?
+
+    private enum Field {
+        case username, email, password
+    }
 
     private var isBusy: Bool {
         viewModel.isLoading || appleSignIn.isLoading
@@ -44,6 +49,7 @@ struct SignUpView: View {
                 errorMessageKey: viewModel.usernameError,
                 textContentType: .username
             )
+            .focused($focusedField, equals: .username)
 
             AuthFormField(
                 labelKey: "signUp.emailField.label",
@@ -53,6 +59,7 @@ struct SignUpView: View {
                 textContentType: .emailAddress,
                 keyboardType: .emailAddress
             )
+            .focused($focusedField, equals: .email)
 
             AuthFormField(
                 labelKey: "signUp.passwordField.label",
@@ -60,8 +67,10 @@ struct SignUpView: View {
                 text: $viewModel.password,
                 errorMessageKey: viewModel.passwordError,
                 isSecure: true,
-                textContentType: .newPassword
+                textContentType: .newPassword,
+                submitLabel: .go
             )
+            .focused($focusedField, equals: .password)
 
             Toggle(isOn: $viewModel.acceptsTerms) {
                 Text("signUp.terms.label")
@@ -71,6 +80,15 @@ struct SignUpView: View {
             }
             .toggleStyle(CheckboxToggleStyle())
             .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .onSubmit {
+            switch focusedField {
+            case .username: focusedField = .email
+            case .email: focusedField = .password
+            case .password, nil:
+                focusedField = nil
+                Task { await submit() }
+            }
         }
     }
 

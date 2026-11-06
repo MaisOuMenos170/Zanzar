@@ -7,6 +7,11 @@ struct LoginView: View {
     @Environment(AuthSession.self) private var authSession
     @Environment(OnboardingGate.self) private var onboarding
     @Environment(\.authorizationController) private var authorizationController
+    @FocusState private var focusedField: Field?
+
+    private enum Field {
+        case email, password
+    }
 
     var body: some View {
         AuthScreenScaffold(titleKey: "login.header.title") {
@@ -37,6 +42,7 @@ struct LoginView: View {
                 textContentType: .emailAddress,
                 keyboardType: .emailAddress
             )
+            .focused($focusedField, equals: .email)
 
             AuthFormField(
                 labelKey: "login.passwordField.label",
@@ -44,8 +50,18 @@ struct LoginView: View {
                 text: $viewModel.password,
                 errorMessageKey: viewModel.passwordError,
                 isSecure: true,
-                textContentType: .password
+                textContentType: .password,
+                submitLabel: .go
             )
+            .focused($focusedField, equals: .password)
+        }
+        .onSubmit {
+            switch focusedField {
+            case .email: focusedField = .password
+            case .password, nil:
+                focusedField = nil
+                Task { await submit() }
+            }
         }
     }
 

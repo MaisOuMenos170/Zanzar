@@ -1,17 +1,21 @@
 import SwiftUI
 
-/// Shared layout for the login and sign-up screens: blue background, rounded title and form anchored above
-/// the actions pinned to the bottom. At accessibility Dynamic Type sizes the actions move into the scroll content.
+/// Shared layout for the login and sign-up screens: blue background, rounded title and form, then the actions.
+/// Everything lives in one scroll view that is at least as tall as the screen, so the actions rest at the bottom.
+/// When the keyboard opens they stay where they are, below the form and under the keyboard, instead of riding up over
+/// the fields; the keyboard's return key moves through the fields and submits on the last one.
 struct AuthScreenScaffold<Content: View, Actions: View>: View {
     let titleKey: LocalizedStringKey
     @ViewBuilder let content: Content
     @ViewBuilder let actions: Actions
 
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @State private var viewportHeight: CGFloat = 0
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
+                Spacer(minLength: 0)
+
                 Text(titleKey)
                     .font(.largeTitle.weight(.semibold))
                     .fontDesign(.rounded)
@@ -20,24 +24,20 @@ struct AuthScreenScaffold<Content: View, Actions: View>: View {
 
                 content
 
-                if dynamicTypeSize.isAccessibilitySize {
-                    actions
-                }
+                actions
+                    .padding(.top, 24)
             }
             .padding(.horizontal, 16)
             .padding(.top, 16)
-            .padding(.bottom, 24)
+            .padding(.bottom, 16)
+            .frame(minHeight: viewportHeight)
         }
-        .defaultScrollAnchor(.bottom, for: .alignment)
         .scrollBounceBehavior(.basedOnSize)
         .scrollDismissesKeyboard(.interactively)
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            if !dynamicTypeSize.isAccessibilitySize {
-                actions
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                    .padding(.bottom, 16)
-            }
+        .onGeometryChange(for: CGFloat.self) { proxy in
+            proxy.size.height
+        } action: { newHeight in
+            viewportHeight = newHeight
         }
         .background(Color.brandBlue50.ignoresSafeArea())
         .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
