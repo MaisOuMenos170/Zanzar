@@ -38,6 +38,21 @@ struct PassportIntroViewModelTests {
         #expect(viewModel.name == "Maria")
     }
 
+    @Test("the profile lookup asks for at least one check-in, as the backend requires")
+    func profileLookupUsesAValidLimit() async {
+        let profile = PassportProfileStub(name: "Maria")
+        let viewModel = PassportIntroViewModel(
+            avatar: Self.avatar,
+            name: nil,
+            profileService: profile,
+            userIDProvider: { "user-1" }
+        )
+
+        await viewModel.loadNameIfNeeded()
+
+        #expect((profile.lastLimit ?? 0) >= 1)
+    }
+
     @Test("a failed lookup leaves the name blank")
     func failedLookupKeepsBlank() async {
         let viewModel = PassportIntroViewModel(
@@ -72,6 +87,7 @@ struct PassportIntroViewModelTests {
 private final class PassportProfileStub: ProfileServicing, @unchecked Sendable {
     let name: String?
     private(set) var fetchCount = 0
+    private(set) var lastLimit: Int?
 
     init(name: String?) {
         self.name = name
@@ -79,6 +95,7 @@ private final class PassportProfileStub: ProfileServicing, @unchecked Sendable {
 
     func fetchProfile(userID: String, limit: Int) async throws -> Profile {
         fetchCount += 1
+        lastLimit = limit
         guard let name else { throw APIError.httpStatus(500, message: nil) }
         return Profile(
             summary: ProfileSummary(name: name, checkInCount: 0, itineraryCount: 0, sealCount: 0),

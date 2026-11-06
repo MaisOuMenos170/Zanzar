@@ -1,16 +1,24 @@
-import AuthenticationServices
 import SwiftUI
 
-/// System "Continuar com Apple" button styled as a full-width capsule. The caller wires the Apple request/result
-/// handlers, so it works the same on the login and the sign-up screens.
+/// "Continuar com Apple": the Apple logo and label in the same type size as the other auth buttons. It only starts
+/// the flow; the caller runs the Sign in with Apple request (see `LoginViewModel.signInWithApple`).
 struct AuthAppleButton: View {
-    let onRequest: (ASAuthorizationAppleIDRequest) -> Void
-    let onCompletion: (Result<ASAuthorization, Error>) -> Void
+    let action: () -> Void
 
     var body: some View {
-        SignInWithAppleButton(.continue, onRequest: onRequest, onCompletion: onCompletion)
-            .signInWithAppleButtonStyle(.black)
-            .frame(height: 52)
-            .clipShape(.capsule)
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Image(systemName: "apple.logo")
+                    .accessibilityHidden(true)
+                Text("auth.apple.button.title")
+            }
+        }
+        .buttonStyle(AuthPrimaryButtonStyle(background: .brandNeutral950))
     }
+}
+
+#Preview {
+    AuthAppleButton {}
+        .padding()
+        .background(Color.brandBlue50)
 }

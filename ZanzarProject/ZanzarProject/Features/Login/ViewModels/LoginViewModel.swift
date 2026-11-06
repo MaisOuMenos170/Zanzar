@@ -86,13 +86,28 @@ final class LoginViewModel {
         request.nonce = nonce.hashed
     }
 
-    func completeAppleSignIn(_ result: Result<ASAuthorization, Error>, using authSession: AuthSession) async -> Bool {
+    /// Runs the whole Sign in with Apple flow: `requestCredential` shows the system sheet for the request (the view
+    /// passes `AuthorizationController.appleIDCredential(for:)`), then the credential it returns signs the user in.
+    func signInWithApple(
+        using authSession: AuthSession,
+        requestCredential: (ASAuthorizationAppleIDRequest) async throws -> ASAuthorizationAppleIDCredential
+    ) async -> Bool {
+        let request = ASAuthorizationAppleIDProvider().createRequest()
+        configureAppleRequest(request)
+        do {
+            let credential = try await requestCredential(request)
+            return await completeAppleSignIn(.success(credential), using: authSession)
+        } catch {
+            return await completeAppleSignIn(.failure(error), using: authSession)
+        }
+    }
+
+    func completeAppleSignIn(
+        _ result: Result<ASAuthorizationAppleIDCredential, Error>,
+        using authSession: AuthSession
+    ) async -> Bool {
         switch result {
-        case .success(let authorization):
-            guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential else {
-                submitError = String(localized: "login.apple.error.generic")
-                return false
-            }
+        case .success(let credential):
             return await submitApple(
                 identityToken: credential.identityToken,
                 fullName: credential.fullName,

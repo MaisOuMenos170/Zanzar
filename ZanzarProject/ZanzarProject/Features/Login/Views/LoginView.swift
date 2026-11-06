@@ -6,6 +6,7 @@ struct LoginView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(AuthSession.self) private var authSession
     @Environment(OnboardingGate.self) private var onboarding
+    @Environment(\.authorizationController) private var authorizationController
 
     var body: some View {
         AuthScreenScaffold(titleKey: "login.header.title") {
@@ -54,10 +55,8 @@ struct LoginView: View {
 
             AuthOrDivider()
 
-            AuthAppleButton { request in
-                viewModel.configureAppleRequest(request)
-            } onCompletion: { result in
-                Task { await completeAppleSignIn(result) }
+            AuthAppleButton {
+                Task { await signInWithApple() }
             }
             .disabled(viewModel.isLoading)
 
@@ -102,9 +101,12 @@ struct LoginView: View {
         }
     }
 
-    private func completeAppleSignIn(_ result: Result<ASAuthorization, Error>) async {
+    private func signInWithApple() async {
         onboarding.begin()
-        guard await viewModel.completeAppleSignIn(result, using: authSession) else {
+        guard await viewModel.signInWithApple(
+            using: authSession,
+            requestCredential: { try await authorizationController.appleIDCredential(for: $0) }
+        ) else {
             onboarding.finish()
             return
         }

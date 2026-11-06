@@ -1,11 +1,13 @@
 import SwiftUI
 
-/// Plays the passport intro once: the passport waits empty, a hand brings the LERO stamp, presses it on the
-/// page. The count of collected stamps stays at 0: this stamp is the passport's welcome, not a place's stamp.
-/// With Reduce Motion it shows the finished passport at once.
+/// The passport scene. It waits untouched until `isPlaying` turns on, then a hand brings the LERO stamp and
+/// presses it on the page, and after a short pause `onFinished` is called. The count of collected stamps stays at 0:
+/// this stamp is the passport's welcome, not a place's stamp. With Reduce Motion the stamped passport shows at once.
 struct PassportStampAnimationView: View {
     let avatar: Avatar
     let name: String
+    let isPlaying: Bool
+    let onFinished: () -> Void
 
     @State private var stage = PassportStampStage.idle
     @State private var phase = PaperStampPhase.settled
@@ -20,8 +22,12 @@ struct PassportStampAnimationView: View {
                 .frame(width: size.width * scale, height: size.height * scale)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .task {
+        .task(id: isPlaying) {
+            guard isPlaying else { return }
             await play()
+            // Leaving the screen cancels the task, and then the flow must not move on by itself.
+            guard !Task.isCancelled else { return }
+            onFinished()
         }
     }
 
@@ -29,11 +35,9 @@ struct PassportStampAnimationView: View {
         guard stage == .idle else { return }
         if reduceMotion {
             stage = .stamped
+            try? await Task.sleep(for: .milliseconds(900))
             return
         }
-
-        try? await Task.sleep(for: .milliseconds(700))
-        guard !Task.isCancelled else { return }
 
         phase = .lifted
         withAnimation(.easeOut(duration: 0.45)) {
@@ -52,10 +56,16 @@ struct PassportStampAnimationView: View {
                 }
             }
         )
+        // The press itself, then a pause to see the stamped passport before the screen changes.
+        try? await Task.sleep(for: .milliseconds(1400))
     }
 }
 
 #Preview {
-    PassportStampAnimationView(avatar: .placeholder, name: "Exemplo de Nome")
-        .background(Color.brandBlue50)
+    @Previewable @State var isPlaying = false
+    VStack {
+        PassportStampAnimationView(avatar: .placeholder, name: "Exemplo de Nome", isPlaying: isPlaying) {}
+        Button("Play") { isPlaying = true }
+    }
+    .background(Color.brandBlue50)
 }

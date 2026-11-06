@@ -7,6 +7,7 @@ struct SignUpView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(AuthSession.self) private var authSession
     @Environment(OnboardingGate.self) private var onboarding
+    @Environment(\.authorizationController) private var authorizationController
 
     private var isBusy: Bool {
         viewModel.isLoading || appleSignIn.isLoading
@@ -79,10 +80,8 @@ struct SignUpView: View {
 
             AuthOrDivider()
 
-            AuthAppleButton { request in
-                appleSignIn.configureAppleRequest(request)
-            } onCompletion: { result in
-                Task { await completeAppleSignIn(result) }
+            AuthAppleButton {
+                Task { await signInWithApple() }
             }
             .disabled(isBusy)
 
@@ -124,9 +123,12 @@ struct SignUpView: View {
         }
     }
 
-    private func completeAppleSignIn(_ result: Result<ASAuthorization, Error>) async {
+    private func signInWithApple() async {
         onboarding.begin()
-        guard await appleSignIn.completeAppleSignIn(result, using: authSession) else {
+        guard await appleSignIn.signInWithApple(
+            using: authSession,
+            requestCredential: { try await authorizationController.appleIDCredential(for: $0) }
+        ) else {
             onboarding.finish()
             return
         }

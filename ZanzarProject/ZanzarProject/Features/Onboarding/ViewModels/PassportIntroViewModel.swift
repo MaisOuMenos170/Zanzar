@@ -9,6 +9,9 @@ final class PassportIntroViewModel {
     private let profileService: ProfileServicing
     private let userIDProvider: @Sendable () -> String?
 
+    /// The profile endpoint requires `limit` >= 1 even though only the name is used.
+    static let profileCheckInsLimit = 1
+
     let avatar: Avatar
     private(set) var name: String
 
@@ -28,7 +31,7 @@ final class PassportIntroViewModel {
     func loadNameIfNeeded() async {
         guard name.isEmpty, let userID = userIDProvider() else { return }
         do {
-            name = try await profileService.fetchProfile(userID: userID, limit: 0).summary.name
+            name = try await profileService.fetchProfile(userID: userID, limit: Self.profileCheckInsLimit).summary.name
         } catch {
             AppLog.profile.error("Could not load the name for the passport", error: error)
         }

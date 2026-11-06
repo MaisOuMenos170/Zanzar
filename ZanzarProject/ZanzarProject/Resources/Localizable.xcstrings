@@ -6726,6 +6726,23 @@
           }
         }
       }
+    },
+    "auth.apple.button.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue with Apple"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar com Apple"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
