@@ -84,6 +84,7 @@ final class ItineraryDetailViewModel {
             let active = try await service.activateItinerary(slug: slug)
             activeItinerary = active
             NotificationCenter.default.post(name: AppNotification.activeItineraryDidChange, object: nil)
+            NotificationCenter.default.post(name: AppNotification.itineraryDidStart, object: nil)
             return true
         } catch is CancellationError {
             return false

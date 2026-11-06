@@ -64,6 +64,7 @@ struct ProfileView: View {
                             onOpenMyPhotos: { coordinator.push(.myPhotos) },
                             onOpenPrivacy: { coordinator.push(.photoPrivacy) }
                         )
+                        ProximityAlertSettingsSection()
                     }
                 }
                 .padding(16)
