@@ -6,6 +6,9 @@ import SwiftUI
 struct AvatarFaceView: View {
     let avatar: Avatar
 
+    private static let centering = CGSize(width: 1.5, height: -10)
+    private static let compositionScale: CGFloat = 0.88
+
     private struct Layer {
         let folder: String
         let id: Int
@@ -18,8 +21,8 @@ struct AvatarFaceView: View {
     private var layers: [Layer] {
         var layers: [Layer] = []
         let hair = avatar.hair == Avatar.none ? nil : AvatarHairLayout.placement(for: avatar.hair)
-        if let hair, hair.hasBackLayer {
-            layers.append(Layer(folder: "CabelosFundo", id: avatar.hair, origin: hair.origin, width: hair.width))
+        if let back = hair?.back {
+            layers.append(Layer(folder: "CabelosFundo", id: avatar.hair, origin: back.origin, width: back.width))
         }
         layers.append(Layer(folder: "Pele", id: avatar.skin, origin: CGPoint(x: 28, y: 56), width: 338))
         if let hair {
@@ -48,6 +51,9 @@ struct AvatarFaceView: View {
                                 .offset(x: layer.origin.x * scale, y: layer.origin.y * scale)
                         }
                     }
+                    .frame(width: proxy.size.width, height: proxy.size.height, alignment: .topLeading)
+                    .scaleEffect(Self.compositionScale)
+                    .offset(x: Self.centering.width * scale, y: Self.centering.height * scale)
                 }
             }
             .accessibilityElement()
