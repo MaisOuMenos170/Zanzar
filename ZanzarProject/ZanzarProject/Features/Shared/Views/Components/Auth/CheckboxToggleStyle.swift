@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// 16pt square checkbox with a pink border, used for the sign-up terms acceptance.
 struct CheckboxToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         Button {

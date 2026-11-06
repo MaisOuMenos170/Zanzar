@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// First screen for a signed-out user: the way in ("Criar meu passaporte") or back to an existing account.
-/// The passport only appears after the avatar is saved.
 struct WelcomeView: View {
     @Environment(AppCoordinator.self) private var coordinator
 

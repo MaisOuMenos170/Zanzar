@@ -8,7 +8,6 @@ import Observation
 @Observable
 final class OnboardingGate {
     private(set) var isActive = false
-    /// Name of the account being created, from the registration response; `nil` after Sign in with Apple.
     var username: String?
 
     func begin() {

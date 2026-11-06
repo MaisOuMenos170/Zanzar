@@ -1,9 +1,7 @@
 import SwiftUI
 
-/// Shared layout for the login and sign-up screens: blue background, rounded title and form, then the actions.
-/// Everything lives in one scroll view that is at least as tall as the screen, so the actions rest at the bottom.
-/// When the keyboard opens they stay where they are, below the form and under the keyboard, instead of riding up over
-/// the fields; the keyboard's return key moves through the fields and submits on the last one.
+/// Layout of the login and sign-up screens. The actions sit at the bottom of the scroll content, so the keyboard
+/// covers them instead of pushing them over the fields.
 struct AuthScreenScaffold<Content: View, Actions: View>: View {
     let titleKey: LocalizedStringKey
     @ViewBuilder let content: Content

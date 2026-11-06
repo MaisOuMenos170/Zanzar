@@ -1,6 +1,5 @@
 import Foundation
 
-/// A category of the avatar editor, in the order of the tab bar.
 enum AvatarEditorTab: CaseIterable, Identifiable, Sendable {
     case skin
     case eyes
@@ -10,7 +9,6 @@ enum AvatarEditorTab: CaseIterable, Identifiable, Sendable {
 
     var id: Self { self }
 
-    /// Localization key of the screen title.
     var titleKey: String {
         switch self {
         case .skin: "avatarEditor.title.skin"
@@ -21,7 +19,6 @@ enum AvatarEditorTab: CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// Image in `Resources/Assets.xcassets/AvatarTabs`.
     var iconName: String {
         switch self {
         case .skin: "AvatarTabs/skin"
@@ -32,7 +29,6 @@ enum AvatarEditorTab: CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// Number of image options, not counting "none".
     var optionCount: Int {
         switch self {
         case .skin: AvatarCatalog.skinCount
@@ -43,12 +39,10 @@ enum AvatarEditorTab: CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// Eyelashes and hair can be turned off.
     var allowsNone: Bool {
         self == .eyelash || self == .hair
     }
 
-    /// Columns of the option grid: swatches are small and fit four per row, face and hair pictures three.
     var gridColumnCount: Int {
         switch self {
         case .skin, .hair: 3

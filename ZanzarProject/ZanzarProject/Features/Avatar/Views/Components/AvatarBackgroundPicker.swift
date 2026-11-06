@@ -17,7 +17,6 @@ struct AvatarBackgroundPicker: View {
             supportsOpacity: false
         )
         .labelsHidden()
-        // The system swatch is about 28pt; scale it so it stays under the 36pt wheel but keeps a comfortable tap area.
         .scaleEffect(1.15)
         .frame(width: 36, height: 36)
         .overlay {

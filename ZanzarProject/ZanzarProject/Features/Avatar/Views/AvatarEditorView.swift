@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// Builds the user's avatar: a live preview, five category tabs, the option grid of the selected tab and Save.
 struct AvatarEditorView: View {
     @State private var viewModel = AvatarEditorViewModel()
     @Environment(AppCoordinator.self) private var coordinator
@@ -26,7 +25,6 @@ struct AvatarEditorView: View {
             Button("avatarEditor.saveButton.title") {
                 Task {
                     if await viewModel.save() {
-                        // The passport shows the avatar the backend just stored.
                         coordinator.push(.passportIntro(avatar: viewModel.avatar, username: onboarding.username))
                     }
                 }

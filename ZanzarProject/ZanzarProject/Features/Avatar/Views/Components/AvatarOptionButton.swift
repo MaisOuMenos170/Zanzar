@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// Makes any option picture tappable and marks the chosen one with the green check.
 struct AvatarOptionButton<Content: View>: View {
     let accessibilityLabel: Text
     let isSelected: Bool

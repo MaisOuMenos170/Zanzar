@@ -56,7 +56,6 @@ struct PassportStampAnimationView: View {
                 }
             }
         )
-        // The press itself, then a pause to see the stamped passport before the screen changes.
         try? await Task.sleep(for: .milliseconds(1400))
     }
 }

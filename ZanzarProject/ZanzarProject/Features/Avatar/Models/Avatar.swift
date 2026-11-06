@@ -1,12 +1,8 @@
 import Foundation
 
-/// The face the user composed. Each value is the id of the local image of that layer
-/// (`Avatar/Pele`, `Avatar/Olhos`, `Avatar/Sobrancelhas`, `Avatar/Cilios`, `Avatar/Cabelos` in the asset catalog).
-/// Ids are 1-based; `eyelash` and `hair` also accept `Avatar.none` (0) for "no layer".
+/// Ids are 1-based; `eyelash` and `hair` also accept `Avatar.none` (0) for no layer.
 struct Avatar: Hashable, Sendable {
-    /// Value of an optional layer (eyelash, hair) that is not drawn.
     static let none = 0
-    /// Circle color behind a new face, from the design.
     static let defaultBackground = "#FFF9F6"
 
     var skin: Int

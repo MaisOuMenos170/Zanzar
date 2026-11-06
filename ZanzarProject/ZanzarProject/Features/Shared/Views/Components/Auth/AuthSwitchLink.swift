@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// "Já tem uma conta? **Fazer login**": plain prompt followed by a semibold tappable action.
 struct AuthSwitchLink: View {
     let promptKey: LocalizedStringKey
     let actionKey: LocalizedStringKey

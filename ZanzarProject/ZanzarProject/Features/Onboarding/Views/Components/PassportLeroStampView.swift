@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The blue "LERO" stamp printed on the passport.
 struct PassportLeroStampView: View {
     private static let tilt = 4.2
     private static let frameCenter = CGPoint(x: 266.49, y: 159.5)

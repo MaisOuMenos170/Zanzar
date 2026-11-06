@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// "Continuar com Apple": the Apple logo and label in the same type size as the other auth buttons. It only starts
-/// the flow; the caller runs the Sign in with Apple request (see `LoginViewModel.signInWithApple`).
 struct AuthAppleButton: View {
     let action: () -> Void
 

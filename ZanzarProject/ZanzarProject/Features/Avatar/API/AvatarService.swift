@@ -4,7 +4,6 @@ protocol AvatarServicing: Sendable {
     /// Returns `nil` when the user has not created an avatar yet (the backend answers `404`).
     func fetchAvatar(userID: String) async throws -> Avatar?
     func createAvatar(userID: String, avatar: Avatar) async throws -> Avatar
-    /// Replaces every layer of an existing avatar (`PATCH`; the backend answers `404` when there is none).
     func updateAvatar(userID: String, avatar: Avatar) async throws -> Avatar
 }
 
@@ -26,7 +25,6 @@ struct AvatarAPIRequest: Encodable, Sendable {
     }
 }
 
-/// Wire format of `GET /user/:id/avatar`: ids of the local images of each layer (0 = none for `eyelash` and `hair`).
 struct AvatarAPIResponse: Decodable, Sendable {
     let skin: Int
     let eyes: Int

@@ -1,8 +1,6 @@
 import SwiftUI
 
 /// Stacks the avatar's layer images into a face, laid out on the design's 397×297 canvas.
-/// Eyelashes and hair are optional (`Avatar.none` draws nothing).
-/// Hair is split in a part behind the face and one in front.
 struct AvatarFaceView: View {
     let avatar: Avatar
 

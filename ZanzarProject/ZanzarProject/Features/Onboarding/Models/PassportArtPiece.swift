@@ -10,22 +10,18 @@ struct PassportArtPiece: Identifiable, Sendable {
 
     var id: String { name }
 
-    /// The card and everything printed on it is tilted by the same angle.
     static let cardTilt = -4.73
 
-    /// Torn paper peeking out from behind the card.
     static let tornPaper: [PassportArtPiece] = [
         .init("PassportTornPaperA", 149.73, 140.235, centerX: 112.2, centerY: 98.2, rotation: -18.45),
         .init("PassportTornPaperB", 149.73, 140.235, centerX: 117.21, centerY: 97.22, rotation: -18.45)
     ]
 
-    /// The card's shadow and its hand-drawn border.
     static let cardFrame: [PassportArtPiece] = [
         .init("PassportCardFill", 322.939, 443.244, centerX: 203.75, centerY: 306.64, rotation: cardTilt),
         .init("PassportCardBorder", 328.089, 448.367, centerX: 194.75, centerY: 295.14, rotation: cardTilt)
     ]
 
-    /// The dashed arrow that circles the card.
     static let arrows = PassportArtPiece(
         name: "PassportArrows",
         size: CGSize(width: 338.402, height: 422.377),
@@ -33,7 +29,6 @@ struct PassportArtPiece: Identifiable, Sendable {
         rotation: -3.34
     )
 
-    /// Stamps and ornaments printed on the card, behind the text.
     static let cardDecorations: [PassportArtPiece] = [
         .init("PassportAirplane", 66.6853, 60.1264, centerX: 319.92, centerY: 459.87, rotation: cardTilt),
         .init("PassportCountPill", 137.987, 19.0663, centerX: 276.61, centerY: 441.04, rotation: cardTilt),
@@ -48,7 +43,6 @@ struct PassportArtPiece: Identifiable, Sendable {
         .init("PassportDotsB", 48.9166, 24.4147, centerX: 255.88, centerY: 257.14, rotation: cardTilt)
     ]
 
-    /// The hand holding the stamp, and the small motion mark next to it.
     static let hand = PassportArtPiece(
         name: "PassportStampHand",
         size: CGSize(width: 256.328, height: 203.788),
@@ -64,7 +58,6 @@ struct PassportArtPiece: Identifiable, Sendable {
 }
 
 private extension PassportArtPiece {
-    /// Shorthand for the placements below; kept in an extension so the memberwise initializer stays available.
     init(_ name: String, _ width: Double, _ height: Double, centerX: Double, centerY: Double, rotation: Double) {
         self.init(
             name: name,

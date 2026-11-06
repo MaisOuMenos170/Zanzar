@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// One pill of the editor's tab bar. The selected one is pink with diagonal highlights and a white icon.
 struct AvatarCategoryTabButton: View {
     let tab: AvatarEditorTab
     let isSelected: Bool
@@ -44,7 +43,6 @@ struct AvatarCategoryTabButton: View {
         }
     }
 
-    /// A translucent band across the pill, tilted like the design's highlights.
     private struct Stripe: View {
         let width: CGFloat
         let height: CGFloat

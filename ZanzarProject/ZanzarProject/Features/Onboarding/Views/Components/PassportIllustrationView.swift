@@ -1,14 +1,11 @@
 import SwiftUI
 
-/// The passport scene on its 393×640 design canvas: torn paper and ticket behind a tilted card, a dashed arrow
-/// around it, and, depending on `stage`, the hand holding the stamp or the finished LERO stamp.
 struct PassportIllustrationView: View {
     static let canvasSize = CGSize(width: 393, height: 640)
 
     let avatar: Avatar
     let name: String
     let stage: PassportStampStage
-    /// Press phase of the stamp: the LERO mark drops in and the paper gives a little at the moment of contact.
     let phase: PaperStampPhase
 
     var body: some View {

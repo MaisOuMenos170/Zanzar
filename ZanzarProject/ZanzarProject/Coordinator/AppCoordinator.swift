@@ -9,7 +9,6 @@ final class AppCoordinator {
         popToRoot()
     }
 
-    /// Replaces the auth stack with the avatar editor, the first step after creating an account.
     func startOnboarding() {
         popToRoot()
         push(.avatarEditor)

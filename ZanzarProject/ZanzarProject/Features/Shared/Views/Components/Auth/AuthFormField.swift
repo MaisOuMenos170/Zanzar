@@ -8,7 +8,6 @@ struct AuthFormField: View {
     var isSecure = false
     var textContentType: UITextContentType?
     var keyboardType: UIKeyboardType = .default
-    /// The return key: `.next` on every field but the last, which uses `.go` and submits the form.
     var submitLabel: SubmitLabel = .next
 
     var body: some View {

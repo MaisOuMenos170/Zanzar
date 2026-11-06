@@ -6,7 +6,6 @@ import SwiftUI
 final class AvatarEditorViewModel {
     private let service: AvatarServicing
     private let userIDProvider: @Sendable () -> String?
-    /// `true` once the backend is known to have an avatar for the user, so saving updates instead of creating.
     private var hasStoredAvatar = false
 
     var avatar: Avatar
@@ -25,7 +24,6 @@ final class AvatarEditorViewModel {
         self.avatar = avatar
     }
 
-    /// The id chosen in the current tab (`Avatar.none` when that layer is off).
     var selectedValue: Int {
         value(for: selectedTab)
     }
@@ -40,7 +38,6 @@ final class AvatarEditorViewModel {
         }
     }
 
-    /// Chooses an option of the current tab; unknown ids are ignored.
     func select(_ value: Int) {
         let lowerBound = selectedTab.allowsNone ? Avatar.none : 1
         guard (lowerBound...selectedTab.optionCount).contains(value) else { return }
@@ -53,13 +50,11 @@ final class AvatarEditorViewModel {
         }
     }
 
-    /// The circle color behind the face, edited by the color picker.
     var backgroundColor: Color {
         get { Color(hex: avatar.background) ?? Color(hex: Avatar.defaultBackground) ?? .clear }
         set { avatar.background = newValue.hexString }
     }
 
-    /// Starts from the avatar the user already has, if any; a new user keeps the default face.
     func load() async {
         guard !isLoading, let userID = userIDProvider() else { return }
         isLoading = true

@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// White card with the options of the selected tab: face pictures, hair pictures or color swatches.
 struct AvatarOptionGrid: View {
     let tab: AvatarEditorTab
     let selectedValue: Int

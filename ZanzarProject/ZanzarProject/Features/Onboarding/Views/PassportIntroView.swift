@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// Shown once after the avatar is saved: "Começar" stamps the passport and then enters the app.
 struct PassportIntroView: View {
     @State private var viewModel: PassportIntroViewModel
     @State private var isStamping = false

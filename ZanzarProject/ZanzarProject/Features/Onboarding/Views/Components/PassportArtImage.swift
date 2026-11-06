@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// Draws one `PassportArtPiece` at its place on the illustration canvas.
 struct PassportArtImage: View {
     let piece: PassportArtPiece
 

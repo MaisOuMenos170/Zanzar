@@ -27,7 +27,6 @@ final class PassportIntroViewModel {
         self.userIDProvider = userIDProvider
     }
 
-    /// Fills in a missing name; a failed lookup leaves it blank instead of blocking the intro.
     func loadNameIfNeeded() async {
         guard name.isEmpty, let userID = userIDProvider() else { return }
         do {

@@ -15,7 +15,6 @@ extension Color {
 }
 
 extension Color {
-    /// `#RRGGBB` of the color in sRGB, clamped to the displayable range.
     var hexString: String {
         let resolved = resolve(in: EnvironmentValues())
         func component(_ value: Float) -> Int {

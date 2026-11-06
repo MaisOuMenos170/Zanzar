@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// The passport card on the illustration canvas: border, printed stamps, the user's avatar, name, city and
-/// the number of stamps collected. Everything is tilted like the card.
 struct PassportCardView: View {
     let avatar: Avatar
     let name: String

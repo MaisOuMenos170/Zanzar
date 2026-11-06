@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The five category pills above the option grid.
 struct AvatarCategoryTabBar: View {
     @Binding var selection: AvatarEditorTab
 

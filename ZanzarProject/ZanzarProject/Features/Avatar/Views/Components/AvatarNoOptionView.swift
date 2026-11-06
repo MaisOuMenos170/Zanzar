@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The "none" option of the eyelash and hair grids: a crossed-out circle.
 struct AvatarNoOptionView: View {
     var body: some View {
         Image(systemName: "nosign")

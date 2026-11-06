@@ -18,7 +18,6 @@ final class SignUpViewModel {
     var isLoading = false
     var submitError: String?
     var shouldNavigateToLogin = false
-    /// The username the backend stored for the new account, read from the registration response.
     private(set) var createdUsername: String?
 
     init(

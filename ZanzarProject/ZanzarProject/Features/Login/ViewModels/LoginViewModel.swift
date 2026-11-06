@@ -86,8 +86,6 @@ final class LoginViewModel {
         request.nonce = nonce.hashed
     }
 
-    /// Runs the whole Sign in with Apple flow: `requestCredential` shows the system sheet for the request (the view
-    /// passes `AuthorizationController.appleIDCredential(for:)`), then the credential it returns signs the user in.
     func signInWithApple(
         using authSession: AuthSession,
         requestCredential: (ASAuthorizationAppleIDRequest) async throws -> ASAuthorizationAppleIDCredential

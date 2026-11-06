@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// Horizontal rule with a centered "ou" label, separating the primary action from Sign in with Apple.
 struct AuthOrDivider: View {
     var body: some View {
         HStack(spacing: 16) {
