@@ -10,6 +10,9 @@ struct AuthFormField: View {
     var keyboardType: UIKeyboardType = .default
     var submitLabel: SubmitLabel = .next
 
+    @State private var isPasswordVisible = false
+    @FocusState private var isSecureFieldFocused: Bool
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(labelKey)
@@ -44,9 +47,36 @@ struct AuthFormField: View {
     @ViewBuilder
     private var field: some View {
         if isSecure {
-            SecureField(placeholderKey, text: $text, prompt: prompt)
+            HStack(spacing: 8) {
+                Group {
+                    if isPasswordVisible {
+                        TextField(placeholderKey, text: $text, prompt: prompt)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                    } else {
+                        SecureField(placeholderKey, text: $text, prompt: prompt)
+                    }
+                }
                 .textContentType(textContentType)
                 .submitLabel(submitLabel)
+                .focused($isSecureFieldFocused)
+
+                Button {
+                    // Swapping SecureField and TextField drops the focus, so hand it back to keep the keyboard open.
+                    let wasFocused = isSecureFieldFocused
+                    isPasswordVisible.toggle()
+                    if wasFocused {
+                        Task { isSecureFieldFocused = true }
+                    }
+                } label: {
+                    Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
+                        .foregroundStyle(.secondary)
+                        .frame(minWidth: 25, minHeight: 25)
+                        .contentShape(.rect)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(isPasswordVisible ? "authFormField.hidePassword" : "authFormField.showPassword")
+            }
         } else {
             // A single-line field: with a vertical axis the return key would add a line instead of submitting.
             TextField(placeholderKey, text: $text, prompt: prompt)
