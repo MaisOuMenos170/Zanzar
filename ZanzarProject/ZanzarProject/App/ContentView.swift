@@ -22,6 +22,9 @@ struct ContentView: View {
             // While onboarding the coordinator already points at the avatar editor.
             guard !onboarding.isActive else { return }
             coordinator.popToRoot()
+            if !authSession.isAuthenticated {
+                Task { await ProximityAlertCoordinator.shared.stop() }
+            }
         }
         .alert("auth.sessionExpired.title", isPresented: $showsSessionExpiredAlert) {
             Button("auth.sessionExpired.dismissButton.title", role: .cancel) {}

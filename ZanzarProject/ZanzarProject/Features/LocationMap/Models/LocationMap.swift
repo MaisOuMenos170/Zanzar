@@ -105,6 +105,8 @@ nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
     let checkInCount: Int
     let photoURL: URL?
     let impressionCounts: [String: Int]
+    /// `nil` when the backend has no hours for the place; callers must not read that as "closed".
+    let openingHours: OpeningHours?
 
     var displayName: String {
         PlaceDisplayNameResolver.displayName(nickname: nickname, name: name)
@@ -129,7 +131,8 @@ nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
         pinStyle: LocationPinStyle = .available,
         checkInCount: Int = 0,
         photoURL: URL? = nil,
-        impressionCounts: [String: Int] = [:]
+        impressionCounts: [String: Int] = [:],
+        openingHours: OpeningHours? = nil
     ) {
         self.id = id
         self.name = name
@@ -142,6 +145,7 @@ nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
         self.checkInCount = checkInCount
         self.photoURL = photoURL
         self.impressionCounts = impressionCounts
+        self.openingHours = openingHours
     }
 }
 
@@ -178,6 +182,7 @@ nonisolated struct PlaceAPIResponse: Decodable, Sendable {
     let zanzar: NearbyPlaceZanzar
     let distanceMeters: Double
     let userContext: PlaceUserContext?
+    let openingHours: PlaceOpeningHoursAPIResponse?
 
     enum CodingKeys: String, CodingKey {
         case placeId = "place_id"
@@ -188,6 +193,7 @@ nonisolated struct PlaceAPIResponse: Decodable, Sendable {
         case zanzar
         case distanceMeters
         case userContext
+        case openingHours = "opening_hours"
     }
 
     nonisolated struct Geometry: Decodable, Sendable {
@@ -211,6 +217,8 @@ nonisolated struct PlaceAPIResponse: Decodable, Sendable {
         zanzar = try container.decode(NearbyPlaceZanzar.self, forKey: .zanzar)
         distanceMeters = try container.decode(Double.self, forKey: .distanceMeters)
         userContext = try container.decodeIfPresent(PlaceUserContext.self, forKey: .userContext)
+        // Hours are a bonus: a malformed block must not take the whole nearby list down.
+        openingHours = try? container.decodeIfPresent(PlaceOpeningHoursAPIResponse.self, forKey: .openingHours)
     }
 }
 
@@ -227,6 +235,7 @@ extension MapPlace {
         checkInCount = response.zanzar.checkInCount
         photoURL = response.photos.first?.url
         impressionCounts = response.zanzar.impressionCounts
+        openingHours = response.openingHours.flatMap(OpeningHours.init(response:))
     }
 
     static func pinStyle(from context: PlaceUserContext?) -> LocationPinStyle {
