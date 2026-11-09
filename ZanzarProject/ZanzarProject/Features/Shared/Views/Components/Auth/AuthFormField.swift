@@ -9,6 +9,8 @@ struct AuthFormField: View {
     var textContentType: UITextContentType?
     var keyboardType: UIKeyboardType = .default
 
+    @State private var isPasswordVisible = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(labelKey)
@@ -39,8 +41,29 @@ struct AuthFormField: View {
     @ViewBuilder
     private var field: some View {
         if isSecure {
-            SecureField(placeholderKey, text: $text)
+            HStack(spacing: 8) {
+                Group {
+                    if isPasswordVisible {
+                        TextField(placeholderKey, text: $text)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                    } else {
+                        SecureField(placeholderKey, text: $text)
+                    }
+                }
                 .textContentType(textContentType)
+
+                Button {
+                    isPasswordVisible.toggle()
+                } label: {
+                    Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
+                        .foregroundStyle(.secondary)
+                        .frame(minWidth: 25, minHeight: 25)
+                        .contentShape(.rect)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(isPasswordVisible ? "authFormField.hidePassword" : "authFormField.showPassword")
+            }
         } else {
             TextField(placeholderKey, text: $text, axis: .vertical)
                 .lineLimit(1...3)
