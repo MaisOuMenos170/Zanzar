@@ -14,12 +14,16 @@ nonisolated struct PlaceDetail: Identifiable, Hashable, Sendable {
     let tags: [PlaceDetailTag]
     let category: ZanzarPlaceCategory
     let description: String
-    let heroPhotoReference: String?
+    /// Photos of the place in the order the backend sends them, at most `maximumPhotoCount`.
+    let photos: [PlacePhoto]
     var totalCheckIns: Int
     var reactions: [PlaceDetailReaction]
     var hasCheckedIn: Bool
     var isInActiveItinerary: Bool
     var selectedReactionTag: String?
+
+    /// The detail shows only the first few photos; each one is a request when it scrolls into view.
+    static let maximumPhotoCount = 5
 
     var displayName: String {
         PlaceDisplayNameResolver.displayName(nickname: nickname, name: name)
@@ -69,7 +73,7 @@ nonisolated struct PlaceDetailNearbyPlace: Identifiable, Hashable, Sendable {
     let category: ZanzarPlaceCategory
     let distanceMeters: Double
     let checkInCount: Int
-    let photoReference: String?
+    let photoURL: URL?
     let reactionImageNames: [String]
     let hasCheckedIn: Bool
 
@@ -101,7 +105,7 @@ nonisolated extension PlaceDetailNearbyPlace {
             category: mapPlace.category,
             distanceMeters: mapPlace.distanceMeters ?? 0,
             checkInCount: mapPlace.checkInCount,
-            photoReference: mapPlace.photoReference,
+            photoURL: mapPlace.photoURL,
             reactionImageNames: ImpressionTag.topReactionImageNames(from: mapPlace.impressionCounts),
             hasCheckedIn: mapPlace.pinStyle == .checkedIn
         )
@@ -118,7 +122,7 @@ nonisolated extension PlaceDetail {
     /// Average walking speed in meters per second (5 km/h ≈ 1.39 m/s)
     private static let walkingSpeedMetersPerSecond: Double = 1.39
 
-    static func make(
+    @MainActor static func make(
         placeResponse: PlaceDetailAPIResponse,
         mapPlace: MapPlace,
         hasCheckedIn: Bool,
@@ -176,7 +180,7 @@ nonisolated extension PlaceDetail {
             tags: tags(from: placeResponse),
             category: ZanzarPlaceCategory(rawCategory: placeResponse.zanzar.category),
             description: description,
-            heroPhotoReference: placeResponse.photos.first?.photoReference,
+            photos: Array(placeResponse.photos.prefix(PlaceDetail.maximumPhotoCount)),
             totalCheckIns: placeResponse.zanzar.checkInCount,
             reactions: ImpressionTag.reactions(
                 from: placeResponse.zanzar.impressionCounts,
@@ -188,7 +192,7 @@ nonisolated extension PlaceDetail {
         )
     }
 
-    private static func openingHoursText(from openingHours: PlaceDetailOpeningHoursResponse?) -> (text: String, isOpen: Bool?) {
+    @MainActor private static func openingHoursText(from openingHours: PlaceDetailOpeningHoursResponse?) -> (text: String, isOpen: Bool?) {
         guard let openingHours else {
             return (L10n.string("placeDetail.header.hoursUnavailable"), nil)
         }
@@ -201,7 +205,7 @@ nonisolated extension PlaceDetail {
         return (L10n.string("placeDetail.header.hoursUnavailable"), nil)
     }
 
-    private static func tags(from response: PlaceDetailAPIResponse) -> [PlaceDetailTag] {
+    @MainActor private static func tags(from response: PlaceDetailAPIResponse) -> [PlaceDetailTag] {
         var tags: [PlaceDetailTag] = []
 
         if let categoryTag = categoryTag(for: response.zanzar.category) {
@@ -230,7 +234,7 @@ nonisolated extension PlaceDetail {
         value.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
     }
 
-    private static func categoryTag(for category: String) -> PlaceDetailTag? {
+    @MainActor private static func categoryTag(for category: String) -> PlaceDetailTag? {
         switch ZanzarPlaceCategory(rawCategory: category) {
         case .park:
             categoryTag("park", label: L10n.string("placeDetail.tag.park"), style: .park)

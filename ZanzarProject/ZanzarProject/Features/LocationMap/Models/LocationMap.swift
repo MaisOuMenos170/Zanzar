@@ -103,8 +103,10 @@ nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
     let pinStyle: LocationPinStyle
     /// Total check-ins at the place. The list endpoint includes this; callers that only have a pin default to 0.
     let checkInCount: Int
-    let photoReference: String?
+    let photoURL: URL?
     let impressionCounts: [String: Int]
+    /// `nil` when the backend has no hours for the place; callers must not read that as "closed".
+    let openingHours: OpeningHours?
 
     var displayName: String {
         PlaceDisplayNameResolver.displayName(nickname: nickname, name: name)
@@ -128,8 +130,9 @@ nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
         distanceMeters: Double?,
         pinStyle: LocationPinStyle = .available,
         checkInCount: Int = 0,
-        photoReference: String? = nil,
-        impressionCounts: [String: Int] = [:]
+        photoURL: URL? = nil,
+        impressionCounts: [String: Int] = [:],
+        openingHours: OpeningHours? = nil
     ) {
         self.id = id
         self.name = name
@@ -140,16 +143,9 @@ nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
         self.distanceMeters = distanceMeters
         self.pinStyle = pinStyle
         self.checkInCount = checkInCount
-        self.photoReference = photoReference
+        self.photoURL = photoURL
         self.impressionCounts = impressionCounts
-    }
-}
-
-struct NearbyPlacePhoto: Decodable, Sendable {
-    let photoReference: String
-
-    enum CodingKeys: String, CodingKey {
-        case photoReference = "photo_reference"
+        self.openingHours = openingHours
     }
 }
 
@@ -182,20 +178,22 @@ nonisolated struct PlaceAPIResponse: Decodable, Sendable {
     let name: String
     let nickname: String?
     let geometry: Geometry
-    let photos: [NearbyPlacePhoto]
+    let photos: [PlacePhoto]
     let zanzar: NearbyPlaceZanzar
     let distanceMeters: Double
     let userContext: PlaceUserContext?
+    let openingHours: PlaceOpeningHoursAPIResponse?
 
     enum CodingKeys: String, CodingKey {
         case placeId = "place_id"
         case name
         case nickname
         case geometry
-        case photos
+        case images
         case zanzar
         case distanceMeters
         case userContext
+        case openingHours = "opening_hours"
     }
 
     nonisolated struct Geometry: Decodable, Sendable {
@@ -213,10 +211,14 @@ nonisolated struct PlaceAPIResponse: Decodable, Sendable {
         name = try container.decode(String.self, forKey: .name)
         nickname = try container.decodeIfPresent(String.self, forKey: .nickname)
         geometry = try container.decode(Geometry.self, forKey: .geometry)
-        photos = try container.decodeIfPresent([NearbyPlacePhoto].self, forKey: .photos) ?? []
+        photos = PlaceImageAPIResponse.photos(
+            from: try container.decodeIfPresent([FailableDecodable<PlaceImageAPIResponse>].self, forKey: .images)
+        )
         zanzar = try container.decode(NearbyPlaceZanzar.self, forKey: .zanzar)
         distanceMeters = try container.decode(Double.self, forKey: .distanceMeters)
         userContext = try container.decodeIfPresent(PlaceUserContext.self, forKey: .userContext)
+        // Hours are a bonus: a malformed block must not take the whole nearby list down.
+        openingHours = try? container.decodeIfPresent(PlaceOpeningHoursAPIResponse.self, forKey: .openingHours)
     }
 }
 
@@ -231,8 +233,9 @@ extension MapPlace {
         distanceMeters = response.distanceMeters
         pinStyle = Self.pinStyle(from: response.userContext)
         checkInCount = response.zanzar.checkInCount
-        photoReference = response.photos.first?.photoReference
+        photoURL = response.photos.first?.url
         impressionCounts = response.zanzar.impressionCounts
+        openingHours = response.openingHours.flatMap(OpeningHours.init(response:))
     }
 
     static func pinStyle(from context: PlaceUserContext?) -> LocationPinStyle {

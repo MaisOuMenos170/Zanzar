@@ -69,3 +69,8 @@ fastlane/test_output
 
 # Notas locais de backlog MVP (não versionar)
 MVP-TASKS.md
+
+# Mapa do código gerado por `stacklit init` (regenerar quando precisar)
+stacklit.json
+stacklit.html
+DEPENDENCIES.md

@@ -10,5 +10,7 @@
 	</array>
 	<key>ZanzarAPIBaseURL</key>
 	<string>$(ZANZAR_API_BASE_URL)</string>
+	<key>ZanzarSupportEmail</key>
+	<string>$(ZANZAR_SUPPORT_EMAIL)</string>
 </dict>
 </plist>

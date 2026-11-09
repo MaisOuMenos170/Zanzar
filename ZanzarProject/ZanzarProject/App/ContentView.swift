@@ -4,11 +4,12 @@ struct ContentView: View {
     @State private var coordinator = AppCoordinator()
     @State private var authSession = AuthSession()
     @State private var toastPresenter = ToastPresenter()
+    @State private var onboarding = OnboardingGate()
     @State private var showsSessionExpiredAlert = false
 
     var body: some View {
         Group {
-            if authSession.isAuthenticated {
+            if authSession.isAuthenticated && !onboarding.isActive {
                 MainTabView()
             } else {
                 NavigationStack(path: $coordinator.path) {
@@ -18,7 +19,12 @@ struct ContentView: View {
             }
         }
         .onChange(of: authSession.isAuthenticated) {
+            // While onboarding the coordinator already points at the avatar editor.
+            guard !onboarding.isActive else { return }
             coordinator.popToRoot()
+            if !authSession.isAuthenticated {
+                Task { await ProximityAlertCoordinator.shared.stop() }
+            }
         }
         .alert("auth.sessionExpired.title", isPresented: $showsSessionExpiredAlert) {
             Button("auth.sessionExpired.dismissButton.title", role: .cancel) {}
@@ -35,6 +41,7 @@ struct ContentView: View {
         .environment(coordinator)
         .environment(authSession)
         .environment(toastPresenter)
+        .environment(onboarding)
     }
 }
 

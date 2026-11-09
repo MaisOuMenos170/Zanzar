@@ -13,3 +13,16 @@ extension Color {
         )
     }
 }
+
+extension Color {
+    var hexString: String {
+        let resolved = resolve(in: EnvironmentValues())
+        func component(_ value: Float) -> Int {
+            Int((min(max(value, 0), 1) * 255).rounded())
+        }
+        let red = component(resolved.red)
+        let green = component(resolved.green)
+        let blue = component(resolved.blue)
+        return String(format: "#%02X%02X%02X", red, green, blue)
+    }
+}

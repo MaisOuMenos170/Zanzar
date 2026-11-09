@@ -14,7 +14,7 @@ struct ProfileViewModelTests {
                 placeID: "p1",
                 placeName: "Parque",
                 date: .now,
-                photoReference: nil,
+                photoURL: nil,
                 sealCategory: .park,
                 impressionTag: nil
             )

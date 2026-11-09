@@ -5,3 +5,6 @@
 // Debug falls back to http://127.0.0.1:3000 when empty.
 // Release does not use this file. It uses Config.Release.xcconfig.
 ZANZAR_API_BASE_URL =
+
+// Developer contact shown in the app (App Store guideline 1.2), e.g. contato@exemplo.com. Empty: the app says it is coming soon.
+ZANZAR_SUPPORT_EMAIL =
