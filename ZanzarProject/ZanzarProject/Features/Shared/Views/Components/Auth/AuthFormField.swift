@@ -13,7 +13,8 @@ struct AuthFormField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(labelKey)
-                .font(.subheadline)
+                .font(.system(size: 14))
+                .tracking(0.25)
                 .foregroundStyle(.primary)
 
             if let errorMessageKey {
@@ -23,13 +24,13 @@ struct AuthFormField: View {
             }
 
             field
-                .font(.body)
+                .font(.system(size: 16))
                 .padding(16)
                 .frame(minHeight: 51, alignment: .leading)
-                .background(Color.brandNeutral50, in: .rect(cornerRadius: 8))
+                .background(Color.brandNeutral50, in: .capsule)
                 .overlay {
                     if errorMessageKey != nil {
-                        RoundedRectangle(cornerRadius: 8)
+                        Capsule()
                             .stroke(Color("AuthError"), lineWidth: 1)
                     }
                 }

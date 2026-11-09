@@ -7,14 +7,14 @@ struct CheckboxToggleStyle: ToggleStyle {
         } label: {
             HStack(spacing: 16) {
                 RoundedRectangle(cornerRadius: 2)
-                    .fill(Color.brandNeutral50)
-                    .strokeBorder(Color.brandPink200, lineWidth: 1)
+                    .fill(Color.white)
+                    .strokeBorder(Color.brandBlue200, lineWidth: 1)
                     .frame(width: 16, height: 16)
                     .overlay {
                         if configuration.isOn {
                             Image(systemName: "checkmark")
                                 .font(.system(size: 10, weight: .bold))
-                                .foregroundStyle(Color.brandPink300)
+                                .foregroundStyle(Color.brandBlue500)
                         }
                     }
                 configuration.label

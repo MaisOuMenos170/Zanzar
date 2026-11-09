@@ -74,7 +74,8 @@ struct SignUpView: View {
 
             Toggle(isOn: $viewModel.acceptsTerms) {
                 Text("signUp.terms.label")
-                    .font(.subheadline)
+                    .font(.system(size: 14))
+                    .tracking(0.25)
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)
             }
