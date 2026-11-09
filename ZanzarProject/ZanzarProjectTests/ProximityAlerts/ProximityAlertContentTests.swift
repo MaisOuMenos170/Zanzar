@@ -28,6 +28,12 @@ struct ProximityAlertContentTests {
         )
     }
 
+    /// 22:00 on the test day as the alert prints it. The format follows the machine's locale ("22:00" or "10:00 PM"),
+    /// so the tests compare against the same formatter instead of looking for digits.
+    private var expectedClosingTime: String {
+        date(22).formatted(Date.FormatStyle(date: .omitted, time: .shortened, timeZone: Self.timeZone))
+    }
+
     private let openUntil22 = """
     { "periods": [ { "open": { "day": 5, "time": "1000" }, "close": { "day": 5, "time": "2200" } } ] }
     """
@@ -43,7 +49,7 @@ struct ProximityAlertContentTests {
 
         #expect(content.title == "Al Beek")
         #expect(content.placeID == "bar")
-        #expect(content.body.contains("22"))
+        #expect(content.body == L10n.string("proximity.alert.nearby.body.openUntil", expectedClosingTime))
         #expect(content.body != L10n.string("proximity.alert.nearby.body"))
     }
 
@@ -87,7 +93,7 @@ struct ProximityAlertContentTests {
         )
 
         #expect(plain.body == L10n.string("proximity.alert.stop.body"))
-        #expect(withHours.body.contains("22"))
+        #expect(withHours.body == L10n.string("proximity.alert.stop.body.openUntil", expectedClosingTime))
         #expect(withHours.kind == .itineraryStop)
     }
 }
