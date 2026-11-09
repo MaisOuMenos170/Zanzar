@@ -11,6 +11,7 @@ struct AuthFormField: View {
     var submitLabel: SubmitLabel = .next
 
     @State private var isPasswordVisible = false
+    @FocusState private var isSecureFieldFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -58,9 +59,15 @@ struct AuthFormField: View {
                 }
                 .textContentType(textContentType)
                 .submitLabel(submitLabel)
+                .focused($isSecureFieldFocused)
 
                 Button {
+                    // Swapping SecureField and TextField drops the focus, so hand it back to keep the keyboard open.
+                    let wasFocused = isSecureFieldFocused
                     isPasswordVisible.toggle()
+                    if wasFocused {
+                        Task { isSecureFieldFocused = true }
+                    }
                 } label: {
                     Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
                         .foregroundStyle(.secondary)
