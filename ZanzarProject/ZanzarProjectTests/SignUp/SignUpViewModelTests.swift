@@ -124,7 +124,7 @@ struct SignUpViewModelTests {
     @MainActor
     func submitSignsInAfterRegisterAndLoginSucceed() async {
         let signUpService = MockSignUpService()
-        signUpService.submitSignUpResult = .success(SignUpResponse(id: "user-id"))
+        signUpService.submitSignUpResult = .success(SignUpResponse(id: "user-id", username: "Zanzar Name"))
         let loginService = MockLoginService()
         loginService.submitLoginResult = .success(LoginResponse(token: "jwt-token", refreshToken: "refresh-token"))
         let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
@@ -135,12 +135,48 @@ struct SignUpViewModelTests {
         viewModel.username = "zanzar"
         viewModel.email = "user@example.com"
         viewModel.password = "secret123"
+        viewModel.acceptsTerms = true
 
         let didSubmit = await viewModel.submit(using: authSession)
 
         #expect(didSubmit == true)
         #expect(authSession.isAuthenticated == true)
         #expect(viewModel.submitError == nil)
+        #expect(viewModel.createdUsername == "Zanzar Name")
+    }
+
+    @Test("the registration response's username is kept, and the typed one is the fallback")
+    @MainActor
+    func createdUsernameFallsBackToTypedName() async {
+        let signUpService = MockSignUpService()
+        signUpService.submitSignUpResult = .success(SignUpResponse(id: "user-id", username: nil))
+        let loginService = MockLoginService()
+        loginService.submitLoginResult = .success(LoginResponse(token: "jwt-token", refreshToken: "refresh-token"))
+        let viewModel = SignUpViewModel(signUpService: signUpService, loginService: loginService)
+        viewModel.username = "  zanzar  "
+        viewModel.email = "user@example.com"
+        viewModel.password = "secret123"
+        viewModel.acceptsTerms = true
+
+        _ = await viewModel.submit(using: AuthSession(keychain: InMemoryAuthTokenStore()))
+
+        #expect(viewModel.createdUsername == "zanzar")
+    }
+
+    @Test("submit without accepting the terms asks for them and sends nothing")
+    @MainActor
+    func submitRequiresTerms() async {
+        let signUpService = MockSignUpService()
+        let viewModel = SignUpViewModel(signUpService: signUpService, loginService: MockLoginService())
+        viewModel.username = "zanzar"
+        viewModel.email = "user@example.com"
+        viewModel.password = "secret123"
+
+        let didSubmit = await viewModel.submit(using: AuthSession(keychain: InMemoryAuthTokenStore()))
+
+        #expect(didSubmit == false)
+        #expect(viewModel.submitError == L10n.string("signUp.submitError.termsRequired"))
+        #expect(!viewModel.isLoading)
     }
 
     @Test("submit maps email already in use error")
@@ -155,6 +191,7 @@ struct SignUpViewModelTests {
         viewModel.username = "zanzar"
         viewModel.email = "user@example.com"
         viewModel.password = "secret123"
+        viewModel.acceptsTerms = true
 
         let didSubmit = await viewModel.submit(using: AuthSession(keychain: InMemoryAuthTokenStore()))
 
@@ -166,7 +203,7 @@ struct SignUpViewModelTests {
     @MainActor
     func submitPromptsLoginWhenRegisterSucceedsButLoginFails() async {
         let signUpService = MockSignUpService()
-        signUpService.submitSignUpResult = .success(SignUpResponse(id: "user-id"))
+        signUpService.submitSignUpResult = .success(SignUpResponse(id: "user-id", username: "Zanzar Name"))
         let loginService = MockLoginService()
         loginService.submitLoginResult = .failure(APIError.httpStatus(500, message: "Internal Server Error"))
         let viewModel = SignUpViewModel(
@@ -176,6 +213,7 @@ struct SignUpViewModelTests {
         viewModel.username = "zanzar"
         viewModel.email = "user@example.com"
         viewModel.password = "secret123"
+        viewModel.acceptsTerms = true
 
         let didSubmit = await viewModel.submit(using: AuthSession(keychain: InMemoryAuthTokenStore()))
 

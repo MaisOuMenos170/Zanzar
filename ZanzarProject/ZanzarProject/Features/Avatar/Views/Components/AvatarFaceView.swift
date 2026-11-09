@@ -1,11 +1,11 @@
 import SwiftUI
 
 /// Stacks the avatar's layer images into a face, laid out on the design's 397×297 canvas.
-/// The hair layer is not drawn yet.
 struct AvatarFaceView: View {
     let avatar: Avatar
-    /// The backend does not store eyelashes yet, so every face uses the same ones.
-    var lashes = 1
+
+    private static let centering = CGSize(width: 1.5, height: -10)
+    private static let compositionScale: CGFloat = 0.88
 
     private struct Layer {
         let folder: String
@@ -17,12 +17,21 @@ struct AvatarFaceView: View {
     private static let canvas = CGSize(width: 397, height: 297)
 
     private var layers: [Layer] {
-        [
-            Layer(folder: "Pele", id: avatar.skin, origin: CGPoint(x: 28, y: 56), width: 338),
-            Layer(folder: "Sobrancelhas", id: avatar.eyebrow, origin: CGPoint(x: 162, y: 165), width: 70),
-            Layer(folder: "Olhos", id: avatar.eyes, origin: CGPoint(x: 130, y: 184), width: 134),
-            Layer(folder: "Cilios", id: lashes, origin: CGPoint(x: 119, y: 197), width: 156)
-        ]
+        var layers: [Layer] = []
+        let hair = avatar.hair == Avatar.none ? nil : AvatarHairLayout.placement(for: avatar.hair)
+        if let back = hair?.back {
+            layers.append(Layer(folder: "CabelosFundo", id: avatar.hair, origin: back.origin, width: back.width))
+        }
+        layers.append(Layer(folder: "Pele", id: avatar.skin, origin: CGPoint(x: 28, y: 56), width: 338))
+        if let hair {
+            layers.append(Layer(folder: "Cabelos", id: avatar.hair, origin: hair.origin, width: hair.width))
+        }
+        layers.append(Layer(folder: "Sobrancelhas", id: avatar.eyebrow, origin: CGPoint(x: 162, y: 165), width: 70))
+        layers.append(Layer(folder: "Olhos", id: avatar.eyes, origin: CGPoint(x: 130, y: 184), width: 134))
+        if avatar.eyelash != Avatar.none {
+            layers.append(Layer(folder: "Cilios", id: avatar.eyelash, origin: CGPoint(x: 119, y: 197), width: 156))
+        }
+        return layers
     }
 
     var body: some View {
@@ -40,6 +49,9 @@ struct AvatarFaceView: View {
                                 .offset(x: layer.origin.x * scale, y: layer.origin.y * scale)
                         }
                     }
+                    .frame(width: proxy.size.width, height: proxy.size.height, alignment: .topLeading)
+                    .scaleEffect(Self.compositionScale)
+                    .offset(x: Self.centering.width * scale, y: Self.centering.height * scale)
                 }
             }
             .accessibilityElement()
