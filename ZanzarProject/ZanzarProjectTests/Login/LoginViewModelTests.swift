@@ -252,6 +252,50 @@ struct LoginViewModelTests {
         #expect(viewModel.submitError == String(localized: "login.apple.error.generic"))
     }
 
+    @Test("signInWithApple hands the Apple request with scopes and the hashed nonce to the sheet")
+    @MainActor
+    func signInWithAppleBuildsTheRequest() async {
+        let viewModel = LoginViewModel(service: MockLoginService())
+        var received: ASAuthorizationAppleIDRequest?
+
+        let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
+
+        let didSignIn = await viewModel.signInWithApple(using: authSession) { request in
+            received = request
+            throw ASAuthorizationError(.canceled)
+        }
+
+        #expect(didSignIn == false)
+        #expect(received?.requestedScopes == [.fullName, .email])
+        #expect(received?.nonce?.count == 64)
+    }
+
+    @Test("signInWithApple stays silent when the user dismisses the sheet")
+    @MainActor
+    func signInWithAppleCanceledIsSilent() async {
+        let viewModel = LoginViewModel(service: MockLoginService())
+
+        let didSignIn = await viewModel.signInWithApple(using: AuthSession(keychain: InMemoryAuthTokenStore())) { _ in
+            throw ASAuthorizationError(.canceled)
+        }
+
+        #expect(didSignIn == false)
+        #expect(viewModel.submitError == nil)
+    }
+
+    @Test("signInWithApple shows a generic error when the sheet fails")
+    @MainActor
+    func signInWithAppleFailureShowsError() async {
+        let viewModel = LoginViewModel(service: MockLoginService())
+
+        let didSignIn = await viewModel.signInWithApple(using: AuthSession(keychain: InMemoryAuthTokenStore())) { _ in
+            throw ASAuthorizationError(.failed)
+        }
+
+        #expect(didSignIn == false)
+        #expect(viewModel.submitError == String(localized: "login.apple.error.generic"))
+    }
+
     @Test("submit ignores duplicate requests while loading")
     @MainActor
     func submitIgnoresDuplicateRequestsWhileLoading() async {

@@ -9,6 +9,8 @@ final class SignUpViewModel {
     var username = ""
     var email = ""
     var password = ""
+    /// Client-side gate only: the backend has no terms-acceptance field for registration.
+    var acceptsTerms = false
 
     var usernameError: String?
     var emailError: String?
@@ -16,6 +18,7 @@ final class SignUpViewModel {
     var isLoading = false
     var submitError: String?
     var shouldNavigateToLogin = false
+    private(set) var createdUsername: String?
 
     init(
         signUpService: SignUpServicing = SignUpService(),
@@ -78,7 +81,12 @@ final class SignUpViewModel {
 
         submitError = nil
         shouldNavigateToLogin = false
+        createdUsername = nil
         guard validateFields() else { return false }
+        guard acceptsTerms else {
+            submitError = String(localized: "signUp.submitError.termsRequired")
+            return false
+        }
 
         isLoading = true
         defer { isLoading = false }
@@ -87,13 +95,14 @@ final class SignUpViewModel {
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
 
         do {
-            _ = try await signUpService.submitSignUp(
+            let created = try await signUpService.submitSignUp(
                 SignUpRequest(
                     email: trimmedEmail,
                     username: trimmedUsername,
                     password: password
                 )
             )
+            createdUsername = created.username ?? trimmedUsername
         } catch let error as APIError {
             submitError = AuthErrorMapper.signUpMessage(for: error)
             return false

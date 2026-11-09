@@ -9,6 +9,11 @@ final class AppCoordinator {
         popToRoot()
     }
 
+    func startOnboarding() {
+        popToRoot()
+        push(.avatarEditor)
+    }
+
     func push(_ route: Route) {
         path.append(route)
     }
@@ -41,6 +46,10 @@ final class AppCoordinator {
             PlaceDetailView(place: place)
         case .avatar:
             AvatarView()
+        case .avatarEditor:
+            AvatarEditorView()
+        case .passportIntro(let avatar, let username):
+            PassportIntroView(avatar: avatar, username: username)
         case .myPhotos:
             MyPhotosView()
         case .photoPrivacy:
