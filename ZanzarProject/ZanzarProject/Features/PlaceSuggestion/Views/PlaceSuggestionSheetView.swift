@@ -5,6 +5,7 @@ struct PlaceSuggestionSheetView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @ScaledMetric(relativeTo: .body) private var searchButtonSize: CGFloat = 51
     private let onFinished: (PlaceSuggestionOutcome) -> Void
 
     init(
@@ -67,7 +68,7 @@ struct PlaceSuggestionSheetView: View {
 
     private var searchSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .bottom, spacing: 8) {
+            AdaptiveStack(horizontalAlignment: .trailing, verticalAlignment: .bottom, spacing: 8) {
                 AuthFormField(
                     labelKey: "placeSuggestion.placeField.label",
                     placeholderKey: "placeSuggestion.placeField.placeholder",
@@ -86,7 +87,7 @@ struct PlaceSuggestionSheetView: View {
                     }
                 }
                 .font(.body.weight(.semibold))
-                .frame(width: 51, height: 51)
+                .frame(width: searchButtonSize, height: searchButtonSize)
                 .foregroundStyle(.white)
                 .background(Color("WelcomePrimary"), in: .circle)
                 .disabled(!viewModel.canSearch)
@@ -101,7 +102,7 @@ struct PlaceSuggestionSheetView: View {
                     Text(nearMeSubtitle)
                         .font(.footnote)
                         .foregroundStyle(viewModel.locationErrorMessage != nil ? Color("AuthError") : Color.secondary)
-                        .lineLimit(2)
+                        .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
                 }
             }
             .tint(Color("WelcomePrimary"))
@@ -142,7 +143,7 @@ struct PlaceSuggestionSheetView: View {
                         }
                     }
                     Text("placeSuggestion.results.attribution")
-                        .font(.caption2)
+                        .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
