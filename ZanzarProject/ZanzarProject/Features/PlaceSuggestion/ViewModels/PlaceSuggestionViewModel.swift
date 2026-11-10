@@ -5,9 +5,17 @@ import Observation
 final class PlaceSuggestionViewModel {
     private let service: PlaceSuggestionServicing
 
-    var mode: PlaceSuggestionLocationMode = .currentLocation
-    var placeQuery = ""
+    var query = ""
+    var searchNearMe = true
     var note = ""
+
+    private(set) var results: [SuggestedPlace] = []
+    private(set) var selectedPlace: SuggestedPlace?
+    /// The user could not find the place and chose to send what they typed to the team.
+    private(set) var isManualEntry = false
+    private(set) var hasSearched = false
+    private(set) var isSearching = false
+    private(set) var searchErrorMessage: String?
 
     private(set) var currentLocation: SuggestedLocation?
     private(set) var isResolvingLocation = false
@@ -24,7 +32,12 @@ final class PlaceSuggestionViewModel {
     }
 
     var trimmedQuery: String {
-        placeQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        query.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    var canSearch: Bool {
+        !isSearching && trimmedQuery.count >= PlaceSuggestionLimits.queryMinLength
+            && trimmedQuery.count <= PlaceSuggestionLimits.queryMaxLength
     }
 
     /// The note is required by the form (per the design) although the backend treats it as optional.
@@ -34,17 +47,15 @@ final class PlaceSuggestionViewModel {
               trimmedNote.count <= PlaceSuggestionLimits.noteMaxLength
         else { return false }
 
-        switch mode {
-        case .currentLocation:
-            return currentLocation != nil
-        case .otherPlace:
-            return !trimmedQuery.isEmpty && trimmedQuery.count <= PlaceSuggestionLimits.addressMaxLength
-        }
+        if selectedPlace != nil { return true }
+        return isManualEntry
+            && !trimmedQuery.isEmpty
+            && trimmedQuery.count <= PlaceSuggestionLimits.addressMaxLength
     }
 
-    /// Looks up the position once; calling it again after a failure retries.
+    /// Looks up the position once, to search near the user; calling it again after a failure retries.
     func loadCurrentLocation() async {
-        guard mode == .currentLocation, currentLocation == nil, !isResolvingLocation else { return }
+        guard searchNearMe, currentLocation == nil, !isResolvingLocation else { return }
         isResolvingLocation = true
         locationErrorMessage = nil
         defer { isResolvingLocation = false }
@@ -56,15 +67,49 @@ final class PlaceSuggestionViewModel {
         }
     }
 
+    func search() async {
+        guard canSearch else { return }
+        isSearching = true
+        searchErrorMessage = nil
+        selectedPlace = nil
+        isManualEntry = false
+        defer { isSearching = false }
+        do {
+            results = try await service.searchPlaces(query: trimmedQuery, near: searchNearMe ? currentLocation : nil)
+            hasSearched = true
+        } catch {
+            guard !PlaceSuggestionErrorMapper.isCancellation(error) else { return }
+            results = []
+            hasSearched = false
+            searchErrorMessage = PlaceSuggestionErrorMapper.searchMessage(for: error)
+        }
+    }
+
+    func select(_ place: SuggestedPlace) {
+        selectedPlace = place
+        isManualEntry = false
+    }
+
+    /// For a place OpenStreetMap does not have: what was typed goes to the team, who add it by hand.
+    func enterManually() {
+        selectedPlace = nil
+        isManualEntry = true
+    }
+
     @discardableResult
     func submit() async -> Bool {
         guard canSubmit else { return false }
         isSubmitting = true
         defer { isSubmitting = false }
         do {
-            let location = try await locationForSubmission()
-            try await service.submit(PlaceSuggestion(location: location, note: trimmedNote))
-            outcome = .success
+            if let selectedPlace {
+                let suggestion = try await service.submit(selectedPlace, note: trimmedNote)
+                outcome = Self.outcome(for: suggestion)
+            } else {
+                let location = manualLocation()
+                try await service.submit(PlaceSuggestion(location: location, note: trimmedNote))
+                outcome = .success
+            }
             return true
         } catch {
             guard !PlaceSuggestionErrorMapper.isCancellation(error) else { return false }
@@ -73,13 +118,25 @@ final class PlaceSuggestionViewModel {
         }
     }
 
-    private func locationForSubmission() async throws -> SuggestedLocation {
-        switch mode {
-        case .currentLocation:
-            if let currentLocation { return currentLocation }
-            return try await service.currentLocation()
-        case .otherPlace:
-            return .typed(address: trimmedQuery)
+    /// What the user is told once the backend has checked the suggestion.
+    static func outcome(for suggestion: MySuggestion) -> PlaceSuggestionOutcome {
+        switch suggestion.status {
+        case .approved:
+            .published(placeName: suggestion.displayName)
+        case .rejected:
+            .refused(suggestion.decisionReason ?? .other(""))
+        case .pending, .needsReview:
+            .success
         }
+    }
+
+    /// The typed text with the user's position when it is known, so the team can find the place on a map.
+    private func manualLocation() -> SuggestedLocation {
+        let known = searchNearMe ? currentLocation : nil
+        return SuggestedLocation(
+            latitude: known?.latitude ?? 0,
+            longitude: known?.longitude ?? 0,
+            address: trimmedQuery
+        )
     }
 }

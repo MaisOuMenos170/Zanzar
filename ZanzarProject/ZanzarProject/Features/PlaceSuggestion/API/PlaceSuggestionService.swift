@@ -2,7 +2,13 @@ import Foundation
 
 protocol PlaceSuggestionServicing: Sendable {
     func currentLocation() async throws -> SuggestedLocation
+    /// Typed by hand (nothing to check it against): a person decides.
     func submit(_ suggestion: PlaceSuggestion) async throws
+    /// Places on OpenStreetMap that match `query`, near `near` when the user allows it.
+    func searchPlaces(query: String, near: SuggestedLocation?) async throws -> [SuggestedPlace]
+    /// Suggests a place found by `searchPlaces`; the backend checks it and answers with where it stands.
+    func submit(_ place: SuggestedPlace, note: String) async throws -> MySuggestion
+    func fetchMine() async throws -> [MySuggestion]
 }
 
 struct PlaceSuggestionRequest: Encodable, Sendable {
@@ -72,6 +78,46 @@ final class PlaceSuggestionService: PlaceSuggestionServicing {
             AppLog.suggestion.error("Place suggestion request failed", error: error)
             throw error
         }
+    }
+
+    func searchPlaces(query: String, near: SuggestedLocation?) async throws -> [SuggestedPlace] {
+        var queryItems = [URLQueryItem(name: "q", value: query)]
+        if let near {
+            queryItems.append(URLQueryItem(name: "lat", value: String(near.latitude)))
+            queryItems.append(URLQueryItem(name: "lng", value: String(near.longitude)))
+        }
+        let response: [SuggestedPlaceAPIResponse] = try await client.get(
+            path: "place-suggestions/search",
+            queryItems: queryItems
+        )
+        return response.compactMap(\.suggestedPlace)
+    }
+
+    func submit(_ place: SuggestedPlace, note: String) async throws -> MySuggestion {
+        AppLog.suggestion.info("Submitting suggestion of an OpenStreetMap place")
+        let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
+        let request = OSMPlaceSuggestionRequest(
+            osmType: place.osmType,
+            osmId: place.osmID,
+            note: trimmed.isEmpty ? nil : trimmed
+        )
+        do {
+            let response: MySuggestionAPIResponse = try await client.send(
+                path: "place-suggestions",
+                method: .post,
+                body: request
+            )
+            AppLog.suggestion.info("Suggestion answered with status \(response.status)")
+            return response.mySuggestion
+        } catch {
+            AppLog.suggestion.error("Place suggestion request failed", error: error)
+            throw error
+        }
+    }
+
+    func fetchMine() async throws -> [MySuggestion] {
+        let response: [MySuggestionAPIResponse] = try await client.get(path: "place-suggestions")
+        return response.map(\.mySuggestion)
     }
 
     private static func nonEmpty(_ text: String) -> String? {

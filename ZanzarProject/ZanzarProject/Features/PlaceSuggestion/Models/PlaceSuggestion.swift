@@ -9,4 +9,6 @@ nonisolated struct PlaceSuggestion: Hashable, Sendable {
 nonisolated enum PlaceSuggestionLimits {
     static let addressMaxLength = 300
     static let noteMaxLength = 1000
+    static let queryMinLength = 2
+    static let queryMaxLength = 120
 }

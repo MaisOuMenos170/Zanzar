@@ -21,7 +21,7 @@ ZanzarProject/ZanzarProject/
   Features/<X>/   API/ (Service + DTOs), Models/, ViewModels/, Views/(Components/)
                   X = Auth, HTTP, Itinerary, LocationMap, Login, PlaceDetail, Profile,
                       RatingPrompt, Shared, SignUp, Welcome
-  Utils/          AppLog, AppLanguage, AppNotification, DataFreshness, GooglePlacesConfiguration
+  Utils/          AppLog, AppLanguage, AppNotification, DataFreshness
   Resources/      Assets.xcassets, Localizable.xcstrings
 ZanzarProject/ZanzarProjectTests/<Feature>/   testes (Swift Testing) + TestHelpers/
 scripts/          check-app-content.mjs, select-ios-simulator.sh, testflight-preflight.sh, update-api-tunnel-url.sh

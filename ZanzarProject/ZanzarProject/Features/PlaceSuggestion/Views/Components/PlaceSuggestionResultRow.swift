@@ -1,10 +1,8 @@
 import SwiftUI
 
-struct PlaceSuggestionOptionRow: View {
-    let titleKey: LocalizedStringKey
-    let subtitle: String
-    var subtitleIsError = false
-    var isLoading = false
+/// One place found by the search. Tapping it selects it for the suggestion.
+struct PlaceSuggestionResultRow: View {
+    let place: SuggestedPlace
     let isSelected: Bool
     let action: () -> Void
 
@@ -16,19 +14,16 @@ struct PlaceSuggestionOptionRow: View {
                     .foregroundStyle(isSelected ? Color("WelcomePrimary") : Color.secondary)
 
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(titleKey)
+                    Text(place.name)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.primary)
-                    Text(subtitle)
+                        .lineLimit(2)
+                    Text(place.address)
                         .font(.footnote)
-                        .foregroundStyle(subtitleIsError ? Color("AuthError") : Color.secondary)
+                        .foregroundStyle(.secondary)
                         .lineLimit(2)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-
-                if isLoading {
-                    ProgressView()
-                }
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 11)
@@ -51,19 +46,17 @@ struct PlaceSuggestionOptionRow: View {
 }
 
 #Preview {
-    VStack {
-        PlaceSuggestionOptionRow(
-            titleKey: "placeSuggestion.locationOption.title",
-            subtitle: "R. XV de novembro, 1200",
-            isSelected: true,
-            action: {}
-        )
-        PlaceSuggestionOptionRow(
-            titleKey: "placeSuggestion.otherPlaceOption.title",
-            subtitle: "Digite o nome ou endereço",
-            isSelected: false,
-            action: {}
-        )
-    }
+    PlaceSuggestionResultRow(
+        place: SuggestedPlace(
+            osmType: "node",
+            osmID: 1,
+            name: "Jardim Botânico",
+            address: "Rua Engenheiro Ostoja Roguski, Curitiba",
+            latitude: -25.44,
+            longitude: -49.24
+        ),
+        isSelected: true,
+        action: {}
+    )
     .padding()
 }

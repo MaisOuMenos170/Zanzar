@@ -64,6 +64,7 @@ struct ProfileView: View {
                             onOpenMyPhotos: { coordinator.push(.myPhotos) },
                             onOpenPrivacy: { coordinator.push(.photoPrivacy) }
                         )
+                        ProfileSuggestionsSection(onOpenMySuggestions: { coordinator.push(.mySuggestions) })
                         ProximityAlertSettingsSection()
                     }
                 }
