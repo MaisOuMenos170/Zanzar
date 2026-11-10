@@ -27,6 +27,7 @@ struct MainTabView: View {
     @State private var shownSuggestionOutcome: PlaceSuggestionOutcome?
     @State private var showsSuggestionAlert = false
     @State private var photoStatusNotice = PhotoStatusNoticeViewModel()
+    @State private var suggestionStatusNotice = SuggestionStatusNoticeViewModel()
     @Environment(ToastPresenter.self) private var toastPresenter
     @Environment(\.scenePhase) private var scenePhase
 
@@ -91,8 +92,13 @@ struct MainTabView: View {
         // Pins and the carousel read the shared places; coming back to a tab refetches them only if stale.
         // Tells the user when a review of one of their photos finished, each time the app comes to the front.
         .task(id: scenePhase) {
-            guard scenePhase == .active, let message = await photoStatusNotice.checkForChanges() else { return }
-            toastPresenter.show(message)
+            guard scenePhase == .active else { return }
+            if let message = await photoStatusNotice.checkForChanges() {
+                toastPresenter.show(message)
+            }
+            if let message = await suggestionStatusNotice.checkForChanges() {
+                toastPresenter.show(message)
+            }
         }
         // The regions watched for proximity alerts follow the places around the user.
         .onChange(of: nearbyPlaces.lastFetchedAt) {

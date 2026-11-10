@@ -1,413 +1,8 @@
 {
   "sourceLanguage" : "pt-BR",
   "strings" : {
-    "proximity.alert.nearby.body" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You're nearby"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você está por perto"
-          }
-        }
-      }
-    },
-    "proximity.alert.nearby.body.open24Hours" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You're nearby · open 24 hours"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você está por perto · aberto 24 horas"
-          }
-        }
-      }
-    },
-    "proximity.alert.nearby.body.openUntil" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You're nearby · open until %@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você está por perto · aberto até %@"
-          }
-        }
-      }
-    },
-    "proximity.alert.stop.body" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Next stop on your route"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Próxima parada do seu roteiro"
-          }
-        }
-      }
-    },
-    "proximity.alert.stop.body.openUntil" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Next stop on your route · open until %@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Próxima parada do seu roteiro · aberto até %@"
-          }
-        }
-      }
-    },
-    "proximityPermission.closeButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Close"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fechar"
-          }
-        }
-      }
-    },
-    "proximityPermission.doneButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ok"
-          }
-        }
-      }
-    },
-    "proximityPermission.enableButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Turn on"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ativar"
-          }
-        }
-      }
-    },
-    "proximityPermission.enabled.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "All set! You'll get a heads-up when you pass nearby."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pronto! Você vai receber avisos quando passar por perto."
-          }
-        }
-      }
-    },
-    "proximityPermission.laterButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not now"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agora não"
-          }
-        }
-      }
-    },
-    "proximityPermission.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lero lets you know when you pass near a place or the next stop on your route, only a few times a day. To work with the app closed, it needs notifications and “Always” location."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Lero avisa quando você passa perto de um lugar ou da próxima parada do seu roteiro, poucas vezes por dia. Para funcionar com o app fechado, ele precisa de notificações e da localização “Sempre”."
-          }
-        }
-      }
-    },
-    "proximityPermission.settings.location.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Almost there: choose “Always” in Settings > Location to get alerts with the app closed."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quase lá: em Ajustes > Localização, escolha “Sempre” para receber avisos com o app fechado."
-          }
-        }
-      }
-    },
-    "proximityPermission.settings.notifications.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Notifications are off. Turn them on in Settings to get the alerts."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As notificações estão desligadas. Ligue nos Ajustes para receber os avisos."
-          }
-        }
-      }
-    },
-    "proximityPermission.settingsButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open Settings"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abrir Ajustes"
-          }
-        }
-      }
-    },
-    "proximityPermission.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alerts nearby"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avisos por perto"
-          }
-        }
-      }
-    },
-    "proximitySettings.complete.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Also working with the app closed."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Funcionando também com o app fechado."
-          }
-        }
-      }
-    },
-    "proximitySettings.itinerary.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lets you know about the next stop on your route"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avisa da próxima parada do seu roteiro"
-          }
-        }
-      }
-    },
-    "proximitySettings.itinerary.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "My route"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meu roteiro"
-          }
-        }
-      }
-    },
-    "proximitySettings.nearby.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lets you know when you pass near a place"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avisa quando você passa perto de um lugar"
-          }
-        }
-      }
-    },
-    "proximitySettings.nearby.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Places nearby"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lugares por perto"
-          }
-        }
-      }
-    },
-    "proximitySettings.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alerts nearby"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avisos por perto"
-          }
-        }
-      }
-    },
-    "proximitySettings.turnOn.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To alert you with the app closed, notifications and “Always” location are needed."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para avisar com o app fechado, falta liberar as notificações e a localização “Sempre”."
-          }
-        }
-      }
-    },
-    "proximitySettings.turnOnButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Turn on alerts"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ativar avisos"
-          }
-        }
-      }
-    },
-    "auth.sessionExpired.dismissButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Checked"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Marcado"
-          }
-        }
-      }
+    "accessibility.checked" : {
+
     },
     "accessibility.unchecked" : {
       "extractionState" : "manual",
@@ -422,6 +17,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Desmarcado"
+          }
+        }
+      }
+    },
+    "auth.apple.button.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue with Apple"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar com Apple"
           }
         }
       }
@@ -449,13 +61,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "OK"
+            "value" : "Checked"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "OK"
+            "value" : "Marcado"
           }
         }
       }
@@ -3580,6 +3192,125 @@
         }
       }
     },
+    "placeSuggestion.decisionReason.acceptedManual" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The team accepted it and will add the place soon."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A equipe aceitou e vai incluir o lugar em breve."
+          }
+        }
+      }
+    },
+    "placeSuggestion.decisionReason.duplicate" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This place is already on Lero."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esse lugar já está no Lero."
+          }
+        }
+      }
+    },
+    "placeSuggestion.decisionReason.inappropriate" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The suggestion has content we can't accept."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A sugestão tem conteúdo que não podemos aceitar."
+          }
+        }
+      }
+    },
+    "placeSuggestion.decisionReason.notARealPlace" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't confirm that this place exists."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não conseguimos confirmar que esse lugar existe."
+          }
+        }
+      }
+    },
+    "placeSuggestion.decisionReason.other" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The team couldn't approve this suggestion."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A equipe não pôde aprovar esta sugestão."
+          }
+        }
+      }
+    },
+    "placeSuggestion.decisionReason.outsideArea" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For now we only take places in Curitiba and the region."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por enquanto só aceitamos lugares de Curitiba e região."
+          }
+        }
+      }
+    },
+    "placeSuggestion.decisionReason.typeNotAccepted" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For now we only take bars, restaurants, cafés, parks, museums and sights."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por enquanto só aceitamos bares, restaurantes, cafés, parques, museus e pontos turísticos."
+          }
+        }
+      }
+    },
     "placeSuggestion.error.generic" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3648,6 +3379,57 @@
         }
       }
     },
+    "placeSuggestion.error.notFound" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't find that place. Search again."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não encontramos esse lugar. Busque de novo."
+          }
+        }
+      }
+    },
+    "placeSuggestion.error.osmUnavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place search is down right now. Try again in a moment."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A busca de lugares está fora do ar agora. Tente de novo daqui a pouco."
+          }
+        }
+      }
+    },
+    "placeSuggestion.error.search" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't search right now. Try again."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível buscar agora. Tente de novo."
+          }
+        }
+      }
+    },
     "placeSuggestion.failureAlert.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3699,36 +3481,189 @@
         }
       }
     },
-    "placeSuggestion.locationOption.subtitle" : {
+    "placeSuggestion.manual.button" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "E.g. 1200 XV de Novembro St."
+            "value" : "Can't find it. Send it to the team to review"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ex: R. XV de novembro, 1200"
+            "value" : "Não encontrei. Enviar para a equipe analisar"
           }
         }
       }
     },
-    "placeSuggestion.locationOption.title" : {
+    "placeSuggestion.manual.selected" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use my location"
+            "value" : "We'll send “%@” to the team to review"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar minha localização"
+            "value" : "Vamos mandar “%@” para a equipe analisar"
+          }
+        }
+      }
+    },
+    "placeSuggestion.mySuggestions.empty.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The places you suggest show up here, with where each one stands."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os lugares que você sugerir aparecem aqui, com o andamento de cada um."
+          }
+        }
+      }
+    },
+    "placeSuggestion.mySuggestions.empty.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No suggestions yet"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhuma sugestão ainda"
+          }
+        }
+      }
+    },
+    "placeSuggestion.mySuggestions.error.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't load your suggestions."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível carregar suas sugestões."
+          }
+        }
+      }
+    },
+    "placeSuggestion.mySuggestions.errorAlert.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algo deu errado"
+          }
+        }
+      }
+    },
+    "placeSuggestion.mySuggestions.footer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Approved places already show on the map. The ones in review are looked at by the team."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lugares aprovados já aparecem no mapa. Os que estão em análise passam pela equipe."
+          }
+        }
+      }
+    },
+    "placeSuggestion.mySuggestions.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My suggestions"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minhas sugestões"
+          }
+        }
+      }
+    },
+    "placeSuggestion.nearMe.locating" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finding your position..."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encontrando sua posição..."
+          }
+        }
+      }
+    },
+    "placeSuggestion.nearMe.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows the places closest to you first"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra primeiro os lugares mais perto de você"
+          }
+        }
+      }
+    },
+    "placeSuggestion.nearMe.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search near me"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Procurar perto de mim"
           }
         }
       }
@@ -3767,36 +3702,53 @@
         }
       }
     },
-    "placeSuggestion.otherPlaceOption.subtitle" : {
+    "placeSuggestion.notice.added" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Type the name or address"
+            "value" : "%d place you suggested was added."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Digite o nome ou endereço"
+            "value" : "%d lugar que você sugeriu foi adicionado."
           }
         }
       }
     },
-    "placeSuggestion.otherPlaceOption.title" : {
+    "placeSuggestion.notice.mixed" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choose another place"
+            "value" : "%d places added and %d suggestions not approved. See them in Profile > My suggestions."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolher outro lugar"
+            "value" : "%d lugares adicionados e %d sugestões não aprovadas. Veja em Perfil > Minhas sugestões."
+          }
+        }
+      }
+    },
+    "placeSuggestion.notice.notApproved" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d of your suggestions was not approved. See it in Profile > My suggestions."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d sugestão sua não foi aprovada. Veja em Perfil > Minhas sugestões."
           }
         }
       }
@@ -3807,13 +3759,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Name or address"
+            "value" : "Place name"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nome ou endereço"
+            "value" : "Nome do lugar"
           }
         }
       }
@@ -3824,13 +3776,166 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Family restaurant, 123 Azul St..."
+            "value" : "E.g. Botanical Garden, café on XV..."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Restaurante família, R. Azul, 123..."
+            "value" : "Ex.: Jardim Botânico, café na XV..."
+          }
+        }
+      }
+    },
+    "placeSuggestion.publishedAlert.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is now on Lero. Thanks for contributing!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ já está no Lero. Obrigado por contribuir!"
+          }
+        }
+      }
+    },
+    "placeSuggestion.publishedAlert.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place added!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lugar adicionado!"
+          }
+        }
+      }
+    },
+    "placeSuggestion.refusedAlert.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestion not approved"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sugestão não aprovada"
+          }
+        }
+      }
+    },
+    "placeSuggestion.results.attribution" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data © OpenStreetMap contributors"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dados © colaboradores do OpenStreetMap"
+          }
+        }
+      }
+    },
+    "placeSuggestion.results.empty" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't find bars, restaurants, cafés, parks, museums or sights with that name in Curitiba and the region."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não achamos bares, restaurantes, cafés, parques, museus ou pontos turísticos com esse nome em Curitiba e região."
+          }
+        }
+      }
+    },
+    "placeSuggestion.searchButton.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar"
+          }
+        }
+      }
+    },
+    "placeSuggestion.status.added" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicionado"
+          }
+        }
+      }
+    },
+    "placeSuggestion.status.notApproved" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not approved"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não aprovado"
+          }
+        }
+      }
+    },
+    "placeSuggestion.status.underReview" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In review"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Em análise"
           }
         }
       }
@@ -4324,6 +4429,431 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "selos"
+          }
+        }
+      }
+    },
+    "profile.suggestionsSection.mySuggestions.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My suggestions"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minhas sugestões"
+          }
+        }
+      }
+    },
+    "profile.suggestionsSection.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestions"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sugestões"
+          }
+        }
+      }
+    },
+    "proximity.alert.nearby.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're nearby"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você está por perto"
+          }
+        }
+      }
+    },
+    "proximity.alert.nearby.body.open24Hours" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're nearby · open 24 hours"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você está por perto · aberto 24 horas"
+          }
+        }
+      }
+    },
+    "proximity.alert.nearby.body.openUntil" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're nearby · open until %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você está por perto · aberto até %@"
+          }
+        }
+      }
+    },
+    "proximity.alert.stop.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next stop on your route"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próxima parada do seu roteiro"
+          }
+        }
+      }
+    },
+    "proximity.alert.stop.body.openUntil" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next stop on your route · open until %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próxima parada do seu roteiro · aberto até %@"
+          }
+        }
+      }
+    },
+    "proximityPermission.closeButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fechar"
+          }
+        }
+      }
+    },
+    "proximityPermission.doneButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ok"
+          }
+        }
+      }
+    },
+    "proximityPermission.enableButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ativar"
+          }
+        }
+      }
+    },
+    "proximityPermission.enabled.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All set! You'll get a heads-up when you pass nearby."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pronto! Você vai receber avisos quando passar por perto."
+          }
+        }
+      }
+    },
+    "proximityPermission.laterButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not now"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agora não"
+          }
+        }
+      }
+    },
+    "proximityPermission.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lero lets you know when you pass near a place or the next stop on your route, only a few times a day. To work with the app closed, it needs notifications and “Always” location."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Lero avisa quando você passa perto de um lugar ou da próxima parada do seu roteiro, poucas vezes por dia. Para funcionar com o app fechado, ele precisa de notificações e da localização “Sempre”."
+          }
+        }
+      }
+    },
+    "proximityPermission.settings.location.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Almost there: choose “Always” in Settings > Location to get alerts with the app closed."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quase lá: em Ajustes > Localização, escolha “Sempre” para receber avisos com o app fechado."
+          }
+        }
+      }
+    },
+    "proximityPermission.settings.notifications.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications are off. Turn them on in Settings to get the alerts."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As notificações estão desligadas. Ligue nos Ajustes para receber os avisos."
+          }
+        }
+      }
+    },
+    "proximityPermission.settingsButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir Ajustes"
+          }
+        }
+      }
+    },
+    "proximityPermission.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alerts nearby"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avisos por perto"
+          }
+        }
+      }
+    },
+    "proximitySettings.complete.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Also working with the app closed."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Funcionando também com o app fechado."
+          }
+        }
+      }
+    },
+    "proximitySettings.itinerary.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lets you know about the next stop on your route"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avisa da próxima parada do seu roteiro"
+          }
+        }
+      }
+    },
+    "proximitySettings.itinerary.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My route"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meu roteiro"
+          }
+        }
+      }
+    },
+    "proximitySettings.nearby.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lets you know when you pass near a place"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avisa quando você passa perto de um lugar"
+          }
+        }
+      }
+    },
+    "proximitySettings.nearby.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Places nearby"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lugares por perto"
+          }
+        }
+      }
+    },
+    "proximitySettings.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alerts nearby"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avisos por perto"
+          }
+        }
+      }
+    },
+    "proximitySettings.turnOn.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To alert you with the app closed, notifications and “Always” location are needed."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para avisar com o app fechado, falta liberar as notificações e a localização “Sempre”."
+          }
+        }
+      }
+    },
+    "proximitySettings.turnOnButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on alerts"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ativar avisos"
           }
         }
       }
@@ -7146,23 +7676,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Criar meu passaporte"
-          }
-        }
-      }
-    },
-    "auth.apple.button.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continue with Apple"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuar com Apple"
           }
         }
       }

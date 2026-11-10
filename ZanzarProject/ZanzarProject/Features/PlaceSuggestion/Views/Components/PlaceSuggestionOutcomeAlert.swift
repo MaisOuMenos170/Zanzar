@@ -11,6 +11,10 @@ private struct PlaceSuggestionOutcomeAlert: ViewModifier {
             switch outcome {
             case .success:
                 Text("placeSuggestion.successAlert.message")
+            case .published(let placeName):
+                Text(L10n.string("placeSuggestion.publishedAlert.message", placeName))
+            case .refused(let reason):
+                Text(LocalizedStringKey(reason.messageKey))
             case .failure(let message):
                 Text(message)
             }
@@ -21,6 +25,10 @@ private struct PlaceSuggestionOutcomeAlert: ViewModifier {
         switch outcome {
         case .failure:
             "placeSuggestion.failureAlert.title"
+        case .published:
+            "placeSuggestion.publishedAlert.title"
+        case .refused:
+            "placeSuggestion.refusedAlert.title"
         case .success, nil:
             "placeSuggestion.successAlert.title"
         }

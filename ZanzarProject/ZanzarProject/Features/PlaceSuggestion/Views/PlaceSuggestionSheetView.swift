@@ -22,11 +22,12 @@ struct PlaceSuggestionSheetView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
+                VStack(alignment: .leading, spacing: 20) {
                     Text("placeSuggestion.header.subtitle")
                         .font(.subheadline.weight(.light))
-                    options
-                    fields
+                    searchSection
+                    resultsSection
+                    PlaceSuggestionNoteField(text: $viewModel.note)
                 }
                 .padding(.horizontal, 19)
                 .padding(.top, 8)
@@ -48,12 +49,13 @@ struct PlaceSuggestionSheetView: View {
                 }
             }
         }
-        .animation(reduceMotion ? nil : .default, value: viewModel.mode)
+        .animation(reduceMotion ? nil : .default, value: viewModel.results)
+        .animation(reduceMotion ? nil : .default, value: viewModel.isManualEntry)
         .presentationDetents([.height(620), .large])
         .presentationDragIndicator(.visible)
         .presentationBackground(Color(.systemBackground))
-        // Re-runs when the option changes, so picking "Usar minha localização" again retries a failed lookup.
-        .task(id: viewModel.mode) {
+        // Re-runs when the toggle changes, so turning "near me" on again retries a failed lookup.
+        .task(id: viewModel.searchNearMe) {
             await viewModel.loadCurrentLocation()
         }
         .onChange(of: viewModel.outcome) { _, outcome in
@@ -62,48 +64,107 @@ struct PlaceSuggestionSheetView: View {
         }
     }
 
-    private var options: some View {
-        VStack(spacing: 8) {
-            PlaceSuggestionOptionRow(
-                titleKey: "placeSuggestion.locationOption.title",
-                subtitle: locationOptionSubtitle,
-                subtitleIsError: viewModel.locationErrorMessage != nil,
-                isLoading: viewModel.isResolvingLocation,
-                isSelected: viewModel.mode == .currentLocation
-            ) {
-                viewModel.mode = .currentLocation
-            }
-
-            PlaceSuggestionOptionRow(
-                titleKey: "placeSuggestion.otherPlaceOption.title",
-                subtitle: L10n.string("placeSuggestion.otherPlaceOption.subtitle"),
-                isSelected: viewModel.mode == .otherPlace
-            ) {
-                viewModel.mode = .otherPlace
-            }
-        }
-    }
-
-    private var locationOptionSubtitle: String {
-        if let message = viewModel.locationErrorMessage {
-            return message
-        }
-        if let address = viewModel.currentLocation?.address {
-            return address
-        }
-        return L10n.string("placeSuggestion.locationOption.subtitle")
-    }
-
-    private var fields: some View {
+    private var searchSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            if viewModel.mode == .otherPlace {
+            HStack(alignment: .bottom, spacing: 8) {
                 AuthFormField(
                     labelKey: "placeSuggestion.placeField.label",
                     placeholderKey: "placeSuggestion.placeField.placeholder",
-                    text: $viewModel.placeQuery
+                    text: $viewModel.query,
+                    submitLabel: .search
                 )
+                .onSubmit { Task { await viewModel.search() } }
+
+                Button {
+                    Task { await viewModel.search() }
+                } label: {
+                    if viewModel.isSearching {
+                        ProgressView()
+                    } else {
+                        Image(systemName: "magnifyingglass")
+                    }
+                }
+                .font(.body.weight(.semibold))
+                .frame(width: 51, height: 51)
+                .foregroundStyle(.white)
+                .background(Color("WelcomePrimary"), in: .circle)
+                .disabled(!viewModel.canSearch)
+                .opacity(viewModel.canSearch || viewModel.isSearching ? 1 : 0.4)
+                .accessibilityLabel("placeSuggestion.searchButton.label")
             }
-            PlaceSuggestionNoteField(text: $viewModel.note)
+
+            Toggle(isOn: $viewModel.searchNearMe) {
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("placeSuggestion.nearMe.title")
+                        .font(.subheadline.weight(.semibold))
+                    Text(nearMeSubtitle)
+                        .font(.footnote)
+                        .foregroundStyle(viewModel.locationErrorMessage != nil ? Color("AuthError") : Color.secondary)
+                        .lineLimit(2)
+                }
+            }
+            .tint(Color("WelcomePrimary"))
+
+            if let message = viewModel.searchErrorMessage {
+                Text(message)
+                    .font(.footnote)
+                    .foregroundStyle(Color("AuthError"))
+            }
+        }
+    }
+
+    private var nearMeSubtitle: String {
+        if let message = viewModel.locationErrorMessage {
+            return message
+        }
+        if viewModel.isResolvingLocation {
+            return L10n.string("placeSuggestion.nearMe.locating")
+        }
+        return viewModel.currentLocation?.address ?? L10n.string("placeSuggestion.nearMe.subtitle")
+    }
+
+    @ViewBuilder
+    private var resultsSection: some View {
+        if viewModel.hasSearched {
+            VStack(alignment: .leading, spacing: 8) {
+                if viewModel.results.isEmpty {
+                    Text("placeSuggestion.results.empty")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                } else {
+                    ForEach(viewModel.results) { place in
+                        PlaceSuggestionResultRow(
+                            place: place,
+                            isSelected: viewModel.selectedPlace == place
+                        ) {
+                            viewModel.select(place)
+                        }
+                    }
+                    Text("placeSuggestion.results.attribution")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+
+                manualEntry
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var manualEntry: some View {
+        if viewModel.isManualEntry {
+            Label(
+                L10n.string("placeSuggestion.manual.selected", viewModel.trimmedQuery),
+                systemImage: "checkmark.circle.fill"
+            )
+            .font(.footnote)
+            .foregroundStyle(Color("WelcomePrimary"))
+        } else {
+            Button("placeSuggestion.manual.button") {
+                viewModel.enterManually()
+            }
+            .font(.footnote.weight(.semibold))
+            .tint(Color("WelcomePrimary"))
         }
     }
 

@@ -52,6 +52,8 @@ final class AppCoordinator {
             PassportIntroView(avatar: avatar, username: username)
         case .myPhotos:
             MyPhotosView()
+        case .mySuggestions:
+            MySuggestionsView()
         case .photoPrivacy:
             PhotoPrivacyView()
         }
