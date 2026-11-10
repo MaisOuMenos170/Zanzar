@@ -26,6 +26,20 @@ Estes itens o simulador não cobre. Use um iPhone com iOS 26 e um build Debug ap
 3. Escolha uma captura de tela PNG. Ela deve passar pelo aparelho, mas a análise deve segurá-la ("dados pessoais").
 4. Escolha uma foto panorâmica muito grande. Ela deve ser reduzida para 2048 px sem travar o app.
 
+## Editar a foto (cortar, zoom e girar)
+
+Depois de escolher a foto (galeria ou câmera) abre a tela "Ajustar foto", antes das checagens do aparelho.
+
+1. **Cortar:** arraste uma alça do canto e outra da borda. O quadro deve seguir o dedo, sem pular, e não pode sair da foto.
+2. **Zoom e mover:** faça a pinça sobre o quadro (pinça para fora deixa o quadro menor) e arraste dentro dele para mover.
+3. **Formato:** no menu "Formato" escolha 1:1, 4:5 e 16:9. O quadro deve ficar com essa proporção e centralizado; "Livre" solta a proporção.
+4. **Girar:** toque em "Girar" quatro vezes. A foto gira no sentido horário, o quadro volta a cobrir a foto inteira e, na quarta vez, a foto fica como no início.
+5. **Restaurar** volta ao começo. **Escolher outra** volta à escolha da foto.
+6. **Foto pequena:** escolha uma foto com o lado menor abaixo de 320 px. As alças somem, aparece "Esta foto é pequena demais para cortar" e dá para girar. O envio é recusado como antes.
+7. **O corte vale para as checagens:** escolha uma foto de grupo com rostos pequenos ao fundo, corte até um rosto ficar grande e toque em "Usar foto". Deve aparecer "Tem um rosto em primeiro plano".
+8. **Editar de novo:** na prévia, toque em "Editar foto". O editor abre com a foto original (sem rostos borrados) e, ao confirmar, as checagens rodam outra vez.
+9. **VoiceOver:** o quadro é um elemento ajustável; deslizar para cima e para baixo aproxima e afasta.
+
 ## Rostos
 
 1. Tire uma selfie. Deve aparecer "Tem um rosto em primeiro plano".

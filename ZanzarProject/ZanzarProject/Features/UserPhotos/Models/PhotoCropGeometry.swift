@@ -184,18 +184,18 @@ nonisolated struct PhotoCropGeometry: Equatable, Sendable {
         width = min(max(width, minimum.width), max(roomX, minimum.width))
         height = min(max(height, minimum.height), max(roomY, minimum.height))
 
-        let x = switch anchorX {
+        let left = switch anchorX {
         case .low: cropRect.minX
         case .high: cropRect.maxX - width
         case .center: cropRect.midX - width / 2
         }
-        let y = switch anchorY {
+        let top = switch anchorY {
         case .low: cropRect.minY
         case .high: cropRect.maxY - height
         case .center: cropRect.midY - height / 2
         }
         return CGRect(
-            x: min(max(x, 0), 1 - width), y: min(max(y, 0), 1 - height), width: width, height: height
+            x: min(max(left, 0), 1 - width), y: min(max(top, 0), 1 - height), width: width, height: height
         )
     }
 

@@ -153,7 +153,10 @@ private func previewPhoto(width: Int, height: Int) -> CGImage {
         data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
         space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue
     )!
-    let colors = [CGColor(red: 0.95, green: 0.55, blue: 0.2, alpha: 1), CGColor(red: 0.2, green: 0.45, blue: 0.85, alpha: 1)]
+    let colors = [
+        CGColor(red: 0.95, green: 0.55, blue: 0.2, alpha: 1),
+        CGColor(red: 0.2, green: 0.45, blue: 0.85, alpha: 1)
+    ]
     let gradient = CGGradient(colorsSpace: nil, colors: colors as CFArray, locations: [0, 1])!
     context.drawLinearGradient(
         gradient, start: .zero, end: CGPoint(x: width, y: height), options: []

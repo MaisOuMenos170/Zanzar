@@ -26,15 +26,15 @@ struct PhotoPreparerEditTests {
         return try #require(context.makeImage())
     }
 
-    /// The pixel at (x, y), counting from the top left.
-    private func pixel(_ image: CGImage, _ x: Int, _ y: Int) throws -> Tint {
+    /// The pixel in a column and row, counting from the top left.
+    private func pixel(_ image: CGImage, _ column: Int, _ row: Int) throws -> Tint {
         let context = try #require(CGContext(
             data: nil, width: image.width, height: image.height, bitsPerComponent: 8, bytesPerRow: 0,
             space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
         ))
         context.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
         let data = try #require(context.data).assumingMemoryBound(to: UInt8.self)
-        let offset = y * context.bytesPerRow + x * 4
+        let offset = row * context.bytesPerRow + column * 4
         return data[offset] > data[offset + 2] ? .red : .blue
     }
 
@@ -84,8 +84,10 @@ struct PhotoPreparerEditTests {
     @Test("an empty rectangle or one that leaves the photo gives nothing")
     func rejectsAnEmptyOrOutOfBoundsRect() async throws {
         let image = try sample()
-        let empty = await PhotoPreparer.edit(image, PhotoEdit(quarterTurns: 0, cropRect: CGRect(x: 1, y: 0, width: 0, height: 2)))
-        let outside = await PhotoPreparer.edit(image, PhotoEdit(quarterTurns: 0, cropRect: CGRect(x: 3, y: 0, width: 4, height: 2)))
+        let emptyRect = CGRect(x: 1, y: 0, width: 0, height: 2)
+        let outsideRect = CGRect(x: 3, y: 0, width: 4, height: 2)
+        let empty = await PhotoPreparer.edit(image, PhotoEdit(quarterTurns: 0, cropRect: emptyRect))
+        let outside = await PhotoPreparer.edit(image, PhotoEdit(quarterTurns: 0, cropRect: outsideRect))
         #expect(empty == nil)
         #expect(outside == nil)
     }

@@ -58,12 +58,12 @@ struct PhotoCropOverlay: View {
     private var grid: some View {
         Path { path in
             for step in [1.0, 2.0] {
-                let x = frame.minX + frame.width * step / 3
-                let y = frame.minY + frame.height * step / 3
-                path.move(to: CGPoint(x: x, y: frame.minY))
-                path.addLine(to: CGPoint(x: x, y: frame.maxY))
-                path.move(to: CGPoint(x: frame.minX, y: y))
-                path.addLine(to: CGPoint(x: frame.maxX, y: y))
+                let column = frame.minX + frame.width * step / 3
+                let row = frame.minY + frame.height * step / 3
+                path.move(to: CGPoint(x: column, y: frame.minY))
+                path.addLine(to: CGPoint(x: column, y: frame.maxY))
+                path.move(to: CGPoint(x: frame.minX, y: row))
+                path.addLine(to: CGPoint(x: frame.maxX, y: row))
             }
         }
         .stroke(.white.opacity(0.4), lineWidth: 0.5)
