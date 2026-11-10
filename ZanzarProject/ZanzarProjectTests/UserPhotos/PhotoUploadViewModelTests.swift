@@ -16,7 +16,8 @@ struct PhotoUploadViewModelTests {
     ) -> PhotoUploadViewModel {
         PhotoUploadViewModel(
             placeID: "place-1", placeName: "Bar do Teste", fromCheckIn: fromCheckIn,
-            service: service, processing: processing, sensitiveContent: checker ?? FixedSensitiveContent(answer: sensitive),
+            service: service, processing: processing,
+            sensitiveContent: checker ?? FixedSensitiveContent(answer: sensitive),
             userIDProvider: { "user-1" }, isOnline: { online }
         )
     }

@@ -38,7 +38,10 @@ Depois de escolher a foto (galeria ou câmera) abre a tela "Ajustar foto", antes
 6. **Foto pequena:** escolha uma foto com o lado menor abaixo de 320 px. As alças somem, aparece "Esta foto é pequena demais para cortar" e dá para girar. O envio é recusado como antes.
 7. **O corte vale para as checagens:** escolha uma foto de grupo com rostos pequenos ao fundo, corte até um rosto ficar grande e toque em "Usar foto". Deve aparecer "Tem um rosto em primeiro plano".
 8. **Editar de novo:** na prévia, toque em "Editar foto". O editor abre com a foto original (sem rostos borrados) e, ao confirmar, as checagens rodam outra vez.
-9. **VoiceOver:** o quadro é um elemento ajustável; deslizar para cima e para baixo aproxima e afasta.
+9. **VoiceOver:** o quadro é um elemento ajustável e lê o tamanho em px; deslizar para cima e para baixo aproxima e afasta. No rotor de ações há "Mover para a esquerda", "direita", "cima" e "baixo". Confira que dá para levar o quadro até uma borda da foto.
+10. **Arrastar a folha:** com o editor aberto, puxe a folha para baixo (fora do quadro). Ela não deve fechar; só o botão "Fechar" fecha.
+11. **Gestos interrompidos:** arraste uma alça e encoste um segundo dedo no meio do gesto, ou faça a pinça e interrompa com um alerta do sistema. O quadro não pode dar um salto no próximo toque.
+12. **Giros rápidos:** toque em "Girar" várias vezes seguidas. A foto na tela e o quadro devem sempre estar na mesma orientação, e "Usar foto" deve enviar o que se vê.
 
 ## Rostos
 

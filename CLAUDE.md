@@ -41,7 +41,7 @@ xcodebuild test -project ZanzarProject/ZanzarProject.xcodeproj -scheme ZanzarPro
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 ```
 
-- Estado em 2026-11-10: build OK, 509 testes passando, 0 falhas.
+- Estado em 2026-11-10: build OK, 511 testes passando, 0 falhas.
 - API local: copie `ZanzarProject/Config.xcconfig.example` para `Config.xcconfig` (ignorado pelo git) e preencha `ZANZAR_API_BASE_URL`. Vazio no Debug = `http://127.0.0.1:3000`. Release usa `Config.Release.xcconfig`.
 - iPhone físico: `scripts/update-api-tunnel-url.sh <url>` com o túnel do backend (README).
 - Lint: `swiftlint lint` (CI roda com a config padrão, não há `.swiftlint.yml`). Não há SwiftFormat.

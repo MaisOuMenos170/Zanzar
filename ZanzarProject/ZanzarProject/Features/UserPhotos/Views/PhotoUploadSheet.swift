@@ -30,7 +30,10 @@ struct PhotoUploadSheet: View {
                     }
                 }
         }
-        .interactiveDismissDisabled(viewModel.step == .uploading || viewModel.step == .analyzing)
+        // The editor is a drag-heavy surface: a swipe down must not throw the photo away (the Close button still can).
+        .interactiveDismissDisabled(
+            viewModel.step == .uploading || viewModel.step == .analyzing || viewModel.step == .editing
+        )
         .task { await viewModel.start() }
         .onChange(of: pickerItem) { _, item in
             guard let item else { return }

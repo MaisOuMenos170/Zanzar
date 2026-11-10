@@ -8,8 +8,6 @@ struct PhotoEditorView: View {
     let onChooseAnother: () -> Void
 
     @State private var geometry: PhotoCropGeometry
-    /// The photo turned like `geometry`, so the frame is always in the space of what is on screen.
-    @State private var displayed: CGImage
 
     init(image: CGImage, onConfirm: @escaping (PhotoEdit) -> Void, onChooseAnother: @escaping () -> Void) {
         self.image = image
@@ -18,7 +16,6 @@ struct PhotoEditorView: View {
         _geometry = State(
             initialValue: PhotoCropGeometry(sourceSize: CGSize(width: image.width, height: image.height))
         )
-        _displayed = State(initialValue: image)
     }
 
     var body: some View {
@@ -38,27 +35,23 @@ struct PhotoEditorView: View {
                 Button("userPhotos.editor.useButton.title") { onConfirm(geometry.edit) }
             }
         }
-        .task(id: geometry.quarterTurns) {
-            displayed = await PhotoPreparer.edit(
-                image, PhotoEdit(quarterTurns: geometry.quarterTurns, cropRect: wholePhoto)
-            ) ?? image
-        }
     }
 
     // MARK: - Canvas
-
-    private var wholePhoto: CGRect {
-        let size = geometry.rotatedSize
-        return CGRect(x: 0, y: 0, width: size.width, height: size.height)
-    }
 
     private var canvas: some View {
         GeometryReader { proxy in
             let imageFrame = fitted(geometry.rotatedSize, in: proxy.size)
             ZStack {
-                Image(decorative: displayed, scale: 1)
+                // Turned by the view, in the same call that turns the geometry, so the two never disagree. The frame
+                // is laid out before the turn: for an odd number of turns its sides are swapped.
+                Image(decorative: image, scale: 1)
                     .resizable()
-                    .frame(width: imageFrame.width, height: imageFrame.height)
+                    .frame(
+                        width: geometry.quarterTurns.isMultiple(of: 2) ? imageFrame.width : imageFrame.height,
+                        height: geometry.quarterTurns.isMultiple(of: 2) ? imageFrame.height : imageFrame.width
+                    )
+                    .rotationEffect(.degrees(Double(geometry.quarterTurns) * 90))
                     .position(x: imageFrame.midX, y: imageFrame.midY)
                     .accessibilityHidden(true)
                 PhotoCropOverlay(geometry: $geometry, imageFrame: imageFrame)

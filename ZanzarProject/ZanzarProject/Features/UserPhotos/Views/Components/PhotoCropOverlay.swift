@@ -2,17 +2,20 @@ import SwiftUI
 
 /// The crop frame over the photo: the dimmed outside, a thirds grid and eight handles. It only turns touches into
 /// calls on the geometry; every rule (limits, ratio, minimum size) lives there.
+///
+/// Gesture bookkeeping lives in `@GestureState`, which SwiftUI resets when a gesture ends *or is cancelled*, so a
+/// cancelled touch cannot leave stale values that make the next one jump.
 struct PhotoCropOverlay: View {
     @Binding var geometry: PhotoCropGeometry
     /// Where the photo is drawn, in the coordinate space named `Self.space`.
     let imageFrame: CGRect
 
     static let space = "photoCropCanvas"
-    private static let touchSize: CGFloat = 44
+    /// How far one VoiceOver "move" action shifts the frame, as a fraction of the photo.
+    private static let accessibilityMoveStep: CGFloat = 0.05
 
-    @State private var grabOffset: CGSize?
-    @State private var lastTranslation = CGSize.zero
-    @State private var lastMagnification: CGFloat = 1
+    @GestureState private var lastTranslation = CGSize.zero
+    @GestureState private var lastMagnification: CGFloat = 1
 
     private var frame: CGRect {
         let rect = geometry.cropRect
@@ -36,7 +39,9 @@ struct PhotoCropOverlay: View {
             movingArea
             if geometry.canCrop {
                 ForEach(Self.handles, id: \.self) { handle in
-                    handleView(handle)
+                    CropHandle(
+                        handle: handle, center: center(of: handle), geometry: $geometry, imageFrame: imageFrame
+                    )
                 }
             }
         }
@@ -79,22 +84,22 @@ struct PhotoCropOverlay: View {
             .position(x: frame.midX, y: frame.midY)
             .gesture(
                 DragGesture()
-                    .onChanged { value in
+                    .updating($lastTranslation) { value, last, _ in
                         let delta = CGSize(
-                            width: value.translation.width - lastTranslation.width,
-                            height: value.translation.height - lastTranslation.height
+                            width: value.translation.width - last.width,
+                            height: value.translation.height - last.height
                         )
-                        lastTranslation = value.translation
+                        last = value.translation
                         geometry.move(by: CGSize(
                             width: delta.width / max(imageFrame.width, 1),
                             height: delta.height / max(imageFrame.height, 1)
                         ))
                     }
-                    .onEnded { _ in lastTranslation = .zero }
             )
             .accessibilityElement()
             .accessibilityLabel(Text("userPhotos.editor.frame.accessibilityLabel"))
             .accessibilityHint(Text("userPhotos.editor.frame.accessibilityHint"))
+            .accessibilityValue(Text(verbatim: sizeDescription))
             .accessibilityAdjustableAction { direction in
                 switch direction {
                 case .increment: geometry.zoom(by: 0.9)
@@ -102,15 +107,28 @@ struct PhotoCropOverlay: View {
                 @unknown default: break
                 }
             }
+            .accessibilityAction(named: Text("userPhotos.editor.move.left")) { shift(horizontal: -Self.accessibilityMoveStep) }
+            .accessibilityAction(named: Text("userPhotos.editor.move.right")) { shift(horizontal: Self.accessibilityMoveStep) }
+            .accessibilityAction(named: Text("userPhotos.editor.move.up")) { shift(vertical: -Self.accessibilityMoveStep) }
+            .accessibilityAction(named: Text("userPhotos.editor.move.down")) { shift(vertical: Self.accessibilityMoveStep) }
+    }
+
+    private func shift(horizontal: CGFloat = 0, vertical: CGFloat = 0) {
+        geometry.move(by: CGSize(width: horizontal, height: vertical))
+    }
+
+    /// The frame size in photo pixels, for VoiceOver to read after each change.
+    private var sizeDescription: String {
+        let rect = geometry.edit.cropRect
+        return "\(Int(rect.width)) × \(Int(rect.height)) px"
     }
 
     private var pinch: some Gesture {
         MagnifyGesture()
-            .onChanged { value in
-                geometry.zoom(by: value.magnification / lastMagnification)
-                lastMagnification = value.magnification
+            .updating($lastMagnification) { value, last, _ in
+                geometry.zoom(by: value.magnification / max(last, .leastNonzeroMagnitude))
+                last = value.magnification
             }
-            .onEnded { _ in lastMagnification = 1 }
     }
 
     // MARK: - Handles
@@ -131,9 +149,48 @@ struct PhotoCropOverlay: View {
         case .left: CGPoint(x: frame.minX, y: frame.midY)
         }
     }
+}
+
+/// One handle of the frame. Each handle owns its gesture state, so two fingers on two handles never share it.
+private struct CropHandle: View {
+    let handle: PhotoCropGeometry.Handle
+    /// Where the handle is drawn now, in the canvas space.
+    let center: CGPoint
+    @Binding var geometry: PhotoCropGeometry
+    let imageFrame: CGRect
+
+    private static let touchSize: CGFloat = 44
+
+    /// Where the finger grabbed the handle, relative to its center. Resets when the gesture ends or is cancelled.
+    @GestureState private var grab: CGSize?
+
+    var body: some View {
+        shape
+            .foregroundStyle(.white)
+            .shadow(color: .black.opacity(0.4), radius: 2)
+            .frame(width: Self.touchSize, height: Self.touchSize)
+            .contentShape(.rect)
+            .position(center)
+            .gesture(
+                DragGesture(minimumDistance: 0, coordinateSpace: .named(PhotoCropOverlay.space))
+                    .updating($grab) { value, grab, _ in
+                        // Keep the finger where it grabbed the handle, so the frame does not jump.
+                        let offset = grab ?? CGSize(
+                            width: center.x - value.startLocation.x, height: center.y - value.startLocation.y
+                        )
+                        grab = offset
+                        geometry.drag(handle, to: CGPoint(
+                            x: (value.location.x + offset.width - imageFrame.minX) / max(imageFrame.width, 1),
+                            y: (value.location.y + offset.height - imageFrame.minY) / max(imageFrame.height, 1)
+                        ))
+                    }
+            )
+            // VoiceOver adjusts the frame as a whole (see `PhotoCropOverlay.movingArea`); the handles are for touch.
+            .accessibilityHidden(true)
+    }
 
     @ViewBuilder
-    private func handleShape(_ handle: PhotoCropGeometry.Handle) -> some View {
+    private var shape: some View {
         switch handle {
         case .top, .bottom:
             Capsule().frame(width: 28, height: 5)
@@ -142,34 +199,5 @@ struct PhotoCropOverlay: View {
         default:
             Circle().frame(width: 16, height: 16)
         }
-    }
-
-    private func handleView(_ handle: PhotoCropGeometry.Handle) -> some View {
-        let origin = center(of: handle)
-        return handleShape(handle)
-            .foregroundStyle(.white)
-            .shadow(color: .black.opacity(0.4), radius: 2)
-            .frame(width: Self.touchSize, height: Self.touchSize)
-            .contentShape(.rect)
-            .position(origin)
-            .gesture(
-                DragGesture(minimumDistance: 0, coordinateSpace: .named(Self.space))
-                    .onChanged { value in
-                        // Keep the finger where it grabbed the handle, so the frame does not jump.
-                        let grab = grabOffset ?? CGSize(
-                            width: center(of: handle).x - value.startLocation.x,
-                            height: center(of: handle).y - value.startLocation.y
-                        )
-                        grabOffset = grab
-                        let point = CGPoint(
-                            x: (value.location.x + grab.width - imageFrame.minX) / max(imageFrame.width, 1),
-                            y: (value.location.y + grab.height - imageFrame.minY) / max(imageFrame.height, 1)
-                        )
-                        geometry.drag(handle, to: point)
-                    }
-                    .onEnded { _ in grabOffset = nil }
-            )
-            // VoiceOver adjusts the frame as a whole (see `movingArea`); the handles are for touch.
-            .accessibilityHidden(true)
     }
 }
