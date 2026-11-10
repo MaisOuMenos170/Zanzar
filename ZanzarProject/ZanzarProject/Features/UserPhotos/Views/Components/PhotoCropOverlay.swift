@@ -107,10 +107,18 @@ struct PhotoCropOverlay: View {
                 @unknown default: break
                 }
             }
-            .accessibilityAction(named: Text("userPhotos.editor.move.left")) { shift(horizontal: -Self.accessibilityMoveStep) }
-            .accessibilityAction(named: Text("userPhotos.editor.move.right")) { shift(horizontal: Self.accessibilityMoveStep) }
-            .accessibilityAction(named: Text("userPhotos.editor.move.up")) { shift(vertical: -Self.accessibilityMoveStep) }
-            .accessibilityAction(named: Text("userPhotos.editor.move.down")) { shift(vertical: Self.accessibilityMoveStep) }
+            .accessibilityAction(named: Text("userPhotos.editor.move.left")) {
+                shift(horizontal: -Self.accessibilityMoveStep)
+            }
+            .accessibilityAction(named: Text("userPhotos.editor.move.right")) {
+                shift(horizontal: Self.accessibilityMoveStep)
+            }
+            .accessibilityAction(named: Text("userPhotos.editor.move.up")) {
+                shift(vertical: -Self.accessibilityMoveStep)
+            }
+            .accessibilityAction(named: Text("userPhotos.editor.move.down")) {
+                shift(vertical: Self.accessibilityMoveStep)
+            }
     }
 
     private func shift(horizontal: CGFloat = 0, vertical: CGFloat = 0) {
