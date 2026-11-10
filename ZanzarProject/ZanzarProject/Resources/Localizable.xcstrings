@@ -1228,6 +1228,23 @@
         }
       }
     },
+    "keyboard.doneButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concluir"
+          }
+        }
+      }
+    },
     "locationMap.clusterPin.accessibilityLabel %lld" : {
       "extractionState" : "manual",
       "localizations" : {

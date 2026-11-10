@@ -7,11 +7,8 @@ struct LoginView: View {
     @Environment(AuthSession.self) private var authSession
     @Environment(OnboardingGate.self) private var onboarding
     @Environment(\.authorizationController) private var authorizationController
-    @FocusState private var focusedField: Field?
-
-    private enum Field {
-        case email, password
-    }
+    @FocusState private var isEmailFocused: Bool
+    @FocusState private var isPasswordFocused: Bool
 
     var body: some View {
         AuthScreenScaffold(titleKey: "login.header.title") {
@@ -40,9 +37,9 @@ struct LoginView: View {
                 text: $viewModel.email,
                 errorMessageKey: viewModel.emailError,
                 textContentType: .emailAddress,
-                keyboardType: .emailAddress
+                keyboardType: .emailAddress,
+                isFocused: $isEmailFocused
             )
-            .focused($focusedField, equals: .email)
 
             AuthFormField(
                 labelKey: "login.passwordField.label",
@@ -51,15 +48,15 @@ struct LoginView: View {
                 errorMessageKey: viewModel.passwordError,
                 isSecure: true,
                 textContentType: .password,
-                submitLabel: .go
+                submitLabel: .go,
+                isFocused: $isPasswordFocused
             )
-            .focused($focusedField, equals: .password)
         }
         .onSubmit {
-            switch focusedField {
-            case .email: focusedField = .password
-            case .password, nil:
-                focusedField = nil
+            if isEmailFocused {
+                isPasswordFocused = true
+            } else {
+                isPasswordFocused = false
                 Task { await submit() }
             }
         }
@@ -99,7 +96,14 @@ struct LoginView: View {
         }
     }
 
+    private func dismissKeyboard() {
+        isEmailFocused = false
+        isPasswordFocused = false
+    }
+
     private func submit() async {
+        // The button path leaves the keyboard up, covering the result and the error banner.
+        dismissKeyboard()
         // A user whose avatar was never created goes to the editor, so the gate holds the auth stack until known.
         onboarding.begin()
         guard await viewModel.submit(using: authSession) else {
@@ -118,6 +122,7 @@ struct LoginView: View {
     }
 
     private func signInWithApple() async {
+        dismissKeyboard()
         onboarding.begin()
         guard await viewModel.signInWithApple(
             using: authSession,
