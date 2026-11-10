@@ -7,6 +7,8 @@ nonisolated final class FakePhotoProcessing: PhotoProcessing, @unchecked Sendabl
     var faces: [CGRect] = []
     var downsampleError: Error?
     private(set) var blurredFaces: [CGRect]?
+    var editResult: CGImage? = FakePhotoProcessing.image
+    private(set) var appliedEdits: [PhotoEdit] = []
 
     static let image: CGImage = {
         let context = CGContext(
@@ -26,6 +28,11 @@ nonisolated final class FakePhotoProcessing: PhotoProcessing, @unchecked Sendabl
     func blur(_ faces: [CGRect], in image: CGImage) async -> CGImage? {
         blurredFaces = faces
         return Self.image
+    }
+
+    func edit(_ image: CGImage, _ edit: PhotoEdit) async -> CGImage? {
+        appliedEdits.append(edit)
+        return editResult
     }
 
     func encode(_ image: CGImage) async throws -> Data { Data([0xFF, 0xD8, 0xFF]) }
