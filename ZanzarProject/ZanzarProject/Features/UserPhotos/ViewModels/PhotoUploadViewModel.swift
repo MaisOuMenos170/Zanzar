@@ -2,7 +2,8 @@ import CoreGraphics
 import Foundation
 import Observation
 
-/// Sending one photo of a place: terms check, picking, on-device checks (sensitive content, faces), preview, upload.
+/// Sending one photo of a place: terms check, picking, editing (crop, zoom, turn), on-device checks (sensitive content,
+/// faces) on the edited photo, preview, upload.
 @Observable
 final class PhotoUploadViewModel {
     enum Step: Equatable {
@@ -10,6 +11,10 @@ final class PhotoUploadViewModel {
         case needsTerms
         case choosing
         case preparing
+        /// The user crops, zooms and turns the picked photo.
+        case editing
+        /// The edit is being applied and the on-device checks are running on the result.
+        case analyzing
         /// Faces in the foreground: the user picks another photo or has them pixelated.
         case faceWarning
         case preview
@@ -25,7 +30,9 @@ final class PhotoUploadViewModel {
 
     private(set) var step: Step = .checkingTerms
     var showsAuthorName = true
-    /// The photo that will be sent, after any pixelation.
+    /// The picked photo as decoded, before any edit or pixelation. The editor shows it and "edit again" starts from it.
+    private(set) var original: CGImage?
+    /// The photo that will be sent, after the edit and any pixelation.
     private(set) var image: CGImage?
     private(set) var hasBlurredFaces = false
     private var prominentFaces: [CGRect] = []
@@ -77,21 +84,16 @@ final class PhotoUploadViewModel {
         step = .choosing
     }
 
-    /// Runs the on-device checks on the picked file.
+    /// Decodes the picked file and opens the editor. The on-device checks wait for the edited photo.
     func pick(_ data: Data) async {
         step = .preparing
         hasBlurredFaces = false
+        image = nil
+        original = nil
+        prominentFaces = []
         do {
-            let picked = try await processing.downsample(data)
-            if await sensitiveContent.isSensitive(picked) == true {
-                AppLog.userPhotos.info("Picked photo refused by on-device sensitive content analysis")
-                image = nil
-                step = .failed(.sensitiveContent)
-                return
-            }
-            image = picked
-            prominentFaces = FacePolicy.prominentFaces(in: await processing.faces(in: picked))
-            step = prominentFaces.isEmpty ? .preview : .faceWarning
+            original = try await processing.downsample(data)
+            step = .editing
         } catch PhotoPreparer.Failure.tooLarge {
             step = .failed(.tooLarge)
         } catch {
@@ -99,8 +101,44 @@ final class PhotoUploadViewModel {
         }
     }
 
+    /// Applies what the user did in the editor, then runs the on-device checks (sensitive content, faces) on the
+    /// result: a crop can make a face prominent, so the checks must see the photo that will be sent.
+    func applyEdit(_ edit: PhotoEdit) async {
+        guard let original else { return }
+        step = .analyzing
+        hasBlurredFaces = false
+        image = nil
+        prominentFaces = []
+        guard let edited = await processing.edit(original, edit) else {
+            step = .failed(.unreadable)
+            return
+        }
+        if await sensitiveContent.isSensitive(edited) == true {
+            AppLog.userPhotos.info("Edited photo refused by on-device sensitive content analysis")
+            step = .failed(.sensitiveContent)
+            return
+        }
+        image = edited
+        prominentFaces = FacePolicy.prominentFaces(in: await processing.faces(in: edited))
+        step = prominentFaces.isEmpty ? .preview : .faceWarning
+    }
+
+    func cancelEditing() {
+        chooseAnother()
+    }
+
+    /// Back to the editor from the preview or the face warning, starting from the original photo.
+    func editAgain() {
+        guard original != nil, step == .preview || step == .faceWarning else { return }
+        image = nil
+        prominentFaces = []
+        hasBlurredFaces = false
+        step = .editing
+    }
+
     func chooseAnother() {
         image = nil
+        original = nil
         prominentFaces = []
         hasBlurredFaces = false
         step = .choosing

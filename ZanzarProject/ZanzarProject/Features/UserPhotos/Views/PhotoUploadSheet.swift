@@ -62,7 +62,7 @@ struct PhotoUploadSheet: View {
     @ViewBuilder
     private var content: some View {
         switch viewModel.step {
-        case .checkingTerms, .preparing:
+        case .checkingTerms, .preparing, .analyzing, .editing:
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         case .needsTerms:
