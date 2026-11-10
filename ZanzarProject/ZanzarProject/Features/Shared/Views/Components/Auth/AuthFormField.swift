@@ -9,9 +9,14 @@ struct AuthFormField: View {
     var textContentType: UITextContentType?
     var keyboardType: UIKeyboardType = .default
     var submitLabel: SubmitLabel = .next
+    /// E-mails and usernames are typed as they are; free text such as a place name wants capitals and suggestions.
+    var capitalization: TextInputAutocapitalization = .never
+    var disablesAutocorrection = true
+    /// Bound straight to the text input. A `.focused` placed on this container never fires, because the container
+    /// itself cannot take focus, so the parent's focus chain would always read "nothing focused".
+    var isFocused: FocusState<Bool>.Binding
 
     @State private var isPasswordVisible = false
-    @FocusState private var isSecureFieldFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -59,14 +64,14 @@ struct AuthFormField: View {
                 }
                 .textContentType(textContentType)
                 .submitLabel(submitLabel)
-                .focused($isSecureFieldFocused)
+                .focused(isFocused)
 
                 Button {
                     // Swapping SecureField and TextField drops the focus, so hand it back to keep the keyboard open.
-                    let wasFocused = isSecureFieldFocused
+                    let wasFocused = isFocused.wrappedValue
                     isPasswordVisible.toggle()
                     if wasFocused {
-                        Task { isSecureFieldFocused = true }
+                        Task { isFocused.wrappedValue = true }
                     }
                 } label: {
                     Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
@@ -83,9 +88,9 @@ struct AuthFormField: View {
                 .textContentType(textContentType)
                 .keyboardType(keyboardType)
                 .submitLabel(submitLabel)
-                // Names and e-mails are typed as they are: no forced capital letter and no autocorrect.
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
+                .textInputAutocapitalization(capitalization)
+                .autocorrectionDisabled(disablesAutocorrection)
+                .focused(isFocused)
         }
     }
 }
