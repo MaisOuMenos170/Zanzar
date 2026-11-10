@@ -204,7 +204,8 @@ nonisolated struct PhotoCropGeometry: Equatable, Sendable {
         switch anchor {
         case .low: 1 - low
         case .high: high
-        case .center: 2 * min((low + high) / 2, 1 - (low + high) / 2)
+        // Around the center the frame may grow to the whole photo: the final clamp slides it inward from an edge.
+        case .center: 1
         }
     }
 

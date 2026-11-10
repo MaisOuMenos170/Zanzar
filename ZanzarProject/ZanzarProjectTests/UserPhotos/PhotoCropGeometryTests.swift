@@ -154,6 +154,21 @@ struct PhotoCropGeometryTests {
         #expect(geometry.cropRect.minY == 0)
     }
 
+    @Test("zooming out at an edge slides the frame inward and keeps its shape")
+    func zoomOutAtAnEdgeKeepsTheShape() {
+        var geometry = make()
+        geometry.zoom(by: 2)
+        geometry.move(by: CGSize(width: -5, height: -5))
+        let before = pixelSize(geometry)
+
+        geometry.zoom(by: 0.75)
+        let after = pixelSize(geometry)
+        #expect(abs(after.width / after.height - before.width / before.height) < 0.001)
+        #expect(after.width > before.width)
+        #expect(geometry.cropRect.minX >= 0 && geometry.cropRect.minY >= 0)
+        #expect(geometry.cropRect.maxX <= 1 && geometry.cropRect.maxY <= 1)
+    }
+
     @Test("reset goes back to the start")
     func resetGoesBackToTheStart() {
         var geometry = make()

@@ -7,8 +7,19 @@ nonisolated final class FakePhotoProcessing: PhotoProcessing, @unchecked Sendabl
     var faces: [CGRect] = []
     var downsampleError: Error?
     private(set) var blurredFaces: [CGRect]?
-    var editResult: CGImage? = FakePhotoProcessing.image
+    /// A different image from the one `downsample` returns, so tests can tell which of the two was used.
+    var editResult: CGImage? = FakePhotoProcessing.edited
     private(set) var appliedEdits: [PhotoEdit] = []
+    private(set) var facesRequestedFor: [CGImage] = []
+    private(set) var encodedImages: [CGImage] = []
+
+    static let edited: CGImage = {
+        let context = CGContext(
+            data: nil, width: 4, height: 3, bitsPerComponent: 8, bytesPerRow: 0,
+            space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue
+        )!
+        return context.makeImage()!
+    }()
 
     static let image: CGImage = {
         let context = CGContext(
@@ -23,7 +34,10 @@ nonisolated final class FakePhotoProcessing: PhotoProcessing, @unchecked Sendabl
         return Self.image
     }
 
-    func faces(in image: CGImage) async -> [CGRect] { faces }
+    func faces(in image: CGImage) async -> [CGRect] {
+        facesRequestedFor.append(image)
+        return faces
+    }
 
     func blur(_ faces: [CGRect], in image: CGImage) async -> CGImage? {
         blurredFaces = faces
@@ -35,10 +49,22 @@ nonisolated final class FakePhotoProcessing: PhotoProcessing, @unchecked Sendabl
         return editResult
     }
 
-    func encode(_ image: CGImage) async throws -> Data { Data([0xFF, 0xD8, 0xFF]) }
+    func encode(_ image: CGImage) async throws -> Data {
+        encodedImages.append(image)
+        return Data([0xFF, 0xD8, 0xFF])
+    }
 }
 
-struct FixedSensitiveContent: SensitiveContentChecking {
+final class FixedSensitiveContent: SensitiveContentChecking, @unchecked Sendable {
     let answer: Bool?
-    func isSensitive(_ image: CGImage) async -> Bool? { answer }
+    private(set) var checkedImages: [CGImage] = []
+
+    init(answer: Bool?) {
+        self.answer = answer
+    }
+
+    func isSensitive(_ image: CGImage) async -> Bool? {
+        checkedImages.append(image)
+        return answer
+    }
 }

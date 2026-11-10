@@ -10,12 +10,13 @@ struct PhotoUploadViewModelTests {
         service: MockUserPhotosService = MockUserPhotosService(),
         processing: FakePhotoProcessing = FakePhotoProcessing(),
         sensitive: Bool? = nil,
+        checker: FixedSensitiveContent? = nil,
         online: Bool = true,
         fromCheckIn: Bool = false
     ) -> PhotoUploadViewModel {
         PhotoUploadViewModel(
             placeID: "place-1", placeName: "Bar do Teste", fromCheckIn: fromCheckIn,
-            service: service, processing: processing, sensitiveContent: FixedSensitiveContent(answer: sensitive),
+            service: service, processing: processing, sensitiveContent: checker ?? FixedSensitiveContent(answer: sensitive),
             userIDProvider: { "user-1" }, isOnline: { online }
         )
     }
@@ -198,6 +199,24 @@ struct PhotoUploadViewModelTests {
         viewModel.editAgain()
         await viewModel.applyEdit(edit)
         #expect(viewModel.step == .faceWarning)
+    }
+
+    @Test("the checks and the upload see the edited photo, never the original")
+    func checksAndUploadUseTheEditedPhoto() async {
+        let processing = FakePhotoProcessing()
+        let checker = FixedSensitiveContent(answer: false)
+        let viewModel = makeViewModel(processing: processing, checker: checker)
+        await viewModel.pick(Data([1]))
+        await viewModel.applyEdit(Self.fullEdit)
+        await viewModel.send()
+
+        #expect(viewModel.original === FakePhotoProcessing.image)
+        #expect(checker.checkedImages.count == 1)
+        #expect(checker.checkedImages.first === FakePhotoProcessing.edited)
+        #expect(processing.facesRequestedFor.count == 1)
+        #expect(processing.facesRequestedFor.first === FakePhotoProcessing.edited)
+        #expect(processing.encodedImages.count == 1)
+        #expect(processing.encodedImages.first === FakePhotoProcessing.edited)
     }
 
     @Test("sensitive content is judged on the edited photo")
