@@ -27,17 +27,13 @@ struct ItineraryStampTrack: View {
     }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 6) {
-            ForEach(slots.enumerated(), id: \.element.id) { index, slot in
-                VStack(spacing: 0) {
-                    Color.clear
-                        .frame(height: index.isMultiple(of: 2) ? waveOffset * 2 : 0)
-                    stamp(for: slot)
-                    Color.clear
-                        .frame(height: index.isMultiple(of: 2) ? 0 : waveOffset * 2)
-                }
-            }
+        ScrollView(.horizontal) {
+            stamps
         }
+        .scrollIndicators(.hidden)
+        .scrollBounceBehavior(.basedOnSize)
+        // The press animation travels past the stamp's frame; don't clip it.
+        .scrollClipDisabled()
         .sensoryFeedback(.impact(flexibility: .rigid, intensity: 0.7), trigger: landingCount)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("itinerary.stampTrack.progress \(earnedCount) \(slots.count)"))
@@ -71,6 +67,20 @@ struct ItineraryStampTrack: View {
                     revealQueuedStamps()
                 }
             )
+        }
+    }
+
+    private var stamps: some View {
+        HStack(alignment: .top, spacing: 6) {
+            ForEach(slots.enumerated(), id: \.element.id) { index, slot in
+                VStack(spacing: 0) {
+                    Color.clear
+                        .frame(height: index.isMultiple(of: 2) ? waveOffset * 2 : 0)
+                    stamp(for: slot)
+                    Color.clear
+                        .frame(height: index.isMultiple(of: 2) ? 0 : waveOffset * 2)
+                }
+            }
         }
     }
 

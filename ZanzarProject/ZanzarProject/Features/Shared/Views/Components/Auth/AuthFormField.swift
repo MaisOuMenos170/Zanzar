@@ -16,7 +16,7 @@ struct AuthFormField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(labelKey)
-                .font(.system(size: 14))
+                .font(.subheadline)
                 .tracking(0.25)
                 .foregroundStyle(.primary)
 
@@ -27,7 +27,7 @@ struct AuthFormField: View {
             }
 
             field
-                .font(.system(size: 16))
+                .font(.body)
                 .padding(16)
                 .frame(minHeight: 51, alignment: .leading)
                 .background(Color.brandNeutral50, in: .capsule)

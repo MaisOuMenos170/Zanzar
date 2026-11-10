@@ -4,6 +4,7 @@ struct PlaceSuggestionSheetView: View {
     @State private var viewModel: PlaceSuggestionViewModel
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     private let onFinished: (PlaceSuggestionOutcome) -> Void
 
     init(
@@ -51,7 +52,7 @@ struct PlaceSuggestionSheetView: View {
         }
         .animation(reduceMotion ? nil : .default, value: viewModel.results)
         .animation(reduceMotion ? nil : .default, value: viewModel.isManualEntry)
-        .presentationDetents([.height(620), .large])
+        .presentationDetents(dynamicTypeSize.isAccessibilitySize ? [.large] : [.height(620), .large])
         .presentationDragIndicator(.visible)
         .presentationBackground(Color(.systemBackground))
         // Re-runs when the toggle changes, so turning "near me" on again retries a failed lookup.

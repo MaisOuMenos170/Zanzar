@@ -3,16 +3,39 @@ import SwiftUI
 struct ProfileStatsView: View {
     let summary: ProfileSummary
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
-        HStack(spacing: 28) {
-            ProfileStatItem(value: summary.checkInCount, label: "profile.stats.checkInsLabel")
-            Divider()
-            ProfileStatItem(value: summary.itineraryCount, label: "profile.stats.itinerariesLabel")
-            Divider()
-            ProfileStatItem(value: summary.sealCount, label: "profile.stats.sealsLabel")
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(spacing: 16) {
+                checkIns
+                itineraries
+                seals
+            }
+            .frame(maxWidth: .infinity)
+        } else {
+            HStack(spacing: 28) {
+                checkIns
+                Divider()
+                itineraries
+                Divider()
+                seals
+            }
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity)
         }
-        .fixedSize(horizontal: false, vertical: true)
-        .frame(maxWidth: .infinity)
+    }
+
+    private var checkIns: some View {
+        ProfileStatItem(value: summary.checkInCount, label: "profile.stats.checkInsLabel")
+    }
+
+    private var itineraries: some View {
+        ProfileStatItem(value: summary.itineraryCount, label: "profile.stats.itinerariesLabel")
+    }
+
+    private var seals: some View {
+        ProfileStatItem(value: summary.sealCount, label: "profile.stats.sealsLabel")
     }
 }
 

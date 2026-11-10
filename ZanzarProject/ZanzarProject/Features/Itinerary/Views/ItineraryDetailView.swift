@@ -43,19 +43,26 @@ struct ItineraryDetailView: View {
     }
 
     private func countsRow(for detail: ItineraryDetail) -> some View {
-        HStack(alignment: .firstTextBaseline) {
-            Label {
-                Text("itinerary.detail.placesCount \(detail.placesCount)")
-            } icon: {
-                Image(systemName: "mappin.and.ellipse")
+        let places = Label {
+            Text("itinerary.detail.placesCount \(detail.placesCount)")
+        } icon: {
+            Image(systemName: "mappin.and.ellipse")
+        }
+        let completed = Label {
+            Text("itinerary.detail.completedCount \(detail.completedCount)")
+        } icon: {
+            Image(systemName: "figure.walk")
+        }
+
+        return ViewThatFits(in: .horizontal) {
+            HStack(alignment: .firstTextBaseline) {
+                places
+                Spacer(minLength: 8)
+                completed
             }
-
-            Spacer(minLength: 8)
-
-            Label {
-                Text("itinerary.detail.completedCount \(detail.completedCount)")
-            } icon: {
-                Image(systemName: "figure.walk")
+            VStack(alignment: .leading, spacing: 4) {
+                places
+                completed
             }
         }
         .font(.caption)

@@ -25,39 +25,39 @@ struct RatingPromptView: View {
     }
 
     private var alert: some View {
-        VStack(spacing: 10) {
-            VStack(spacing: 24) {
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("ratingPrompt.title")
-                        .font(.headline)
+        AlertOverlayCard {
+            VStack(spacing: 10) {
+                VStack(spacing: 24) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("ratingPrompt.title")
+                            .font(.headline)
 
-                    Text(message)
-                        .font(.body)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                        Text(message)
+                            .font(.body)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
-                VStack(spacing: 0) {
-                    emotionRow(Self.topRow, spacing: 5)
-                    emotionRow(Self.bottomRow, spacing: 24)
-                }
+                    VStack(spacing: 0) {
+                        emotionRow(Self.topRow, spacing: 5)
+                        emotionRow(Self.bottomRow, spacing: 24)
+                    }
 
-                if let errorMessage {
-                    Text(errorMessage)
-                        .font(.footnote)
-                        .foregroundStyle(Color("AuthError"))
-                        .multilineTextAlignment(.center)
+                    if let errorMessage {
+                        Text(errorMessage)
+                            .font(.footnote)
+                            .foregroundStyle(Color("AuthError"))
+                            .multilineTextAlignment(.center)
+                    }
                 }
+                .padding(.horizontal, 8)
+                .padding(.top, 8)
+                .padding(.bottom, 24)
+
+                buttons
             }
-            .padding(.horizontal, 8)
-            .padding(.top, 8)
-            .padding(.bottom, 24)
-
-            buttons
+            .frame(maxWidth: .infinity)
         }
-        .padding(14)
-        .frame(width: 300)
-        .glassEffect(.regular, in: .rect(cornerRadius: 34))
     }
 
     private var message: AttributedString {
@@ -79,32 +79,45 @@ struct RatingPromptView: View {
     }
 
     private var buttons: some View {
-        HStack(spacing: 16) {
-            Button(action: onDismiss) {
-                Text("ratingPrompt.dismissButton.title")
-                    .frame(maxWidth: .infinity)
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 16) {
+                dismissButton
+                submitButton
             }
-            .tint(.primary)
-            .buttonStyle(.glass)
-            .disabled(isSubmitting)
-
-            Button(action: onSubmit) {
-                Group {
-                    if isSubmitting {
-                        ProgressView()
-                    } else {
-                        Text("ratingPrompt.submitButton.title")
-                    }
-                }
-                .frame(maxWidth: .infinity)
+            VStack(spacing: 10) {
+                submitButton
+                dismissButton
             }
-            .buttonStyle(.glassProminent)
-            .tint(Color("RatingPromptPrimary"))
-            .disabled(selectedTag == nil || isSubmitting)
         }
         .controlSize(.large)
         .buttonBorderShape(.capsule)
         .frame(maxWidth: .infinity)
+    }
+
+    private var dismissButton: some View {
+        Button(action: onDismiss) {
+            Text("ratingPrompt.dismissButton.title")
+                .frame(maxWidth: .infinity)
+        }
+        .tint(.primary)
+        .buttonStyle(.glass)
+        .disabled(isSubmitting)
+    }
+
+    private var submitButton: some View {
+        Button(action: onSubmit) {
+            Group {
+                if isSubmitting {
+                    ProgressView()
+                } else {
+                    Text("ratingPrompt.submitButton.title")
+                }
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.glassProminent)
+        .tint(Color("RatingPromptPrimary"))
+        .disabled(selectedTag == nil || isSubmitting)
     }
 }
 

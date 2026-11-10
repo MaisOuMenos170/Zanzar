@@ -4,6 +4,11 @@ struct AvatarEditorView: View {
     @State private var viewModel = AvatarEditorViewModel()
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(OnboardingGate.self) private var onboarding
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var previewSize: CGFloat {
+        dynamicTypeSize.isAccessibilitySize ? 120 : 210
+    }
 
     var body: some View {
         VStack(spacing: 16) {
@@ -53,7 +58,7 @@ struct AvatarEditorView: View {
             avatar: viewModel.avatar,
             fallbackBackground: Color.avatarBackdrop
         )
-        .frame(width: 210, height: 210)
+        .frame(width: previewSize, height: previewSize)
         .overlay(alignment: .bottomTrailing) {
             AvatarBackgroundPicker(color: $viewModel.backgroundColor)
                 .padding(.trailing, 18)

@@ -23,6 +23,10 @@ struct LocationClusterPinView: View {
         Text(countLabel)
             .font(.caption.bold())
             .monospacedDigit()
+            // The badge is a fixed-size map marker, so its count scales only up to a point and then shrinks to fit.
+            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+            .lineLimit(1)
+            .minimumScaleFactor(0.6)
             .foregroundStyle(.white)
             .frame(width: diameter, height: diameter)
             .background(Color("LocationPinPrimary"), in: .circle)
