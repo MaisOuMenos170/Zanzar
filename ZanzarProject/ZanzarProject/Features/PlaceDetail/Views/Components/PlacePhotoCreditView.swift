@@ -10,11 +10,12 @@ struct PlacePhotoCreditView: View {
             HStack(spacing: 0) {
                 Text(L10n.string("placeDetail.photo.credit", credit.author))
                     .lineLimit(1)
+                // The licence wraps instead of being cut, and takes space before the author name does.
                 Text(verbatim: " · \(credit.license)")
-                    .lineLimit(1)
-                    .fixedSize()
+                    .fixedSize(horizontal: false, vertical: true)
+                    .layoutPriority(1)
             }
-            .font(.caption2)
+            .font(.caption)
             .foregroundStyle(.white)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)

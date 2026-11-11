@@ -5,6 +5,8 @@ struct PlaceSuggestionSheetView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @FocusState private var isQueryFocused: Bool
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @ScaledMetric(relativeTo: .body) private var searchButtonSize: CGFloat = 51
     private let onFinished: (PlaceSuggestionOutcome) -> Void
 
     init(
@@ -52,7 +54,7 @@ struct PlaceSuggestionSheetView: View {
         }
         .animation(reduceMotion ? nil : .default, value: viewModel.results)
         .animation(reduceMotion ? nil : .default, value: viewModel.isManualEntry)
-        .presentationDetents([.height(620), .large])
+        .presentationDetents(dynamicTypeSize.isAccessibilitySize ? [.large] : [.height(620), .large])
         .presentationDragIndicator(.visible)
         .presentationBackground(Color(.systemBackground))
         // Re-runs when the toggle changes, so turning "near me" on again retries a failed lookup.
@@ -67,7 +69,7 @@ struct PlaceSuggestionSheetView: View {
 
     private var searchSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .bottom, spacing: 8) {
+            AdaptiveStack(horizontalAlignment: .trailing, verticalAlignment: .bottom, spacing: 8) {
                 AuthFormField(
                     labelKey: "placeSuggestion.placeField.label",
                     placeholderKey: "placeSuggestion.placeField.placeholder",
@@ -91,7 +93,7 @@ struct PlaceSuggestionSheetView: View {
                     }
                 }
                 .font(.body.weight(.semibold))
-                .frame(width: 51, height: 51)
+                .frame(width: searchButtonSize, height: searchButtonSize)
                 .foregroundStyle(.white)
                 .background(Color("WelcomePrimary"), in: .circle)
                 .disabled(!viewModel.canSearch)
@@ -106,7 +108,7 @@ struct PlaceSuggestionSheetView: View {
                     Text(nearMeSubtitle)
                         .font(.footnote)
                         .foregroundStyle(viewModel.locationErrorMessage != nil ? Color("AuthError") : Color.secondary)
-                        .lineLimit(2)
+                        .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
                 }
             }
             .tint(Color("WelcomePrimary"))
@@ -147,7 +149,7 @@ struct PlaceSuggestionSheetView: View {
                         }
                     }
                     Text("placeSuggestion.results.attribution")
-                        .font(.caption2)
+                        .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 

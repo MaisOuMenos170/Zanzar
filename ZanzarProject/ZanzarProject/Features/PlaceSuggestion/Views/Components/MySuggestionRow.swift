@@ -3,16 +3,22 @@ import SwiftUI
 struct MySuggestionRow: View {
     let suggestion: MySuggestion
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var lineLimit: Int? {
+        dynamicTypeSize.isAccessibilitySize ? nil : 2
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(suggestion.displayName)
                 .font(.headline)
-                .lineLimit(2)
+                .lineLimit(lineLimit)
             if suggestion.name != nil {
                 Text(suggestion.address)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
-                    .lineLimit(2)
+                    .lineLimit(lineLimit)
             }
             PlaceSuggestionStatusBadge(status: suggestion.status)
             if let reason = shownReason {

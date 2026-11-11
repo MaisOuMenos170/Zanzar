@@ -7,6 +7,7 @@ struct PlaceDetailStatsCard: View {
     let isInActiveItinerary: Bool
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     /// Earned seals already on the card stay put. The press runs only when check-in flips on screen.
     @State private var showsEarned: Bool
     @State private var phase = PaperStampPhase.settled
@@ -38,7 +39,7 @@ struct PlaceDetailStatsCard: View {
     }
 
     var body: some View {
-        HStack(spacing: 0) {
+        AdaptiveStack(horizontalAlignment: .center, spacing: dynamicTypeSize.isAccessibilitySize ? 12 : 0) {
             VStack(spacing: 4) {
                 Text(totalCheckIns, format: .number)
                     .contentTransition(.numericText(value: Double(totalCheckIns)))

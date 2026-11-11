@@ -5,6 +5,8 @@ import SwiftUI
 struct PlaceDetailReactionsSection: View {
     let reactions: [PlaceDetailReaction]
 
+    @ScaledMetric(relativeTo: .caption) private var itemSize: CGFloat = 56
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("placeDetail.reactionsSection.title")
@@ -16,11 +18,23 @@ struct PlaceDetailReactionsSection: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             } else {
-                HStack(alignment: .top, spacing: 12) {
-                    ForEach(displayedReactions) { reaction in
-                        PlaceDetailReactionItem(reaction: reaction)
-                        if isShowingAllReactions, reaction != displayedReactions.last {
-                            Spacer(minLength: 0)
+                ViewThatFits(in: .horizontal) {
+                    HStack(alignment: .top, spacing: 12) {
+                        ForEach(displayedReactions) { reaction in
+                            PlaceDetailReactionItem(reaction: reaction, size: itemSize)
+                            if isShowingAllReactions, reaction != displayedReactions.last {
+                                Spacer(minLength: 0)
+                            }
+                        }
+                    }
+
+                    LazyVGrid(
+                        columns: [GridItem(.adaptive(minimum: itemSize), spacing: 12, alignment: .top)],
+                        alignment: .leading,
+                        spacing: 4
+                    ) {
+                        ForEach(displayedReactions) { reaction in
+                            PlaceDetailReactionItem(reaction: reaction, size: itemSize)
                         }
                     }
                 }
@@ -41,13 +55,14 @@ struct PlaceDetailReactionsSection: View {
 
 private struct PlaceDetailReactionItem: View {
     let reaction: PlaceDetailReaction
+    let size: CGFloat
 
     var body: some View {
         VStack(spacing: 0) {
             Image(reaction.imageName)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 56, height: 56)
+                .frame(width: size, height: size)
 
             Text(reaction.count, format: .number)
                 .font(.caption.weight(.medium))

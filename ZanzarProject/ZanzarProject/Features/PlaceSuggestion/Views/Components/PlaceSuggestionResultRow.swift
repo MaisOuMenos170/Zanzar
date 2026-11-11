@@ -6,6 +6,8 @@ struct PlaceSuggestionResultRow: View {
     let isSelected: Bool
     let action: () -> Void
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: 10) {
@@ -17,11 +19,11 @@ struct PlaceSuggestionResultRow: View {
                     Text(place.name)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.primary)
-                        .lineLimit(2)
+                        .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
                     Text(place.address)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
-                        .lineLimit(2)
+                        .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }

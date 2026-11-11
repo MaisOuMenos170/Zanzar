@@ -84,6 +84,16 @@ struct PhotoUploadSheet: View {
     }
 
     private var choosing: some View {
+        ViewThatFits(in: .vertical) {
+            choosingContent
+                .frame(maxHeight: .infinity)
+            ScrollView {
+                choosingContent
+            }
+        }
+    }
+
+    private var choosingContent: some View {
         VStack(spacing: 16) {
             Text(L10n.string("userPhotos.upload.choosing.message", viewModel.placeName))
                 .multilineTextAlignment(.center)
@@ -112,7 +122,6 @@ struct PhotoUploadSheet: View {
                 .multilineTextAlignment(.center)
         }
         .padding(24)
-        .frame(maxHeight: .infinity)
     }
 
     private var faceWarning: some View {

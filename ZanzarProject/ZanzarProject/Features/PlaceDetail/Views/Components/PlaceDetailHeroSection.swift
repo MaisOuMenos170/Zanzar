@@ -15,11 +15,16 @@ struct PlaceDetailHeroSection: View {
             )
 
             if !tags.isEmpty {
-                HStack(spacing: 8) {
-                    ForEach(tags) { tag in
-                        PlaceDetailTagBadge(label: tag.label, style: tag.style)
+                ScrollView(.horizontal) {
+                    HStack(spacing: 8) {
+                        ForEach(tags) { tag in
+                            PlaceDetailTagBadge(label: tag.label, style: tag.style)
+                        }
                     }
                 }
+                .scrollIndicators(.hidden)
+                .scrollBounceBehavior(.basedOnSize)
+                .scrollClipDisabled()
             }
         }
     }

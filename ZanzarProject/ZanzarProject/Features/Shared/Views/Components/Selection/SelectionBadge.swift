@@ -1,11 +1,13 @@
 import SwiftUI
 
 struct SelectionBadge: View {
+    @ScaledMetric(relativeTo: .caption) private var size: CGFloat = 24
+
     var body: some View {
         Image(systemName: "checkmark")
-            .font(.system(size: 10, weight: .heavy))
+            .font(.caption2.weight(.heavy))
             .foregroundStyle(.white)
-            .frame(width: 24, height: 24)
+            .frame(width: size, height: size)
             .background(Color.selectionGreen, in: .circle)
             .overlay {
                 Circle().strokeBorder(.white, lineWidth: 1.7)
