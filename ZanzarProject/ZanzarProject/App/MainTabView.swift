@@ -14,7 +14,10 @@ struct MainTabView: View {
     /// Tells the proximity alerts which roteiro the user is following; the server is the source of truth.
     @State private var itineraryFeed = ActiveItineraryFeed(
         service: ItineraryService(),
-        apply: { await ProximityAlertCoordinator.shared.update(itinerary: $0) }
+        apply: { active in
+            await ProximityAlertCoordinator.shared.update(itinerary: active)
+            WidgetDataWriter.shared.update(itinerary: active)
+        }
     )
     /// Explains and asks for the permissions behind the proximity alerts, at a moment that makes sense.
     @State private var proximityPermission = ProximityPermissionViewModel(
@@ -105,6 +108,8 @@ struct MainTabView: View {
             let places = nearbyPlaces.places
             let user = nearbyPlaces.userCoordinate
             Task { await ProximityAlertCoordinator.shared.update(places: places, user: user) }
+            // The widget names the next stop from the same places.
+            WidgetDataWriter.shared.update(places: places)
         }
         .onChange(of: selectedTab) { _, tab in
             guard tab != .profile else { return }
