@@ -5,6 +5,7 @@ import SwiftUI
 struct UserPhotoAttributionView: View {
     let attribution: UserPhotoAttribution
     @Environment(\.userPhotoActionHandler) private var actionHandler
+    @ScaledMetric(relativeTo: .caption) private var menuButtonSize: CGFloat = 28
 
     var body: some View {
         HStack(spacing: 6) {
@@ -20,7 +21,7 @@ struct UserPhotoAttributionView: View {
                         .fontWeight(.semibold)
                 }
             }
-            .font(.caption2)
+            .font(.caption)
             .foregroundStyle(.white)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
@@ -38,9 +39,10 @@ struct UserPhotoAttributionView: View {
                     Image(systemName: "ellipsis")
                         .font(.caption.weight(.bold))
                         .foregroundStyle(.white)
-                        .frame(width: 28, height: 28)
+                        .frame(width: menuButtonSize, height: menuButtonSize)
                         .background(.black.opacity(0.55), in: .circle)
-                        .contentShape(.circle)
+                        // The circle looks small over a photo, but the tap area reaches the 44pt HIG minimum.
+                        .contentShape(Circle().inset(by: -8))
                 }
                 .accessibilityLabel(Text("shared.userPhoto.menu.accessibilityLabel"))
             }

@@ -9,16 +9,19 @@ struct PlaceDetailNavigationAppsSheet: View {
 
     var body: some View {
         NavigationStack {
-            appList
-                .padding(.horizontal, 16)
-                .padding(.top, 8)
-                .onGeometryChange(for: CGFloat.self) { proxy in
-                    proxy.size.height
-                } action: { height in
-                    contentHeight = height
-                }
-                .frame(maxHeight: .infinity, alignment: .top)
-                .navigationTitle("placeDetail.navigationSheet.title")
+            ScrollView {
+                appList
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .onGeometryChange(for: CGFloat.self) { proxy in
+                        proxy.size.height
+                    } action: { height in
+                        contentHeight = height
+                    }
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            .frame(maxHeight: .infinity, alignment: .top)
+            .navigationTitle("placeDetail.navigationSheet.title")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {

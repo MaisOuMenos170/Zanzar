@@ -4,25 +4,31 @@ struct ActiveItineraryProgressCard: View {
     let activeItinerary: ActiveItinerary
     let onViewDetails: () -> Void
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var isStacked: Bool {
+        dynamicTypeSize.isAccessibilitySize
+    }
+
     var body: some View {
-        HStack(alignment: .center, spacing: 8) {
+        AdaptiveStack(horizontalAlignment: .leading, spacing: 8) {
             ItineraryStampTrack(slots: activeItinerary.places.map { slot in
                 ItineraryStampTrack.Slot(id: slot.id, isEarned: slot.isCompleted)
             })
             .frame(maxWidth: .infinity)
 
-            VStack(alignment: .trailing, spacing: 8) {
+            VStack(alignment: isStacked ? .leading : .trailing, spacing: 8) {
                 Text(activeItinerary.name)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(Color("PlaceDetailNearbyTitle"))
-                    .multilineTextAlignment(.trailing)
+                    .multilineTextAlignment(isStacked ? .leading : .trailing)
 
                 Button("itinerary.activeCard.viewDetails", action: onViewDetails)
                     .buttonStyle(.borderedProminent)
                     .controlSize(.small)
                     .tint(Color("TabBarSelected"))
             }
-            .frame(maxWidth: 110)
+            .frame(maxWidth: isStacked ? .infinity : 110, alignment: isStacked ? .leading : .trailing)
         }
         .padding(8)
         .background(Color("ItineraryProgressBackground"), in: .rect(cornerRadius: 8))

@@ -5,6 +5,8 @@ import SwiftUI
 struct BackButton: View {
     let action: () -> Void
 
+    @ScaledMetric(relativeTo: .body) private var iconFrame: CGFloat = 30
+
     var body: some View {
         Button(action: action) {
             Label("backButton.accessibilityLabel", systemImage: "chevron.left")
@@ -13,7 +15,7 @@ struct BackButton: View {
                 .foregroundStyle(.primary)
                 // The glass style adds 7pt of padding on each side, so this renders as a 44×44pt control
                 // (measured on device), which is the HIG minimum for a hit target.
-                .frame(width: 30, height: 30)
+                .frame(width: iconFrame, height: iconFrame)
         }
         .buttonStyle(.glass)
         .buttonBorderShape(.circle)

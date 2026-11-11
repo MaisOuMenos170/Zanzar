@@ -12,6 +12,7 @@ struct NearbyPlaceCard: View {
     // every card is the same size no matter how long the name is or how many reactions it has.
     @ScaledMetric(relativeTo: .caption) private var textLineHeight = 16
     @ScaledMetric(relativeTo: .caption) private var infoHeight = 72
+    @ScaledMetric(relativeTo: .caption) private var fallbackSealSize = 32
 
     private var sealState: PlaceCategorySealState {
         place.hasCheckedIn ? .earned : .preview
@@ -38,7 +39,7 @@ struct NearbyPlaceCard: View {
                                 PlaceCategorySealView(
                                     category: place.category,
                                     state: sealState,
-                                    size: 32
+                                    size: fallbackSealSize
                                 )
                             }
                         }
@@ -55,7 +56,7 @@ struct NearbyPlaceCard: View {
                             .frame(height: textLineHeight)
 
                         Text(checkInsText)
-                            .font(.caption2)
+                            .font(.caption)
                             .foregroundStyle(Color("PlaceDetailNearbySubtitle"))
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
