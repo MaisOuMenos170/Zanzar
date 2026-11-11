@@ -7,6 +7,7 @@ enum Route: Hashable {
     case avatar
     case avatarEditor
     case passportIntro(avatar: Avatar, username: String?)
+    case notificationPermission
     case myPhotos
     case mySuggestions
     case photoPrivacy

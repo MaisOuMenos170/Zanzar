@@ -50,6 +50,8 @@ final class AppCoordinator {
             AvatarEditorView()
         case .passportIntro(let avatar, let username):
             PassportIntroView(avatar: avatar, username: username)
+        case .notificationPermission:
+            NotificationPermissionView()
         case .myPhotos:
             MyPhotosView()
         case .mySuggestions:
