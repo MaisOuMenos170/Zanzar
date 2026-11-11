@@ -3,8 +3,10 @@ import SwiftUI
 struct MyPhotoRow: View {
     let photo: UserPhoto
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        AdaptiveStack(horizontalAlignment: .leading, verticalAlignment: .top, spacing: 12) {
             AsyncImage(url: photo.thumbnailURL) { image in
                 image.resizable().scaledToFill()
             } placeholder: {
@@ -20,7 +22,7 @@ struct MyPhotoRow: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(photo.placeName ?? L10n.string("userPhotos.myPhotos.unknownPlace"))
                     .font(.headline)
-                    .lineLimit(2)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
                 UserPhotoStatusBadge(status: photo.status)
                 if let reason = photo.decisionReason, photo.status == .rejected || photo.status == .removed {
                     Text(LocalizedStringKey(reason.messageKey))

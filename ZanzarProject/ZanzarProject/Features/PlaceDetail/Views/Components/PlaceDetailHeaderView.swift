@@ -8,6 +8,8 @@ struct PlaceDetailHeaderView: View {
     let isOpen: Bool?
     let onBack: () -> Void
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
             BackButton(action: onBack)
@@ -17,7 +19,7 @@ struct PlaceDetailHeaderView: View {
                     .font(.title2)
                     .bold()
                     .foregroundStyle(.primary)
-                    .lineLimit(2)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
 
                 if let distanceText {
                     Text(distanceText)
@@ -26,26 +28,14 @@ struct PlaceDetailHeaderView: View {
                 }
 
                 if let walkingTimeText {
-                    HStack(spacing: 4) {
-                        Image(systemName: "figure.walk")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-
-                        Text(walkingTimeText)
-                            .font(.caption2.weight(.medium))
-                            .foregroundStyle(.secondary)
-                    }
+                    Label(walkingTimeText, systemImage: "figure.walk")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.secondary)
                 }
 
-                HStack(spacing: 4) {
-                    Image(systemName: "clock")
-                        .font(.caption2)
-                        .foregroundStyle(statusColor)
-
-                    Text(openingHoursText)
-                        .font(.caption2.weight(.medium))
-                        .foregroundStyle(statusColor)
-                }
+                Label(openingHoursText, systemImage: "clock")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(statusColor)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

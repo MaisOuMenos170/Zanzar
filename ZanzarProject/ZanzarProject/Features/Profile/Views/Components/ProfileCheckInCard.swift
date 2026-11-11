@@ -4,10 +4,14 @@ struct ProfileCheckInCard: View {
     let checkIn: ProfileCheckIn
     let mediaPolicy: PlaceMediaAccessPolicy
 
+    @ScaledMetric(relativeTo: .caption) private var photoHeight: CGFloat = 78
+    @ScaledMetric(relativeTo: .caption) private var reactionSize: CGFloat = 36
+    @ScaledMetric(relativeTo: .caption) private var sealSize: CGFloat = 47
+
     var body: some View {
         VStack(spacing: 10) {
             Color("ProfileReactionPlaceholder")
-                .frame(height: 78)
+                .frame(height: photoHeight)
                 .overlay {
                     PlaceRemoteImage(photoURL: checkIn.photoURL, mediaPolicy: mediaPolicy) {
                         Color("ProfileReactionPlaceholder")
@@ -18,20 +22,20 @@ struct ProfileCheckInCard: View {
                         Image(impressionTag.imageName)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 36, height: 36)
+                            .frame(width: reactionSize, height: reactionSize)
                             .padding(8)
                             .accessibilityLabel(Text("profile.checkInCard.reactionAccessibilityLabel"))
                     }
                 }
                 .clipped()
 
-            HStack(spacing: 8) {
+            AdaptiveStack(horizontalAlignment: .leading, spacing: 8) {
                 VStack(alignment: .leading, spacing: 4) {
                     placeNameText
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.primary)
                     Text("profile.checkInCard.dateLabel \(checkIn.date.formatted(date: .numeric, time: .omitted))")
-                        .font(.caption2)
+                        .font(.caption)
                         .foregroundStyle(Color("PlaceDetailNearbySubtitle"))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -58,12 +62,11 @@ struct ProfileCheckInCard: View {
     @ViewBuilder
     private var sealBadge: some View {
         if let sealCategory = checkIn.sealCategory {
-            PlaceCategorySealView(category: sealCategory, size: 47)
+            PlaceCategorySealView(category: sealCategory, size: sealSize)
         } else {
             Circle()
                 .fill(Color("ProfileReactionPlaceholder"))
-                .frame(width: 47, height: 47)
+                .frame(width: sealSize, height: sealSize)
         }
     }
 }
-

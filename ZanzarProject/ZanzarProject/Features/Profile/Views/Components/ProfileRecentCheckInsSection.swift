@@ -4,10 +4,12 @@ struct ProfileRecentCheckInsSection: View {
     let checkIns: [ProfileCheckIn]
     let mediaPolicy: PlaceMediaAccessPolicy
 
-    private let columns = [
-        GridItem(.flexible(), spacing: 8),
-        GridItem(.flexible(), spacing: 8)
-    ]
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var columns: [GridItem] {
+        let count = dynamicTypeSize.isAccessibilitySize ? 1 : 2
+        return Array(repeating: GridItem(.flexible(), spacing: 8), count: count)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {

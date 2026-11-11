@@ -7,6 +7,7 @@ struct PlaceDetailView: View {
     @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var showsPhotoUpload = false
     init(place: MapPlace) {
         self.place = place
@@ -152,22 +153,32 @@ struct PlaceDetailView: View {
     }
 
     private func content(for detail: PlaceDetail) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            PlaceDetailHeaderView(
-                name: detail.displayName,
-                distanceText: detail.distanceText,
-                walkingTimeText: detail.walkingTimeText,
-                openingHoursText: detail.openingHoursText,
-                isOpen: detail.isOpen,
-                onBack: { coordinator.pop() }
-            )
-            .padding(.top, 8)
-            .padding(.bottom, 12)
-            .background(Color(.systemBackground))
+        let header = PlaceDetailHeaderView(
+            name: detail.displayName,
+            distanceText: detail.distanceText,
+            walkingTimeText: detail.walkingTimeText,
+            openingHoursText: detail.openingHoursText,
+            isOpen: detail.isOpen,
+            onBack: { coordinator.pop() }
+        )
+        .padding(.top, 8)
+        .padding(.bottom, 12)
+        .background(Color(.systemBackground))
+        let scrollsHeader = dynamicTypeSize.isAccessibilitySize
+
+        return VStack(alignment: .leading, spacing: 0) {
+            if !scrollsHeader {
+                header
+            }
 
             ScrollView {
-                detailBody(for: detail)
-                    .padding(.bottom, 32)
+                VStack(alignment: .leading, spacing: 0) {
+                    if scrollsHeader {
+                        header
+                    }
+                    detailBody(for: detail)
+                }
+                .padding(.bottom, 32)
             }
             .scrollIndicators(.hidden)
         }

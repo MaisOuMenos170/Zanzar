@@ -6,17 +6,18 @@ struct AuthSwitchLink: View {
     let action: () -> Void
 
     var body: some View {
-        HStack(spacing: 4) {
+        AdaptiveStack(horizontalAlignment: .center, spacing: 4) {
             Text(promptKey)
+                .multilineTextAlignment(.center)
             Button(action: action) {
                 Text(actionKey)
                     .fontWeight(.semibold)
+                    .multilineTextAlignment(.center)
             }
             .buttonStyle(.plain)
         }
         .font(.subheadline)
         .foregroundStyle(.primary)
-        .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)
     }
 }

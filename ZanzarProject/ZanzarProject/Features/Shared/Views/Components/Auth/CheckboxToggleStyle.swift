@@ -5,18 +5,9 @@ struct CheckboxToggleStyle: ToggleStyle {
         Button {
             configuration.isOn.toggle()
         } label: {
-            HStack(spacing: 16) {
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(Color.white)
-                    .strokeBorder(Color.brandBlue200, lineWidth: 1)
-                    .frame(width: 16, height: 16)
-                    .overlay {
-                        if configuration.isOn {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundStyle(Color.brandBlue500)
-                        }
-                    }
+            HStack(alignment: .top, spacing: 16) {
+                CheckboxBoxView(isOn: configuration.isOn)
+                    .padding(.top, 2)
                 configuration.label
             }
             .contentShape(.rect)
