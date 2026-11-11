@@ -19,7 +19,9 @@ struct PhotoUploadSheet: View {
     var body: some View {
         NavigationStack {
             content
-                .navigationTitle("userPhotos.upload.title")
+                .navigationTitle(viewModel.step == .editing
+                    ? LocalizedStringKey("userPhotos.editor.title")
+                    : LocalizedStringKey("userPhotos.upload.title"))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
@@ -28,7 +30,10 @@ struct PhotoUploadSheet: View {
                     }
                 }
         }
-        .interactiveDismissDisabled(viewModel.step == .uploading)
+        // The editor is a drag-heavy surface: a swipe down must not throw the photo away (the Close button still can).
+        .interactiveDismissDisabled(
+            viewModel.step == .uploading || viewModel.step == .analyzing || viewModel.step == .editing
+        )
         .task { await viewModel.start() }
         .onChange(of: pickerItem) { _, item in
             guard let item else { return }
@@ -62,9 +67,17 @@ struct PhotoUploadSheet: View {
     @ViewBuilder
     private var content: some View {
         switch viewModel.step {
-        case .checkingTerms, .preparing:
+        case .checkingTerms, .preparing, .analyzing:
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+        case .editing:
+            if let original = viewModel.original {
+                PhotoEditorView(
+                    image: original,
+                    onConfirm: { edit in Task { await viewModel.applyEdit(edit) } },
+                    onChooseAnother: viewModel.cancelEditing
+                )
+            }
         case .needsTerms:
             PhotoTermsView(onAccepted: viewModel.termsAccepted)
         case .choosing:
@@ -141,6 +154,8 @@ struct PhotoUploadSheet: View {
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.large)
+                Button("userPhotos.upload.preview.editButton.title") { viewModel.editAgain() }
+                    .frame(maxWidth: .infinity)
             }
             .padding(24)
         }
@@ -169,6 +184,10 @@ struct PhotoUploadSheet: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
+                Button("userPhotos.upload.preview.editButton.title") { viewModel.editAgain() }
+                    .buttonStyle(.bordered)
+                    .controlSize(.large)
+                    .frame(maxWidth: .infinity)
                 Button("userPhotos.upload.preview.anotherButton.title") { viewModel.chooseAnother() }
                     .frame(maxWidth: .infinity)
             }

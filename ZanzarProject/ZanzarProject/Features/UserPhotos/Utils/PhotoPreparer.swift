@@ -38,6 +38,37 @@ nonisolated enum PhotoPreparer {
         return image
     }
 
+    /// Turns the photo clockwise by `edit.quarterTurns`, then keeps `edit.cropRect` (pixels of the turned photo).
+    /// Returns the same image when nothing changes, and `nil` when the rectangle is empty or leaves the photo.
+    @concurrent
+    static func edit(_ image: CGImage, _ edit: PhotoEdit) async -> CGImage? {
+        let turns = ((edit.quarterTurns % 4) + 4) % 4
+        let source = CGSize(width: image.width, height: image.height)
+        let turned = turns.isMultiple(of: 2) ? source : CGSize(width: source.height, height: source.width)
+        let rect = edit.cropRect
+        let bounds = CGRect(origin: .zero, size: turned)
+        guard rect.width >= 1, rect.height >= 1, bounds.contains(rect) else { return nil }
+        if turns == 0, rect == bounds { return image }
+
+        let colorSpace = image.colorSpace.flatMap { $0.model == .rgb ? $0 : nil } ?? CGColorSpaceCreateDeviceRGB()
+        guard let context = CGContext(
+            data: nil, width: Int(rect.width), height: Int(rect.height), bitsPerComponent: 8, bytesPerRow: 0,
+            space: colorSpace, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue
+        ) else { return nil }
+        context.interpolationQuality = .high
+        // Core Graphics counts y upwards: put the wanted corner of the turned photo at the context origin.
+        context.translateBy(x: -rect.minX, y: -(turned.height - rect.minY - rect.height))
+        let clockwise: CGAffineTransform = switch turns {
+        case 1: CGAffineTransform(a: 0, b: -1, c: 1, d: 0, tx: 0, ty: source.width)
+        case 2: CGAffineTransform(a: -1, b: 0, c: 0, d: -1, tx: source.width, ty: source.height)
+        case 3: CGAffineTransform(a: 0, b: 1, c: -1, d: 0, tx: source.height, ty: 0)
+        default: .identity
+        }
+        context.concatenate(clockwise)
+        context.draw(image, in: CGRect(origin: .zero, size: source))
+        return context.makeImage()
+    }
+
     /// Encodes pixels as a JPEG with no properties: nothing but the image itself is written.
     @concurrent
     static func encode(_ image: CGImage) async throws -> Data {
