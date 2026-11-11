@@ -14,6 +14,12 @@ final class AppCoordinator {
         push(.avatarEditor)
     }
 
+    /// After a new password is saved: back to the login screen, so the user signs in with it.
+    func returnToLogin() {
+        popToRoot()
+        push(.login)
+    }
+
     func push(_ route: Route) {
         path.append(route)
     }
@@ -38,10 +44,8 @@ final class AppCoordinator {
     @ViewBuilder
     func view(for route: Route) -> some View {
         switch route {
-        case .signUp:
-            SignUpView()
-        case .login:
-            LoginView()
+        case .signUp, .login, .forgotPassword, .resetCode, .newPassword:
+            authView(for: route)
         case .placeDetail(let place):
             PlaceDetailView(place: place)
         case .avatar:
@@ -58,6 +62,28 @@ final class AppCoordinator {
             MySuggestionsView()
         case .photoPrivacy:
             PhotoPrivacyView()
+        }
+    }
+
+    /// Screens of the signed-out stack: sign up, login and password reset.
+    @ViewBuilder
+    private func authView(for route: Route) -> some View {
+        switch route {
+        case .signUp:
+            SignUpView()
+        case .forgotPassword:
+            ForgotPasswordView()
+        case .resetCode(let email):
+            ResetCodeView(email: email)
+        case .newPassword(let resetToken):
+            NewPasswordView(resetToken: resetToken) { [weak self] in
+                self?.returnToLogin()
+            }
+        case .login:
+            LoginView()
+        default:
+            // Only the routes listed in `view(for:)` reach here.
+            EmptyView()
         }
     }
 

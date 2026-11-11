@@ -3,6 +3,9 @@ import Foundation
 enum Route: Hashable {
     case signUp
     case login
+    case forgotPassword
+    case resetCode(email: String)
+    case newPassword(resetToken: String)
     case placeDetail(MapPlace)
     case avatar
     case avatarEditor

@@ -34,6 +34,40 @@ nonisolated enum AuthErrorMapper {
         )
     }
 
+    static func forgotPasswordMessage(for error: APIError) -> String {
+        mappedMessage(for: error, genericKey: "passwordReset.forgot.error.generic", statusMessages: [:])
+    }
+
+    static func resetCodeMessage(for error: APIError) -> String {
+        mappedMessage(
+            for: error,
+            genericKey: "passwordReset.code.error.generic",
+            statusMessages: [
+                400: "passwordReset.code.error.invalidOrExpired"
+            ]
+        )
+    }
+
+    static func resetLinkMessage(for error: APIError) -> String {
+        mappedMessage(
+            for: error,
+            genericKey: "passwordReset.link.error.generic",
+            statusMessages: [
+                400: "passwordReset.link.error.invalidOrExpired"
+            ]
+        )
+    }
+
+    static func newPasswordMessage(for error: APIError) -> String {
+        mappedMessage(
+            for: error,
+            genericKey: "passwordReset.newPassword.error.generic",
+            statusMessages: [
+                401: "passwordReset.newPassword.error.expired"
+            ]
+        )
+    }
+
     private static func mappedMessage(
         for error: APIError,
         genericKey: String,

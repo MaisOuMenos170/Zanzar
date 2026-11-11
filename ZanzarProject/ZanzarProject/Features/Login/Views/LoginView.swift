@@ -51,6 +51,15 @@ struct LoginView: View {
                 submitLabel: .go,
                 isFocused: $isPasswordFocused
             )
+
+            Button("login.forgotPassword.button.title") {
+                coordinator.push(.forgotPassword)
+            }
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(.primary)
+            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity, minHeight: 44, alignment: .trailing)
+            .contentShape(.rect)
         }
         .onSubmit {
             if isEmailFocused {

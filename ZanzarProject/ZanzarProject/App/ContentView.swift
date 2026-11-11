@@ -9,6 +9,10 @@ struct ContentView: View {
     @State private var onboarding = OnboardingGate()
     @State private var showsSessionExpiredAlert = false
     @State private var pushTokenManager = PushTokenManager.shared
+    @State private var presentedResetLink: PasswordResetLink?
+    /// Set when a reset from the email link signs the user out, so the login screen opens after the stack resets.
+    @State private var opensLoginAfterSignOut = false
+    @Environment(PasswordResetLinkInbox.self) private var passwordResetLinks
 
     var body: some View {
         Group {
@@ -33,7 +37,17 @@ struct ContentView: View {
                 }
             } else {
                 Task { await ProximityAlertCoordinator.shared.stop() }
+                if opensLoginAfterSignOut {
+                    opensLoginAfterSignOut = false
+                    coordinator.push(.login)
+                }
             }
+        }
+        .onChange(of: passwordResetLinks.pending, initial: true) {
+            presentPendingResetLink()
+        }
+        .sheet(item: $presentedResetLink) { link in
+            resetLinkSheet(for: link)
         }
         .alert("auth.sessionExpired.title", isPresented: $showsSessionExpiredAlert) {
             Button("auth.sessionExpired.dismissButton.title", role: .cancel) {}
@@ -75,6 +89,53 @@ private extension ContentView {
         }
     }
 
+    func resetLinkSheet(for link: PasswordResetLink) -> PasswordResetLinkView {
+        // The code flow lives in the signed-out stack, so it is only offered there.
+        let requestNewCode: (() -> Void)? = authSession.isAuthenticated ? nil : { requestNewResetCode() }
+        return PasswordResetLinkView(
+            link: link,
+            onFinished: { finishPasswordReset() },
+            onRequestNewCode: requestNewCode
+        )
+    }
+
+    func presentPendingResetLink() {
+        guard let link = passwordResetLinks.take() else { return }
+        let hadSheet = coordinator.presentedSheet != nil
+        coordinator.dismissSheet()
+        guard hadSheet else {
+            presentedResetLink = link
+            return
+        }
+        // A sheet can't appear while another one is still dismissing.
+        Task {
+            try? await Task.sleep(for: .milliseconds(500))
+            presentedResetLink = link
+        }
+    }
+
+    func finishPasswordReset() {
+        presentedResetLink = nil
+        guard authSession.isAuthenticated else {
+            coordinator.returnToLogin()
+            return
+        }
+        // The backend revoked every session, so the tokens on this device are dead too.
+        opensLoginAfterSignOut = true
+        do {
+            try authSession.signOut()
+        } catch {
+            authSession.handleSessionExpired()
+        }
+    }
+
+    func requestNewResetCode() {
+        presentedResetLink = nil
+        coordinator.popToRoot()
+        coordinator.push(.login)
+        coordinator.push(.forgotPassword)
+    }
+
     func handleSessionExpired() {
         guard authSession.isAuthenticated else { return }
         authSession.handleSessionExpired()
@@ -95,4 +156,5 @@ private extension ContentView {
 
 #Preview {
     ContentView()
+        .environment(PasswordResetLinkInbox())
 }
