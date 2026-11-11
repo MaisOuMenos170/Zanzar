@@ -1,6 +1,8 @@
 import SwiftUI
 
 @main struct MyApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
     init() {
         AppLanguageSettings.applyPreferredLanguageOnLaunch()
         ProximityAlertCoordinator.launch()

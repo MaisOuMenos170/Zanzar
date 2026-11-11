@@ -34,10 +34,9 @@ struct PassportIntroView: View {
         }
     }
 
-    /// Finishing the gate swaps in the main tabs; the auth stack is reset for the next sign-out.
+    /// After the passport animation, ask for notifications before opening the app.
     private func enterApp() {
-        onboarding.finish()
-        coordinator.popToRoot()
+        coordinator.push(.notificationPermission)
     }
 }
 
