@@ -44,7 +44,7 @@ final class AppCoordinator {
     @ViewBuilder
     func view(for route: Route) -> some View {
         switch route {
-        case .signUp, .login, .forgotPassword, .resetCode, .newPassword:
+        case .signUp, .login, .forgotPassword, .resetCode, .codeVerified, .newPassword, .passwordResetSuccess:
             authView(for: route)
         case .placeDetail(let place):
             PlaceDetailView(place: place)
@@ -75,10 +75,14 @@ final class AppCoordinator {
             ForgotPasswordView()
         case .resetCode(let email):
             ResetCodeView(email: email)
+        case .codeVerified(let resetToken):
+            CodeVerifiedView(resetToken: resetToken)
         case .newPassword(let resetToken):
             NewPasswordView(resetToken: resetToken) { [weak self] in
-                self?.returnToLogin()
+                self?.push(.passwordResetSuccess)
             }
+        case .passwordResetSuccess:
+            PasswordResetSuccessView()
         case .login:
             LoginView()
         default:

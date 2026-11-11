@@ -82,7 +82,7 @@ struct PasswordResetViewModelTests {
         let token = await viewModel.submit()
 
         #expect(token == "reset-123")
-        #expect(service.verifyRequests == [.code(email: "ana@example.com", code: "123456")])
+        #expect(service.verifyRequests == [VerifyResetRequest(email: "ana@example.com", code: "123456")])
     }
 
     @Test("a refused code (400) explains that it is invalid or expired")
@@ -155,45 +155,5 @@ struct PasswordResetViewModelTests {
 
         #expect(saved == false)
         #expect(viewModel.submitError == L10n.string("passwordReset.newPassword.error.expired"))
-    }
-
-    // MARK: - PasswordResetLinkViewModel
-
-    private static let link = PasswordResetLink(
-        url: URL(string: "lero://reset-password?token=\(String(repeating: "a", count: 43))")!
-    )!
-
-    @Test("the link token becomes a reset token")
-    func verifiesLink() async {
-        let service = FakePasswordResetService()
-        service.verifyResult = .success("reset-123")
-        let viewModel = PasswordResetLinkViewModel(link: Self.link, service: service)
-
-        await viewModel.verify()
-
-        #expect(viewModel.state == .ready(resetToken: "reset-123"))
-        #expect(service.verifyRequests == [.link(token: Self.link.token)])
-    }
-
-    @Test("a used or expired link shows why it failed")
-    func refusedLink() async {
-        let service = FakePasswordResetService()
-        service.verifyResult = .failure(APIError.httpStatus(400, message: "Invalid or expired code"))
-        let viewModel = PasswordResetLinkViewModel(link: Self.link, service: service)
-
-        await viewModel.verify()
-
-        #expect(viewModel.state == .failed(message: L10n.string("passwordReset.link.error.invalidOrExpired")))
-    }
-
-    @Test("the single-use link token is sent only once")
-    func verifiesOnce() async {
-        let service = FakePasswordResetService()
-        let viewModel = PasswordResetLinkViewModel(link: Self.link, service: service)
-
-        await viewModel.verify()
-        await viewModel.verify()
-
-        #expect(service.verifyRequests.count == 1)
     }
 }

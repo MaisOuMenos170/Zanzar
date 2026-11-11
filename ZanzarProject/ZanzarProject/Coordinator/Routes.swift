@@ -5,7 +5,9 @@ enum Route: Hashable {
     case login
     case forgotPassword
     case resetCode(email: String)
+    case codeVerified(resetToken: String)
     case newPassword(resetToken: String)
+    case passwordResetSuccess
     case placeDetail(MapPlace)
     case avatar
     case avatarEditor

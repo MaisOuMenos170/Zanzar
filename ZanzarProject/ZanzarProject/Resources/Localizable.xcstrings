@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "pt-BR",
   "strings" : {
+    "" : {
+
+    },
     "accessibility.checked" : {
 
     },
@@ -1874,6 +1877,40 @@
         }
       }
     },
+    "passwordReset.code.field.accessibilityLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verification code"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Código de verificação"
+          }
+        }
+      }
+    },
+    "passwordReset.code.field.accessibilityValue %lld %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld of %2$lld digits entered"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld de %2$lld dígitos preenchidos"
+          }
+        }
+      }
+    },
     "passwordReset.code.field.errorEmpty" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1925,36 +1962,19 @@
         }
       }
     },
-    "passwordReset.code.field.placeholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "6 digits"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "6 dígitos"
-          }
-        }
-      }
-    },
     "passwordReset.code.message %@" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "If %@ has a Lero account, we sent it a 6-digit code that works for 15 minutes. You can also tap the link in the email."
+            "value" : "If %@ has a Lero account, we sent it a 6-digit code that works for 15 minutes. Type it or paste it here."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se %@ tiver uma conta no Lero, enviamos para ele um código de 6 dígitos que vale por 15 minutos. Você também pode tocar no link do e-mail."
+            "value" : "Se %@ tiver uma conta no Lero, enviamos para ele um código de 6 dígitos que vale por 15 minutos. Digite ou cole aqui."
           }
         }
       }
@@ -2135,13 +2155,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enter your account email. We'll send a 6-digit code and a link to create a new password."
+            "value" : "Enter your account email. We'll send a 6-digit code to create a new password."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Informe o e-mail da sua conta. Vamos enviar um código de 6 dígitos e um link para criar uma nova senha."
+            "value" : "Informe o e-mail da sua conta. Vamos enviar um código de 6 dígitos para criar uma nova senha."
           }
         }
       }
@@ -2176,91 +2196,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Recuperar senha"
-          }
-        }
-      }
-    },
-    "passwordReset.link.error.generic" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Could not check the link. Try again in a moment."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível conferir o link. Tente de novo em instantes."
-          }
-        }
-      }
-    },
-    "passwordReset.link.error.invalidOrExpired" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This link is invalid, expired or was already used."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este link é inválido, expirou ou já foi usado."
-          }
-        }
-      }
-    },
-    "passwordReset.link.failed.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The link didn't work"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O link não funcionou"
-          }
-        }
-      }
-    },
-    "passwordReset.link.requestNewCode" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ask for a new code"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pedir um novo código"
-          }
-        }
-      }
-    },
-    "passwordReset.link.verifying" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Checking the link…"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conferindo o link…"
           }
         }
       }
@@ -2384,19 +2319,104 @@
         }
       }
     },
-    "passwordReset.success.toast" : {
+    "passwordReset.success.button.title" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Password changed. Sign in with the new password."
+            "value" : "Continue"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Senha alterada. Entre com a nova senha."
+            "value" : "Continuar"
+          }
+        }
+      }
+    },
+    "passwordReset.success.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your password has been updated. Continue to sign in with it."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua senha foi atualizada. Continue para entrar com ela."
+          }
+        }
+      }
+    },
+    "passwordReset.success.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Password updated"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senha atualizada"
+          }
+        }
+      }
+    },
+    "passwordReset.verified.button.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar"
+          }
+        }
+      }
+    },
+    "passwordReset.verified.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your code was confirmed. Tap Continue to create your new password."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu código foi confirmado. Toque em Continuar para criar sua nova senha."
+          }
+        }
+      }
+    },
+    "passwordReset.verified.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Code verified"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Código verificado"
           }
         }
       }

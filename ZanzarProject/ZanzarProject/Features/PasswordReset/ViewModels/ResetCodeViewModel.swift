@@ -50,7 +50,7 @@ final class ResetCodeViewModel {
         defer { isLoading = false }
 
         do {
-            return try await service.verify(.code(email: email, code: code))
+            return try await service.verify(VerifyResetRequest(email: email, code: code))
         } catch let error as APIError {
             submitError = AuthErrorMapper.resetCodeMessage(for: error)
             return nil

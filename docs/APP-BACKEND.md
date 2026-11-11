@@ -19,7 +19,7 @@ O app é o único cliente. O backend não serve telas, só JSON (e um proxy de f
 |---|---|---|
 | `SignUpService` | `POST /register` | `auth.routes` |
 | `LoginService` | `POST /login` | `auth.routes` |
-| `PasswordResetService` | `POST /password/forgot`, `POST /password/verify` (`{email, code}` ou `{token}`), `POST /password/reset` | `auth.routes` (ver abaixo) |
+| `PasswordResetService` | `POST /password/forgot`, `POST /password/verify` (`{email, code}`), `POST /password/reset` | `auth.routes` (ver abaixo) |
 | `SessionRefresher` | `POST /refresh` | só em `origin/develop` (ver abaixo) |
 | `ProfileService` | `POST /logout`, `GET /user/:id/profile` | `auth`, `users` |
 | `LocationMapService` | `GET /places` | `place.routes` |
@@ -35,9 +35,7 @@ Erros das rotas de foto trazem `code` (ex.: `duplicate_photo`, `terms_required`)
 
 ## Recuperação de senha
 
-`POST /password/forgot` responde 202 sempre e manda um e-mail com um código de 6 dígitos (vale 15 min) e um link `https://<API>/reset-password?token=…`. O app troca o código (`{email, code}`) ou o token do link (`{token}`) por um `resetToken` em `POST /password/verify` e envia a nova senha em `POST /password/reset` (204, o backend revoga todas as sessões; o app faz sign-out local se estava logado). As três rotas estão em `publicPaths` do `URLSessionNetworkClient`: vão sem Bearer e um 401 não vira "sessão expirada".
-
-Como o link abre o app: o link do e-mail é `https://<RAILWAY_PUBLIC_DOMAIN>/reset-password?token=…` e cai na página-ponte do backend, que redireciona para `lero://reset-password?token=…` (esquema registrado em `CFBundleURLTypes` no `Info.plist`). O iOS pergunta "Abrir no Lero?" antes de abrir o app; é o comportamento esperado (não usamos Universal Links). O `.onOpenURL` no `MyApp` transforma a URL em `PasswordResetLink` e o `ContentView` abre a sheet `PasswordResetLinkView`.
+`POST /password/forgot` responde 202 sempre e manda um e-mail com um código de 6 dígitos (vale 15 min, 5 tentativas). Não há link nem deep link: a pessoa lê o código no e-mail e digita ou cola no app. O app troca o código (`{email, code}`) por um `resetToken` em `POST /password/verify` e envia a nova senha em `POST /password/reset` (204, o backend revoga todas as sessões). A sequência de telas é e-mail, código (6 caixas), "código verificado", nova senha, sucesso, login. As três rotas estão em `publicPaths` do `URLSessionNetworkClient`: vão sem Bearer e um 401 não vira "sessão expirada".
 
 ## Sugestão de lugar e moderação
 

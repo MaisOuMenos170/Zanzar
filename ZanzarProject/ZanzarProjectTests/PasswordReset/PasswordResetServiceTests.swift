@@ -17,27 +17,17 @@ struct PasswordResetServiceTests {
         #expect(try client.lastJSON() == ["email": "ana@example.com"])
     }
 
-    @Test("verify with a code sends only email and code, and returns the reset token")
+    @Test("verify sends only email and code, and returns the reset token")
     func verifyCode() async throws {
         let client = RecordingNetworkClient(responseJSON: #"{"resetToken":"reset-123"}"#)
         let service = PasswordResetService(client: client)
 
-        let token = try await service.verify(.code(email: "ana@example.com", code: "123456"))
+        let token = try await service.verify(VerifyResetRequest(email: "ana@example.com", code: "123456"))
 
         #expect(token == "reset-123")
         #expect(client.lastPath == "password/verify")
         #expect(client.lastMethod == .post)
         #expect(try client.lastJSON() == ["email": "ana@example.com", "code": "123456"])
-    }
-
-    @Test("verify with a link sends only the token")
-    func verifyLink() async throws {
-        let client = RecordingNetworkClient(responseJSON: #"{"resetToken":"reset-123"}"#)
-        let service = PasswordResetService(client: client)
-
-        _ = try await service.verify(.link(token: "link-token"))
-
-        #expect(try client.lastJSON() == ["token": "link-token"])
     }
 
     @Test("resetPassword posts the reset token and the new password")
@@ -58,7 +48,7 @@ struct PasswordResetServiceTests {
         let service = PasswordResetService(client: client)
 
         await #expect(throws: APIError.self) {
-            _ = try await service.verify(.code(email: "ana@example.com", code: "000000"))
+            _ = try await service.verify(VerifyResetRequest(email: "ana@example.com", code: "000000"))
         }
     }
 }

@@ -33,14 +33,11 @@ struct ResetCodeView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 
-            AuthFormField(
+            OneTimeCodeField(
                 labelKey: "passwordReset.code.field.label",
-                placeholderKey: "passwordReset.code.field.placeholder",
                 text: $viewModel.code,
-                errorMessageKey: viewModel.codeError,
-                textContentType: .oneTimeCode,
-                keyboardType: .numberPad,
-                submitLabel: .continue
+                length: ResetCodeViewModel.codeLength,
+                errorMessageKey: viewModel.codeError
             )
         }
     }
@@ -70,7 +67,7 @@ struct ResetCodeView: View {
 
     private func submit() async {
         guard let resetToken = await viewModel.submit() else { return }
-        coordinator.push(.newPassword(resetToken: resetToken))
+        coordinator.push(.codeVerified(resetToken: resetToken))
     }
 
     private func resend() async {

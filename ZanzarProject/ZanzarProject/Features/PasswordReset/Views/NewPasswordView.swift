@@ -2,7 +2,6 @@ import SwiftUI
 
 struct NewPasswordView: View {
     @State private var viewModel: NewPasswordViewModel
-    @Environment(ToastPresenter.self) private var toastPresenter
     @FocusState private var focusedField: Field?
 
     private let onFinished: () -> Void
@@ -88,7 +87,6 @@ struct NewPasswordView: View {
 
     private func submit() async {
         guard await viewModel.submit() else { return }
-        toastPresenter.show(L10n.string("passwordReset.success.toast"))
         onFinished()
     }
 }
@@ -96,6 +94,5 @@ struct NewPasswordView: View {
 #Preview {
     NavigationStack {
         NewPasswordView(resetToken: "preview-token") {}
-            .environment(ToastPresenter())
     }
 }
