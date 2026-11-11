@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// A verification code shown as one box per digit. A single invisible text field sits on top of the boxes, so typing,
-/// pasting and the e-mail code suggestion from the keyboard all work like in a normal field.
+/// A verification code shown as one box per digit. A single invisible text field holds the focus, so typing and the
+/// e-mail code suggestion from the keyboard work like in a normal field; press and hold to paste a whole code.
 struct OneTimeCodeField: View {
     let labelKey: LocalizedStringKey
     @Binding var text: String
@@ -46,6 +46,20 @@ struct OneTimeCodeField: View {
             .accessibilityAction {
                 isFocused = true
             }
+            // Press and hold the boxes to paste the whole code at once; it spreads over the boxes.
+            .contextMenu {
+                PasteButton(payloadType: String.self) { strings in
+                    guard let pasted = strings.first else { return }
+                    text = Self.sanitized(pasted, length: length)
+                    isFocused = true
+                }
+            }
+            .onChange(of: text) {
+                let digits = Self.sanitized(text, length: length)
+                if digits != text {
+                    text = digits
+                }
+            }
         }
     }
 
@@ -72,6 +86,11 @@ struct OneTimeCodeField: View {
         let isFilled = index < text.count
         let isActive = isFocused && index == min(text.count, length - 1)
         return isFilled || isActive ? .brandBlue500 : .brandNeutral300
+    }
+
+    /// Keeps only the digits, up to `length`, so "123 456" or a whole pasted line still fills the boxes.
+    static func sanitized(_ raw: String, length: Int) -> String {
+        String(raw.filter { $0.isASCII && $0.isNumber }.prefix(length))
     }
 
     /// The digit shown in box `index`, or an empty string while that box is still waiting for input.

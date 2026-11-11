@@ -1509,13 +1509,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Forgot password?"
+            "value" : "Forgot your password?"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esqueci a senha"
+            "value" : "Esqueceu a sua senha?"
           }
         }
       }

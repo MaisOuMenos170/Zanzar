@@ -23,4 +23,12 @@ struct OneTimeCodeFieldTests {
         #expect(OneTimeCodeField.digit(at: -1, in: "123456") == "")
         #expect(OneTimeCodeField.digit(at: 6, in: "123456") == "")
     }
+
+    @Test("a pasted code keeps only its digits, up to the length")
+    func sanitizesPastedCode() {
+        #expect(OneTimeCodeField.sanitized("123 456", length: 6) == "123456")
+        #expect(OneTimeCodeField.sanitized("Seu código: 987654.", length: 6) == "987654")
+        #expect(OneTimeCodeField.sanitized("12345678", length: 6) == "123456")
+        #expect(OneTimeCodeField.sanitized("abc", length: 6) == "")
+    }
 }
