@@ -4,6 +4,7 @@ struct PlaceSuggestionSheetView: View {
     @State private var viewModel: PlaceSuggestionViewModel
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @FocusState private var isQueryFocused: Bool
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @ScaledMetric(relativeTo: .body) private var searchButtonSize: CGFloat = 51
     private let onFinished: (PlaceSuggestionOutcome) -> Void
@@ -73,11 +74,16 @@ struct PlaceSuggestionSheetView: View {
                     labelKey: "placeSuggestion.placeField.label",
                     placeholderKey: "placeSuggestion.placeField.placeholder",
                     text: $viewModel.query,
-                    submitLabel: .search
+                    submitLabel: .search,
+                    capitalization: .words,
+                    disablesAutocorrection: false,
+                    isFocused: $isQueryFocused
                 )
                 .onSubmit { Task { await viewModel.search() } }
 
                 Button {
+                    // Drop the keyboard first, or it keeps covering the results this search is about to show.
+                    isQueryFocused = false
                     Task { await viewModel.search() }
                 } label: {
                     if viewModel.isSearching {

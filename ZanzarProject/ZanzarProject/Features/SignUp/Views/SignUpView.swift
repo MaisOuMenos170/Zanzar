@@ -8,11 +8,9 @@ struct SignUpView: View {
     @Environment(AuthSession.self) private var authSession
     @Environment(OnboardingGate.self) private var onboarding
     @Environment(\.authorizationController) private var authorizationController
-    @FocusState private var focusedField: Field?
-
-    private enum Field {
-        case username, email, password
-    }
+    @FocusState private var isUsernameFocused: Bool
+    @FocusState private var isEmailFocused: Bool
+    @FocusState private var isPasswordFocused: Bool
 
     private var isBusy: Bool {
         viewModel.isLoading || appleSignIn.isLoading
@@ -47,9 +45,9 @@ struct SignUpView: View {
                 placeholderKey: "signUp.usernameField.placeholder",
                 text: $viewModel.username,
                 errorMessageKey: viewModel.usernameError,
-                textContentType: .username
+                textContentType: .username,
+                isFocused: $isUsernameFocused
             )
-            .focused($focusedField, equals: .username)
 
             AuthFormField(
                 labelKey: "signUp.emailField.label",
@@ -57,9 +55,9 @@ struct SignUpView: View {
                 text: $viewModel.email,
                 errorMessageKey: viewModel.emailError,
                 textContentType: .emailAddress,
-                keyboardType: .emailAddress
+                keyboardType: .emailAddress,
+                isFocused: $isEmailFocused
             )
-            .focused($focusedField, equals: .email)
 
             AuthFormField(
                 labelKey: "signUp.passwordField.label",
@@ -68,9 +66,9 @@ struct SignUpView: View {
                 errorMessageKey: viewModel.passwordError,
                 isSecure: true,
                 textContentType: .newPassword,
-                submitLabel: .go
+                submitLabel: .go,
+                isFocused: $isPasswordFocused
             )
-            .focused($focusedField, equals: .password)
 
             Toggle(isOn: $viewModel.acceptsTerms) {
                 Text("signUp.terms.label")
@@ -83,11 +81,12 @@ struct SignUpView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .onSubmit {
-            switch focusedField {
-            case .username: focusedField = .email
-            case .email: focusedField = .password
-            case .password, nil:
-                focusedField = nil
+            if isUsernameFocused {
+                isEmailFocused = true
+            } else if isEmailFocused {
+                isPasswordFocused = true
+            } else {
+                isPasswordFocused = false
                 Task { await submit() }
             }
         }
@@ -127,7 +126,15 @@ struct SignUpView: View {
         }
     }
 
+    private func dismissKeyboard() {
+        isUsernameFocused = false
+        isEmailFocused = false
+        isPasswordFocused = false
+    }
+
     private func submit() async {
+        // The button path leaves the keyboard up, covering the result and the error banner.
+        dismissKeyboard()
         // The session flips to authenticated inside `submit`, so the gate must already hold the auth stack.
         onboarding.begin()
         if await viewModel.submit(using: authSession) {
@@ -143,6 +150,7 @@ struct SignUpView: View {
     }
 
     private func signInWithApple() async {
+        dismissKeyboard()
         onboarding.begin()
         guard await appleSignIn.signInWithApple(
             using: authSession,
