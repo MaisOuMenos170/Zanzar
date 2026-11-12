@@ -1248,6 +1248,193 @@
         }
       }
     },
+    "discover.search.placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search for a place"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar um lugar"
+          }
+        }
+      }
+    },
+    "discover.search.accessibilityLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search for a place"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar um lugar"
+          }
+        }
+      }
+    },
+    "discover.search.clear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear search"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limpar busca"
+          }
+        }
+      }
+    },
+    "discover.search.searching" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searching…"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscando…"
+          }
+        }
+      }
+    },
+    "discover.search.empty" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No places found. Try another name or change the filter."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum lugar encontrado. Tente outro nome ou mude o filtro."
+          }
+        }
+      }
+    },
+    "discover.search.error" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't search right now. Try again."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível buscar agora. Tente de novo."
+          }
+        }
+      }
+    },
+    "discover.filter.accessibilityLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter places"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filtrar lugares"
+          }
+        }
+      }
+    },
+    "discover.filter.accessibilityValue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld active"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld ativos"
+          }
+        }
+      }
+    },
+    "discover.filter.inItinerary" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In the roteiro"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No roteiro"
+          }
+        }
+      }
+    },
+    "discover.filter.typesHeader" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type of place"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipo do lugar"
+          }
+        }
+      }
+    },
+    "discover.filter.clear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear filters"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limpar filtros"
+          }
+        }
+      }
+    },
     "locationMap.clusterPin.accessibilityLabel %lld" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4074,7 +4261,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conhece um lugar que ainda não está no Lero? Conta pra gente!"
+            "value" : "Conhece um lugar e ainda não está no Lero? Conta pra gente!"
           }
         }
       }
@@ -4289,13 +4476,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Why this place?"
+            "value" : "Description"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por que esse lugar?"
+            "value" : "Descrição"
           }
         }
       }
@@ -4374,13 +4561,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Place name"
+            "value" : "Name/Address"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nome do lugar"
+            "value" : "Nome/Endereço"
           }
         }
       }
@@ -4391,13 +4578,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "E.g. Botanical Garden, café on XV..."
+            "value" : "E.g. Botanical Garden, R. Engo. Ostoja Roguski, 350"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ex.: Jardim Botânico, café na XV..."
+            "value" : "Ex: Jardim Botânico, R. Engo. Ostoja Roguski, 350"
           }
         }
       }
@@ -4578,13 +4765,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your request is being reviewed by our moderators. Check back later to see if it was accepted."
+            "value" : "Your request is being reviewed by our moderators."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu pedido está em análise pela moderação, volte mais tarde para conferir se foi aceito."
+            "value" : "Seu pedido está em análise pela moderação."
           }
         }
       }
@@ -4602,6 +4789,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sugestão enviada!"
+          }
+        }
+      }
+    },
+    "placeSuggestion.locationOption.useMine" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use my location"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar minha localização"
+          }
+        }
+      }
+    },
+    "placeSuggestion.locationOption.other" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Another place"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outro lugar"
+          }
+        }
+      }
+    },
+    "placeSuggestion.closeButton.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fechar"
           }
         }
       }
@@ -8573,13 +8811,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zanzar lets you know when you pass near a place you haven't visited yet — only a few times a day. Alerts work with the app closed, and you can change this anytime in Settings."
+            "value" : "Lero lets you know when you pass near a place you haven't visited yet — only a few times a day. Alerts work with the app closed, and you can change this anytime in Settings."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zanzar avisa quando você passa perto de um lugar que você ainda não visitou — apenas algumas vezes por dia. Os alertas funcionam com o app fechado, e você pode mudar isso a qualquer momento nos Ajustes."
+            "value" : "O Lero avisa quando você passa perto de um lugar que você ainda não visitou — apenas algumas vezes por dia. Os alertas funcionam com o app fechado, e você pode mudar isso a qualquer momento nos Ajustes."
           }
         }
       }
@@ -8641,13 +8879,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zanzar"
+            "value" : "Lero"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zanzar"
+            "value" : "Lero"
           }
         }
       }
@@ -8709,13 +8947,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You haven't checked in today. Open Zanzar to see places near you."
+            "value" : "You haven't checked in today. Open Lero to see places near you."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você não fez check-in hoje. Abra o Zanzar para ver lugares perto de você."
+            "value" : "Você não fez check-in hoje. Abra o Lero para ver lugares perto de você."
           }
         }
       }

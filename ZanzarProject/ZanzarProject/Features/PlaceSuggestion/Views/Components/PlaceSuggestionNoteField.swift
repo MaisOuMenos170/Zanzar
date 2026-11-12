@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// The "Descrição" field of "Sugerir um lugar" (Figma node 1998:4949): gray box, at least 98pt tall.
 struct PlaceSuggestionNoteField: View {
     @Binding var text: String
     @FocusState private var isFocused: Bool
@@ -7,24 +8,35 @@ struct PlaceSuggestionNoteField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("placeSuggestion.noteField.label")
-                .font(.subheadline)
-                .foregroundStyle(.primary)
+                .font(.system(size: 14))
+                .foregroundStyle(.black)
 
-            TextField("placeSuggestion.noteField.placeholder", text: $text, axis: .vertical)
-                .font(.body)
-                .lineLimit(4...10)
-                .focused($isFocused)
-                // Return adds a line in a multi-line field, so the keyboard needs its own way out.
-                .toolbar {
-                    ToolbarItemGroup(placement: .keyboard) {
-                        Spacer()
-                        Button("keyboard.doneButton.title") { isFocused = false }
-                    }
+            TextField(
+                "",
+                text: $text,
+                prompt: Text("placeSuggestion.noteField.placeholder").foregroundStyle(Color.brandFieldPlaceholder),
+                axis: .vertical
+            )
+            .font(.system(size: 14))
+            .foregroundStyle(Color.brandNeutral950)
+            .lineLimit(4...10)
+            .focused($isFocused)
+            // Return adds a line in a multi-line field, so the keyboard needs its own way out.
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("keyboard.doneButton.title") { isFocused = false }
                 }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 12)
-                .frame(minHeight: 102, alignment: .topLeading)
-                .background(Color("AuthFieldBackground"), in: .rect(cornerRadius: 8))
+            }
+            .padding(16)
+            .frame(minHeight: 98, alignment: .topLeading)
+            .background(isFocused ? Color.brandNeutral50 : Color.brandNeutral100, in: .rect(cornerRadius: 8))
+            .overlay {
+                if isFocused {
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(Color.brandPurple400, lineWidth: 1)
+                }
+            }
         }
     }
 }

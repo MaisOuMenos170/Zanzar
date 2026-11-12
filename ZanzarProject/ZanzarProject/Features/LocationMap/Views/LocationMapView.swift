@@ -5,6 +5,8 @@ struct LocationMapView: View {
     let store: NearbyPlacesStore
 
     @State private var viewModel: LocationMapViewModel
+    @State private var searchViewModel: DiscoverSearchViewModel
+    @FocusState private var isSearchFocused: Bool
     @State private var ratingPrompt = RatingPromptViewModel()
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(ToastManager.self) private var toasts
@@ -14,6 +16,9 @@ struct LocationMapView: View {
     init(store: NearbyPlacesStore) {
         self.store = store
         _viewModel = State(initialValue: LocationMapViewModel(store: store))
+        _searchViewModel = State(
+            initialValue: DiscoverSearchViewModel(coordinateProvider: { store.userCoordinate })
+        )
     }
 
     var body: some View {
@@ -61,18 +66,17 @@ struct LocationMapView: View {
                 .transition(.opacity)
             }
         }
+        .overlay(alignment: .top) {
+            discoverControls
+        }
         .animation(reduceMotion ? nil : .default, value: ratingPrompt.isPresented)
+        // Kept for the back button of the screens pushed from here; the bar itself is hidden because the
+        // search bar and the suggestion button float over the map.
         .navigationTitle("mainTab.discoverTab.title")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar(removing: .title)
-        .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("placeSuggestion.toolbarButton.label", systemImage: "plus.bubble") {
-                    coordinator.present(sheet: .suggestPlace)
-                }
-                .labelStyle(.iconOnly)
-            }
+        .toolbar(.hidden, for: .navigationBar)
+        .onChange(of: searchViewModel.filter) { _, newFilter in
+            viewModel.setFilter(newFilter)
         }
         .task {
             await viewModel.load()
@@ -109,6 +113,42 @@ struct LocationMapView: View {
         coordinator.push(.placeDetail(place))
     }
 
+    /// Opens a search result: the camera goes to the place and its detail is pushed, as when tapping its pin.
+    private func openSearchResult(_ place: MapPlace) {
+        isSearchFocused = false
+        searchViewModel.reset()
+        viewModel.applyCameraRegion(
+            MKCoordinateRegion(center: place.coordinate, latitudinalMeters: 600, longitudinalMeters: 600)
+        )
+        open(place)
+    }
+
+    private var discoverControls: some View {
+        @Bindable var searchViewModel = searchViewModel
+        return VStack(alignment: .trailing, spacing: 8) {
+            DiscoverSearchBar(
+                text: $searchViewModel.query,
+                filter: $searchViewModel.filter,
+                isFocused: $isSearchFocused,
+                onSubmit: { searchViewModel.submit() }
+            )
+
+            if searchViewModel.showsResultsPanel {
+                DiscoverSearchResultsPanel(
+                    phase: searchViewModel.phase,
+                    results: searchViewModel.results,
+                    onSelect: openSearchResult
+                )
+            } else {
+                DiscoverSuggestButton {
+                    isSearchFocused = false
+                    coordinator.present(sheet: .suggestPlace)
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+    }
+
     private func expand(_ cluster: MapPinCluster) {
         let region = viewModel.focusRegion(on: cluster)
         if reduceMotion {
@@ -141,7 +181,7 @@ struct LocationMapView: View {
                 }
                 .annotationTitles(.hidden)
             case .cluster(let cluster):
-                Annotation("", coordinate: cluster.coordinate, anchor: .center) {
+                Annotation("", coordinate: cluster.coordinate, anchor: .bottom) {
                     Button {
                         expand(cluster)
                     } label: {

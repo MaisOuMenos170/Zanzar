@@ -6,6 +6,7 @@
 import WidgetKit
 import SwiftUI
 
+/// Timeline provider for the Lero widget: shows the next itinerary stop or a
 /// Timeline provider for the Zanzar widget: shows the next itinerary stop or a
 /// nudge to check in nearby, refreshed from the app's shared data.
 struct Provider: AppIntentTimelineProvider {

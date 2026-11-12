@@ -22,7 +22,7 @@ enum DevLocation {
 }
 #endif
 
-nonisolated enum ZanzarPlaceCategory: String, Sendable {
+nonisolated enum ZanzarPlaceCategory: String, CaseIterable, Sendable {
     case restaurant
     case bar
     case cafe
@@ -36,6 +36,37 @@ nonisolated enum ZanzarPlaceCategory: String, Sendable {
 
     init(rawCategory: String) {
         self = Self(rawValue: rawCategory) ?? .unknown
+    }
+
+    /// The categories a user can pick in the discover filter; `.unknown` only exists for places the app cannot name.
+    static var filterOptions: [ZanzarPlaceCategory] {
+        allCases.filter { $0 != .unknown }
+    }
+
+    /// Localized name of the category, shared with the place detail tags.
+    var titleKey: String {
+        switch self {
+        case .restaurant:
+            "placeDetail.tag.restaurant"
+        case .bar:
+            "placeDetail.tag.bar"
+        case .cafe:
+            "placeDetail.tag.cafe"
+        case .museum:
+            "placeDetail.tag.museum"
+        case .park:
+            "placeDetail.tag.park"
+        case .tourist:
+            "placeDetail.tag.touristSpot"
+        case .historic:
+            "placeDetail.tag.historic"
+        case .curiosity:
+            "placeDetail.tag.curiosity"
+        case .party:
+            "placeDetail.tag.party"
+        case .unknown:
+            "placeDetail.tag.touristSpot"
+        }
     }
 
     /// SF Symbol aligned with Figma node 860:4084 (pins e selos).
@@ -101,6 +132,9 @@ nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
     /// `nil` when the place was reached without a known user position (e.g. from the profile).
     let distanceMeters: Double?
     let pinStyle: LocationPinStyle
+    /// The place is a stop of the roteiro the user is following, whether or not it was already visited.
+    /// `pinStyle` cannot tell: a visited stop shows as `.checkedIn`.
+    let isInActiveItinerary: Bool
     /// Total check-ins at the place. The list endpoint includes this; callers that only have a pin default to 0.
     let checkInCount: Int
     let photoURL: URL?
@@ -129,6 +163,7 @@ nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
         category: ZanzarPlaceCategory,
         distanceMeters: Double?,
         pinStyle: LocationPinStyle = .available,
+        isInActiveItinerary: Bool? = nil,
         checkInCount: Int = 0,
         photoURL: URL? = nil,
         impressionCounts: [String: Int] = [:],
@@ -142,6 +177,7 @@ nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
         self.category = category
         self.distanceMeters = distanceMeters
         self.pinStyle = pinStyle
+        self.isInActiveItinerary = isInActiveItinerary ?? (pinStyle == .inCurrentItinerary)
         self.checkInCount = checkInCount
         self.photoURL = photoURL
         self.impressionCounts = impressionCounts
@@ -232,6 +268,7 @@ extension MapPlace {
         category = ZanzarPlaceCategory(rawCategory: response.zanzar.category)
         distanceMeters = response.distanceMeters
         pinStyle = Self.pinStyle(from: response.userContext)
+        isInActiveItinerary = response.userContext?.isInActiveItinerary ?? false
         checkInCount = response.zanzar.checkInCount
         photoURL = response.photos.first?.url
         impressionCounts = response.zanzar.impressionCounts
