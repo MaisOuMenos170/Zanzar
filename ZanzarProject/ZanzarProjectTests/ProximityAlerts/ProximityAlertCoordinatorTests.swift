@@ -251,8 +251,9 @@ struct ProximityAlertCoordinatorTests {
 
         monitor.enter("p1")
 
-        for _ in 0..<50 where notifier.posted.isEmpty {
-            try await Task.sleep(for: .milliseconds(20))
+        // Up to 5 s: the entry is consumed on a background task, and a loaded CI runner can take longer than a second.
+        for _ in 0..<500 where notifier.posted.isEmpty {
+            try await Task.sleep(for: .milliseconds(10))
         }
         #expect(notifier.posted.map(\.title) == ["Place 1"])
     }
