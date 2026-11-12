@@ -23,10 +23,6 @@ struct AvatarEditorView: View {
                 viewModel.select(value)
             }
 
-            if let saveError = viewModel.saveError {
-                ErrorBanner(message: saveError)
-            }
-
             Button("avatarEditor.saveButton.title") {
                 Task {
                     if await viewModel.save() {
@@ -56,6 +52,7 @@ struct AvatarEditorView: View {
             }
         }
         .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
+        .toast(for: viewModel.saveError)
         .task {
             await viewModel.load()
         }
@@ -79,5 +76,6 @@ struct AvatarEditorView: View {
         AvatarEditorView()
             .environment(AppCoordinator())
             .environment(OnboardingGate())
+            .environment(ToastManager())
     }
 }

@@ -21,6 +21,7 @@ struct NewPasswordView: View {
         } actions: {
             submitButton
         }
+        .toast(for: viewModel.submitError)
         .onChange(of: viewModel.password) {
             viewModel.refreshShownFieldErrors()
         }
@@ -35,11 +36,6 @@ struct NewPasswordView: View {
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
-
-            if let submitError = viewModel.submitError {
-                ErrorBanner(message: submitError)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
 
             AuthFormField(
                 labelKey: "passwordReset.newPassword.field.label",
@@ -94,5 +90,6 @@ struct NewPasswordView: View {
 #Preview {
     NavigationStack {
         NewPasswordView(resetToken: "preview-token") {}
+            .environment(ToastManager())
     }
 }

@@ -7,7 +7,7 @@ struct LocationMapView: View {
     @State private var viewModel: LocationMapViewModel
     @State private var ratingPrompt = RatingPromptViewModel()
     @Environment(AppCoordinator.self) private var coordinator
-    @Environment(ToastPresenter.self) private var toasts
+    @Environment(ToastManager.self) private var toasts
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -37,7 +37,7 @@ struct LocationMapView: View {
         // The error is handed to the app-level toast and consumed, so a repeated failure shows it again.
         .onChange(of: viewModel.errorMessage) { _, message in
             guard let message else { return }
-            toasts.show(message)
+            toasts.show(message, style: .negative)
             viewModel.errorMessage = nil
         }
         .overlay {
@@ -177,5 +177,5 @@ struct LocationMapView: View {
 #Preview {
     LocationMapView(store: NearbyPlacesStore())
         .environment(AppCoordinator())
-        .environment(ToastPresenter())
+        .environment(ToastManager())
 }

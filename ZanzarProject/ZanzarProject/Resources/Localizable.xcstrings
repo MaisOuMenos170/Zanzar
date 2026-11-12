@@ -6136,6 +6136,23 @@
         }
       }
     },
+    "toast.dismiss.accessibilityAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismiss"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dispensar"
+          }
+        }
+      }
+    },
     "userPhotos.camera.alert.title" : {
       "extractionState" : "manual",
       "localizations" : {

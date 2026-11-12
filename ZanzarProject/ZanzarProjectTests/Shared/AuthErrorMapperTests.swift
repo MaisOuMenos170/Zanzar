@@ -38,6 +38,23 @@ struct AuthErrorMapperTests {
         #expect(AuthErrorMapper.signUpMessage(for: error) == error.errorDescription)
     }
 
+    @Test("a malformed login body reads as wrong credentials, not as the schema error from the server")
+    func loginBadRequest() {
+        let raw = "errors: , properties: password: errors: Too small: expected string to have >=8 characters"
+        let message = AuthErrorMapper.loginMessage(for: .httpStatus(400, message: raw))
+        #expect(message == L10n.string("login.submitError.invalidCredentials"))
+    }
+
+    @Test("never shows the text the server sent back")
+    func neverShowsServerText() {
+        let raw = "Unexpected internal detail"
+        let login = AuthErrorMapper.loginMessage(for: .httpStatus(500, message: raw))
+        let signUp = AuthErrorMapper.signUpMessage(for: .httpStatus(400, message: raw))
+
+        #expect(login == L10n.string("login.submitError.generic"))
+        #expect(signUp == L10n.string("signUp.submitError.generic"))
+    }
+
     @Test("falls back to generic message for unknown status codes")
     func genericFallback() {
         let message = AuthErrorMapper.loginMessage(for: .httpStatus(500, message: nil))

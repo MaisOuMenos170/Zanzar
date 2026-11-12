@@ -3,7 +3,7 @@ import SwiftUI
 struct ResetCodeView: View {
     @State private var viewModel: ResetCodeViewModel
     @Environment(AppCoordinator.self) private var coordinator
-    @Environment(ToastPresenter.self) private var toastPresenter
+    @Environment(ToastManager.self) private var toastManager
 
     init(email: String) {
         _viewModel = State(initialValue: ResetCodeViewModel(email: email))
@@ -15,6 +15,7 @@ struct ResetCodeView: View {
         } actions: {
             actions
         }
+        .toast(for: viewModel.submitError)
         .onChange(of: viewModel.code) {
             viewModel.sanitizeCode()
             viewModel.refreshShownFieldErrors()
@@ -27,11 +28,6 @@ struct ResetCodeView: View {
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
-
-            if let submitError = viewModel.submitError {
-                ErrorBanner(message: submitError)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
 
             OneTimeCodeField(
                 labelKey: "passwordReset.code.field.label",
@@ -72,7 +68,7 @@ struct ResetCodeView: View {
 
     private func resend() async {
         guard await viewModel.resendCode() else { return }
-        toastPresenter.show(L10n.string("passwordReset.code.resend.toast"))
+        toastManager.show(L10n.string("passwordReset.code.resend.toast"), style: .positive)
     }
 }
 
@@ -80,6 +76,6 @@ struct ResetCodeView: View {
     NavigationStack {
         ResetCodeView(email: "ana@example.com")
             .environment(AppCoordinator())
-            .environment(ToastPresenter())
+            .environment(ToastManager())
     }
 }

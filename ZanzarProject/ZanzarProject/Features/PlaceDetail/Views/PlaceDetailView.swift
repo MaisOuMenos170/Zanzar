@@ -241,5 +241,5 @@ struct PlaceDetailView: View {
         )
     }
     .environment(AppCoordinator())
-    .environment(ToastPresenter())
+    .environment(ToastManager())
 }

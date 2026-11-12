@@ -10,6 +10,7 @@ struct ForgotPasswordView: View {
         } actions: {
             submitButton
         }
+        .toast(for: viewModel.submitError)
         .onChange(of: viewModel.email) {
             viewModel.refreshShownFieldErrors()
         }
@@ -21,11 +22,6 @@ struct ForgotPasswordView: View {
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
-
-            if let submitError = viewModel.submitError {
-                ErrorBanner(message: submitError)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
 
             AuthFormField(
                 labelKey: "login.emailField.label",
@@ -65,5 +61,6 @@ struct ForgotPasswordView: View {
     NavigationStack {
         ForgotPasswordView()
             .environment(AppCoordinator())
+            .environment(ToastManager())
     }
 }

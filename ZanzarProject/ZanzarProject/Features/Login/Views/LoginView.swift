@@ -16,6 +16,7 @@ struct LoginView: View {
         } actions: {
             actions
         }
+        .toast(for: viewModel.submitError)
         .onChange(of: viewModel.email) {
             viewModel.refreshShownFieldErrors()
         }
@@ -26,11 +27,6 @@ struct LoginView: View {
 
     private var form: some View {
         VStack(spacing: 16) {
-            if let submitError = viewModel.submitError {
-                ErrorBanner(message: submitError)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-
             AuthFormField(
                 labelKey: "login.emailField.label",
                 placeholderKey: "login.emailField.placeholder",
@@ -150,6 +146,6 @@ struct LoginView: View {
             .environment(AppCoordinator())
             .environment(AuthSession())
             .environment(OnboardingGate())
-            .environment(ToastPresenter())
+            .environment(ToastManager())
     }
 }

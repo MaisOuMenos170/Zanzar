@@ -5,7 +5,7 @@ import UserNotifications
 struct ContentView: View {
     @State private var coordinator = AppCoordinator()
     @State private var authSession = AuthSession()
-    @State private var toastPresenter = ToastPresenter()
+    @State private var toastManager = ToastManager()
     @State private var onboarding = OnboardingGate()
     @State private var showsSessionExpiredAlert = false
     @State private var pushTokenManager = PushTokenManager.shared
@@ -43,13 +43,13 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: AppNotification.sessionExpired)) { _ in
             handleSessionExpired()
         }
-        .safeAreaInset(edge: .top, spacing: 0) {
+        .overlay {
             ToastOverlay()
         }
         .preferredColorScheme(.light)
         .environment(coordinator)
         .environment(authSession)
-        .environment(toastPresenter)
+        .environment(toastManager)
         .environment(onboarding)
     }
 }
