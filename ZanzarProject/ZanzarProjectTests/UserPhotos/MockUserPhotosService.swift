@@ -95,6 +95,7 @@ nonisolated extension UserPhoto {
             isVerifiedCheckIn: false,
             showsAuthorName: true,
             thumbnailURL: nil,
+            imageURL: nil,
             decisionReason: reason,
             createdAt: Date(timeIntervalSince1970: 1_800_000_000),
             decidedAt: nil

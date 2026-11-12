@@ -9,7 +9,12 @@ nonisolated struct UserPhoto: Identifiable, Hashable, Sendable {
     let isVerifiedCheckIn: Bool
     let showsAuthorName: Bool
     let thumbnailURL: URL?
+    /// The full-size photo, when the backend sends one.
+    let imageURL: URL?
     let decisionReason: UserPhotoDecisionReason?
     let createdAt: Date
     let decidedAt: Date?
+
+    /// What the viewer opens: the full-size photo, or the thumbnail when that is all there is.
+    var viewerURL: URL? { imageURL ?? thumbnailURL }
 }
