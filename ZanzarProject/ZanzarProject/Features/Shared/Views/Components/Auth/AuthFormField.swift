@@ -21,8 +21,7 @@ struct AuthFormField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(labelKey)
-                .font(.subheadline)
-                .tracking(0.25)
+                .typography(.body2)
                 .foregroundStyle(.primary)
 
             if let errorMessageKey {
@@ -32,7 +31,7 @@ struct AuthFormField: View {
             }
 
             field
-                .font(.body)
+                .typography(.body1)
                 .padding(16)
                 .frame(minHeight: 51, alignment: .leading)
                 .background(Color.brandNeutral50, in: .capsule)

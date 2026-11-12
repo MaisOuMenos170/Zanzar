@@ -8,15 +8,15 @@ struct AuthSwitchLink: View {
     var body: some View {
         AdaptiveStack(horizontalAlignment: .center, spacing: 4) {
             Text(promptKey)
+                .typography(.body2)
                 .multilineTextAlignment(.center)
             Button(action: action) {
                 Text(actionKey)
-                    .fontWeight(.semibold)
+                    .typography(.subtitle2)
                     .multilineTextAlignment(.center)
             }
             .buttonStyle(.plain)
         }
-        .font(.subheadline)
         .foregroundStyle(.primary)
         .frame(maxWidth: .infinity)
     }

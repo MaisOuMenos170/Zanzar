@@ -22,6 +22,8 @@ struct SignUpView: View {
         } actions: {
             actions
         }
+        .toast(for: viewModel.submitError)
+        .toast(for: appleSignIn.submitError)
         .onChange(of: viewModel.username) {
             viewModel.refreshShownFieldErrors()
         }
@@ -35,11 +37,6 @@ struct SignUpView: View {
 
     private var form: some View {
         VStack(spacing: 16) {
-            if let submitError = viewModel.submitError ?? appleSignIn.submitError {
-                ErrorBanner(message: submitError)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-
             AuthFormField(
                 labelKey: "signUp.usernameField.label",
                 placeholderKey: "signUp.usernameField.placeholder",
@@ -72,8 +69,7 @@ struct SignUpView: View {
 
             Toggle(isOn: $viewModel.acceptsTerms) {
                 Text("signUp.terms.label")
-                    .font(.subheadline)
-                    .tracking(0.25)
+                    .typography(.body2)
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)
             }
@@ -118,7 +114,7 @@ struct SignUpView: View {
             Task { await submit() }
         }
         .buttonStyle(AuthPrimaryButtonStyle())
-        .disabled(isBusy)
+        .disabled(isBusy || !viewModel.canSubmit)
         .overlay {
             if viewModel.isLoading {
                 ProgressView()
@@ -173,6 +169,6 @@ struct SignUpView: View {
             .environment(AppCoordinator())
             .environment(AuthSession())
             .environment(OnboardingGate())
-            .environment(ToastPresenter())
+            .environment(ToastManager())
     }
 }

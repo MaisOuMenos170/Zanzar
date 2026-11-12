@@ -1,13 +1,13 @@
 import SwiftUI
 
 struct AuthPrimaryButtonStyle: ButtonStyle {
-    var background = Color.brandBlue500
+    var background = Color.brandPurple500
 
     @Environment(\.isEnabled) private var isEnabled
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.body)
+            .typography(.subtitle2)
             .multilineTextAlignment(.center)
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)

@@ -14,7 +14,7 @@ struct CheckboxBoxView: View {
                 if isOn {
                     Image(systemName: "checkmark")
                         .font(.caption2.bold())
-                        .foregroundStyle(Color.brandBlue500)
+                        .foregroundStyle(Color.brandPurple500)
                 }
             }
     }

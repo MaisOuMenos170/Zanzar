@@ -19,6 +19,7 @@ O app é o único cliente. O backend não serve telas, só JSON (e um proxy de f
 |---|---|---|
 | `SignUpService` | `POST /register` | `auth.routes` |
 | `LoginService` | `POST /login` | `auth.routes` |
+| `PasswordResetService` | `POST /password/forgot`, `POST /password/verify` (`{email, code}`), `POST /password/reset` | `auth.routes` (ver abaixo) |
 | `SessionRefresher` | `POST /refresh` | só em `origin/develop` (ver abaixo) |
 | `ProfileService` | `POST /logout`, `GET /user/:id/profile` | `auth`, `users` |
 | `LocationMapService` | `GET /places` | `place.routes` |
@@ -31,6 +32,10 @@ O app é o único cliente. O backend não serve telas, só JSON (e um proxy de f
 Sem uso no app hoje: `GET /user/:id`, `GET /stamps/:stampId`, `GET /places/photo` (proxy do Google, aposentado), `GET /health` (só o Railway). A collection `sync_mutations` e `modules/sync` não têm rota. A revisão de fotos (`/admin`, `/admin/api/photos`) é usada só pela página da equipe, não pelo app.
 
 Erros das rotas de foto trazem `code` (ex.: `duplicate_photo`, `terms_required`), que o app lê como `APIError.rejected`.
+
+## Recuperação de senha
+
+`POST /password/forgot` responde 202 sempre e manda um e-mail com um código de 6 dígitos (vale 15 min, 5 tentativas). Não há link nem deep link: a pessoa lê o código no e-mail e digita ou cola no app. O app troca o código (`{email, code}`) por um `resetToken` em `POST /password/verify` e envia a nova senha em `POST /password/reset` (204, o backend revoga todas as sessões). A sequência de telas é e-mail, código (6 caixas), "código verificado", nova senha, sucesso, login. As três rotas estão em `publicPaths` do `URLSessionNetworkClient`: vão sem Bearer e um 401 não vira "sessão expirada".
 
 ## Sugestão de lugar e moderação
 
