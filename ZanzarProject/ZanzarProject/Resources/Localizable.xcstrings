@@ -1968,13 +1968,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "If %@ has a Lero account, we sent it a 6-digit code that works for 15 minutes. Type it or paste it here."
+            "value" : "If the email is registered with Lero, enter the code sent to %@."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se %@ tiver uma conta no Lero, enviamos para ele um código de 6 dígitos que vale por 15 minutos. Digite ou cole aqui."
+            "value" : "Se o e-mail estiver cadastrado no Lero, digite o código enviado para %@."
           }
         }
       }
@@ -2121,13 +2121,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Type the password again"
+            "value" : "Confirm new password"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Digite a senha de novo"
+            "value" : "Confirmar nova senha"
           }
         }
       }
@@ -2155,13 +2155,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enter your account email. We'll send a 6-digit code to create a new password."
+            "value" : "Enter your account email to reset your password."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Informe o e-mail da sua conta. Vamos enviar um código de 6 dígitos para criar uma nova senha."
+            "value" : "Digite o e-mail da sua conta para redefinir a senha."
           }
         }
       }
@@ -2195,7 +2195,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recuperar senha"
+            "value" : "Redefinir senha"
           }
         }
       }
@@ -2257,13 +2257,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "At least 8 characters"
+            "value" : "Create new password"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mínimo de 8 caracteres"
+            "value" : "Criar nova senha"
           }
         }
       }
@@ -2274,13 +2274,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use at least 8 characters, with letters and numbers. Saving signs you out on every device."
+            "value" : "Create a new password. Make sure it differs from previous ones, for security."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use pelo menos 8 caracteres, com letras e números. Ao salvar, você sai da conta em todos os aparelhos."
+            "value" : "Crie uma nova senha. Ela precisa ser diferente das anteriores, por segurança."
           }
         }
       }
