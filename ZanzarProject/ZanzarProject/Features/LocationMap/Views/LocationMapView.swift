@@ -141,7 +141,7 @@ struct LocationMapView: View {
                 }
                 .annotationTitles(.hidden)
             case .cluster(let cluster):
-                Annotation("", coordinate: cluster.coordinate, anchor: .center) {
+                Annotation("", coordinate: cluster.coordinate, anchor: .bottom) {
                     Button {
                         expand(cluster)
                     } label: {
