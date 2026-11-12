@@ -8957,6 +8957,40 @@
           }
         }
       }
+    },
+    "widget.configuration.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lero Widget"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget do Lero"
+          }
+        }
+      }
+    },
+    "widget.configuration.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows your next itinerary stop or a reminder to check in nearby."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra sua próxima parada do roteiro ou um lembrete para fazer check-in por perto."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
