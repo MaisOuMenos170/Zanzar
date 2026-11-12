@@ -81,6 +81,11 @@
 			path = ZanzarWidget;
 			sourceTree = "<group>";
 		};
+		B9AE997B30A49C31006AFF3E /* Resources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ZanzarProject/Resources;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -195,6 +200,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				B9AE997A30A49C31006AFF3E /* ZanzarWidget */,
+				B9AE997B30A49C31006AFF3E /* Resources */,
 			);
 			name = ZanzarWidgetExtension;
 			productName = ZanzarWidgetExtension;

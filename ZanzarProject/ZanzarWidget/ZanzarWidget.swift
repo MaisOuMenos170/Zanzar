@@ -95,15 +95,11 @@ struct ZanzarWidget: Widget {
 
 extension ConfigurationAppIntent {
     fileprivate static var smiley: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "😀"
-        return intent
+        ConfigurationAppIntent()
     }
 
     fileprivate static var starEyes: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "🤩"
-        return intent
+        ConfigurationAppIntent()
     }
 }
 
