@@ -2,13 +2,10 @@ import SwiftUI
 
 struct NewPasswordView: View {
     @State private var viewModel: NewPasswordViewModel
-    @FocusState private var focusedField: Field?
+    @FocusState private var isPasswordFocused: Bool
+    @FocusState private var isConfirmationFocused: Bool
 
     private let onFinished: () -> Void
-
-    private enum Field {
-        case password, confirmation
-    }
 
     init(resetToken: String, onFinished: @escaping () -> Void) {
         _viewModel = State(initialValue: NewPasswordViewModel(resetToken: resetToken))
@@ -43,9 +40,9 @@ struct NewPasswordView: View {
                 text: $viewModel.password,
                 errorMessageKey: viewModel.passwordError,
                 isSecure: true,
-                textContentType: .newPassword
+                textContentType: .newPassword,
+                isFocused: $isPasswordFocused
             )
-            .focused($focusedField, equals: .password)
 
             AuthFormField(
                 labelKey: "passwordReset.confirmPassword.field.label",
@@ -54,15 +51,15 @@ struct NewPasswordView: View {
                 errorMessageKey: viewModel.confirmationError,
                 isSecure: true,
                 textContentType: .newPassword,
-                submitLabel: .done
+                submitLabel: .done,
+                isFocused: $isConfirmationFocused
             )
-            .focused($focusedField, equals: .confirmation)
         }
         .onSubmit {
-            switch focusedField {
-            case .password: focusedField = .confirmation
-            case .confirmation, nil:
-                focusedField = nil
+            if isPasswordFocused {
+                isConfirmationFocused = true
+            } else {
+                isConfirmationFocused = false
                 Task { await submit() }
             }
         }

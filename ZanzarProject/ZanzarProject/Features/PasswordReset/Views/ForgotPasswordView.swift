@@ -3,6 +3,7 @@ import SwiftUI
 struct ForgotPasswordView: View {
     @State private var viewModel = ForgotPasswordViewModel()
     @Environment(AppCoordinator.self) private var coordinator
+    @FocusState private var isEmailFocused: Bool
 
     var body: some View {
         AuthScreenScaffold(titleKey: "passwordReset.forgot.title") {
@@ -30,9 +31,11 @@ struct ForgotPasswordView: View {
                 errorMessageKey: viewModel.emailError,
                 textContentType: .emailAddress,
                 keyboardType: .emailAddress,
-                submitLabel: .send
+                submitLabel: .send,
+                isFocused: $isEmailFocused
             )
             .onSubmit {
+                isEmailFocused = false
                 Task { await submit() }
             }
         }
