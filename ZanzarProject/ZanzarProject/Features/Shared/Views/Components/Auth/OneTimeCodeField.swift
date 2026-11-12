@@ -14,8 +14,7 @@ struct OneTimeCodeField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(labelKey)
-                .font(.system(size: 14))
-                .tracking(0.25)
+                .typography(.body2)
                 .foregroundStyle(.primary)
 
             if let errorMessageKey {

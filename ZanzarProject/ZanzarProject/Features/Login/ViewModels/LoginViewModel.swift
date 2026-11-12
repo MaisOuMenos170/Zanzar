@@ -173,3 +173,10 @@ final class LoginViewModel {
         return AppleLoginRequest.FullName(givenName: given, familyName: family)
     }
 }
+
+extension LoginViewModel {
+    /// The sign-in button stays off until both fields have something in them.
+    var canSubmit: Bool {
+        !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !password.isEmpty
+    }
+}

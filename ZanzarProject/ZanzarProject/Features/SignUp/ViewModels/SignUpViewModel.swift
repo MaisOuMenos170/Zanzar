@@ -124,3 +124,12 @@ final class SignUpViewModel {
         }
     }
 }
+
+extension SignUpViewModel {
+    /// The sign-up button stays off until every field has something in it. The terms checkbox is checked on submit.
+    var canSubmit: Bool {
+        !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && !password.isEmpty
+    }
+}

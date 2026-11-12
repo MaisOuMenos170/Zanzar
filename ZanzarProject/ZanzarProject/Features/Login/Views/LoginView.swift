@@ -55,7 +55,7 @@ struct LoginView: View {
             Button("login.forgotPassword.button.title") {
                 coordinator.push(.forgotPassword)
             }
-            .font(.subheadline.weight(.semibold))
+            .typography(.subtitle2)
             .foregroundStyle(.primary)
             .buttonStyle(.plain)
             .frame(maxWidth: .infinity, minHeight: 44, alignment: .trailing)
@@ -97,7 +97,7 @@ struct LoginView: View {
             Task { await submit() }
         }
         .buttonStyle(AuthPrimaryButtonStyle())
-        .disabled(viewModel.isLoading)
+        .disabled(viewModel.isLoading || !viewModel.canSubmit)
         .overlay {
             if viewModel.isLoading {
                 ProgressView()

@@ -72,8 +72,7 @@ struct SignUpView: View {
 
             Toggle(isOn: $viewModel.acceptsTerms) {
                 Text("signUp.terms.label")
-                    .font(.subheadline)
-                    .tracking(0.25)
+                    .typography(.body2)
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)
             }
@@ -118,7 +117,7 @@ struct SignUpView: View {
             Task { await submit() }
         }
         .buttonStyle(AuthPrimaryButtonStyle())
-        .disabled(isBusy)
+        .disabled(isBusy || !viewModel.canSubmit)
         .overlay {
             if viewModel.isLoading {
                 ProgressView()

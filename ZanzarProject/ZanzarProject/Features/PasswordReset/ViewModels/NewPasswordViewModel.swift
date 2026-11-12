@@ -74,3 +74,9 @@ final class NewPasswordViewModel {
         return nil
     }
 }
+
+extension NewPasswordViewModel {
+    var canSubmit: Bool {
+        !password.isEmpty && !confirmation.isEmpty
+    }
+}

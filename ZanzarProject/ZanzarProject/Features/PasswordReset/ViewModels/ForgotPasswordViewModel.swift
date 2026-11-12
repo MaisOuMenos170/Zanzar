@@ -58,3 +58,9 @@ final class ForgotPasswordViewModel {
         )
     }
 }
+
+extension ForgotPasswordViewModel {
+    var canSubmit: Bool {
+        !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+}

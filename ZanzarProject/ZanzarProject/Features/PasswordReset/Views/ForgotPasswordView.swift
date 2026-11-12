@@ -47,7 +47,7 @@ struct ForgotPasswordView: View {
             Task { await submit() }
         }
         .buttonStyle(AuthPrimaryButtonStyle())
-        .disabled(viewModel.isLoading)
+        .disabled(viewModel.isLoading || !viewModel.canSubmit)
         .overlay {
             if viewModel.isLoading {
                 ProgressView()

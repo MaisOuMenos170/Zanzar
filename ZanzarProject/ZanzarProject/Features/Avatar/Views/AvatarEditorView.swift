@@ -47,6 +47,14 @@ struct AvatarEditorView: View {
         .background(Color.brandBlue50.ignoresSafeArea())
         .navigationTitle(Text(LocalizedStringKey(viewModel.selectedTab.titleKey)))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text(LocalizedStringKey(viewModel.selectedTab.titleKey))
+                    .typography(.subtitle1)
+                    .foregroundStyle(Color.titleBrown)
+                    .accessibilityAddTraits(.isHeader)
+            }
+        }
         .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
         .task {
             await viewModel.load()

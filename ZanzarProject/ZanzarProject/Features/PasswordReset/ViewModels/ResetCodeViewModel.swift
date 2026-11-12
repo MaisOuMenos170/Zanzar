@@ -92,3 +92,10 @@ final class ResetCodeViewModel {
         return nil
     }
 }
+
+extension ResetCodeViewModel {
+    /// The button waits for the whole code.
+    var canSubmit: Bool {
+        code.count == Self.codeLength
+    }
+}
