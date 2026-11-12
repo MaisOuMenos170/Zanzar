@@ -18,6 +18,8 @@ final class LocationMapViewModel {
     var isLoading = false
     var errorMessage: String?
     private(set) var acceptsVisibleRegionUpdates = false
+    /// The discover filter: only matching places become pins (and take part in the grouping).
+    private(set) var filter = PlaceFilter()
 
     /// The pins to draw. Stored rather than computed so it is only rebuilt when the places or the zoom
     /// level change (never while merely panning), and it is only reassigned when the result differs, which
@@ -76,6 +78,12 @@ final class LocationMapViewModel {
     func syncPlaces() {
         guard places != store.places else { return }
         setPlaces(store.places)
+    }
+
+    func setFilter(_ newFilter: PlaceFilter) {
+        guard filter != newFilter else { return }
+        filter = newFilter
+        refreshDisplayItems()
     }
 
     func updateVisibleRegion(_ region: MKCoordinateRegion) {
@@ -181,7 +189,7 @@ final class LocationMapViewModel {
     // ever grows to thousands, `MapPinClustering.cluster` is pure and Sendable and can become `@concurrent`
     // behind a generation check, like `loadGeneration`.
     private func refreshDisplayItems() {
-        let items = MapPinClustering.cluster(places: places, zoomLevel: zoomLevel)
+        let items = MapPinClustering.cluster(places: filter.apply(to: places), zoomLevel: zoomLevel)
         if items != displayItems {
             displayItems = items
         }

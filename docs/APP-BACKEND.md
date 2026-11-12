@@ -22,6 +22,7 @@ O app é o único cliente. O backend não serve telas, só JSON (e um proxy de f
 | `SessionRefresher` | `POST /refresh` | só em `origin/develop` (ver abaixo) |
 | `ProfileService` | `POST /logout`, `GET /user/:id/profile` | `auth`, `users` |
 | `LocationMapService` | `GET /places` | `place.routes` |
+| `PlaceSearchService` | `GET /places/search?q=&lat=&lng=&categories=&limit=` (busca por nome, apelido ou endereço em todos os lugares, mais perto primeiro; `q` de 2 a 80 caracteres, `categories` separadas por vírgula, `limit` padrão 20) | `place.routes` (só em `feat/place-search` até o merge) |
 | `PlaceDetailService` | `GET /places/:id`, `POST` e `GET /checkIn`, `GET /rating`, `GET /places/:id/photos` | `place`, `checkin`, `rating`, `user-photo-community` |
 | `RatingPromptService` | `GET` e `POST /rating` | `rating.routes` |
 | `UserPhotosService` | `POST /places/:id/photos` (corpo = JPEG; `?fromCheckIn=&showAuthorName=`), `DELETE /places/:id/photos/:photoId`, `POST /places/:id/photos/:photoId/reports`, `GET` e `POST /user/:id/photo-terms`, `GET /user/:id/photos`, `GET`, `POST` e `DELETE /user/:id/blocks` | `user-photos` (ver `docs/fotos-de-usuario-decisao.md`) |

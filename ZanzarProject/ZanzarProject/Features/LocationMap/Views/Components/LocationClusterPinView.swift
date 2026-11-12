@@ -1,13 +1,12 @@
 import SwiftUI
 
-/// Stack-of-labels badge shown when several places overlap at the current zoom level (Figma 1930:525).
+/// Stack-of-labels badge shown when several places overlap at the current zoom level
+/// (Figma "Pin do mapa v2", tipo Cluster, 60×72).
 struct LocationClusterPinView: View {
     let count: Int
 
     /// Frame of the Figma cluster; the front label's tail tip touches the bottom edge.
-    static let size = CGSize(width: 72, height: 76)
-
-    private static let frontSize = CGSize(width: 50, height: 62)
+    static let size = CGSize(width: 60, height: 72)
 
     private var countLabel: String {
         count > 99 ? "99+" : count.formatted()
@@ -15,13 +14,13 @@ struct LocationClusterPinView: View {
 
     var body: some View {
         ZStack {
-            backLabel(color: Color("LocationPinClusterBack"))
-                .position(x: 42, y: 32)
-            backLabel(color: Color("LocationPinClusterMid"))
-                .position(x: 38.5, y: 35.5)
+            backLabel(fill: .brandPurple200)
+                .position(x: 34, y: 27)
+            backLabel(fill: .brandPurple400)
+                .position(x: 30.5, y: 30.5)
 
             frontLabel
-                .position(x: 35, y: 44)
+                .position(x: 27, y: 39)
 
             Text(countLabel)
                 .font(.system(size: 18, weight: .bold))
@@ -30,9 +29,9 @@ struct LocationClusterPinView: View {
                 .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
-                .foregroundStyle(.white)
+                .foregroundStyle(Color.brandNeutral50)
                 .frame(width: 40)
-                .position(x: 35, y: 39)
+                .position(x: 27, y: 34)
         }
         .frame(width: Self.size.width, height: Self.size.height)
         .frame(minWidth: 44, minHeight: 44)
@@ -40,24 +39,24 @@ struct LocationClusterPinView: View {
         .accessibilityHidden(true)
     }
 
-    private func backLabel(color: Color) -> some View {
+    private func backLabel(fill: Color) -> some View {
         LocationLabelShape(cornerRadius: 13, tailWidth: 0, tailHeight: 0)
-            .fill(color)
+            .fill(fill)
             .overlay {
                 LocationLabelShape(cornerRadius: 13, tailWidth: 0, tailHeight: 0)
-                    .stroke(.white, style: StrokeStyle(lineWidth: 2, lineJoin: .round))
+                    .stroke(Color.brandNeutral50, style: StrokeStyle(lineWidth: 2, lineJoin: .round))
             }
             .frame(width: 50, height: 52)
     }
 
     private var frontLabel: some View {
         LocationLabelShape(cornerRadius: 13, tailWidth: 14, tailHeight: 10)
-            .fill(Color("LocationPinPrimary"))
+            .fill(Color.brandPurple600)
             .overlay {
                 LocationLabelShape(cornerRadius: 13, tailWidth: 14, tailHeight: 10)
-                    .stroke(.white, style: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round))
+                    .stroke(Color.brandNeutral50, style: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round))
             }
-            .frame(width: Self.frontSize.width, height: Self.frontSize.height)
+            .frame(width: 50, height: 62)
     }
 }
 

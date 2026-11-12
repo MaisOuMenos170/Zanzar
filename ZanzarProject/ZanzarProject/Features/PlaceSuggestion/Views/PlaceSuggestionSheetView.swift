@@ -2,64 +2,72 @@ import SwiftUI
 
 struct PlaceSuggestionSheetView: View {
     @State private var viewModel: PlaceSuggestionViewModel
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @FocusState private var isQueryFocused: Bool
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @ScaledMetric(relativeTo: .body) private var searchButtonSize: CGFloat = 51
+    /// Height of everything in the sheet, so it is only as tall as its content (the Figma sheet hugs it) until
+    /// the screen runs out of room, and then it scrolls.
+    @State private var contentHeight: CGFloat?
     private let onFinished: (PlaceSuggestionOutcome) -> Void
+    private let onClose: () -> Void
 
     init(
         service: PlaceSuggestionServicing = PlaceSuggestionService(),
-        onFinished: @escaping (PlaceSuggestionOutcome) -> Void
+        onFinished: @escaping (PlaceSuggestionOutcome) -> Void,
+        onClose: @escaping () -> Void
     ) {
         _viewModel = State(initialValue: PlaceSuggestionViewModel(service: service))
         self.onFinished = onFinished
+        self.onClose = onClose
     }
 
-    init(viewModel: PlaceSuggestionViewModel, onFinished: @escaping (PlaceSuggestionOutcome) -> Void = { _ in }) {
+    init(
+        viewModel: PlaceSuggestionViewModel,
+        onFinished: @escaping (PlaceSuggestionOutcome) -> Void = { _ in },
+        onClose: @escaping () -> Void = {}
+    ) {
         _viewModel = State(initialValue: viewModel)
         self.onFinished = onFinished
+        self.onClose = onClose
     }
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("placeSuggestion.header.subtitle")
-                        .font(.subheadline.weight(.light))
-                    searchSection
-                    resultsSection
-                    PlaceSuggestionNoteField(text: $viewModel.note)
-                }
-                .padding(.horizontal, 19)
-                .padding(.top, 8)
-                .padding(.bottom, 16)
-            }
-            .scrollDismissesKeyboard(.interactively)
-            .safeAreaInset(edge: .bottom) {
-                submitButton
-                    .padding(.horizontal, 19)
-                    .padding(.vertical, 12)
-            }
-            .navigationTitle("placeSuggestion.header.title")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(role: .close) {
-                        dismiss()
+                VStack(alignment: .leading, spacing: 24) {
+                    VStack(alignment: .leading, spacing: 16) {
+                        header
+                        VStack(alignment: .leading, spacing: 24) {
+                            locationOptions
+                            VStack(alignment: .leading, spacing: 16) {
+                                searchSection
+                                resultsSection
+                                PlaceSuggestionNoteField(text: $viewModel.note)
+                            }
+                        }
                     }
+                    .padding(.horizontal, 3)
+
+                    submitButton
                 }
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+                // The Figma sheet ends 40pt below the button, counting the home indicator area, which the card's
+                // content already stays clear of.
+                .padding(.bottom, max(8, 40 - ScreenInsets.bottom))
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { contentHeight = $0 }
             }
+            .scrollBounceBehavior(.basedOnSize)
+            .scrollDismissesKeyboard(.interactively)
+            .toolbar(.hidden, for: .navigationBar)
         }
+        // On the stack, not on the scroll view: a navigation stack takes all the height it is offered.
+        .frame(maxHeight: contentHeight ?? .infinity)
         .animation(reduceMotion ? nil : .default, value: viewModel.results)
         .animation(reduceMotion ? nil : .default, value: viewModel.isManualEntry)
-        .presentationDetents(dynamicTypeSize.isAccessibilitySize ? [.large] : [.height(620), .large])
-        .presentationDragIndicator(.visible)
-        .presentationBackground(Color(.systemBackground))
-        // Re-runs when the toggle changes, so turning "near me" on again retries a failed lookup.
+        // Re-runs when the option changes, so choosing "use my location" again retries a failed lookup.
         .task(id: viewModel.searchNearMe) {
             await viewModel.loadCurrentLocation()
+            viewModel.fillQueryWithCurrentAddress()
         }
         .onChange(of: viewModel.outcome) { _, outcome in
             guard let outcome else { return }
@@ -67,68 +75,98 @@ struct PlaceSuggestionSheetView: View {
         }
     }
 
-    private var searchSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            AdaptiveStack(horizontalAlignment: .trailing, verticalAlignment: .bottom, spacing: 8) {
-                AuthFormField(
-                    labelKey: "placeSuggestion.placeField.label",
-                    placeholderKey: "placeSuggestion.placeField.placeholder",
-                    text: $viewModel.query,
-                    submitLabel: .search,
-                    capitalization: .words,
-                    disablesAutocorrection: false,
-                    isFocused: $isQueryFocused
-                )
-                .onSubmit { Task { await viewModel.search() } }
+    // MARK: - Sections
 
-                Button {
-                    // Drop the keyboard first, or it keeps covering the results this search is about to show.
-                    isQueryFocused = false
-                    Task { await viewModel.search() }
-                } label: {
-                    if viewModel.isSearching {
-                        ProgressView()
-                    } else {
-                        Image(systemName: "magnifyingglass")
-                    }
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text("placeSuggestion.header.title")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.brandSheetTitle)
+                    .accessibilityAddTraits(.isHeader)
+
+                Spacer(minLength: 8)
+
+                Button(action: onClose) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(Color.brandCloseIcon)
+                        .padding(8)
+                        .contentShape(.rect)
                 }
-                .font(.body.weight(.semibold))
-                .frame(width: searchButtonSize, height: searchButtonSize)
-                .foregroundStyle(.white)
-                .background(Color("WelcomePrimary"), in: .circle)
-                .disabled(!viewModel.canSearch)
-                .opacity(viewModel.canSearch || viewModel.isSearching ? 1 : 0.4)
-                .accessibilityLabel("placeSuggestion.searchButton.label")
+                .accessibilityLabel("placeSuggestion.closeButton.label")
+            }
+            .padding(.top, 4)
+            .padding(.bottom, 4)
+
+            Text("placeSuggestion.header.subtitle")
+                .font(.system(size: 14))
+                .tracking(0.25)
+                .foregroundStyle(.black)
+        }
+        .padding(.horizontal, 8)
+    }
+
+    private var locationOptions: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            PlaceSuggestionLocationOption(
+                titleKey: "placeSuggestion.locationOption.useMine",
+                isSelected: viewModel.searchNearMe
+            ) {
+                viewModel.useCurrentLocation()
             }
 
-            Toggle(isOn: $viewModel.searchNearMe) {
-                VStack(alignment: .leading, spacing: 1) {
-                    Text("placeSuggestion.nearMe.title")
-                        .font(.subheadline.weight(.semibold))
-                    Text(nearMeSubtitle)
-                        .font(.footnote)
-                        .foregroundStyle(viewModel.locationErrorMessage != nil ? Color("AuthError") : Color.secondary)
-                        .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
-                }
+            PlaceSuggestionLocationOption(
+                titleKey: "placeSuggestion.locationOption.other",
+                isSelected: !viewModel.searchNearMe
+            ) {
+                viewModel.useAnotherPlace()
             }
-            .tint(Color("WelcomePrimary"))
 
-            if let message = viewModel.searchErrorMessage {
-                Text(message)
+            if let status = locationStatus {
+                Text(status.text)
                     .font(.footnote)
-                    .foregroundStyle(Color("AuthError"))
+                    .foregroundStyle(status.isError ? Color.brandErrorRed : Color.brandNeutral600)
+                    .padding(.horizontal, 8)
             }
         }
     }
 
-    private var nearMeSubtitle: String {
+    /// What the user needs to know about the position: it is being found, or it could not be.
+    private var locationStatus: (text: String, isError: Bool)? {
+        guard viewModel.searchNearMe else { return nil }
         if let message = viewModel.locationErrorMessage {
-            return message
+            return (message, true)
         }
         if viewModel.isResolvingLocation {
-            return L10n.string("placeSuggestion.nearMe.locating")
+            return (L10n.string("placeSuggestion.nearMe.locating"), false)
         }
-        return viewModel.currentLocation?.address ?? L10n.string("placeSuggestion.nearMe.subtitle")
+        return nil
+    }
+
+    private var searchSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            PlaceSuggestionTextField(
+                labelKey: "placeSuggestion.placeField.label",
+                placeholderKey: "placeSuggestion.placeField.placeholder",
+                text: $viewModel.query,
+                isFocused: $isQueryFocused,
+                isRequired: true,
+                onSearch: {
+                    // Drop the keyboard first, or it keeps covering the results this search is about to show.
+                    isQueryFocused = false
+                    Task { await viewModel.search() }
+                },
+                canSearch: viewModel.canSearch,
+                isSearching: viewModel.isSearching
+            )
+
+            if let message = viewModel.searchErrorMessage {
+                Text(message)
+                    .font(.footnote)
+                    .foregroundStyle(Color.brandErrorRed)
+            }
+        }
     }
 
     @ViewBuilder
@@ -166,20 +204,19 @@ struct PlaceSuggestionSheetView: View {
                 systemImage: "checkmark.circle.fill"
             )
             .font(.footnote)
-            .foregroundStyle(Color("WelcomePrimary"))
+            .foregroundStyle(Color.brandPurple500)
         } else {
             Button("placeSuggestion.manual.button") {
                 viewModel.enterManually()
             }
             .font(.footnote.weight(.semibold))
-            .tint(Color("WelcomePrimary"))
+            .tint(Color.brandPurple500)
         }
     }
 
     private var submitButton: some View {
-        PlaceDetailCheckInButton(
+        PlaceSuggestionSubmitButton(
             titleKey: "placeSuggestion.submitButton.title",
-            hasCheckedIn: false,
             isLoading: viewModel.isSubmitting
         ) {
             Task { await viewModel.submit() }
@@ -190,6 +227,8 @@ struct PlaceSuggestionSheetView: View {
 }
 
 #Preview {
-    PlaceSuggestionSheetView(onFinished: { _ in })
-        .environment(AppCoordinator())
+    PlaceSuggestionSheetCard(onClose: {}, content: {
+        PlaceSuggestionSheetView(onFinished: { _ in }, onClose: {})
+    })
+    .environment(AppCoordinator())
 }

@@ -22,6 +22,9 @@ final class PlaceSuggestionViewModel {
     private(set) var isSubmitting = false
     private(set) var locationErrorMessage: String?
     private(set) var outcome: PlaceSuggestionOutcome?
+    /// The address put in the name field by "use my location", so switching to another place can take it out
+    /// again without touching what the user typed.
+    private var prefilledAddress: String?
 
     init(service: PlaceSuggestionServicing = PlaceSuggestionService()) {
         self.service = service
@@ -65,6 +68,32 @@ final class PlaceSuggestionViewModel {
             guard !PlaceSuggestionErrorMapper.isCancellation(error) else { return }
             locationErrorMessage = PlaceSuggestionErrorMapper.locationMessage(for: error)
         }
+    }
+
+    /// "Usar minha localização": searches near the user and offers their current address in the name field.
+    func useCurrentLocation() {
+        searchNearMe = true
+        fillQueryWithCurrentAddress()
+    }
+
+    /// "Outro lugar": the field starts empty again, unless the user already wrote something of their own.
+    func useAnotherPlace() {
+        searchNearMe = false
+        if let prefilledAddress, query == prefilledAddress {
+            query = ""
+        }
+        prefilledAddress = nil
+    }
+
+    /// Puts the address in the empty name field once the position is known. Never overwrites what was typed.
+    func fillQueryWithCurrentAddress() {
+        guard searchNearMe, trimmedQuery.isEmpty, let location = currentLocation else { return }
+        // Without a street address the lookup falls back to the coordinates, which is no use in a name field.
+        let address = location.address
+        guard address != SuggestedLocation.coordinateText(latitude: location.latitude, longitude: location.longitude)
+        else { return }
+        query = address
+        prefilledAddress = address
     }
 
     func search() async {

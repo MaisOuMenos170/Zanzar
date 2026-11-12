@@ -596,7 +596,7 @@
 				DEVELOPMENT_TEAM = 982D3NRR89;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ZanzarWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = ZanzarWidget;
+				INFOPLIST_KEY_CFBundleDisplayName = Lero;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 27.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -630,7 +630,7 @@
 				DEVELOPMENT_TEAM = 982D3NRR89;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ZanzarWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = ZanzarWidget;
+				INFOPLIST_KEY_CFBundleDisplayName = Lero;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 27.2;
 				LD_RUNPATH_SEARCH_PATHS = (

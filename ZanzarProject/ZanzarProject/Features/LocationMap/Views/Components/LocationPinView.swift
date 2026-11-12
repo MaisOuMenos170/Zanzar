@@ -1,12 +1,12 @@
 import SwiftUI
 
-/// Visual state of a map pin, from Figma pin family B "Etiqueta carimbo" (node 1929:462).
+/// Visual state of a map pin, from the Figma component "Pin do mapa v2" (node 1956:918).
 nonisolated enum LocationPinStyle: Sendable {
-    /// "Novo": not visited yet. Hollow white label with a dashed indigo outline, like a stamp still to be collected.
+    /// "Não visitado": hollow white label with a dashed indigo outline, like a stamp still to be collected.
     case available
     /// "Visitado": check-in done. Solid indigo label with a yellow check badge.
     case checkedIn
-    /// "Completa o roteiro": the stop that finishes the current itinerary. Larger orange label with a finish flag.
+    /// "No roteiro": the stop that completes the current itinerary. Larger orange label with a white outline.
     case inCurrentItinerary
 }
 
@@ -15,10 +15,7 @@ struct LocationPinView: View {
     let iconName: String
     var style: LocationPinStyle
 
-    /// Frame shared by all three states; the tail tip touches the bottom edge, centered horizontally.
-    static let size = CGSize(width: 64, height: 76)
-
-    private static let iconSize: CGFloat = 17
+    private static let iconSize: CGFloat = 18
 
     init(iconName: String = "leaf", style: LocationPinStyle = .available) {
         self.iconName = iconName
@@ -30,13 +27,13 @@ struct LocationPinView: View {
         self.style = style
     }
 
+    /// Frame of the pin in points; the tail tip touches the bottom edge, centered horizontally.
+    static func size(for style: LocationPinStyle) -> CGSize {
+        style == .inCurrentItinerary ? CGSize(width: 52, height: 62) : CGSize(width: 44, height: 54)
+    }
+
     var body: some View {
         ZStack {
-            if style == .inCurrentItinerary {
-                LocationPinFlag()
-                    .position(x: 47, y: 8.75)
-            }
-
             label
 
             Image(systemName: iconName)
@@ -47,10 +44,10 @@ struct LocationPinView: View {
 
             if style == .checkedIn {
                 LocationPinStampBadge()
-                    .position(x: 54, y: 26)
+                    .position(x: 41.5, y: 4.5)
             }
         }
-        .frame(width: Self.size.width, height: Self.size.height)
+        .frame(width: Self.size(for: style).width, height: Self.size(for: style).height)
         .accessibilityHidden(true)
     }
 
@@ -84,7 +81,7 @@ struct LocationPinView: View {
         switch style {
         case .available, .checkedIn:
             LabelMetrics(
-                origin: CGPoint(x: 11.25, y: 23.25),
+                origin: CGPoint(x: 1.25, y: 1.25),
                 size: CGSize(width: 41.5, height: 51.5),
                 cornerRadius: 12,
                 tailWidth: 14,
@@ -92,7 +89,7 @@ struct LocationPinView: View {
             )
         case .inCurrentItinerary:
             LabelMetrics(
-                origin: CGPoint(x: 7.5, y: 15.5),
+                origin: CGPoint(x: 1.5, y: 1.5),
                 size: CGSize(width: 49, height: 59),
                 cornerRadius: 14,
                 tailWidth: 16,
@@ -105,24 +102,24 @@ struct LocationPinView: View {
         switch style {
         case .available:
             PinLook(
-                fill: .white,
-                outline: Color("LocationPinPrimary"),
-                outlineStyle: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round, dash: [4.93, 4.32]),
-                icon: Color("LocationPinPrimary")
+                fill: .brandNeutral50,
+                outline: .brandPurple600,
+                outlineStyle: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round, dash: [3.5238, 2.6428]),
+                icon: .brandPurple600
             )
         case .checkedIn:
             PinLook(
-                fill: Color("LocationPinPrimary"),
-                outline: Color("LocationPinPrimary"),
-                outlineStyle: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round),
-                icon: .white
+                fill: .brandPurple600,
+                outline: .brandPurple600,
+                outlineStyle: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round),
+                icon: .brandNeutral50
             )
         case .inCurrentItinerary:
             PinLook(
-                fill: Color("LocationPinItineraryPrimary"),
-                outline: Color("LocationPinInk"),
+                fill: .brandOrange600,
+                outline: .brandNeutral50,
                 outlineStyle: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round),
-                icon: Color("LocationPinInk")
+                icon: .brandNeutral50
             )
         }
     }
@@ -152,23 +149,13 @@ private let previewCategories: [ZanzarPlaceCategory] = [
     .restaurant, .bar, .cafe, .museum, .park, .tourist, .historic, .curiosity, .party
 ]
 
-#Preview("Novo") {
-    HStack(spacing: 0) {
-        ForEach(previewCategories, id: \.self) { LocationPinView(category: $0) }
-    }
-    .padding()
-}
-
-#Preview("Visitado") {
-    HStack(spacing: 0) {
-        ForEach(previewCategories, id: \.self) { LocationPinView(category: $0, style: .checkedIn) }
-    }
-    .padding()
-}
-
-#Preview("Completa o roteiro") {
-    HStack(spacing: 0) {
-        ForEach(previewCategories, id: \.self) { LocationPinView(category: $0, style: .inCurrentItinerary) }
+#Preview("Pin v2") {
+    VStack(spacing: 12) {
+        ForEach([LocationPinStyle.available, .checkedIn, .inCurrentItinerary], id: \.self) { style in
+            HStack(spacing: 8) {
+                ForEach(previewCategories, id: \.self) { LocationPinView(category: $0, style: style) }
+            }
+        }
     }
     .padding()
 }

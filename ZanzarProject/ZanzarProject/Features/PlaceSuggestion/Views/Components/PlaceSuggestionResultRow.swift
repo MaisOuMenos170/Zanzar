@@ -13,7 +13,7 @@ struct PlaceSuggestionResultRow: View {
             HStack(spacing: 10) {
                 Image(systemName: isSelected ? "inset.filled.circle" : "circle")
                     .font(.body.weight(.medium))
-                    .foregroundStyle(isSelected ? Color("WelcomePrimary") : Color.secondary)
+                    .foregroundStyle(isSelected ? Color.brandPurple500 : Color.brandOptionIdleIcon)
 
                 VStack(alignment: .leading, spacing: 1) {
                     Text(place.name)
@@ -30,14 +30,14 @@ struct PlaceSuggestionResultRow: View {
             .padding(.horizontal, 14)
             .padding(.vertical, 11)
             .background(
-                isSelected ? Color("PlaceSuggestionOptionSelectedBackground") : Color(.systemBackground),
+                isSelected ? Color.brandPurple50 : Color.brandNeutral50,
                 in: .rect(cornerRadius: 8)
             )
             .overlay {
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(
-                        isSelected ? Color("WelcomePrimary") : Color("PlaceSuggestionOptionBorder"),
-                        lineWidth: isSelected ? 1.5 : 1
+                        isSelected ? Color.brandPurple400 : Color.brandOptionBorder,
+                        lineWidth: 1
                     )
             }
             .contentShape(.rect(cornerRadius: 8))

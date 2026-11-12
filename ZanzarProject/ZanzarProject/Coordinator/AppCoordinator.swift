@@ -71,7 +71,15 @@ final class AppCoordinator {
         case .itineraryDetail(let slug):
             ItineraryDetailSheet(slug: slug, onSelectPlace: onSelectPlace)
         case .suggestPlace:
-            PlaceSuggestionSheetView(onFinished: onPlaceSuggestionFinished)
+            PlaceSuggestionSheetCard(
+                onClose: { [weak self] in self?.dismissSheet() },
+                content: {
+                    PlaceSuggestionSheetView(
+                        onFinished: onPlaceSuggestionFinished,
+                        onClose: { [weak self] in self?.dismissSheet() }
+                    )
+                }
+            )
         }
     }
 }

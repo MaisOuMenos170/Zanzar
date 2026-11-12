@@ -33,6 +33,7 @@ struct MainTabView: View {
     @State private var suggestionStatusNotice = SuggestionStatusNoticeViewModel()
     @Environment(ToastPresenter.self) private var toastPresenter
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -45,21 +46,38 @@ struct MainTabView: View {
                 }
             }
         }
-        .tint(.tabBarSelected)
+        // The system tab bar, with the app's new blue (Blue/600 in the Figma) for the selected tab.
+        .tint(.brandBlue600)
         // Presented here, not by ContentView, so the sheet sees the shared places and can open a place
         // on the check-in tab's path once it closes.
-        .sheet(item: Bindable(coordinator).presentedSheet, onDismiss: presentPendingSuggestionAlert) { sheet in
+        .sheet(item: itinerarySheet, onDismiss: presentPendingSuggestionAlert) { sheet in
             coordinator.view(
                 for: sheet,
                 onSelectPlace: { place in
                     coordinator.dismissSheet()
                     checkInCoordinator.push(.placeDetail(place))
                 },
-                onPlaceSuggestionFinished: { outcome in
-                    pendingSuggestionOutcome = outcome
-                    coordinator.dismissSheet()
-                }
+                onPlaceSuggestionFinished: finishSuggestion
             )
+        }
+        // "Sugerir um lugar" is a full-width card of its own (see `PlaceSuggestionSheetCard`), not a system sheet.
+        .overlay {
+            if coordinator.presentedSheet == .suggestPlace {
+                coordinator.view(
+                    for: .suggestPlace,
+                    onSelectPlace: { _ in },
+                    onPlaceSuggestionFinished: finishSuggestion
+                )
+            }
+        }
+        .animation(reduceMotion ? nil : .smooth(duration: 0.35), value: coordinator.presentedSheet)
+        .onChange(of: coordinator.presentedSheet) { previous, current in
+            guard previous == .suggestPlace, current == nil else { return }
+            // An alert cannot appear while the card is still leaving.
+            Task {
+                try? await Task.sleep(for: .milliseconds(400))
+                presentPendingSuggestionAlert()
+            }
         }
         .placeSuggestionOutcomeAlert(isPresented: $showsSuggestionAlert, outcome: shownSuggestionOutcome)
         .environment(nearbyPlaces)
@@ -115,6 +133,22 @@ struct MainTabView: View {
             guard tab != .profile else { return }
             Task { try? await nearbyPlaces.refreshIfNeeded() }
         }
+    }
+
+    /// The system sheet only carries the roteiro detail; the suggestion form is drawn by the overlay.
+    private var itinerarySheet: Binding<Sheet?> {
+        Binding(
+            get: {
+                guard case .itineraryDetail = coordinator.presentedSheet else { return nil }
+                return coordinator.presentedSheet
+            },
+            set: { if $0 == nil, case .itineraryDetail = coordinator.presentedSheet { coordinator.dismissSheet() } }
+        )
+    }
+
+    private func finishSuggestion(_ outcome: PlaceSuggestionOutcome) {
+        pendingSuggestionOutcome = outcome
+        coordinator.dismissSheet()
     }
 
     /// The user tapped a proximity alert: show that place on Discover, whatever they were looking at.
