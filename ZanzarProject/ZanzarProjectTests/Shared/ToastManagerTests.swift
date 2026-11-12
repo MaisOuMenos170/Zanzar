@@ -10,7 +10,7 @@ struct ToastManagerTests {
         ToastManager(sleep: { _ in try await Task.sleep(for: .seconds(3600)) })
     }
 
-    /// Toasts leave as soon as the timer gets to run.
+    /// Toasts leave as soon as their timer gets to run.
     private func quickManager() -> ToastManager {
         ToastManager(sleep: { _ in })
     }
@@ -21,55 +21,122 @@ struct ToastManagerTests {
         }
     }
 
-    @Test("a toast shows right away when nothing else is on screen")
+    @Test("a toast shows right away")
     func showsImmediately() {
         let toasts = manager()
 
         toasts.show("One", style: .positive)
 
         #expect(toasts.current?.message == "One")
-        #expect(toasts.queue.isEmpty)
+        #expect(toasts.toasts.count == 1)
     }
 
-    @Test("toasts raised meanwhile wait in the order they came")
-    func queuesInOrder() {
+    @Test("toasts pile up with the newest in front")
+    func newestInFront() {
         let toasts = manager()
 
         toasts.show("One", style: .positive)
         toasts.show("Two", style: .negative)
         toasts.show("Three", style: .negative)
 
-        #expect(toasts.current?.message == "One")
-        #expect(toasts.queue.map(\.message) == ["Two", "Three"])
+        #expect(toasts.toasts.map(\.message) == ["One", "Two", "Three"])
+        #expect(toasts.current?.message == "Three")
     }
 
-    @Test("dismissing the toast on screen brings the next one")
-    func dismissAdvances() throws {
+    @Test("dismissing the toast in front brings back the one behind it")
+    func dismissFront() {
         let toasts = manager()
         toasts.show("One", style: .positive)
         toasts.show("Two", style: .negative)
 
-        toasts.dismiss(try #require(toasts.current).id)
+        toasts.dismissCurrent()
 
-        #expect(toasts.current?.message == "Two")
-        #expect(toasts.queue.isEmpty)
+        #expect(toasts.current?.message == "One")
 
         toasts.dismissCurrent()
 
         #expect(toasts.current == nil)
     }
 
-    @Test("a toast that is still waiting can be taken out of the queue")
-    func dismissWaiting() throws {
+    @Test("a toast behind the front one can be taken out on its own")
+    func dismissBehind() throws {
         let toasts = manager()
         toasts.show("One", style: .positive)
         toasts.show("Two", style: .negative)
-        let waiting = try #require(toasts.queue.first)
+        let behind = try #require(toasts.toasts.first)
 
-        toasts.dismiss(waiting.id)
+        toasts.dismiss(behind.id)
 
-        #expect(toasts.current?.message == "One")
-        #expect(toasts.queue.isEmpty)
+        #expect(toasts.toasts.map(\.message) == ["Two"])
+    }
+
+    @Test("a message already in the pile is not added again")
+    func repeatedMessageIsNotAdded() throws {
+        let toasts = manager()
+        toasts.show("One", style: .negative)
+        let original = try #require(toasts.current)
+
+        toasts.show("One", style: .negative)
+
+        #expect(toasts.toasts.count == 1)
+        #expect(toasts.current?.id == original.id)
+    }
+
+    @Test("a repeated message that was behind comes to the front")
+    func repeatedMessageComesToFront() throws {
+        let toasts = manager()
+        toasts.show("One", style: .negative)
+        let original = try #require(toasts.current)
+        toasts.show("Two", style: .negative)
+
+        toasts.show("One", style: .negative)
+
+        #expect(toasts.toasts.map(\.message) == ["Two", "One"])
+        #expect(toasts.current?.id == original.id)
+    }
+
+    @Test("the same text with another style is a different toast")
+    func sameTextOtherStyle() {
+        let toasts = manager()
+
+        toasts.show("Done", style: .positive)
+        toasts.show("Done", style: .negative)
+
+        #expect(toasts.toasts.count == 2)
+    }
+
+    @Test("a newer toast pushes the oldest out once the pile is full")
+    func pileIsCapped() {
+        let toasts = manager()
+
+        for number in 1...(ToastManager.maxStored + 2) {
+            toasts.show("Toast \(number)", style: .negative)
+        }
+
+        #expect(toasts.toasts.count == ToastManager.maxStored)
+        #expect(toasts.toasts.first?.message == "Toast 3")
+        #expect(toasts.current?.message == "Toast 7")
+    }
+
+    @Test("only the newest few are drawn")
+    func visibleToasts() {
+        let toasts = manager()
+
+        for number in 1...5 {
+            toasts.show("Toast \(number)", style: .negative)
+        }
+
+        #expect(toasts.visibleToasts.map(\.message) == ["Toast 3", "Toast 4", "Toast 5"])
+    }
+
+    @Test("a toast for the other edge is not drawn with the one in front")
+    func visibleToastsShareAnEdge() {
+        let toasts = manager()
+
+        toasts.show("Below", style: .negative, position: .bottom)
+        toasts.show("Above", style: .negative, position: .top)
+
+        #expect(toasts.visibleToasts.map(\.message) == ["Above"])
     }
 
     @Test("a toast keeps its style, position and duration")
@@ -93,7 +160,7 @@ struct ToastManagerTests {
         #expect(toasts.current?.duration == ToastManager.defaultDuration)
     }
 
-    @Test("removeAll drops the toast on screen and the ones waiting")
+    @Test("removeAll empties the pile")
     func removeAll() {
         let toasts = manager()
         toasts.show("One", style: .positive)
@@ -102,32 +169,43 @@ struct ToastManagerTests {
         toasts.removeAll()
 
         #expect(toasts.current == nil)
-        #expect(toasts.queue.isEmpty)
+        #expect(toasts.toasts.isEmpty)
     }
 
-    @Test("a toast leaves by itself and the next one follows")
-    func leavesByItself() async {
+    @Test("toasts leave by themselves")
+    func leaveByThemselves() async {
         let toasts = quickManager()
 
         toasts.show("One", style: .positive)
         toasts.show("Two", style: .negative)
-        await wait { toasts.current == nil && toasts.queue.isEmpty }
+        await wait { toasts.toasts.isEmpty }
 
-        #expect(toasts.current == nil)
-        #expect(toasts.queue.isEmpty)
+        #expect(toasts.toasts.isEmpty)
     }
 
-    @Test("the countdown holds while paused and runs again when resumed")
+    @Test("each toast counts down on its own, even from behind")
+    func independentCountdowns() async {
+        let toasts = ToastManager(sleep: { try await Task.sleep(for: $0) })
+        toasts.show("Short", style: .negative, duration: .milliseconds(30))
+        toasts.show("Long", style: .positive, duration: .seconds(3600))
+
+        await wait { toasts.toasts.count == 1 }
+
+        #expect(toasts.toasts.map(\.message) == ["Long"])
+    }
+
+    @Test("the countdowns hold while paused and run again when resumed")
     func pauseAndResume() async {
         let toasts = ToastManager(sleep: { _ in try await Task.sleep(for: .milliseconds(50)) })
         toasts.show("One", style: .positive)
+        toasts.show("Two", style: .negative)
 
-        toasts.pauseTimer()
+        toasts.pauseTimers()
         try? await Task.sleep(for: .milliseconds(200))
-        #expect(toasts.current?.message == "One")
+        #expect(toasts.toasts.count == 2)
 
-        toasts.resumeTimer()
-        await wait { toasts.current == nil }
-        #expect(toasts.current == nil)
+        toasts.resumeTimers()
+        await wait { toasts.toasts.isEmpty }
+        #expect(toasts.toasts.isEmpty)
     }
 }

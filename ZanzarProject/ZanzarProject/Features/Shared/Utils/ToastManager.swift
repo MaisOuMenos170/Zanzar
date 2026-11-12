@@ -3,47 +3,71 @@ import SwiftUI
 
 /// Owns the toasts of the app. Any screen raises one with `show`, so a toast can outlive the screen that raised it.
 ///
-/// One toast is on screen at a time and the others wait in a queue, oldest first. Each toast leaves by itself after
-/// its duration, or sooner when it is dismissed. `ToastOverlay` draws the one on screen.
+/// Toasts pile up: the newest is in front and the older ones wait behind it. Each one has its own countdown that
+/// starts when it is raised, so a message that is no longer news is gone by the time the ones in front of it leave.
+/// A message already in the pile is not added again; it comes to the front and its countdown starts over.
+/// `ToastOverlay` draws the pile.
 @MainActor
 @Observable
 final class ToastManager {
     static let defaultDuration = Duration.seconds(4)
+    /// How many toasts of the pile can be seen at once.
+    static let maxVisible = 3
+    /// How many toasts the pile keeps; a newer one pushes the oldest out.
+    static let maxStored = 5
 
-    /// The toast on screen.
-    private(set) var current: ToastItem?
-    /// The toasts waiting for their turn, oldest first.
-    private(set) var queue: [ToastItem] = []
+    /// The pile, oldest first. The last one is in front.
+    private(set) var toasts: [ToastItem] = []
+
+    /// The toast in front.
+    var current: ToastItem? {
+        toasts.last
+    }
+
+    /// The toasts to draw, oldest first, so the last one is in front. They all sit on the edge of the one in front;
+    /// a toast that asked for the other edge waits until the front one leaves.
+    var visibleToasts: [ToastItem] {
+        guard let front = toasts.last else { return [] }
+        return Array(toasts.filter { $0.position == front.position }.suffix(Self.maxVisible))
+    }
 
     /// Waits for a toast's duration. A parameter so tests do not have to wait for real time.
     private let sleep: @Sendable (Duration) async throws -> Void
-    @ObservationIgnored private var timer: Task<Void, Never>?
+    @ObservationIgnored private var timers: [ToastItem.ID: Task<Void, Never>] = [:]
 
     init(sleep: @escaping @Sendable (Duration) async throws -> Void = { try await Task.sleep(for: $0) }) {
         self.sleep = sleep
     }
 
-    /// Shows the toast now, or after the ones already waiting.
+    /// Puts the toast in front of the pile.
     func show(
         _ message: String,
         style: ToastStyle,
         position: ToastPosition = .top,
         duration: Duration = ToastManager.defaultDuration
     ) {
-        queue.append(ToastItem(message: message, style: style, position: position, duration: duration))
-        presentNextIfIdle()
+        if let index = toasts.firstIndex(where: { $0.message == message && $0.style == style }) {
+            let repeated = toasts.remove(at: index)
+            toasts.append(repeated)
+            startTimer(for: repeated)
+            return
+        }
+
+        let toast = ToastItem(message: message, style: style, position: position, duration: duration)
+        toasts.append(toast)
+        if toasts.count > Self.maxStored {
+            dismiss(toasts[0].id)
+        }
+        // The overlay appears without moving focus, so VoiceOver has to be told about it.
+        AccessibilityNotification.Announcement(message).post()
+        startTimer(for: toast)
     }
 
-    /// Takes a toast away, whether it is on screen or still waiting.
+    /// Takes a toast out of the pile, whether it is in front or behind.
     func dismiss(_ id: ToastItem.ID) {
-        if current?.id == id {
-            timer?.cancel()
-            timer = nil
-            current = nil
-            presentNextIfIdle()
-        } else {
-            queue.removeAll { $0.id == id }
-        }
+        timers[id]?.cancel()
+        timers[id] = nil
+        toasts.removeAll { $0.id == id }
     }
 
     func dismissCurrent() {
@@ -51,39 +75,35 @@ final class ToastManager {
         dismiss(id)
     }
 
-    /// Drops the toast on screen and every one waiting.
+    /// Empties the pile.
     func removeAll() {
-        queue.removeAll()
-        dismissCurrent()
+        for timer in timers.values {
+            timer.cancel()
+        }
+        timers.removeAll()
+        toasts.removeAll()
     }
 
-    /// Holds the countdown while the user is dragging the toast.
-    func pauseTimer() {
-        timer?.cancel()
-        timer = nil
+    /// Holds every countdown while the user is dragging the toast.
+    func pauseTimers() {
+        for timer in timers.values {
+            timer.cancel()
+        }
+        timers.removeAll()
     }
 
-    /// Starts the countdown again, from the full duration, once the user lets go.
-    func resumeTimer() {
-        guard timer == nil, current != nil else { return }
-        startTimer()
+    /// Starts the countdowns again, from the full duration, once the user lets go.
+    func resumeTimers() {
+        for toast in toasts where timers[toast.id] == nil {
+            startTimer(for: toast)
+        }
     }
 
-    private func presentNextIfIdle() {
-        guard current == nil, !queue.isEmpty else { return }
-        let next = queue.removeFirst()
-        current = next
-        // The overlay appears without moving focus, so VoiceOver has to be told about it.
-        AccessibilityNotification.Announcement(next.message).post()
-        startTimer()
-    }
-
-    private func startTimer() {
-        guard let toast = current else { return }
-        timer?.cancel()
+    private func startTimer(for toast: ToastItem) {
+        timers[toast.id]?.cancel()
         let sleep = sleep
         // The waiting needs nothing from the main actor; only taking the toast away does.
-        timer = Task { @concurrent [weak self] in
+        timers[toast.id] = Task { @concurrent [weak self] in
             do {
                 try await sleep(toast.duration)
             } catch {
