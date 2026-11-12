@@ -48,7 +48,7 @@ struct PlaceDetailCheckInButton: View {
                     .accessibilityAddTraits(.isStaticText)
             } else {
                 Button(titleKey, action: action)
-                    .buttonStyle(AuthPrimaryButtonStyle())
+                    .buttonStyle(AuthPrimaryButtonStyle(background: .brandBlue500))
                     .disabled(isLoading)
                     .overlay {
                         if isLoading {

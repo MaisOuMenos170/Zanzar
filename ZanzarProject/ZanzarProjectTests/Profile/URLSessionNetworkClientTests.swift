@@ -102,6 +102,23 @@ struct URLSessionNetworkClientTests {
         )
     }
 
+    @Test("password reset calls go without a Bearer token, so their 401 is not taken for an expired session")
+    func passwordResetIsPublic() async throws {
+        StubURLProtocol.stub(status: 401, body: Data(#"{"message":"Invalid reset token"}"#.utf8))
+
+        await #expect(throws: APIError.self) {
+            try await makeClient().sendWithoutResponse(
+                path: "password/reset",
+                method: .post,
+                body: ResetPasswordRequest(resetToken: "reset", newPassword: "nova1234")
+            )
+        }
+
+        let request = try #require(StubURLProtocol.lastRequest)
+        #expect(request.value(forHTTPHeaderField: "Authorization") == nil)
+        #expect(StubURLProtocol.requestCount == 1)
+    }
+
     @Test("maps a non-2xx response to an API error")
     func mapsHTTPFailure() async {
         StubURLProtocol.stub(status: 401, body: Data(#"{"message":"Invalid JWT token"}"#.utf8))

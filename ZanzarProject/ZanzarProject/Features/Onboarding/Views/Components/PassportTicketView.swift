@@ -12,9 +12,9 @@ struct PassportTicketView: View {
         ZStack(alignment: .topLeading) {
             Color.white
 
-            Color.brandOrange400
+            Color.brandOrange500
                 .frame(width: 23.68)
-            Color.brandOrange400
+            Color.brandOrange500
                 .frame(width: 22.81)
                 .frame(maxWidth: .infinity, alignment: .trailing)
 

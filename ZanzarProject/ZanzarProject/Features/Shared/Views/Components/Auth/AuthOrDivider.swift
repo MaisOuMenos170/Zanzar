@@ -5,7 +5,7 @@ struct AuthOrDivider: View {
         HStack(spacing: 16) {
             line
             Text("auth.or.label")
-                .font(.subheadline)
+                .typography(.body2)
                 .foregroundStyle(Color.brandNeutral950)
             line
         }

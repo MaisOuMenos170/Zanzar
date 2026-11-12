@@ -16,6 +16,7 @@ struct LoginView: View {
         } actions: {
             actions
         }
+        .toast(for: viewModel.submitError)
         .onChange(of: viewModel.email) {
             viewModel.refreshShownFieldErrors()
         }
@@ -26,11 +27,6 @@ struct LoginView: View {
 
     private var form: some View {
         VStack(spacing: 16) {
-            if let submitError = viewModel.submitError {
-                ErrorBanner(message: submitError)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-
             AuthFormField(
                 labelKey: "login.emailField.label",
                 placeholderKey: "login.emailField.placeholder",
@@ -51,6 +47,15 @@ struct LoginView: View {
                 submitLabel: .go,
                 isFocused: $isPasswordFocused
             )
+
+            Button("login.forgotPassword.button.title") {
+                coordinator.push(.forgotPassword)
+            }
+            .typography(.subtitle2)
+            .foregroundStyle(.primary)
+            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity, minHeight: 44, alignment: .trailing)
+            .contentShape(.rect)
         }
         .onSubmit {
             if isEmailFocused {
@@ -88,7 +93,7 @@ struct LoginView: View {
             Task { await submit() }
         }
         .buttonStyle(AuthPrimaryButtonStyle())
-        .disabled(viewModel.isLoading)
+        .disabled(viewModel.isLoading || !viewModel.canSubmit)
         .overlay {
             if viewModel.isLoading {
                 ProgressView()
@@ -141,6 +146,6 @@ struct LoginView: View {
             .environment(AppCoordinator())
             .environment(AuthSession())
             .environment(OnboardingGate())
-            .environment(ToastPresenter())
+            .environment(ToastManager())
     }
 }

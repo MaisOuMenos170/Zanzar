@@ -31,7 +31,7 @@ struct MainTabView: View {
     @State private var showsSuggestionAlert = false
     @State private var photoStatusNotice = PhotoStatusNoticeViewModel()
     @State private var suggestionStatusNotice = SuggestionStatusNoticeViewModel()
-    @Environment(ToastPresenter.self) private var toastPresenter
+    @Environment(ToastManager.self) private var toastManager
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -115,10 +115,10 @@ struct MainTabView: View {
         .task(id: scenePhase) {
             guard scenePhase == .active else { return }
             if let message = await photoStatusNotice.checkForChanges() {
-                toastPresenter.show(message)
+                toastManager.show(message, style: .positive)
             }
             if let message = await suggestionStatusNotice.checkForChanges() {
-                toastPresenter.show(message)
+                toastManager.show(message, style: .positive)
             }
         }
         // The regions watched for proximity alerts follow the places around the user.

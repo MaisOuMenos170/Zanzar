@@ -7,7 +7,7 @@ struct PlaceDetailUserPhotoFlows: ViewModifier {
     let detail: PlaceDetail?
     let reloadUserPhotos: () async -> Void
 
-    @Environment(ToastPresenter.self) private var toastPresenter
+    @Environment(ToastManager.self) private var toastManager
     @State private var photoToReport: UserPhotoAttribution?
     @State private var photoToBlock: UserPhotoAttribution?
 
@@ -34,7 +34,7 @@ struct PlaceDetailUserPhotoFlows: ViewModifier {
             )
             .sheet(item: $photoToReport) { attribution in
                 ReportPhotoSheet(photoID: attribution.photoID, placeID: placeID) {
-                    toastPresenter.show(L10n.string("placeDetail.photoReport.sentToast"))
+                    toastManager.show(L10n.string("placeDetail.photoReport.sentToast"), style: .positive)
                     Task { await reloadUserPhotos() }
                 }
             }
@@ -62,7 +62,7 @@ struct PlaceDetailUserPhotoFlows: ViewModifier {
         let blocker = ReportPhotoViewModel(photoID: attribution.photoID, placeID: placeID)
         await blocker.blockOnly()
         let key = blocker.didFinish ? "placeDetail.photoBlock.doneToast" : "placeDetail.photoBlock.failedToast"
-        toastPresenter.show(L10n.string(key))
+        toastManager.show(L10n.string(key), style: blocker.didFinish ? .positive : .negative)
         await reloadUserPhotos()
     }
 }

@@ -11,6 +11,7 @@ nonisolated enum AppLog: String {
     case auth
     case login
     case signUp
+    case passwordReset
     case map
     case placeDetail
     case ratingPrompt

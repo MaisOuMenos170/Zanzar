@@ -15,8 +15,7 @@ struct AuthScreenScaffold<Content: View, Actions: View>: View {
                 Spacer(minLength: 0)
 
                 Text(titleKey)
-                    .font(.largeTitle.weight(.semibold))
-                    .fontDesign(.rounded)
+                    .typography(.headline4)
                     .foregroundStyle(.primary)
                     .accessibilityAddTraits(.isHeader)
 

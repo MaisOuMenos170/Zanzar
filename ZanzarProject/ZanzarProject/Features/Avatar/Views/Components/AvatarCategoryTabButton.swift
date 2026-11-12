@@ -33,7 +33,7 @@ struct AvatarCategoryTabButton: View {
     @ViewBuilder
     private var background: some View {
         if isSelected {
-            Color.brandPink300
+            Color.brandCoral500
                 .overlay {
                     Stripe(width: 14.9, height: 91, offset: CGSize(width: -8, height: 4))
                     Stripe(width: 6.7, height: 91, offset: CGSize(width: 6, height: -2))
@@ -50,7 +50,7 @@ struct AvatarCategoryTabButton: View {
 
         var body: some View {
             Rectangle()
-                .fill(Color.brandPink200.opacity(0.32))
+                .fill(Color.brandPink200.opacity(0.18))
                 .frame(width: height, height: width)
                 .rotationEffect(.degrees(-43.33))
                 .offset(offset)

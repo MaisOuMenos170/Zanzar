@@ -15,7 +15,7 @@ struct PassportIllustrationView: View {
             PassportArtImage(piece: PassportArtPiece.arrows)
 
             Group {
-                PassportCardView(avatar: avatar, name: name, stampCount: 0)
+                PassportCardView(avatar: avatar, name: name, stampCount: stage == .stamped ? 1 : 0)
 
                 if stage == .stamped {
                     PassportLeroStampView()

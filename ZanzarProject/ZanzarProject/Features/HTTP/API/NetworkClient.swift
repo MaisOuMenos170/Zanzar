@@ -58,7 +58,11 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
 
     // `/places` is intentionally omitted: the backend accepts anonymous reads but enriches
     // responses when a Bearer token is available (optional auth).
-    private static let publicPaths: Set<String> = ["login", "register", "health"]
+    // The password reset calls carry no session: a stale Bearer would make a 401 on `password/reset`
+    // (expired reset token) look like an expired session.
+    private static let publicPaths: Set<String> = [
+        "login", "register", "health", "password/forgot", "password/verify", "password/reset"
+    ]
     // A 401 here never triggers a token refresh: `login`/`register` reject credentials rather than a token,
     // `refresh` would recurse, and `logout` is best effort (the app signs out locally either way).
     private static let noRefreshPaths: Set<String> = publicPaths.union(["refresh", "logout"])
