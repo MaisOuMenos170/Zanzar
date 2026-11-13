@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 
 struct PlaceDetailView: View {
     let place: MapPlace
@@ -11,6 +12,12 @@ struct PlaceDetailView: View {
     @State private var showsPhotoUpload = false
     /// The content rises in once when it first loads, not again when a nested screen is popped.
     @State private var contentShown = false
+
+    // Tips
+    private let checkInTip = PlaceDetailCheckInTip()
+    private let addPhotoTip = PlaceDetailAddPhotoTip()
+    private let directionsTip = PlaceDetailDirectionsTip()
+
     init(place: MapPlace) {
         self.place = place
         _viewModel = State(initialValue: PlaceDetailViewModel(place: place))
@@ -204,13 +211,17 @@ struct PlaceDetailView: View {
                     isLoading: viewModel.isCheckingIn
                 ) {
                     viewModel.requestCheckIn()
+                    PlaceDetailCheckInTip.hasViewedPlaceDetail = true
                 }
                 .entrance(contentShown, order: 1)
+                .popoverTip(checkInTip, arrowEdge: .top)
 
                 PlaceDetailAddPhotoButton(hasCheckedIn: detail.hasCheckedIn) {
                     showsPhotoUpload = true
+                    PlaceDetailAddPhotoTip.hasViewedPlaceDetail = true
                 }
                 .entrance(contentShown, order: 1)
+                .popoverTip(addPhotoTip, arrowEdge: .top)
 
                 PlaceDetailDescriptionSection(description: detail.description)
                     .entrance(contentShown, order: 1)
@@ -233,6 +244,7 @@ struct PlaceDetailView: View {
                 placeName: detail.displayName
             )
             .entrance(contentShown, order: 3)
+            .popoverTip(directionsTip, arrowEdge: .top)
         }
         .padding(.horizontal, 16)
         .onAppear {

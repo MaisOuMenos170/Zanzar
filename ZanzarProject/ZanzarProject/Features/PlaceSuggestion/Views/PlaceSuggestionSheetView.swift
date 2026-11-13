@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 
 struct PlaceSuggestionSheetView: View {
     @State private var viewModel: PlaceSuggestionViewModel
@@ -9,6 +10,8 @@ struct PlaceSuggestionSheetView: View {
     @State private var contentHeight: CGFloat?
     private let onFinished: (PlaceSuggestionOutcome) -> Void
     private let onClose: () -> Void
+    
+    private let suggestTip = PlaceSuggestionTip()
 
     init(
         service: PlaceSuggestionServicing = PlaceSuggestionService(),
@@ -220,9 +223,11 @@ struct PlaceSuggestionSheetView: View {
             isLoading: viewModel.isSubmitting
         ) {
             Task { await viewModel.submit() }
+            PlaceSuggestionTip.hasUsedDiscover = true
         }
         .disabled(!viewModel.canSubmit)
         .opacity(viewModel.canSubmit || viewModel.isSubmitting ? 1 : 0.4)
+        .popoverTip(suggestTip, arrowEdge: .top)
     }
 }
 

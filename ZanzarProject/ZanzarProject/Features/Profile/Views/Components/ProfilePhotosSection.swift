@@ -1,9 +1,12 @@
 import SwiftUI
+import TipKit
 
 /// Links to the user's photos and to how photos and blocking work.
 struct ProfilePhotosSection: View {
     let onOpenMyPhotos: () -> Void
     let onOpenPrivacy: () -> Void
+    
+    private let myPhotosTip = ProfileMyPhotosTip()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -15,6 +18,7 @@ struct ProfilePhotosSection: View {
                     systemImage: "photo.on.rectangle",
                     action: onOpenMyPhotos
                 )
+                .popoverTip(myPhotosTip, arrowEdge: .trailing)
                 Divider()
                 row(titleKey: "profile.photosSection.privacy.title", systemImage: "hand.raised", action: onOpenPrivacy)
             }

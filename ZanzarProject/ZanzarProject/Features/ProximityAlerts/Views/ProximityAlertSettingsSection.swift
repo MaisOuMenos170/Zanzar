@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 
 /// The Profile section where the user chooses what the proximity alerts tell them, and fixes what blocks them.
 struct ProximityAlertSettingsSection: View {
@@ -8,6 +9,9 @@ struct ProximityAlertSettingsSection: View {
         onChanged: { await ProximityAlertCoordinator.shared.refresh() }
     )
     @Environment(\.scenePhase) private var scenePhase
+    
+    private let enableTip = ProximityAlertsEnableTip()
+    private let customizeTip = ProximityAlertsCustomizeTip()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -18,9 +22,12 @@ struct ProximityAlertSettingsSection: View {
                 Toggle(isOn: nearbyBinding) {
                     label("proximitySettings.nearby.title", "proximitySettings.nearby.subtitle")
                 }
+                .popoverTip(enableTip, arrowEdge: .trailing)
+                
                 Toggle(isOn: itineraryBinding) {
                     label("proximitySettings.itinerary.title", "proximitySettings.itinerary.subtitle")
                 }
+                .popoverTip(customizeTip, arrowEdge: .trailing)
             }
 
             permissionRow

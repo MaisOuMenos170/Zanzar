@@ -1,10 +1,13 @@
 import SwiftUI
+import TipKit
 
 struct AvatarEditorView: View {
     @State private var viewModel = AvatarEditorViewModel()
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(OnboardingGate.self) private var onboarding
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    
+    private let avatarEditorTip = OnboardingAvatarEditorTip()
 
     private var previewSize: CGFloat {
         dynamicTypeSize.isAccessibilitySize ? 120 : 210
@@ -13,6 +16,7 @@ struct AvatarEditorView: View {
     var body: some View {
         VStack(spacing: 16) {
             preview
+                .popoverTip(avatarEditorTip, arrowEdge: .top)
 
             AvatarCategoryTabBar(selection: $viewModel.selectedTab)
 

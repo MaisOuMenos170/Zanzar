@@ -1,5 +1,6 @@
 import MapKit
 import SwiftUI
+import TipKit
 
 struct LocationMapView: View {
     let store: NearbyPlacesStore
@@ -15,6 +16,12 @@ struct LocationMapView: View {
     @Environment(ToastManager.self) private var toasts
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    
+    // Tips
+    private let mapPinsTip = DiscoverMapPinsTip()
+    private let filterTip = DiscoverFilterTip()
+    private let searchTip = DiscoverSearchTip()
+    private let userLocationTip = DiscoverUserLocationTip()
 
     init(store: NearbyPlacesStore, zoomNamespace: Namespace.ID) {
         self.store = store
@@ -35,6 +42,7 @@ struct LocationMapView: View {
         .mapControls {
             #if !(DEBUG && targetEnvironment(simulator))
             MapUserLocationButton()
+                .popoverTip(userLocationTip, arrowEdge: .trailing)
             #endif
             MapCompass()
         }
@@ -72,6 +80,10 @@ struct LocationMapView: View {
         }
         .overlay(alignment: .top) {
             discoverControls
+        }
+        .overlay(alignment: .bottom) {
+            TipView(mapPinsTip, arrowEdge: .top)
+                .padding(.bottom, 100)
         }
         .animation(reduceMotion ? nil : .default, value: ratingPrompt.isPresented)
         .haptic(.toqueSuave, trigger: pinTaps)

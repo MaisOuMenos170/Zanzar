@@ -1,5 +1,6 @@
 import PhotosUI
 import SwiftUI
+import TipKit
 
 /// Sending a photo of a place, from the library or the camera. Presented as a sheet by the place screen.
 struct PhotoUploadSheet: View {
@@ -9,6 +10,9 @@ struct PhotoUploadSheet: View {
     @State private var cameraMessage: LocalizedStringKey?
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
+    
+    private let takePhotoTip = UserPhotosTakePhotoTip()
+    private let uploadTip = UserPhotosUploadTip()
 
     init(placeID: String, placeName: String, fromCheckIn: Bool) {
         _viewModel = State(
@@ -121,14 +125,17 @@ struct PhotoUploadSheet: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+            .popoverTip(takePhotoTip, arrowEdge: .top)
             Button {
                 Task { await openCamera() }
+                UserPhotosTakePhotoTip.hasOpenedMyPhotos = true
             } label: {
                 Label("userPhotos.upload.cameraButton.title", systemImage: "camera")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)
             .controlSize(.large)
+            .popoverTip(uploadTip, arrowEdge: .top)
             Text("userPhotos.upload.reviewNotice")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -217,6 +224,7 @@ struct PhotoUploadSheet: View {
             Button("userPhotos.upload.sent.doneButton.title") { dismiss() }
                 .buttonStyle(.borderedProminent)
         }
+        .popoverTip(UserPhotosStatusTip(), arrowEdge: .top)
     }
 
     private func failed(_ error: PhotoUploadError) -> some View {
