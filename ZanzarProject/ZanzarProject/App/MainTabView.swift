@@ -33,6 +33,7 @@ struct MainTabView: View {
     @State private var suggestionStatusNotice = SuggestionStatusNoticeViewModel()
     @Environment(ToastManager.self) private var toastManager
     @Environment(\.scenePhase) private var scenePhase
+    @Namespace private var placeZoom
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -177,8 +178,15 @@ struct MainTabView: View {
         switch tab {
         case .discover:
             NavigationStack(path: Bindable(coordinator).path) {
-                LocationMapView(store: nearbyPlaces)
-                    .navigationDestination(for: Route.self) { coordinator.view(for: $0) }
+                LocationMapView(store: nearbyPlaces, zoomNamespace: placeZoom)
+                    .navigationDestination(for: Route.self) { route in
+                        if case .placeDetail(let place, true) = route {
+                            coordinator.view(for: route)
+                                .navigationTransition(.zoom(sourceID: place.id, in: placeZoom))
+                        } else {
+                            coordinator.view(for: route)
+                        }
+                    }
             }
         case .checkIn:
             NavigationStack(path: Bindable(checkInCoordinator).path) {

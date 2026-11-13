@@ -8,6 +8,11 @@ nonisolated enum LocationPinStyle: Sendable {
     case checkedIn
     /// "No roteiro": the stop that completes the current itinerary. Larger orange label with a white outline.
     case inCurrentItinerary
+
+    /// A pin earns its stamp when it turns into a checked-in one, not when it is drawn that way.
+    static func earnedStamp(from old: LocationPinStyle, to new: LocationPinStyle) -> Bool {
+        new == .checkedIn && old != .checkedIn
+    }
 }
 
 /// Map pin for places loaded from the backend — not the user's live location.
@@ -44,10 +49,15 @@ struct LocationPinView: View {
 
             if style == .checkedIn {
                 LocationPinStampBadge()
+                    .transition(.scale(scale: 1.6).combined(with: .opacity))
                     .position(x: 41.5, y: 4.5)
             }
         }
         .frame(width: Self.size(for: style).width, height: Self.size(for: style).height)
+        .motion(Motion.carimbo(duration: Motion.StampSize.small.duration), value: style)
+        .haptic(.carimboLeve, trigger: style, when: { old, new in
+            LocationPinStyle.earnedStamp(from: old, to: new)
+        })
         .accessibilityHidden(true)
     }
 

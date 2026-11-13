@@ -46,7 +46,7 @@ final class AppCoordinator {
         switch route {
         case .signUp, .login, .forgotPassword, .resetCode, .codeVerified, .newPassword, .passwordResetSuccess:
             authView(for: route)
-        case .placeDetail(let place):
+        case .placeDetail(let place, _):
             PlaceDetailView(place: place)
         case .avatar:
             AvatarView()

@@ -8,7 +8,8 @@ enum Route: Hashable {
     case codeVerified(resetToken: String)
     case newPassword(resetToken: String)
     case passwordResetSuccess
-    case placeDetail(MapPlace)
+    /// `zoomsFromPin` is true when the push starts from a map pin, so the detail opens as a zoom out of it.
+    case placeDetail(MapPlace, zoomsFromPin: Bool = false)
     case avatar
     case avatarEditor
     case passportIntro(avatar: Avatar, username: String?)
