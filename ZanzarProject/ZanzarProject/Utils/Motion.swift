@@ -41,6 +41,16 @@ extension View {
     }
 }
 
+extension View {
+    /// Fades in and rises a little once `isShown` turns on. `order` staggers siblings by 60ms each.
+    /// With Reduce Motion the view just appears.
+    func entrance(_ isShown: Bool, order: Int = 0) -> some View {
+        opacity(isShown ? 1 : 0)
+            .offset(y: isShown ? 0 : 12)
+            .motion(Motion.assentar.delay(0.06 * Double(order)), value: isShown)
+    }
+}
+
 private struct MotionModifier<V: Equatable>: ViewModifier {
     let animation: Animation
     let value: V

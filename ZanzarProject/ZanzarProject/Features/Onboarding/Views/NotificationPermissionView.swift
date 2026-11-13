@@ -10,6 +10,8 @@ struct NotificationPermissionView: View {
     @State private var viewModel = NotificationPermissionViewModel()
     @Environment(OnboardingGate.self) private var onboarding
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var bellRings = 0
 
     var body: some View {
         VStack(spacing: 24) {
@@ -19,6 +21,7 @@ struct NotificationPermissionView: View {
                 Image(systemName: "bell.badge.fill")
                     .font(.system(size: 60))
                     .foregroundStyle(.tint)
+                    .symbolEffect(.bounce, options: .nonRepeating, value: bellRings)
                     .accessibilityHidden(true)
 
                 Text("notificationPermission.title")
@@ -70,6 +73,13 @@ struct NotificationPermissionView: View {
         .background(Color.brandBlue50.ignoresSafeArea())
         .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
         .task { await viewModel.checkStatus() }
+        .task {
+            // The bell rings once, a beat after the screen settles.
+            guard !reduceMotion else { return }
+            try? await Task.sleep(for: .milliseconds(450))
+            guard !Task.isCancelled else { return }
+            bellRings += 1
+        }
         .onChange(of: viewModel.step) { _, newStep in
             if newStep == .enabled {
                 finishOnboarding()

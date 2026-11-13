@@ -12,15 +12,19 @@ struct ContentView: View {
 
     var body: some View {
         Group {
-            if authSession.isAuthenticated && !onboarding.isActive {
+            if showsMainApp {
                 MainTabView()
+                    .transition(.opacity)
             } else {
                 NavigationStack(path: $coordinator.path) {
                     WelcomeView()
                         .navigationDestination(for: Route.self) { coordinator.view(for: $0) }
                 }
+                .transition(.opacity)
             }
         }
+        .motion(Motion.assentar, value: showsMainApp)
+        .haptic(.sucesso, trigger: showsMainApp, when: { _, isShown in isShown })
         .onChange(of: authSession.isAuthenticated) { _, isAuthenticated in
             // While onboarding the coordinator already points at the avatar editor.
             guard !onboarding.isActive else { return }
@@ -55,6 +59,10 @@ struct ContentView: View {
 }
 
 private extension ContentView {
+    var showsMainApp: Bool {
+        authSession.isAuthenticated && !onboarding.isActive
+    }
+
     func registerForRemoteNotifications() async {
         let center = UNUserNotificationCenter.current()
         let settings = await center.notificationSettings()

@@ -76,6 +76,10 @@ struct SignUpView: View {
             .toggleStyle(CheckboxToggleStyle())
             .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .motion(
+            Motion.suave,
+            value: [viewModel.usernameError, viewModel.emailError, viewModel.passwordError]
+        )
         .onSubmit {
             if isUsernameFocused {
                 isEmailFocused = true
@@ -110,16 +114,21 @@ struct SignUpView: View {
     }
 
     private var submitButton: some View {
-        Button("signUp.submitButton.title") {
+        Button {
             Task { await submit() }
+        } label: {
+            Text("signUp.submitButton.title")
+                .opacity(viewModel.isLoading ? 0 : 1)
         }
         .buttonStyle(AuthPrimaryButtonStyle())
         .disabled(isBusy || !viewModel.canSubmit)
         .overlay {
             if viewModel.isLoading {
                 ProgressView()
+                    .transition(.opacity)
             }
         }
+        .motion(Motion.suave, value: viewModel.isLoading)
     }
 
     private func dismissKeyboard() {

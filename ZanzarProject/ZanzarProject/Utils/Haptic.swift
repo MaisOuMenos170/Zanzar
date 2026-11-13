@@ -33,4 +33,13 @@ extension View {
     func haptic<T: Equatable>(_ haptic: Haptic, trigger: T) -> some View {
         sensoryFeedback(haptic.feedback, trigger: trigger)
     }
+
+    /// Plays `haptic` when `trigger` changes and `condition(old, new)` allows it.
+    func haptic<T: Equatable>(
+        _ haptic: Haptic,
+        trigger: T,
+        when condition: @escaping (_ old: T, _ new: T) -> Bool
+    ) -> some View {
+        sensoryFeedback(haptic.feedback, trigger: trigger, condition: condition)
+    }
 }
