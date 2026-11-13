@@ -4,4 +4,4 @@
 ZANZAR_API_BASE_URL = https:/$()/zanzarbackend-development.up.railway.app
 
 // Developer contact shown in "Fotos e privacidade" (App Store guideline 1.2). Fill in before submitting.
-ZANZAR_SUPPORT_EMAIL =
+ZANZAR_SUPPORT_EMAIL = contato@lero.social

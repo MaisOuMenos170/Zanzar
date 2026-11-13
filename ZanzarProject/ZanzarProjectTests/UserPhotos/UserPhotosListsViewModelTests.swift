@@ -89,7 +89,7 @@ struct UserPhotosListsViewModelTests {
         clock = clock.addingTimeInterval(3600)
         let rejected = UserPhoto(
             id: "new", placeID: "p", placeName: nil, status: .rejected, isVerifiedCheckIn: false, showsAuthorName: true,
-            thumbnailURL: nil, decisionReason: .personalData, createdAt: clock.addingTimeInterval(-600),
+            thumbnailURL: nil, imageURL: nil, decisionReason: .personalData, createdAt: clock.addingTimeInterval(-600),
             decidedAt: clock.addingTimeInterval(-60)
         )
         service.myPhotos = .success([rejected])

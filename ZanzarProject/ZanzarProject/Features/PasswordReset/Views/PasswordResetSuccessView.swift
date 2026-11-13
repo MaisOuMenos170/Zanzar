@@ -16,7 +16,7 @@ struct PasswordResetSuccessView: View {
                     .font(.largeTitle.weight(.semibold))
                     .foregroundStyle(.white)
                     .frame(width: 98, height: 98)
-                    .background(Color.brandBlue500, in: .circle)
+                    .background(Color.brandPurple500, in: .circle)
                     .accessibilityHidden(true)
 
                 Text("passwordReset.success.title")

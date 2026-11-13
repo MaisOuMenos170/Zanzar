@@ -8,6 +8,7 @@ nonisolated struct UserPhotoAPIResponse: Decodable, Sendable {
     let status: UserPhotoStatus
     let isVerifiedCheckIn: Bool
     let showAuthorName: Bool
+    let url: String?
     let thumbnailUrl: String?
     let decisionReason: String?
     let createdAt: String
@@ -22,6 +23,7 @@ nonisolated struct UserPhotoAPIResponse: Decodable, Sendable {
             isVerifiedCheckIn: isVerifiedCheckIn,
             showsAuthorName: showAuthorName,
             thumbnailURL: thumbnailUrl.flatMap(PlaceUserPhotoAPIResponse.allowedURL),
+            imageURL: url.flatMap(PlaceUserPhotoAPIResponse.allowedURL),
             decisionReason: decisionReason.map(UserPhotoDecisionReason.init(code:)),
             createdAt: Self.date(createdAt) ?? .distantPast,
             decidedAt: decidedAt.flatMap(Self.date)

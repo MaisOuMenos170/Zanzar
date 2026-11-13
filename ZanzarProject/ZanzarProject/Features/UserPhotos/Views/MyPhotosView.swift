@@ -3,6 +3,7 @@ import SwiftUI
 /// The user's photos and where each stands. Reached from the profile.
 struct MyPhotosView: View {
     @State private var viewModel = MyPhotosViewModel()
+    @State private var photoBeingViewed: UserPhoto?
 
     var body: some View {
         Group {
@@ -18,8 +19,15 @@ struct MyPhotosView: View {
                 List {
                     Section {
                         ForEach(viewModel.photos) { photo in
-                            MyPhotoRow(photo: photo)
-                                .swipeActions { deleteButton(for: photo) }
+                            Button {
+                                photoBeingViewed = photo
+                            } label: {
+                                MyPhotoRow(photo: photo)
+                                    .contentShape(.rect)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityHint("userPhotos.myPhotos.openHint")
+                            .swipeActions { deleteButton(for: photo) }
                                 .contextMenu { deleteButton(for: photo) }
                         }
                     } footer: {
@@ -31,6 +39,9 @@ struct MyPhotosView: View {
         .navigationTitle("userPhotos.myPhotos.title")
         .task { await viewModel.load() }
         .refreshable { await viewModel.load() }
+        .fullScreenCover(item: $photoBeingViewed) { photo in
+            UserPhotoViewerView(photo: photo)
+        }
         .alert(
             "userPhotos.myPhotos.deleteConfirmation.title",
             isPresented: deletionIsPresented,

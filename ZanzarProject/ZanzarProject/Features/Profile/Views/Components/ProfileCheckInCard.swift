@@ -34,9 +34,13 @@ struct ProfileCheckInCard: View {
                     placeNameText
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.primary)
+                        // Always two lines tall, so a short name does not make its card shorter than the one beside it.
+                        .lineLimit(2, reservesSpace: true)
                     Text("profile.checkInCard.dateLabel \(checkIn.date.formatted(date: .numeric, time: .omitted))")
                         .font(.caption)
                         .foregroundStyle(Color("PlaceDetailNearbySubtitle"))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
