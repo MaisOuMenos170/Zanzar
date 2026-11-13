@@ -14,6 +14,8 @@ struct RatingPromptView: View {
     private static let topRow: [ImpressionTag] = [.happy, .delighted, .nauseated]
     private static let bottomRow: [ImpressionTag] = [.sad, .sleepy]
 
+    @State private var isShown = false
+
     var body: some View {
         ZStack {
             Color.black.opacity(0.2)
@@ -21,6 +23,11 @@ struct RatingPromptView: View {
                 .contentShape(.rect)
 
             alert
+                .popIn(isShown)
+        }
+        .haptic(.selecao, trigger: selectedTag, when: { _, tag in tag != nil })
+        .onAppear {
+            isShown = true
         }
     }
 

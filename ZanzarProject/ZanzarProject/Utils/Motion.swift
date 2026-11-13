@@ -51,6 +51,16 @@ extension View {
     }
 }
 
+extension View {
+    /// Fades in and grows from a slightly smaller size once `isShown` turns on. Meant for cards that appear
+    /// over the screen. With Reduce Motion the view just appears.
+    func popIn(_ isShown: Bool) -> some View {
+        opacity(isShown ? 1 : 0)
+            .scaleEffect(isShown ? 1 : 0.94)
+            .motion(Motion.assentar, value: isShown)
+    }
+}
+
 private struct MotionModifier<V: Equatable>: ViewModifier {
     let animation: Animation
     let value: V

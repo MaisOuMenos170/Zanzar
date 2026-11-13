@@ -46,15 +46,20 @@ struct PlaceDetailCheckInButton: View {
                     .haptic(.carimboLeve, trigger: landingCount)
                     .accessibilityAddTraits(.isStaticText)
             } else {
-                Button(titleKey, action: action)
-                    .buttonStyle(AuthPrimaryButtonStyle(background: .brandBlue500))
-                    .disabled(isLoading)
-                    .overlay {
-                        if isLoading {
-                            ProgressView()
-                                .tint(.white)
-                        }
+                Button(action: action) {
+                    Text(titleKey)
+                        .opacity(isLoading ? 0 : 1)
+                }
+                .buttonStyle(AuthPrimaryButtonStyle(background: .brandBlue500))
+                .disabled(isLoading)
+                .overlay {
+                    if isLoading {
+                        ProgressView()
+                            .tint(.white)
+                            .transition(.opacity)
                     }
+                }
+                .motion(Motion.suave, value: isLoading)
             }
         }
         .onAppear {
