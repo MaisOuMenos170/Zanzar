@@ -1,10 +1,18 @@
 import SwiftUI
+import TipKit
 
 struct ProfileView: View {
     @State private var viewModel = ProfileViewModel()
     @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
+    @State private var tipKitViewModel = TipKitViewModel()
     @Environment(AuthSession.self) private var authSession
     @Environment(AppCoordinator.self) private var coordinator
+    
+    // Tips
+    private let myPhotosTip = ProfileMyPhotosTip()
+    private let mySuggestionsTip = ProfileMySuggestionsTip()
+    private let editAvatarTip = ProfileEditAvatarTip()
+    private let settingsTip = ProfileSettingsTip()
 
     var body: some View {
         content
@@ -12,14 +20,21 @@ struct ProfileView: View {
             .navigationTitle("mainTab.profileTab.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    Button("profile.header.resetTips.title", systemImage: "arrow.counterclockwise") {
+                        Task { await tipKitViewModel.resetAllTips() }
+                    }
+                    .disabled(tipKitViewModel.isResetting)
+                    
                     Button(
                         "profile.header.signOutAccessibilityLabel",
                         systemImage: "rectangle.portrait.and.arrow.forward"
                     ) {
                         viewModel.showsSignOutConfirmation = true
+                        ProfileSettingsTip.hasVisitedProfile = true
                     }
                     .disabled(viewModel.isSigningOut)
+                    .popoverTip(settingsTip, arrowEdge: .top)
                 }
             }
             .alert("profile.signOutConfirmation.title", isPresented: $viewModel.showsSignOutConfirmation) {

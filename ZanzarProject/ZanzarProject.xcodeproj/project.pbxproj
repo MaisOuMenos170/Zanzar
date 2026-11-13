@@ -81,7 +81,7 @@
 			path = ZanzarWidget;
 			sourceTree = "<group>";
 		};
-		B9AE997B30A49C31006AFF3E /* Resources */ = {
+		B9AE997B30A49C31006AFF3E /* ZanzarProject/Resources */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ZanzarProject/Resources;
 			sourceTree = "<group>";
@@ -120,6 +120,7 @@
 				B9AE997A30A49C31006AFF3E /* ZanzarWidget */,
 				B9AE997530A49C31006AFF3E /* Frameworks */,
 				000000000000000000000020 /* Products */,
+				B949546030A64E43000AECEB /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -131,6 +132,14 @@
 				B9AE997430A49C31006AFF3E /* ZanzarWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B949546030A64E43000AECEB /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				B9AE997B30A49C31006AFF3E /* ZanzarProject/Resources */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		B9AE997530A49C31006AFF3E /* Frameworks */ = {
@@ -200,7 +209,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				B9AE997A30A49C31006AFF3E /* ZanzarWidget */,
-				B9AE997B30A49C31006AFF3E /* Resources */,
+				B9AE997B30A49C31006AFF3E /* ZanzarProject/Resources */,
 			);
 			name = ZanzarWidgetExtension;
 			productName = ZanzarWidgetExtension;

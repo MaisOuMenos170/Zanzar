@@ -1,8 +1,11 @@
 import SwiftUI
+import TipKit
 
 /// Links to the places the user suggested and where each one stands.
 struct ProfileSuggestionsSection: View {
     let onOpenMySuggestions: () -> Void
+    
+    private let mySuggestionsTip = ProfileMySuggestionsTip()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -21,6 +24,7 @@ struct ProfileSuggestionsSection: View {
             }
             .buttonStyle(.plain)
             .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 14))
+            .popoverTip(mySuggestionsTip, arrowEdge: .trailing)
         }
     }
 }

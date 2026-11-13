@@ -1,7 +1,11 @@
 import SwiftUI
+import TipKit
 
 struct WelcomeView: View {
     @Environment(AppCoordinator.self) private var coordinator
+    
+    private let createAccountTip = WelcomeCreateAccountTip()
+    private let signInTip = WelcomeSignInTip()
 
     var body: some View {
         VStack(spacing: 16) {
@@ -10,15 +14,19 @@ struct WelcomeView: View {
             VStack(spacing: 16) {
                 Button("welcome.createPassportButton.title") {
                     coordinator.push(.signUp)
+                    WelcomeCreateAccountTip.hasSeenWelcome = true
                 }
                 .buttonStyle(AuthPrimaryButtonStyle())
+                .popoverTip(createAccountTip, arrowEdge: .bottom)
 
                 AuthSwitchLink(
                     promptKey: "auth.switch.haveAccount.prompt",
                     actionKey: "auth.switch.haveAccount.action"
                 ) {
                     coordinator.push(.login)
+                    WelcomeSignInTip.hasSeenWelcome = true
                 }
+                .popoverTip(signInTip, arrowEdge: .bottom)
             }
         }
         .padding(.horizontal, 16)
