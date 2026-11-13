@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 
 /// The "Buscar um lugar" bar of the discover screen (Figma "Campo / busca"): a white pill with the search
 /// icon, the text and the filter button.
@@ -9,6 +10,10 @@ struct DiscoverSearchBar: View {
     let onSubmit: () -> Void
 
     @ScaledMetric(relativeTo: .body) private var textSize: CGFloat = 16
+    
+    // Tips
+    private let searchTip = DiscoverSearchTip()
+    private let filterTip = DiscoverFilterTip()
 
     var body: some View {
         HStack(spacing: 10) {
@@ -16,6 +21,7 @@ struct DiscoverSearchBar: View {
                 .font(.system(size: textSize))
                 .foregroundStyle(.primary)
                 .accessibilityHidden(true)
+                .popoverTip(searchTip, arrowEdge: .top)
 
             TextField(
                 "",
@@ -29,7 +35,10 @@ struct DiscoverSearchBar: View {
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
             .focused(isFocused)
-            .onSubmit(onSubmit)
+            .onSubmit {
+                onSubmit()
+                DiscoverSearchTip.hasUsedDiscover = true
+            }
             .accessibilityLabel("discover.search.accessibilityLabel")
 
             if !text.isEmpty {
@@ -47,6 +56,7 @@ struct DiscoverSearchBar: View {
             }
 
             DiscoverFilterMenu(filter: $filter)
+                .popoverTip(filterTip, arrowEdge: .top)
         }
         .padding(.horizontal, 14)
         // 10.5 because a text field is about 3pt taller than its 19pt line, which makes the bar 43pt like Figma's.

@@ -1,5 +1,6 @@
 import SwiftUI
 import UserNotifications
+import TipKit
 
 /// Explains notifications and asks for provisional authorization during onboarding.
 ///
@@ -10,6 +11,8 @@ struct NotificationPermissionView: View {
     @State private var viewModel = NotificationPermissionViewModel()
     @Environment(OnboardingGate.self) private var onboarding
     @Environment(AppCoordinator.self) private var coordinator
+    
+    private let notificationTip = OnboardingNotificationTip()
 
     var body: some View {
         VStack(spacing: 24) {
@@ -31,10 +34,12 @@ struct NotificationPermissionView: View {
                     .multilineTextAlignment(.center)
             }
             .padding(.horizontal, 32)
+            .popoverTip(notificationTip, arrowEdge: .bottom)
 
             VStack(spacing: 12) {
                 Button {
                     Task { await viewModel.enableProvisional() }
+                    OnboardingNotificationTip.isOnboarding = false
                 } label: {
                     if viewModel.isWorking {
                         ProgressView()
