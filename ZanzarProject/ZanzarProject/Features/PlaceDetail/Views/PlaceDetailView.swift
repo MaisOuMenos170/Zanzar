@@ -10,12 +10,14 @@ struct PlaceDetailView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var showsPhotoUpload = false
-    
+    /// The content rises in once when it first loads, not again when a nested screen is popped.
+    @State private var contentShown = false
+
     // Tips
     private let checkInTip = PlaceDetailCheckInTip()
     private let addPhotoTip = PlaceDetailAddPhotoTip()
     private let directionsTip = PlaceDetailDirectionsTip()
-    
+
     init(place: MapPlace) {
         self.place = place
         _viewModel = State(initialValue: PlaceDetailViewModel(place: place))
@@ -105,6 +107,8 @@ struct PlaceDetailView: View {
         }
         .animation(reduceMotion ? nil : .default, value: viewModel.earnedSealPresentation != nil)
         .animation(reduceMotion ? nil : .default, value: viewModel.showsCompletedItineraryAlert)
+        .haptic(.alerta, trigger: viewModel.checkInWarning, when: { _, warning in warning != nil })
+        .haptic(.alerta, trigger: viewModel.errorMessage, when: { _, message in message != nil })
     }
 
     private func checkInConfirmationMessage(for placeName: String) -> AttributedString {
@@ -200,6 +204,7 @@ struct PlaceDetailView: View {
                     tags: detail.tags,
                     mediaPolicy: mediaPolicy
                 )
+                .entrance(contentShown, order: 0)
 
                 PlaceDetailCheckInButton(
                     hasCheckedIn: detail.hasCheckedIn,
@@ -208,15 +213,18 @@ struct PlaceDetailView: View {
                     viewModel.requestCheckIn()
                     PlaceDetailCheckInTip.hasViewedPlaceDetail = true
                 }
+                .entrance(contentShown, order: 1)
                 .popoverTip(checkInTip, arrowEdge: .top)
 
                 PlaceDetailAddPhotoButton(hasCheckedIn: detail.hasCheckedIn) {
                     showsPhotoUpload = true
                     PlaceDetailAddPhotoTip.hasViewedPlaceDetail = true
                 }
+                .entrance(contentShown, order: 1)
                 .popoverTip(addPhotoTip, arrowEdge: .top)
 
                 PlaceDetailDescriptionSection(description: detail.description)
+                    .entrance(contentShown, order: 1)
             }
 
             PlaceDetailStatsCard(
@@ -225,17 +233,23 @@ struct PlaceDetailView: View {
                 hasCheckedIn: detail.hasCheckedIn,
                 isInActiveItinerary: detail.isInActiveItinerary
             )
+            .entrance(contentShown, order: 2)
 
             PlaceDetailReactionsSection(reactions: detail.reactions)
+                .entrance(contentShown, order: 3)
 
             PlaceDetailDirectionsButton(
                 latitude: detail.latitude,
                 longitude: detail.longitude,
                 placeName: detail.displayName
             )
+            .entrance(contentShown, order: 3)
             .popoverTip(directionsTip, arrowEdge: .top)
         }
         .padding(.horizontal, 16)
+        .onAppear {
+            contentShown = true
+        }
     }
 }
 

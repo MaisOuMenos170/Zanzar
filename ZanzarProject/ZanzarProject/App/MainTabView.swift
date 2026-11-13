@@ -33,7 +33,7 @@ struct MainTabView: View {
     @State private var suggestionStatusNotice = SuggestionStatusNoticeViewModel()
     @Environment(ToastManager.self) private var toastManager
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Namespace private var placeZoom
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -70,7 +70,7 @@ struct MainTabView: View {
                 )
             }
         }
-        .animation(reduceMotion ? nil : .smooth(duration: 0.35), value: coordinator.presentedSheet)
+        .motion(Motion.assentar, value: coordinator.presentedSheet)
         .onChange(of: coordinator.presentedSheet) { previous, current in
             guard previous == .suggestPlace, current == nil else { return }
             // An alert cannot appear while the card is still leaving.
@@ -178,8 +178,15 @@ struct MainTabView: View {
         switch tab {
         case .discover:
             NavigationStack(path: Bindable(coordinator).path) {
-                LocationMapView(store: nearbyPlaces)
-                    .navigationDestination(for: Route.self) { coordinator.view(for: $0) }
+                LocationMapView(store: nearbyPlaces, zoomNamespace: placeZoom)
+                    .navigationDestination(for: Route.self) { route in
+                        if case .placeDetail(let place, true) = route {
+                            coordinator.view(for: route)
+                                .navigationTransition(.zoom(sourceID: place.id, in: placeZoom))
+                        } else {
+                            coordinator.view(for: route)
+                        }
+                    }
             }
         case .checkIn:
             NavigationStack(path: Bindable(checkInCoordinator).path) {

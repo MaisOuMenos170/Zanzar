@@ -34,13 +34,16 @@ struct DiscoverFilterMenu: View {
                             .fill(Color.brandPurple500)
                             .frame(width: 8, height: 8)
                             .offset(x: 5, y: -4)
+                            .transition(.scale.combined(with: .opacity))
                     }
                 }
+                .motion(Motion.toque, value: filter.isActive)
                 // Bigger hit area than the 20pt glyph, without moving it.
                 .padding(12)
                 .contentShape(.rect)
                 .padding(-12)
         }
+        .haptic(.selecao, trigger: filter)
         .accessibilityLabel("discover.filter.accessibilityLabel")
         .accessibilityValue(
             filter.isActive ? L10n.string("discover.filter.accessibilityValue", filter.activeCount) : ""

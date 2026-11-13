@@ -44,7 +44,7 @@ struct SealEarnedAlertView: View {
                 .frame(maxWidth: .infinity)
             }
             .paperStampPress(phase: phase, role: .sheet)
-            .sensoryFeedback(.impact(flexibility: .rigid, intensity: 0.7), trigger: landingCount)
+            .haptic(.carimbo, trigger: landingCount)
         }
         .accessibilityAddTraits(.isModal)
         .onAppear {
@@ -52,7 +52,7 @@ struct SealEarnedAlertView: View {
             guard !didPlayStamp else { return }
             didPlayStamp = true
             PaperStampPhase.play(
-                duration: 0.45,
+                size: .medium,
                 reduceMotion: reduceMotion,
                 update: { phase = $0 },
                 onContact: { landingCount += 1 }

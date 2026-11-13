@@ -57,6 +57,7 @@ struct LoginView: View {
             .frame(maxWidth: .infinity, minHeight: 44, alignment: .trailing)
             .contentShape(.rect)
         }
+        .motion(Motion.suave, value: [viewModel.emailError, viewModel.passwordError])
         .onSubmit {
             if isEmailFocused {
                 isPasswordFocused = true
@@ -89,16 +90,21 @@ struct LoginView: View {
     }
 
     private var submitButton: some View {
-        Button("login.submitButton.title") {
+        Button {
             Task { await submit() }
+        } label: {
+            Text("login.submitButton.title")
+                .opacity(viewModel.isLoading ? 0 : 1)
         }
         .buttonStyle(AuthPrimaryButtonStyle())
         .disabled(viewModel.isLoading || !viewModel.canSubmit)
         .overlay {
             if viewModel.isLoading {
                 ProgressView()
+                    .transition(.opacity)
             }
         }
+        .motion(Motion.suave, value: viewModel.isLoading)
     }
 
     private func dismissKeyboard() {

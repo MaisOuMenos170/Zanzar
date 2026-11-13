@@ -14,5 +14,7 @@ struct AuthPrimaryButtonStyle: ButtonStyle {
             .padding(.vertical, 16)
             .background(background, in: .capsule)
             .opacity(isEnabled ? (configuration.isPressed ? 0.85 : 1) : 0.5)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .motion(Motion.toque, value: configuration.isPressed)
     }
 }

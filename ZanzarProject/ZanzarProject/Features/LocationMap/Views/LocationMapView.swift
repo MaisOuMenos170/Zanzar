@@ -4,7 +4,10 @@ import TipKit
 
 struct LocationMapView: View {
     let store: NearbyPlacesStore
+    /// Pins are the source of the zoom into the place detail.
+    let zoomNamespace: Namespace.ID
 
+    @State private var pinTaps = 0
     @State private var viewModel: LocationMapViewModel
     @State private var searchViewModel: DiscoverSearchViewModel
     @FocusState private var isSearchFocused: Bool
@@ -20,8 +23,9 @@ struct LocationMapView: View {
     private let searchTip = DiscoverSearchTip()
     private let userLocationTip = DiscoverUserLocationTip()
 
-    init(store: NearbyPlacesStore) {
+    init(store: NearbyPlacesStore, zoomNamespace: Namespace.ID) {
         self.store = store
+        self.zoomNamespace = zoomNamespace
         _viewModel = State(initialValue: LocationMapViewModel(store: store))
         _searchViewModel = State(
             initialValue: DiscoverSearchViewModel(coordinateProvider: { store.userCoordinate })
@@ -82,6 +86,7 @@ struct LocationMapView: View {
                 .padding(.bottom, 100)
         }
         .animation(reduceMotion ? nil : .default, value: ratingPrompt.isPresented)
+        .haptic(.toqueSuave, trigger: pinTaps)
         // Kept for the back button of the screens pushed from here; the bar itself is hidden because the
         // search bar and the suggestion button float over the map.
         .navigationTitle("mainTab.discoverTab.title")
@@ -125,6 +130,12 @@ struct LocationMapView: View {
         coordinator.push(.placeDetail(place))
     }
 
+    /// Opens a place from its pin: the detail zooms out of the pin and the tap is felt.
+    private func openPin(_ place: MapPlace) {
+        pinTaps += 1
+        coordinator.push(.placeDetail(place, zoomsFromPin: true))
+    }
+
     /// Opens a search result: the camera goes to the place and its detail is pushed, as when tapping its pin.
     private func openSearchResult(_ place: MapPlace) {
         isSearchFocused = false
@@ -151,17 +162,21 @@ struct LocationMapView: View {
                     results: searchViewModel.results,
                     onSelect: openSearchResult
                 )
+                .transition(.opacity.combined(with: .scale(scale: 0.96, anchor: .top)))
             } else {
                 DiscoverSuggestButton {
                     isSearchFocused = false
                     coordinator.present(sheet: .suggestPlace)
                 }
+                .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .topTrailing)))
             }
         }
+        .motion(Motion.suave, value: searchViewModel.showsResultsPanel)
         .padding(.horizontal, 16)
     }
 
     private func expand(_ cluster: MapPinCluster) {
+        pinTaps += 1
         let region = viewModel.focusRegion(on: cluster)
         if reduceMotion {
             viewModel.applyCameraRegion(region)
@@ -183,11 +198,12 @@ struct LocationMapView: View {
             case .place(let place):
                 Annotation("", coordinate: place.coordinate, anchor: .bottom) {
                     Button {
-                        open(place)
+                        openPin(place)
                     } label: {
                         LocationPinView(category: place.category, style: place.pinStyle)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(MapPinButtonStyle())
+                    .matchedTransitionSource(id: place.id, in: zoomNamespace)
                     .accessibilityLabel(place.displayName)
                     .transition(pinTransition)
                 }
@@ -199,7 +215,7 @@ struct LocationMapView: View {
                     } label: {
                         LocationClusterPinView(count: cluster.count)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(MapPinButtonStyle())
                     .accessibilityLabel(
                         String(
                             localized: "locationMap.clusterPin.accessibilityLabel \(cluster.count)"
@@ -227,7 +243,8 @@ struct LocationMapView: View {
 }
 
 #Preview {
-    LocationMapView(store: NearbyPlacesStore())
+    @Previewable @Namespace var placeZoom
+    LocationMapView(store: NearbyPlacesStore(), zoomNamespace: placeZoom)
         .environment(AppCoordinator())
         .environment(ToastManager())
 }

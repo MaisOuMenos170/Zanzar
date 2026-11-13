@@ -14,6 +14,9 @@ struct DiscoverSearchResultsPanel: View {
             .frame(maxWidth: .infinity)
             .background(Color.brandNeutral50, in: .rect(cornerRadius: 24))
             .shadow(color: .black.opacity(0.25), radius: 4, y: 1)
+            // The card grows and shrinks to its rows instead of jumping when the results arrive.
+            .motion(Motion.assentar, value: listHeight)
+            .motion(Motion.suave, value: phase)
     }
 
     @ViewBuilder

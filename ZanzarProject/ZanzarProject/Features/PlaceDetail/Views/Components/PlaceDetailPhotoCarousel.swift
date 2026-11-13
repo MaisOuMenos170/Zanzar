@@ -7,6 +7,8 @@ struct PlaceDetailPhotoCarousel: View {
     let placeName: String
     let mediaPolicy: PlaceMediaAccessPolicy
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     private static let photoWidthFraction = 0.85
     private static let photoSpacing: CGFloat = 8
 
@@ -19,7 +21,9 @@ struct PlaceDetailPhotoCarousel: View {
     }
 
     private var carousel: some View {
-        ScrollView(.horizontal) {
+        // Read here: the scroll transition closure is not main-actor isolated.
+        let stepsBack = !reduceMotion
+        return ScrollView(.horizontal) {
             // At most `PlaceDetail.maximumPhotoCount` photos from free URLs, so there is no need for a lazy stack.
             HStack(spacing: Self.photoSpacing) {
                 ForEach(photos.enumerated(), id: \.offset) { index, photo in
@@ -30,6 +34,12 @@ struct PlaceDetailPhotoCarousel: View {
                     )
                     .containerRelativeFrame(.horizontal) { width, _ in
                         width * Self.photoWidthFraction
+                    }
+                    // The photo in view is the one in focus; its neighbours step back.
+                    .scrollTransition(axis: .horizontal) { content, phase in
+                        content
+                            .scaleEffect(phase.isIdentity || !stepsBack ? 1 : 0.94)
+                            .opacity(phase.isIdentity || !stepsBack ? 1 : 0.7)
                     }
                 }
             }

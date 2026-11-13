@@ -34,7 +34,7 @@ struct ItineraryStampTrack: View {
         .scrollBounceBehavior(.basedOnSize)
         // The press animation travels past the stamp's frame; don't clip it.
         .scrollClipDisabled()
-        .sensoryFeedback(.impact(flexibility: .rigid, intensity: 0.7), trigger: landingCount)
+        .haptic(.carimbo, trigger: landingCount)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("itinerary.stampTrack.progress \(earnedCount) \(slots.count)"))
         .onAppear {
@@ -56,7 +56,7 @@ struct ItineraryStampTrack: View {
             guard let newID else { return }
             let generation = pressGeneration
             PaperStampPhase.play(
-                duration: 0.45,
+                size: .medium,
                 reduceMotion: reduceMotion,
                 update: { pressPhase = $0 },
                 onContact: { landingCount += 1 },

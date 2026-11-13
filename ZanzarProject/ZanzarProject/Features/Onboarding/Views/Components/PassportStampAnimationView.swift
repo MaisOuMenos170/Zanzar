@@ -11,6 +11,7 @@ struct PassportStampAnimationView: View {
 
     @State private var stage = PassportStampStage.idle
     @State private var phase = PaperStampPhase.settled
+    @State private var landingCount = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
@@ -22,6 +23,7 @@ struct PassportStampAnimationView: View {
                 .frame(width: size.width * scale, height: size.height * scale)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .haptic(.carimbo, trigger: landingCount)
         .task(id: isPlaying) {
             guard isPlaying else { return }
             await play()
@@ -47,10 +49,11 @@ struct PassportStampAnimationView: View {
         guard !Task.isCancelled else { return }
 
         PaperStampPhase.play(
-            duration: 0.35,
+            size: .small,
             reduceMotion: false,
             update: { phase = $0 },
             onContact: {
+                landingCount += 1
                 withAnimation(.easeOut(duration: 0.2)) {
                     stage = .stamped
                 }

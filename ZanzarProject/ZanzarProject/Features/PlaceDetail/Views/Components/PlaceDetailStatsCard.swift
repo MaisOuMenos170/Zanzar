@@ -15,7 +15,6 @@ struct PlaceDetailStatsCard: View {
     @State private var isVisible = false
 
     private let stampTravel: CGFloat = 14
-    private let stampDuration: TimeInterval = 0.35
 
     init(
         totalCheckIns: Int,
@@ -73,7 +72,7 @@ struct PlaceDetailStatsCard: View {
         .padding(.vertical, 16)
         .background(Color("PlaceDetailStatsBackground"), in: .rect(cornerRadius: 16))
         .paperStampPress(phase: phase, role: .sheet, travel: stampTravel)
-        .sensoryFeedback(.impact(flexibility: .rigid, intensity: 0.7), trigger: landingCount)
+        .haptic(.carimbo, trigger: landingCount)
         .onAppear {
             isVisible = true
         }
@@ -97,7 +96,7 @@ struct PlaceDetailStatsCard: View {
         .onChange(of: showsEarned) { _, earned in
             guard earned, phase == .lifted else { return }
             PaperStampPhase.play(
-                duration: stampDuration,
+                size: .small,
                 reduceMotion: reduceMotion,
                 update: { phase = $0 },
                 onContact: { landingCount += 1 }
