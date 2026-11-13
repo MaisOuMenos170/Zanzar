@@ -47,7 +47,7 @@ struct PassportStampAnimationView: View {
         guard !Task.isCancelled else { return }
 
         PaperStampPhase.play(
-            duration: 0.35,
+            size: .small,
             reduceMotion: false,
             update: { phase = $0 },
             onContact: {

@@ -14,7 +14,6 @@ struct PlaceDetailCheckInButton: View {
     @State private var isVisible = false
 
     private let stampTravel: CGFloat = 8
-    private let stampDuration: TimeInterval = 0.35
 
     init(
         titleKey: LocalizedStringKey = "placeDetail.checkInButton.title",
@@ -44,7 +43,7 @@ struct PlaceDetailCheckInButton: View {
                             .strokeBorder(Color("PlaceDetailCheckInDoneBorder"), lineWidth: 1)
                     }
                     .paperStampPress(phase: phase, role: .sheet, travel: stampTravel)
-                    .sensoryFeedback(.impact(flexibility: .rigid, intensity: 0.55), trigger: landingCount)
+                    .haptic(.carimboLeve, trigger: landingCount)
                     .accessibilityAddTraits(.isStaticText)
             } else {
                 Button(titleKey, action: action)
@@ -81,7 +80,7 @@ struct PlaceDetailCheckInButton: View {
         .onChange(of: showsDone) { _, done in
             guard done, phase == .lifted else { return }
             PaperStampPhase.play(
-                duration: stampDuration,
+                size: .small,
                 reduceMotion: reduceMotion,
                 update: { phase = $0 },
                 onContact: { landingCount += 1 }

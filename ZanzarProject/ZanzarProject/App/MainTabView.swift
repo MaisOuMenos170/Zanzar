@@ -33,7 +33,6 @@ struct MainTabView: View {
     @State private var suggestionStatusNotice = SuggestionStatusNoticeViewModel()
     @Environment(ToastManager.self) private var toastManager
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -70,7 +69,7 @@ struct MainTabView: View {
                 )
             }
         }
-        .animation(reduceMotion ? nil : .smooth(duration: 0.35), value: coordinator.presentedSheet)
+        .motion(Motion.assentar, value: coordinator.presentedSheet)
         .onChange(of: coordinator.presentedSheet) { previous, current in
             guard previous == .suggestPlace, current == nil else { return }
             // An alert cannot appear while the card is still leaving.
