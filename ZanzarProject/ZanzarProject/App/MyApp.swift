@@ -1,8 +1,10 @@
 import SwiftUI
 import UIKit
+import TipKit
 
 @main struct MyApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @State private var tipKitViewModel = TipKitViewModel()
 
     init() {
         AppLanguageSettings.applyPreferredLanguageOnLaunch()
@@ -16,6 +18,9 @@ import UIKit
         WindowGroup {
             ContentView()
                 .environment(\.locale, AppLanguageSettings.current.locale)
+                .task {
+                    await tipKitViewModel.configure()
+                }
         }
     }
 }

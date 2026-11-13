@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 
 struct ItineraryListView: View {
     let sheetCoordinator: AppCoordinator
@@ -7,6 +8,10 @@ struct ItineraryListView: View {
     @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(NearbyPlacesStore.self) private var nearbyPlacesStore
+    
+    // Tips
+    private let createItineraryTip = CheckInCreateItineraryTip()
+    private let startItineraryTip = CheckInStartItineraryTip()
 
     var body: some View {
         @Bindable var viewModel = viewModel
@@ -80,15 +85,18 @@ struct ItineraryListView: View {
                         Text("itinerary.list.header.subtitle")
                             .font(.caption.weight(.light))
                             .foregroundStyle(.primary)
+                            .popoverTip(createItineraryTip, arrowEdge: .top)
                     } else {
                         Text("itinerary.activeCard.title")
                             .font(.title2.bold())
+                            .popoverTip(startItineraryTip, arrowEdge: .top)
                     }
                 }
 
                 if let activeItinerary = viewModel.activeItinerary {
                     ActiveItineraryProgressCard(activeItinerary: activeItinerary) {
                         sheetCoordinator.present(sheet: .itineraryDetail(slug: activeItinerary.slug))
+                        CheckInStartItineraryTip.hasStartedItinerary = true
                     }
                 }
 

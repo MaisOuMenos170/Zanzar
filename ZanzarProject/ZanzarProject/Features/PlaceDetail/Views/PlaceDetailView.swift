@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 
 struct PlaceDetailView: View {
     let place: MapPlace
@@ -9,6 +10,12 @@ struct PlaceDetailView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var showsPhotoUpload = false
+    
+    // Tips
+    private let checkInTip = PlaceDetailCheckInTip()
+    private let addPhotoTip = PlaceDetailAddPhotoTip()
+    private let directionsTip = PlaceDetailDirectionsTip()
+    
     init(place: MapPlace) {
         self.place = place
         _viewModel = State(initialValue: PlaceDetailViewModel(place: place))
@@ -199,11 +206,15 @@ struct PlaceDetailView: View {
                     isLoading: viewModel.isCheckingIn
                 ) {
                     viewModel.requestCheckIn()
+                    PlaceDetailCheckInTip.hasViewedPlaceDetail = true
                 }
+                .popoverTip(checkInTip, arrowEdge: .top)
 
                 PlaceDetailAddPhotoButton(hasCheckedIn: detail.hasCheckedIn) {
                     showsPhotoUpload = true
+                    PlaceDetailAddPhotoTip.hasViewedPlaceDetail = true
                 }
+                .popoverTip(addPhotoTip, arrowEdge: .top)
 
                 PlaceDetailDescriptionSection(description: detail.description)
             }
@@ -222,6 +233,7 @@ struct PlaceDetailView: View {
                 longitude: detail.longitude,
                 placeName: detail.displayName
             )
+            .popoverTip(directionsTip, arrowEdge: .top)
         }
         .padding(.horizontal, 16)
     }
