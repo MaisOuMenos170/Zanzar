@@ -5,6 +5,8 @@ struct ProfileView: View {
     @State private var viewModel = ProfileViewModel()
     @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
     @State private var tipKitViewModel = TipKitViewModel()
+    /// The profile rises in once when it first loads, not again after a check-in refreshes it.
+    @State private var contentShown = false
     @Environment(AuthSession.self) private var authSession
     @Environment(AppCoordinator.self) private var coordinator
     
@@ -37,6 +39,7 @@ struct ProfileView: View {
                     .popoverTip(settingsTip, arrowEdge: .top)
                 }
             }
+            .haptic(.alerta, trigger: viewModel.showsSignOutConfirmation, when: { _, shown in shown })
             .alert("profile.signOutConfirmation.title", isPresented: $viewModel.showsSignOutConfirmation) {
                 Button("profile.signOutConfirmation.confirmButton.title", role: .destructive) {
                     Task { await viewModel.signOut(using: authSession, coordinator: coordinator) }
@@ -71,19 +74,28 @@ struct ProfileView: View {
             ScrollView {
                 VStack(spacing: 24) {
                     ProfileHeaderView(name: profile.summary.name)
+                        .entrance(contentShown, order: 0)
 
                     VStack(alignment: .leading, spacing: 32) {
                         ProfileStatsView(summary: profile.summary)
+                            .entrance(contentShown, order: 1)
                         ProfileRecentCheckInsSection(checkIns: profile.recentCheckIns, mediaPolicy: mediaPolicy)
+                            .entrance(contentShown, order: 2)
                         ProfilePhotosSection(
                             onOpenMyPhotos: { coordinator.push(.myPhotos) },
                             onOpenPrivacy: { coordinator.push(.photoPrivacy) }
                         )
+                        .entrance(contentShown, order: 3)
                         ProfileSuggestionsSection(onOpenMySuggestions: { coordinator.push(.mySuggestions) })
+                            .entrance(contentShown, order: 3)
                         ProximityAlertSettingsSection()
+                            .entrance(contentShown, order: 4)
                     }
                 }
                 .padding(16)
+                .onAppear {
+                    contentShown = true
+                }
             }
             .refreshable { await viewModel.load(force: true) }
         } else if let errorMessage = viewModel.errorMessage {

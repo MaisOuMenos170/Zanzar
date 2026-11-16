@@ -21,6 +21,16 @@ final class PhotoUploadViewModel {
         case uploading
         case sent(UserPhotoStatus)
         case failed(PhotoUploadError)
+
+        var isSent: Bool {
+            if case .sent = self { return true }
+            return false
+        }
+
+        var isFailure: Bool {
+            if case .failed = self { return true }
+            return false
+        }
     }
 
     let placeID: String

@@ -8,4 +8,12 @@ nonisolated enum PlaceSuggestionOutcome: Hashable, Sendable {
     /// Checked automatically and not accepted.
     case refused(PlaceSuggestionDecisionReason)
     case failure(message: String)
+
+    /// Whether the person gets good news (sent or published) rather than a refusal or a failure.
+    var isGoodNews: Bool {
+        switch self {
+        case .success, .published: true
+        case .refused, .failure: false
+        }
+    }
 }
