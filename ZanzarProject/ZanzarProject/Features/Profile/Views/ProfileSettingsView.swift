@@ -7,6 +7,9 @@ struct ProfileSettingsView: View {
     let onSignOut: () -> Void
     let onDeleteAccount: () -> Void
 
+    @State private var showsMailComposer = false
+    @Environment(\.openURL) private var openURL
+
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             ProximityAlertSettingsSection()
@@ -14,6 +17,13 @@ struct ProfileSettingsView: View {
             accountSection
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .sheet(isPresented: $showsMailComposer) {
+            MailComposeView(
+                recipient: SupportContact.email ?? SupportContact.defaultEmail,
+                subject: L10n.string("profile.settings.support.mailSubject")
+            )
+            .ignoresSafeArea()
+        }
     }
 
     private var privacySection: some View {
@@ -35,18 +45,29 @@ struct ProfileSettingsView: View {
             }
             .buttonStyle(.plain)
 
+            supportRow
+        }
+    }
+
+    /// Opens the mail sheet of the system. Without a Mail account on the device it hands the address to
+    /// whatever app handles `mailto:`.
+    private var supportRow: some View {
+        Button(action: contactSupport) {
             ProfileSettingsRow(
                 title: Text("profile.settings.support.title"),
-                subtitle: Text("profile.settings.support.subtitle")
+                subtitle: Text(verbatim: SupportContact.email ?? SupportContact.defaultEmail)
             ) {
-                Text("profile.settings.support.badge")
-                    .typography(.caption1)
-                    .foregroundStyle(Color.brandNeutral600)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .overlay { Capsule().strokeBorder(Color.brandNeutral200, lineWidth: 1) }
+                icon("envelope")
             }
-            .accessibilityElement(children: .combine)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func contactSupport() {
+        if MailComposeView.canSend {
+            showsMailComposer = true
+        } else if let url = SupportContact.mailURL {
+            openURL(url)
         }
     }
 
@@ -57,10 +78,7 @@ struct ProfileSettingsView: View {
                     title: Text("profile.settings.signOut.title"),
                     subtitle: Text("profile.settings.signOut.subtitle")
                 ) {
-                    Image(systemName: "rectangle.portrait.and.arrow.forward")
-                        .font(.body)
-                        .foregroundStyle(Color.brandNeutral950)
-                        .accessibilityHidden(true)
+                    icon("rectangle.portrait.and.arrow.forward", color: Color.brandNeutral950)
                 }
             }
             .buttonStyle(.plain)
@@ -71,10 +89,7 @@ struct ProfileSettingsView: View {
                     subtitle: Text("profile.settings.deleteAccount.subtitle"),
                     isDestructive: true
                 ) {
-                    Image(systemName: "trash")
-                        .font(.body)
-                        .foregroundStyle(Color.brandErrorRed)
-                        .accessibilityHidden(true)
+                    icon("trash", color: Color.brandErrorRed)
                 }
             }
             .buttonStyle(.plain)
@@ -87,6 +102,15 @@ struct ProfileSettingsView: View {
         } else {
             Text("profile.settings.blocked.subtitleUnknown")
         }
+    }
+
+    /// A trailing icon in a fixed-width slot, so icons of different widths line up on the same trailing edge.
+    private func icon(_ systemName: String, color: Color = Color.brandNeutral950) -> some View {
+        Image(systemName: systemName)
+            .font(.body)
+            .foregroundStyle(color)
+            .frame(width: 28, height: 28)
+            .accessibilityHidden(true)
     }
 
     private var chevron: some View {

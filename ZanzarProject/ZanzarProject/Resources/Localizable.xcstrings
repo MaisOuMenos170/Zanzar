@@ -5990,36 +5990,19 @@
         }
       }
     },
-    "profile.settings.support.badge" : {
+    "profile.settings.support.mailSubject" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Soon"
+            "value" : "Contact from the Lero app"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Em breve"
-          }
-        }
-      }
-    },
-    "profile.settings.support.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Contact email coming soon"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "E-mail de contato em breve"
+            "value" : "Contato pelo app Lero"
           }
         }
       }
