@@ -6,6 +6,8 @@ struct ItineraryListView: View {
 
     @State private var viewModel = ItineraryListViewModel()
     @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
+    /// The list rises in once when it first loads, not each time the tab is shown again.
+    @State private var contentShown = false
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(NearbyPlacesStore.self) private var nearbyPlacesStore
     
@@ -92,23 +94,29 @@ struct ItineraryListView: View {
                             .popoverTip(startItineraryTip, arrowEdge: .top)
                     }
                 }
+                .entrance(contentShown, order: 0)
 
                 if let activeItinerary = viewModel.activeItinerary {
                     ActiveItineraryProgressCard(activeItinerary: activeItinerary) {
                         sheetCoordinator.present(sheet: .itineraryDetail(slug: activeItinerary.slug))
                         CheckInStartItineraryTip.hasStartedItinerary = true
                     }
+                    .entrance(contentShown, order: 1)
+                    .transition(.opacity.combined(with: .scale(scale: 0.96, anchor: .top)))
                 }
 
                 if !viewModel.itineraries.isEmpty {
                     VStack(alignment: .leading, spacing: 16) {
                         Text("itinerary.list.sections.itineraries")
                             .font(.callout.bold())
+                            .entrance(contentShown, order: 2)
 
-                        ForEach(viewModel.itineraries) { itinerary in
+                        ForEach(viewModel.itineraries.enumerated(), id: \.element.id) { index, itinerary in
                             ItineraryCard(itinerary: itinerary) {
                                 sheetCoordinator.present(sheet: .itineraryDetail(slug: itinerary.slug))
                             }
+                            // Only the first few cards stagger, so a long list does not take long to settle.
+                            .entrance(contentShown, order: 2 + min(index, 3))
                         }
                     }
                 }
@@ -122,9 +130,15 @@ struct ItineraryListView: View {
                             coordinator.push(.placeDetail(place))
                         }
                     }
+                    .entrance(contentShown, order: 5)
                 }
             }
             .padding(16)
+            // Starting or leaving a roteiro swaps the progress card in or out instead of cutting.
+            .motion(Motion.assentar, value: viewModel.activeItinerary?.slug)
+            .onAppear {
+                contentShown = true
+            }
         }
         .scrollIndicators(.hidden)
     }

@@ -6,6 +6,10 @@ struct ItineraryDetailView: View {
     let onItineraryChanged: () -> Void
     let onSelectPlace: (MapPlace) -> Void
     @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
+    /// The content rises in once when it first loads.
+    @State private var contentShown = false
+    @State private var startCount = 0
+    @State private var abandonCount = 0
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(NearbyPlacesStore.self) private var nearbyPlacesStore
 
@@ -31,6 +35,8 @@ struct ItineraryDetailView: View {
         .task {
             await viewModel.load()
         }
+        .haptic(.sucesso, trigger: startCount)
+        .haptic(.toqueSuave, trigger: abandonCount)
         .alert("itinerary.detail.actionError.title", isPresented: $viewModel.showsActionError) {
             Button("itinerary.detail.actionError.dismissButton.title", role: .cancel) {
                 viewModel.actionErrorMessage = nil
@@ -83,12 +89,15 @@ struct ItineraryDetailView: View {
                         .buttonStyle(.bordered)
                         .buttonBorderShape(.circle)
                 }
+                .entrance(contentShown, order: 0)
 
                 if !detail.objectives.isEmpty {
                     ItineraryObjectiveTagsView(objectives: detail.objectives)
+                        .entrance(contentShown, order: 1)
                 }
 
                 countsRow(for: detail)
+                    .entrance(contentShown, order: 1)
 
                 VStack(alignment: .leading, spacing: 32) {
                     VStack(alignment: .leading, spacing: 12) {
@@ -109,13 +118,19 @@ struct ItineraryDetailView: View {
                             .font(.subheadline.weight(.light))
                             .foregroundStyle(.primary)
                     }
+                    .entrance(contentShown, order: 2)
 
                     actionButtons
+                        .entrance(contentShown, order: 3)
 
                     placesSection(for: detail)
+                        .entrance(contentShown, order: 4)
                 }
             }
             .padding(16)
+            .onAppear {
+                contentShown = true
+            }
         }
         .scrollIndicators(.hidden)
     }
@@ -140,6 +155,7 @@ struct ItineraryDetailView: View {
             Button(role: .destructive) {
                 Task {
                     if await viewModel.abandonItinerary() {
+                        abandonCount += 1
                         onItineraryChanged()
                         coordinator.dismissSheet()
                     }
@@ -147,15 +163,25 @@ struct ItineraryDetailView: View {
             } label: {
                 Text("itinerary.detail.abandonButton")
                     .frame(maxWidth: .infinity)
+                    .opacity(viewModel.isPerformingAction ? 0 : 1)
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
             .disabled(viewModel.isPerformingAction)
+            .overlay {
+                if viewModel.isPerformingAction {
+                    ProgressView()
+                        .tint(.white)
+                        .transition(.opacity)
+                }
+            }
+            .motion(Motion.suave, value: viewModel.isPerformingAction)
         } else {
             VStack(alignment: .leading, spacing: 8) {
                 Button {
                     Task {
                         if await viewModel.activateItinerary() {
+                            startCount += 1
                             onItineraryChanged()
                             coordinator.dismissSheet()
                         }
@@ -163,11 +189,20 @@ struct ItineraryDetailView: View {
                 } label: {
                     Text("itinerary.detail.startButton")
                         .frame(maxWidth: .infinity)
+                        .opacity(viewModel.isPerformingAction ? 0 : 1)
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
                 .tint(Color("TabBarSelected"))
                 .disabled(viewModel.isPerformingAction || viewModel.hasDifferentActiveItinerary)
+                .overlay {
+                    if viewModel.isPerformingAction {
+                        ProgressView()
+                            .tint(.white)
+                            .transition(.opacity)
+                    }
+                }
+                .motion(Motion.suave, value: viewModel.isPerformingAction)
 
                 if viewModel.hasDifferentActiveItinerary {
                     Text("itinerary.detail.actionError.alreadyActive")
