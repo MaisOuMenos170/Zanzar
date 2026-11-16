@@ -71,6 +71,7 @@ struct MainTabView: View {
             }
         }
         .motion(Motion.assentar, value: coordinator.presentedSheet)
+        .haptic(.selecao, trigger: selectedTab)
         .onChange(of: coordinator.presentedSheet) { previous, current in
             guard previous == .suggestPlace, current == nil else { return }
             // An alert cannot appear while the card is still leaving.
