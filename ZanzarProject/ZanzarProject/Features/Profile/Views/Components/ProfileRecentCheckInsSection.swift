@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ProfileRecentCheckInsSection: View {
     let checkIns: [ProfileCheckIn]
-    let mediaPolicy: PlaceMediaAccessPolicy
+    let onSeeMore: () -> Void
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -13,16 +13,15 @@ struct ProfileRecentCheckInsSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("profile.recentCheckIns.title")
-                .font(.headline)
+            ProfileSectionHeader(title: "profile.recentCheckIns.title", onSeeMore: onSeeMore)
 
             if checkIns.isEmpty {
                 ProfileEmptyCheckInsSheet()
             } else {
                 LazyVGrid(columns: columns, spacing: 8) {
-                    ForEach(checkIns) { checkIn in
+                    ForEach(Array(checkIns.enumerated()), id: \.element.id) { index, checkIn in
                         NavigationLink(value: Route.placeDetail(checkIn.mapPlace)) {
-                            ProfileCheckInCard(checkIn: checkIn, mediaPolicy: mediaPolicy)
+                            ProfileCheckInCard(checkIn: checkIn, tone: .tone(at: index))
                         }
                         .buttonStyle(PressableButtonStyle())
                         .accessibilityHint("profile.checkInCard.openDetailsHint")

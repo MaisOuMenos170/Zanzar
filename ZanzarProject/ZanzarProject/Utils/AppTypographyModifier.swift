@@ -12,6 +12,7 @@ struct AppTypographyModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.system(size: size, weight: style.weight, design: style.design))
+            .fontWidth(style.width)
             .tracking(style.tracking)
     }
 }

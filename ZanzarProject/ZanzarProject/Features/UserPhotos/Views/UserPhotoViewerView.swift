@@ -1,14 +1,20 @@
 import SwiftUI
 
-/// One of the user's own photos at full size, opened from "My photos".
+/// One of the user's own photos, opened over the dimmed list it came from.
 struct UserPhotoViewerView: View {
     let photo: UserPhoto
 
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationStack {
-            AsyncImage(url: photo.viewerURL, transaction: Transaction(animation: Motion.suave)) { phase in
+        ZStack {
+            // A tap outside the photo closes it.
+            Color.clear
+                .contentShape(.rect)
+                .onTapGesture { dismiss() }
+                .accessibilityHidden(true)
+
+            AsyncImage(url: photo.viewerURL) { phase in
                 switch phase {
                 case .success(let image):
                     image
@@ -22,22 +28,33 @@ struct UserPhotoViewerView: View {
                         unavailable
                     } else {
                         ProgressView()
+                            .frame(maxWidth: .infinity, minHeight: 258)
                     }
                 @unknown default:
                     unavailable
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(.black)
-            .navigationTitle(photoTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .close) { dismiss() }
+            .frame(maxWidth: 350)
+            .background(Color.brandNeutral100)
+            .clipShape(.rect(cornerRadius: 8))
+            .shadow(color: .black.opacity(0.25), radius: 8, y: 1)
+            .overlay(alignment: .topTrailing) {
+                Button {
+                    dismiss()
+                } label: {
+                    Label("userPhotos.viewer.closeButton.title", systemImage: "xmark")
+                        .labelStyle(.iconOnly)
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(Color.primary)
+                        .frame(width: 30, height: 30)
                 }
+                .buttonStyle(.glass)
+                .buttonBorderShape(.circle)
+                .padding(8)
             }
+            .padding(.horizontal, 22)
         }
-        .preferredColorScheme(.dark)
+        .presentationBackground(Color.black.opacity(0.35))
     }
 
     private var photoTitle: String {
@@ -50,5 +67,6 @@ struct UserPhotoViewerView: View {
             systemImage: "photo.badge.exclamationmark",
             description: Text("userPhotos.viewer.error.message")
         )
+        .frame(maxWidth: .infinity, minHeight: 258)
     }
 }

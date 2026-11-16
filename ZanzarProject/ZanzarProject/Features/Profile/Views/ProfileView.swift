@@ -2,44 +2,40 @@ import SwiftUI
 import TipKit
 
 struct ProfileView: View {
-    @State private var viewModel = ProfileViewModel()
-    @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
-    @State private var tipKitViewModel = TipKitViewModel()
-    /// The profile rises in once when it first loads, not again after a check-in refreshes it.
-    @State private var contentShown = false
+    @State private var viewModel = ProfileViewModel(checkInsLimit: ProfileViewModel.passportLimit)
+    @State private var blockedProfiles = BlockedProfilesViewModel()
+    @State private var section = ProfileSection.passport
     @Environment(AuthSession.self) private var authSession
     @Environment(AppCoordinator.self) private var coordinator
-    
+
     // Tips
-    private let myPhotosTip = ProfileMyPhotosTip()
-    private let mySuggestionsTip = ProfileMySuggestionsTip()
     private let editAvatarTip = ProfileEditAvatarTip()
     private let settingsTip = ProfileSettingsTip()
 
+    /// How many of the loaded check-ins show as cards on the passport.
+    private let recentCheckInsCount = 4
+    /// How many seals show on the passport.
+    private let sealsPreviewCount = 8
+
     var body: some View {
         content
-            .background(Color(.systemBackground))
-            .navigationTitle("mainTab.profileTab.title")
+            .background(Color.profileBackground)
+            .navigationTitle(viewModel.profile?.summary.name ?? L10n.string("mainTab.profileTab.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    Button("profile.header.resetTips.title", systemImage: "arrow.counterclockwise") {
-                        Task { await tipKitViewModel.resetAllTips() }
+                ToolbarItem(placement: .principal) {
+                    Text(viewModel.profile?.summary.name ?? L10n.string("mainTab.profileTab.title"))
+                        .typography(.headline5)
+                        .foregroundStyle(Color.black)
+                        .lineLimit(1)
+                        .accessibilityAddTraits(.isHeader)
+                }
+                if viewModel.profile != nil {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        editMenu
                     }
-                    .disabled(tipKitViewModel.isResetting)
-                    
-                    Button(
-                        "profile.header.signOutAccessibilityLabel",
-                        systemImage: "rectangle.portrait.and.arrow.forward"
-                    ) {
-                        viewModel.showsSignOutConfirmation = true
-                        ProfileSettingsTip.hasVisitedProfile = true
-                    }
-                    .disabled(viewModel.isSigningOut)
-                    .popoverTip(settingsTip, arrowEdge: .top)
                 }
             }
-            .haptic(.alerta, trigger: viewModel.showsSignOutConfirmation, when: { _, shown in shown })
             .alert("profile.signOutConfirmation.title", isPresented: $viewModel.showsSignOutConfirmation) {
                 Button("profile.signOutConfirmation.confirmButton.title", role: .destructive) {
                     Task { await viewModel.signOut(using: authSession, coordinator: coordinator) }
@@ -53,10 +49,33 @@ struct ProfileView: View {
                     viewModel.signOutFailed = false
                 }
             }
-            // Restarts when a pushed place detail is popped; a check-in made there shows up here (see `markStale`).
+            .alert("profile.deleteAccount.confirmation.title", isPresented: $viewModel.showsDeleteAccountConfirmation) {
+                Button("profile.deleteAccount.confirmation.cancelButton.title", role: .cancel) {}
+                Button("profile.deleteAccount.confirmation.confirmButton.title", role: .destructive) {
+                    Task { await viewModel.deleteAccount(using: authSession, coordinator: coordinator) }
+                }
+            } message: {
+                Text("profile.deleteAccount.confirmation.message")
+            }
+            .alert("profile.deleteAccount.errorAlert.title", isPresented: $viewModel.deleteAccountFailed) {
+                Button("profile.signOutAlert.dismissButton.title", role: .cancel) {}
+            }
+            .alert("profile.editName.title", isPresented: $viewModel.showsEditName) {
+                TextField("profile.editName.placeholder", text: $viewModel.draftName)
+                    .textInputAutocapitalization(.words)
+                Button("profile.editName.cancelButton.title", role: .cancel) {}
+                Button("profile.editName.saveButton.title") {
+                    Task { await viewModel.saveName() }
+                }
+            }
+            .alert("profile.editName.errorAlert.title", isPresented: $viewModel.editNameFailed) {
+                Button("profile.signOutAlert.dismissButton.title", role: .cancel) {}
+            }
+            // Restarts when a pushed screen is popped; a check-in made there shows up here (see `markStale`).
             .task(id: coordinator.path.isEmpty) {
                 guard coordinator.path.isEmpty else { return }
                 await viewModel.load()
+                await blockedProfiles.load()
             }
             // A check-in makes the loaded profile outdated; the load above then skips its freshness window.
             .onReceive(NotificationCenter.default.publisher(for: AppNotification.checkInDidSucceed)) { _ in
@@ -68,36 +87,48 @@ struct ProfileView: View {
             }
     }
 
+    private var editMenu: some View {
+        Menu {
+            Button("profile.menu.editName") {
+                viewModel.beginEditingName()
+            }
+            Button("profile.menu.editAvatar") {
+                coordinator.push(.avatarEdit)
+            }
+        } label: {
+            Label("profile.menu.accessibilityLabel", systemImage: "pencil")
+        }
+        .popoverTip(editAvatarTip, arrowEdge: .top)
+    }
+
     @ViewBuilder
     private var content: some View {
         if let profile = viewModel.profile {
             ScrollView {
                 VStack(spacing: 24) {
-                    ProfileHeaderView(name: profile.summary.name)
-                        .entrance(contentShown, order: 0)
+                    ProfileHeaderView()
 
-                    VStack(alignment: .leading, spacing: 32) {
-                        ProfileStatsView(summary: profile.summary)
-                            .entrance(contentShown, order: 1)
-                        ProfileRecentCheckInsSection(checkIns: profile.recentCheckIns, mediaPolicy: mediaPolicy)
-                            .entrance(contentShown, order: 2)
-                        ProfilePhotosSection(
-                            onOpenMyPhotos: { coordinator.push(.myPhotos) },
-                            onOpenPrivacy: { coordinator.push(.photoPrivacy) }
+                    ProfileSegmentedControl(selection: $section)
+                        .popoverTip(settingsTip, arrowEdge: .top)
+
+                    switch section {
+                    case .passport:
+                        passport(profile)
+                    case .settings:
+                        ProfileSettingsView(
+                            blockedCount: blockedProfiles.hasLoaded ? blockedProfiles.blockedUsers.count : nil,
+                            onSignOut: {
+                                viewModel.showsSignOutConfirmation = true
+                                ProfileSettingsTip.hasVisitedProfile = true
+                            },
+                            onDeleteAccount: { viewModel.showsDeleteAccountConfirmation = true }
                         )
-                        .entrance(contentShown, order: 3)
-                        ProfileSuggestionsSection(onOpenMySuggestions: { coordinator.push(.mySuggestions) })
-                            .entrance(contentShown, order: 3)
-                        ProximityAlertSettingsSection()
-                            .entrance(contentShown, order: 4)
                     }
                 }
                 .padding(16)
-                .onAppear {
-                    contentShown = true
-                }
             }
             .refreshable { await viewModel.load(force: true) }
+            .motion(Motion.suave, value: section)
         } else if let errorMessage = viewModel.errorMessage {
             ContentUnavailableView {
                 Label("profile.errorState.title", systemImage: "exclamationmark.triangle")
@@ -114,8 +145,35 @@ struct ProfileView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
+
+    private func passport(_ profile: Profile) -> some View {
+        VStack(alignment: .leading, spacing: 32) {
+            ProfileStatsView(summary: profile.summary)
+            ProfileSealsSection(
+                categories: earnedSealCategories(in: profile),
+                onSeeMore: { coordinator.push(.allSeals) }
+            )
+            ProfileRecentCheckInsSection(
+                checkIns: Array(profile.recentCheckIns.prefix(recentCheckInsCount)),
+                onSeeMore: { coordinator.push(.allCheckIns) }
+            )
+            ProfilePhotosSection(onSeeMore: { coordinator.push(.myPhotos) })
+            ProfileSuggestionsSection(onOpenMySuggestions: { coordinator.push(.mySuggestions) })
+        }
+    }
+
+    /// The kinds of seal the user has, most recent first, one of each.
+    private func earnedSealCategories(in profile: Profile) -> [ZanzarPlaceCategory] {
+        var seen: Set<ZanzarPlaceCategory> = []
+        return profile.recentCheckIns
+            .compactMap(\.sealCategory)
+            .filter { seen.insert($0).inserted }
+            .prefix(sealsPreviewCount)
+            .map { $0 }
+    }
 }
 
+#if DEBUG
 #Preview {
     NavigationStack {
         ProfileView()
@@ -123,3 +181,4 @@ struct ProfileView: View {
     .environment(AuthSession())
     .environment(AppCoordinator())
 }
+#endif

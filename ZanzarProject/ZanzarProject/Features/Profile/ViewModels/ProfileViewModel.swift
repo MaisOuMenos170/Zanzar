@@ -18,6 +18,12 @@ final class ProfileViewModel {
     var errorMessage: String?
     var showsSignOutConfirmation = false
     var signOutFailed = false
+    var showsDeleteAccountConfirmation = false
+    var deleteAccountFailed = false
+    private(set) var isDeletingAccount = false
+    var showsEditName = false
+    var draftName = ""
+    var editNameFailed = false
 
     init(
         service: ProfileServicing = ProfileService(),
@@ -78,6 +84,65 @@ final class ProfileViewModel {
             // The server's message is never shown: the service already logged the details.
             guard generation == loadGeneration, profile == nil else { return }
             errorMessage = APIError.rateLimitedMessage(for: error) ?? String(localized: "profile.errorState.message")
+        }
+    }
+
+    /// How many check-ins the passport asks for, so the seals row and the recent cards come from one request.
+    static let passportLimit = 100
+
+    /// Opens the rename alert with the current name filled in.
+    func beginEditingName() {
+        draftName = profile?.summary.name ?? ""
+        showsEditName = true
+    }
+
+    /// Saves `draftName`. An empty or unchanged name is ignored; a failure keeps the old name on screen.
+    func saveName() async {
+        let name = draftName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let profile, !name.isEmpty, name != profile.summary.name, let userID = userIDProvider() else { return }
+        editNameFailed = false
+        do {
+            try await service.updateName(userID: userID, name: name)
+            let summary = profile.summary
+            self.profile = Profile(
+                summary: ProfileSummary(
+                    name: name,
+                    checkInCount: summary.checkInCount,
+                    itineraryCount: summary.itineraryCount,
+                    sealCount: summary.sealCount
+                ),
+                recentCheckIns: profile.recentCheckIns
+            )
+        } catch is CancellationError {
+            return
+        } catch {
+            editNameFailed = true
+        }
+    }
+
+    /// Deletes the account on the server, then ends the local session like a sign-out. A server failure keeps
+    /// the user signed in so they can try again.
+    func deleteAccount(using authSession: AuthSession, coordinator: AppCoordinator) async {
+        guard !isDeletingAccount, let userID = userIDProvider() else { return }
+        isDeletingAccount = true
+        defer { isDeletingAccount = false }
+        deleteAccountFailed = false
+
+        do {
+            try await service.deleteAccount(userID: userID)
+        } catch is CancellationError {
+            return
+        } catch {
+            deleteAccountFailed = true
+            return
+        }
+
+        do {
+            try authSession.signOut()
+            coordinator.popToRoot()
+        } catch {
+            AppLog.profile.warning("Account deleted but the local sign-out failed")
+            deleteAccountFailed = true
         }
     }
 

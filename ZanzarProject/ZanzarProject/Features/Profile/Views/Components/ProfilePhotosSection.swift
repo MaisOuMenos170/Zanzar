@@ -1,43 +1,33 @@
 import SwiftUI
 import TipKit
 
-/// Links to the user's photos and to how photos and blocking work.
+/// "Minhas fotos": the latest photos the user sent, with a link to all of them.
 struct ProfilePhotosSection: View {
-    let onOpenMyPhotos: () -> Void
-    let onOpenPrivacy: () -> Void
-    
+    let onSeeMore: () -> Void
+
+    @State private var viewModel = MyPhotosViewModel()
+    @Environment(AppCoordinator.self) private var coordinator
+
     private let myPhotosTip = ProfileMyPhotosTip()
+    private let previewCount = 3
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("profile.photosSection.title")
-                .font(.title3.weight(.semibold))
-            VStack(spacing: 0) {
-                row(
-                    titleKey: "profile.photosSection.myPhotos.title",
-                    systemImage: "photo.on.rectangle",
-                    action: onOpenMyPhotos
-                )
-                .popoverTip(myPhotosTip, arrowEdge: .trailing)
-                Divider()
-                row(titleKey: "profile.photosSection.privacy.title", systemImage: "hand.raised", action: onOpenPrivacy)
-            }
-            .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 14))
-        }
-    }
+        VStack(alignment: .leading, spacing: 16) {
+            ProfileSectionHeader(title: "profile.photosSection.myPhotos.title", onSeeMore: onSeeMore)
+                .popoverTip(myPhotosTip, arrowEdge: .bottom)
 
-    private func row(titleKey: LocalizedStringKey, systemImage: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack {
-                Label(titleKey, systemImage: systemImage)
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.tertiary)
+            if viewModel.photos.isEmpty {
+                Text(viewModel.hasLoaded ? "userPhotos.myPhotos.empty.title" : "profile.loadingIndicator.title")
+                    .typography(.body2)
+                    .foregroundStyle(Color.brandNeutral600)
+            } else {
+                UserPhotoListCard(photos: Array(viewModel.photos.prefix(previewCount)), viewModel: viewModel)
             }
-            .padding(14)
-            .contentShape(.rect)
         }
-        .buttonStyle(PressableButtonStyle(pressedScale: 0.99))
+        // Reloads when "all photos" is popped: photos may have been deleted there.
+        .task(id: coordinator.path.isEmpty) {
+            guard coordinator.path.isEmpty else { return }
+            await viewModel.load()
+        }
     }
 }

@@ -1,0 +1,33 @@
+import SwiftUI
+
+/// The white pill with a magnifier that sits above the profile lists ("Campo / busca" in the Figma).
+struct ListSearchField: View {
+    let prompt: LocalizedStringKey
+    @Binding var text: String
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(Color.brandNeutral700)
+                .accessibilityHidden(true)
+
+            TextField(text: $text) {
+                Text(prompt).foregroundStyle(Color.brandSearchPlaceholder)
+            }
+            .typography(.body1)
+            .foregroundStyle(Color.brandNeutral950)
+            .submitLabel(.search)
+            .autocorrectionDisabled()
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background(Color.brandNeutral50, in: .rect(cornerRadius: 24))
+    }
+}
+
+#Preview {
+    @Previewable @State var text = ""
+    ListSearchField(prompt: "Buscar lugar", text: $text)
+        .padding()
+        .background(Color.profileBackground)
+}

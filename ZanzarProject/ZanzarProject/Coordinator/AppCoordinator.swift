@@ -52,6 +52,8 @@ final class AppCoordinator {
             AvatarView()
         case .avatarEditor:
             AvatarEditorView()
+        case .avatarEdit:
+            AvatarEditorView(finishesByPopping: true)
         case .passportIntro(let avatar, let username):
             PassportIntroView(avatar: avatar, username: username)
         case .notificationPermission:
@@ -62,6 +64,12 @@ final class AppCoordinator {
             MySuggestionsView()
         case .photoPrivacy:
             PhotoPrivacyView()
+        case .allCheckIns:
+            AllCheckInsView()
+        case .allSeals:
+            AllSealsView()
+        case .blockedProfiles:
+            BlockedProfilesView()
         }
     }
 

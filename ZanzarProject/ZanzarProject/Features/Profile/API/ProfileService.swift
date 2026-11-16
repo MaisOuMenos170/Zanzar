@@ -3,6 +3,26 @@ import Foundation
 protocol ProfileServicing: Sendable {
     func fetchProfile(userID: String, limit: Int) async throws -> Profile
     func logout() async throws
+    /// Changes the name shown on the profile.
+    func updateName(userID: String, name: String) async throws
+    /// Deletes the account and everything that belongs to it.
+    func deleteAccount(userID: String) async throws
+}
+
+extension ProfileServicing {
+    // Defaults so test doubles that never edit the account don't have to implement these.
+    func updateName(userID: String, name: String) async throws {
+        throw APIError.invalidRequest
+    }
+
+    func deleteAccount(userID: String) async throws {
+        throw APIError.invalidRequest
+    }
+}
+
+/// Body of `PATCH user/{id}`.
+nonisolated struct UpdateNameRequest: Encodable, Sendable {
+    let username: String
 }
 
 struct ProfileAPIResponse: Decodable, Sendable {
@@ -148,6 +168,39 @@ final class ProfileService: ProfileServicing {
 
     private static func isSafePathSegment(_ value: String) -> Bool {
         !value.isEmpty && value.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "-" || $0 == "_") }
+    }
+
+    func updateName(userID: String, name: String) async throws {
+        guard Self.isSafePathSegment(userID) else {
+            AppLog.profile.error("Refusing to rename a malformed user id")
+            throw APIError.invalidRequest
+        }
+        AppLog.profile.info("Updating the profile name")
+        do {
+            try await client.sendWithoutResponse(
+                path: "user/\(userID)",
+                method: .patch,
+                body: UpdateNameRequest(username: name)
+            )
+        } catch {
+            AppLog.profile.error("Profile name update failed", error: error)
+            throw error
+        }
+    }
+
+    func deleteAccount(userID: String) async throws {
+        guard Self.isSafePathSegment(userID) else {
+            AppLog.profile.error("Refusing to delete a malformed user id")
+            throw APIError.invalidRequest
+        }
+        AppLog.profile.info("Requesting account deletion")
+        do {
+            try await client.sendWithoutResponse(path: "user/\(userID)", method: .delete)
+            AppLog.profile.info("Account deleted")
+        } catch {
+            AppLog.profile.error("Account deletion failed", error: error)
+            throw error
+        }
     }
 
     func logout() async throws {

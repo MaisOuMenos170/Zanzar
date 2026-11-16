@@ -1,7 +1,7 @@
 import SwiftUI
 import TipKit
 
-/// The Profile section where the user chooses what the proximity alerts tell them, and fixes what blocks them.
+/// The Ajustes section where the user chooses what the proximity alerts tell them, and fixes what blocks them.
 struct ProximityAlertSettingsSection: View {
     @State private var viewModel = ProximityAlertSettingsViewModel(
         service: SystemProximityPermissionService(),
@@ -14,21 +14,33 @@ struct ProximityAlertSettingsSection: View {
     private let customizeTip = ProximityAlertsCustomizeTip()
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("proximitySettings.title")
-                .font(.headline)
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("proximitySettings.title")
+                    .typography(.headline6)
+                    .foregroundStyle(Color.black)
+                    .accessibilityAddTraits(.isHeader)
+                Text("proximitySettings.subtitle")
+                    .typography(.caption2)
+                    .foregroundStyle(Color.brandSlate500)
+            }
 
-            VStack(spacing: 12) {
+            ListCard {
                 Toggle(isOn: nearbyBinding) {
                     label("proximitySettings.nearby.title", "proximitySettings.nearby.subtitle")
                 }
                 .popoverTip(enableTip, arrowEdge: .trailing)
-                
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+
                 Toggle(isOn: itineraryBinding) {
                     label("proximitySettings.itinerary.title", "proximitySettings.itinerary.subtitle")
                 }
                 .popoverTip(customizeTip, arrowEdge: .trailing)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
             }
+            .tint(Color.brandPurple600)
 
             permissionRow
         }
@@ -57,9 +69,11 @@ struct ProximityAlertSettingsSection: View {
     private func label(_ title: LocalizedStringKey, _ subtitle: LocalizedStringKey) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
+                .typography(.subtitle2)
+                .foregroundStyle(Color.brandNeutral950)
             Text(subtitle)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                .typography(.caption1)
+                .foregroundStyle(Color.brandNeutral600)
         }
     }
 
@@ -69,14 +83,13 @@ struct ProximityAlertSettingsSection: View {
         case .unknown:
             EmptyView()
         case .complete:
-            Label("proximitySettings.complete.message", systemImage: "checkmark.circle")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+            // The line under the title already says the alerts work with the app closed.
+            EmptyView()
         case .canTurnOn:
             VStack(alignment: .leading, spacing: 8) {
                 Text("proximitySettings.turnOn.message")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .typography(.caption1)
+                    .foregroundStyle(Color.brandNeutral600)
                 Button("proximitySettings.turnOnButton.title") {
                     Task { await viewModel.turnOn() }
                 }
@@ -88,8 +101,8 @@ struct ProximityAlertSettingsSection: View {
                 Text(missing == .notifications
                      ? "proximityPermission.settings.notifications.message"
                      : "proximityPermission.settings.location.message")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .typography(.caption1)
+                    .foregroundStyle(Color.brandNeutral600)
                 Button("proximityPermission.settingsButton.title", action: viewModel.openSettings)
                     .buttonStyle(.glass)
             }
