@@ -12,14 +12,14 @@ struct ProfilePhotosSection: View {
     private let previewCount = 3
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 8) {
             ProfileSectionHeader(title: "profile.photosSection.myPhotos.title", onSeeMore: onSeeMore)
                 .popoverTip(myPhotosTip, arrowEdge: .bottom)
 
             if viewModel.photos.isEmpty {
-                Text(viewModel.hasLoaded ? "userPhotos.myPhotos.empty.title" : "profile.loadingIndicator.title")
-                    .typography(.body2)
-                    .foregroundStyle(Color.brandNeutral600)
+                if viewModel.hasLoaded {
+                    ListEmptyState(message: "profile.photosSection.empty")
+                }
             } else {
                 UserPhotoListCard(photos: Array(viewModel.photos.prefix(previewCount)), viewModel: viewModel)
             }

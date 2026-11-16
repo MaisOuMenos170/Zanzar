@@ -158,7 +158,7 @@ struct ProfileView: View {
                 onSeeMore: { coordinator.push(.allCheckIns) }
             )
             ProfilePhotosSection(onSeeMore: { coordinator.push(.myPhotos) })
-            ProfileSuggestionsSection(onOpenMySuggestions: { coordinator.push(.mySuggestions) })
+            ProfileSuggestionsSection(onSeeMore: { coordinator.push(.mySuggestions) })
         }
     }
 

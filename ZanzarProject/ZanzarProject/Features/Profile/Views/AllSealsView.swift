@@ -48,13 +48,16 @@ struct AllSealsView: View {
                     Task { await viewModel.load() }
                 }
             }
-        } else if viewModel.checkIns.isEmpty && viewModel.hasLoaded {
-            ContentUnavailableView("profile.sealsSection.empty", systemImage: "seal")
-        } else if viewModel.checkIns.isEmpty {
-            ProgressView()
-                .frame(maxWidth: .infinity)
+        } else if viewModel.checkIns.isEmpty && !viewModel.hasLoaded {
+            ListLoadingView()
         } else if visibleSeals.isEmpty {
-            ContentUnavailableView.search(text: searchText)
+            ListNoResultsView(
+                hasItems: viewModel.checkIns.contains { $0.sealCategory != nil },
+                query: searchText,
+                emptyTitle: "list.empty.seals.title",
+                emptyMessage: "list.empty.seals.message",
+                notFoundMessage: "list.noResults.seal.message"
+            )
         } else {
             LazyVGrid(columns: columns, spacing: 8) {
                 ForEach(visibleSeals) { seal in

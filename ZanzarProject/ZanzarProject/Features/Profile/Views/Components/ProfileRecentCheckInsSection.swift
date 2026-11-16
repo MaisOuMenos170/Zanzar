@@ -12,11 +12,11 @@ struct ProfileRecentCheckInsSection: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 8) {
             ProfileSectionHeader(title: "profile.recentCheckIns.title", onSeeMore: onSeeMore)
 
             if checkIns.isEmpty {
-                ProfileEmptyCheckInsSheet()
+                ListEmptyState(message: "profile.recentCheckIns.empty")
             } else {
                 LazyVGrid(columns: columns, spacing: 8) {
                     ForEach(Array(checkIns.enumerated()), id: \.element.id) { index, checkIn in

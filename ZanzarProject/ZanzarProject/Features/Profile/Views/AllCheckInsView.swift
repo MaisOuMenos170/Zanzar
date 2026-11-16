@@ -40,13 +40,16 @@ struct AllCheckInsView: View {
                     Task { await viewModel.load() }
                 }
             }
-        } else if viewModel.checkIns.isEmpty && viewModel.hasLoaded {
-            ContentUnavailableView("profile.recentCheckIns.empty", systemImage: "mappin.slash")
-        } else if viewModel.checkIns.isEmpty {
-            ProgressView()
-                .frame(maxWidth: .infinity)
+        } else if viewModel.checkIns.isEmpty && !viewModel.hasLoaded {
+            ListLoadingView()
         } else if visibleCheckIns.isEmpty {
-            ContentUnavailableView.search(text: searchText)
+            ListNoResultsView(
+                hasItems: !viewModel.checkIns.isEmpty,
+                query: searchText,
+                emptyTitle: "list.empty.checkIns.title",
+                emptyMessage: "list.empty.checkIns.message",
+                notFoundMessage: "list.noResults.place.message"
+            )
         } else {
             LazyVStack(spacing: 16) {
                 ForEach(Array(visibleCheckIns.enumerated()), id: \.element.id) { index, checkIn in

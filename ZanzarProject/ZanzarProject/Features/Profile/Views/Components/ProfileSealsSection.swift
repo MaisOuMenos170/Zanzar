@@ -6,13 +6,11 @@ struct ProfileSealsSection: View {
     let onSeeMore: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 8) {
             ProfileSectionHeader(title: "profile.sealsSection.title", onSeeMore: onSeeMore)
 
             if categories.isEmpty {
-                Text("profile.sealsSection.empty")
-                    .typography(.body2)
-                    .foregroundStyle(Color.brandNeutral600)
+                ListEmptyState(message: "profile.sealsSection.empty")
             } else {
                 ScrollView(.horizontal) {
                     HStack(spacing: 8) {
@@ -22,6 +20,8 @@ struct ProfileSealsSection: View {
                     }
                 }
                 .scrollIndicators(.hidden)
+                // Seals scrolling out of the 16pt margin are not cut at its edge, they slide off the screen.
+                .scrollClipDisabled()
             }
         }
     }

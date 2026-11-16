@@ -1540,6 +1540,227 @@
         }
       }
     },
+    "list.empty.checkIns.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explore the map and make your first check-in!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explore o mapa e faça seu primeiro check-in!"
+          }
+        }
+      }
+    },
+    "list.empty.checkIns.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You have no check-ins yet"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você ainda não tem check-ins"
+          }
+        }
+      }
+    },
+    "list.empty.seals.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check in at a place to earn your first seal!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faça check-in em um lugar para ganhar seu primeiro selo!"
+          }
+        }
+      }
+    },
+    "list.empty.seals.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You have no seals yet"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você ainda não tem selos"
+          }
+        }
+      }
+    },
+    "list.noResults.blocked.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You haven't blocked any profile with that name."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você não bloqueou nenhum perfil com esse nome."
+          }
+        }
+      }
+    },
+    "list.noResults.filterMessage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try picking another category."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tente escolher outra categoria."
+          }
+        }
+      }
+    },
+    "list.noResults.filterTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No results"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum resultado"
+          }
+        }
+      }
+    },
+    "list.noResults.place.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Looks like this place isn't on Lero yet. How about suggesting a new one?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parece que esse lugar ainda não está no Lero. Que tal sugerir um lugar novo?"
+          }
+        }
+      }
+    },
+    "list.noResults.seal.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You haven't earned a seal with that name yet. Keep checking in!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você ainda não ganhou um selo com esse nome. Continue fazendo check-ins!"
+          }
+        }
+      }
+    },
+    "list.noResults.suggestButton" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggest a place"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sugerir lugar"
+          }
+        }
+      }
+    },
+    "list.noResults.suggestion.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You haven't suggested this place yet. How about suggesting it now?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você ainda não sugeriu esse lugar. Que tal sugerir agora?"
+          }
+        }
+      }
+    },
+    "list.noResults.title %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” not found"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” não encontrado"
+          }
+        }
+      }
+    },
+    "listSearchField.clearButton.accessibilityLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear search"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limpar busca"
+          }
+        }
+      }
+    },
     "locationMap.clusterPin.accessibilityLabel %lld" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2056,13 +2277,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Open settings"
+            "value" : "Open Settings"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir ajustes"
+            "value" : "Abrir Ajustes"
           }
         }
       }
@@ -4575,6 +4796,47 @@
         }
       }
     },
+    "placeSuggestion.mySuggestions.count %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld suggestion"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld suggestions"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld sugestão"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld sugestões"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "placeSuggestion.mySuggestions.empty.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4656,6 +4918,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lugares aprovados já aparecem no mapa. Os que estão em análise passam pela equipe."
+          }
+        }
+      }
+    },
+    "placeSuggestion.mySuggestions.search.prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search suggestions"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar sugestão"
           }
         }
       }
@@ -5626,6 +5905,23 @@
         }
       }
     },
+    "profile.photosSection.empty" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You haven't sent any photos yet!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você ainda não enviou fotos!"
+          }
+        }
+      }
+    },
     "profile.photosSection.myPhotos.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5683,13 +5979,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No check-ins yet."
+            "value" : "You have no check-ins yet!"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nenhum check-in ainda."
+            "value" : "Você não tem check-ins registrados!"
           }
         }
       }
@@ -5717,13 +6013,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check in to earn your first seal."
+            "value" : "You have no seals yet!"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faça check-in para ganhar seu primeiro selo."
+            "value" : "Você ainda não tem selos!"
           }
         }
       }
@@ -6245,6 +6541,23 @@
         }
       }
     },
+    "profile.suggestionsSection.empty" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You haven't suggested any places yet!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você ainda não sugeriu lugares!"
+          }
+        }
+      }
+    },
     "profile.suggestionsSection.mySuggestions.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6506,13 +6819,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Open Settings"
+            "value" : "Open settings"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir Ajustes"
+            "value" : "Abrir ajustes"
           }
         }
       }

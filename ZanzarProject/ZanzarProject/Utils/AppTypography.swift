@@ -32,9 +32,9 @@ enum AppTypography {
     case button
     /// SF Pro Semibold 16, for the buttons of alerts.
     case button2
-    /// SF Pro Expanded Semibold 80, for the big number of a tile.
+    /// SF Pro Rounded Semibold 80, for the big number of a tile.
     case display1
-    /// SF Pro Expanded Regular 44, for the number of a small tile.
+    /// SF Pro Rounded Regular 44, for the number of a small tile.
     case display2
 
     var size: CGFloat {
@@ -63,16 +63,8 @@ enum AppTypography {
 
     var design: Font.Design {
         switch self {
-        case .headline4, .headline5, .headline6, .subtitle3, .subtitle4: .rounded
+        case .headline4, .headline5, .headline6, .subtitle3, .subtitle4, .display1, .display2: .rounded
         default: .default
-        }
-    }
-
-    /// `.expanded` for the big numbers; `nil` keeps the font's default width.
-    var width: Font.Width? {
-        switch self {
-        case .display1, .display2: .expanded
-        default: nil
         }
     }
 

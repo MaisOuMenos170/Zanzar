@@ -1,22 +1,11 @@
 import SwiftUI
 
-/// A colored dot and the state of a photo: "Em análise", "Publicada" or "Rejeitada".
+/// The state of a photo: "Em análise", "Publicada" or "Rejeitada".
 struct UserPhotoStatusIndicator: View {
     let status: UserPhotoStatus
 
     var body: some View {
-        HStack(spacing: 6) {
-            Circle()
-                .fill(dotColor)
-                .frame(width: 8, height: 8)
-                .accessibilityHidden(true)
-            Text(titleKey)
-                .typography(.caption1)
-                .foregroundStyle(Color.brandNeutral900)
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 2)
-        .accessibilityElement(children: .combine)
+        StatusDotLabel(title: titleKey, color: dotColor)
     }
 
     private var titleKey: LocalizedStringKey {

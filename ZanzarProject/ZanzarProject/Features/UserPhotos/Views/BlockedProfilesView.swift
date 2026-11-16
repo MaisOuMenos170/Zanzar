@@ -31,17 +31,16 @@ struct BlockedProfilesView: View {
 
     @ViewBuilder
     private var content: some View {
-        if viewModel.blockedUsers.isEmpty && viewModel.hasLoaded {
-            ContentUnavailableView(
-                "userPhotos.privacy.blocked.empty",
-                systemImage: "hand.raised",
-                description: Text("userPhotos.privacy.blocked.footer")
-            )
-        } else if viewModel.blockedUsers.isEmpty {
-            ProgressView()
-                .frame(maxWidth: .infinity)
+        if viewModel.blockedUsers.isEmpty && !viewModel.hasLoaded {
+            ListLoadingView()
         } else if visibleUsers.isEmpty {
-            ContentUnavailableView.search(text: searchText)
+            ListNoResultsView(
+                hasItems: !viewModel.blockedUsers.isEmpty,
+                query: searchText,
+                emptyTitle: "userPhotos.privacy.blocked.empty",
+                emptyMessage: "userPhotos.privacy.blocked.footer",
+                notFoundMessage: "list.noResults.blocked.message"
+            )
         } else {
             ListCard {
                 ForEach(visibleUsers) { user in

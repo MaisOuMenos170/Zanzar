@@ -22,8 +22,8 @@ struct ProfileSectionHeader: View {
                         .accessibilityHidden(true)
                 }
                 .foregroundStyle(Color.brandPurple500)
-                .frame(minHeight: 44)
-                .contentShape(.rect)
+                // Taller than the line, so the header stays compact but the link is still easy to hit.
+                .contentShape(.rect.inset(by: -10))
             }
             .buttonStyle(.plain)
         }

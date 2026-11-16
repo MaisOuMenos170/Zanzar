@@ -33,11 +33,6 @@ struct UserPhotoRow: View {
                                 .foregroundStyle(Color.brandNeutral600)
                             UserPhotoStatusIndicator(status: photo.status)
                         }
-                        if let reason = photo.decisionReason, photo.status == .rejected || photo.status == .removed {
-                            Text(LocalizedStringKey(reason.messageKey))
-                                .typography(.caption1)
-                                .foregroundStyle(Color.brandNeutral600)
-                        }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -51,8 +46,9 @@ struct UserPhotoRow: View {
                     .labelStyle(.iconOnly)
                     .font(.body)
                     .foregroundStyle(Color.brandErrorRed)
-                    .frame(minWidth: 44, minHeight: 44)
-                    .contentShape(.rect)
+                    .padding(4)
+                    // The icon sits in the 4pt padding of the design; the touch area reaches the 44pt minimum.
+                    .contentShape(.rect.inset(by: -8))
             }
             .buttonStyle(.plain)
         }

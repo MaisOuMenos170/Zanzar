@@ -26,17 +26,16 @@ struct MyPhotosView: View {
 
     @ViewBuilder
     private var content: some View {
-        if viewModel.photos.isEmpty && viewModel.hasLoaded {
-            ContentUnavailableView(
-                "userPhotos.myPhotos.empty.title",
-                systemImage: "photo.on.rectangle.angled",
-                description: Text("userPhotos.myPhotos.empty.message")
-            )
-        } else if viewModel.photos.isEmpty {
-            ProgressView()
-                .frame(maxWidth: .infinity)
+        if viewModel.photos.isEmpty && !viewModel.hasLoaded {
+            ListLoadingView()
         } else if visiblePhotos.isEmpty {
-            ContentUnavailableView.search(text: searchText)
+            ListNoResultsView(
+                hasItems: !viewModel.photos.isEmpty,
+                query: searchText,
+                emptyTitle: "userPhotos.myPhotos.empty.title",
+                emptyMessage: "userPhotos.myPhotos.empty.message",
+                notFoundMessage: "list.noResults.place.message"
+            )
         } else {
             UserPhotoListCard(photos: visiblePhotos, viewModel: viewModel)
         }

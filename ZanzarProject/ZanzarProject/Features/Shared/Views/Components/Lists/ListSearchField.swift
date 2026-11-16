@@ -18,6 +18,17 @@ struct ListSearchField: View {
             .foregroundStyle(Color.brandNeutral950)
             .submitLabel(.search)
             .autocorrectionDisabled()
+
+            if !text.isEmpty {
+                Button {
+                    text = ""
+                } label: {
+                    Label("listSearchField.clearButton.accessibilityLabel", systemImage: "xmark")
+                        .labelStyle(.iconOnly)
+                        .foregroundStyle(Color.brandNeutral700)
+                }
+                .buttonStyle(.plain)
+            }
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)

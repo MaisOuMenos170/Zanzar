@@ -213,9 +213,11 @@ struct MainTabView: View {
             NavigationStack(path: Bindable(profileCoordinator).path) {
                 ProfileView()
                     .environment(profileCoordinator)
+                    .environment(\.suggestPlace) { coordinator.present(sheet: .suggestPlace) }
                     .navigationDestination(for: Route.self) { route in
                         profileCoordinator.view(for: route)
                             .environment(profileCoordinator)
+                            .environment(\.suggestPlace) { coordinator.present(sheet: .suggestPlace) }
                     }
             }
         }

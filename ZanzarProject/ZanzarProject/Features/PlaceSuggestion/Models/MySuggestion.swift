@@ -14,8 +14,8 @@ nonisolated struct MySuggestion: Identifiable, Hashable, Sendable {
     let createdAt: Date
     let decidedAt: Date?
 
-    /// What to call it on screen.
+    /// What to call it on screen: the name, or the short form of the address for a suggestion typed by hand.
     var displayName: String {
-        name ?? address
+        name ?? ShortAddress.format(address)
     }
 }
