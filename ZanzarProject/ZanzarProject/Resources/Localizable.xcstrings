@@ -2056,13 +2056,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Open Settings"
+            "value" : "Open settings"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir Ajustes"
+            "value" : "Abrir ajustes"
           }
         }
       }
@@ -6682,7 +6682,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para avisar com o app fechado, falta liberar as notificações e a localização “Sempre”."
+            "value" : "Para receber notificações a qualquer momento, é necessário ativar as notificações do app e a localização como “Sempre”."
           }
         }
       }

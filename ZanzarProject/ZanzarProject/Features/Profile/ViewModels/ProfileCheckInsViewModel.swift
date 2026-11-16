@@ -4,8 +4,9 @@ import Observation
 /// Every check-in of the signed-in user, for "all check-ins" and "all seals".
 @Observable
 final class ProfileCheckInsViewModel {
-    /// How many check-ins one request asks for.
-    static let fetchLimit = 100
+    /// How many check-ins one request asks for: the most the backend allows (`limit` is capped at 20, above that
+    /// it answers 400). It has no paging, so these lists show the 20 latest.
+    static let fetchLimit = 20
 
     private(set) var checkIns: [ProfileCheckIn] = []
     private(set) var isLoading = false

@@ -88,7 +88,8 @@ final class ProfileViewModel {
     }
 
     /// How many check-ins the passport asks for, so the seals row and the recent cards come from one request.
-    static let passportLimit = 100
+    /// The backend caps `limit` at 20 (`validateGetProfileQuery`); anything above is answered with a 400.
+    static let passportLimit = 20
 
     /// Opens the rename alert with the current name filled in.
     func beginEditingName() {
