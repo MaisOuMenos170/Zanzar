@@ -22,7 +22,7 @@ struct ProfileSuggestionsSection: View {
                 .padding(14)
                 .contentShape(.rect)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PressableButtonStyle(pressedScale: 0.99))
             .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 14))
             .popoverTip(mySuggestionsTip, arrowEdge: .trailing)
         }

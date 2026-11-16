@@ -36,6 +36,9 @@ struct MyPhotosView: View {
                 }
             }
         }
+        .motion(Motion.suave, value: [viewModel.hasLoaded, viewModel.photos.isEmpty])
+        .motion(Motion.assentar, value: viewModel.photos.map(\.id))
+        .haptic(.alerta, trigger: viewModel.photoPendingDeletion?.id, when: { _, photoID in photoID != nil })
         .navigationTitle("userPhotos.myPhotos.title")
         .task { await viewModel.load() }
         .refreshable { await viewModel.load() }

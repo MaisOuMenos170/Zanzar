@@ -8,7 +8,7 @@ struct UserPhotoViewerView: View {
 
     var body: some View {
         NavigationStack {
-            AsyncImage(url: photo.viewerURL) { phase in
+            AsyncImage(url: photo.viewerURL, transaction: Transaction(animation: Motion.suave)) { phase in
                 switch phase {
                 case .success(let image):
                     image

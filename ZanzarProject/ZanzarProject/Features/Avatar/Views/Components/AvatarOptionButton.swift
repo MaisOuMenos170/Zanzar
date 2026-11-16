@@ -13,11 +13,13 @@ struct AvatarOptionButton<Content: View>: View {
                     if isSelected {
                         SelectionBadge()
                             .offset(x: 4)
+                            .transition(.scale(scale: 0.5).combined(with: .opacity))
                     }
                 }
+                .motion(Motion.toque, value: isSelected)
                 .contentShape(.rect)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle(pressedScale: 0.94))
         .accessibilityLabel(accessibilityLabel)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }

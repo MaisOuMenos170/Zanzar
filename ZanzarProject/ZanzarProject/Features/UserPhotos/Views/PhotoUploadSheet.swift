@@ -38,6 +38,10 @@ struct PhotoUploadSheet: View {
         .interactiveDismissDisabled(
             viewModel.step == .uploading || viewModel.step == .analyzing || viewModel.step == .editing
         )
+        // Each step of the flow fades into the next, and the two endings are felt.
+        .motion(Motion.suave, value: viewModel.step)
+        .haptic(.sucesso, trigger: viewModel.step, when: { _, step in step.isSent })
+        .haptic(.alerta, trigger: viewModel.step, when: { _, step in step.isFailure })
         .task { await viewModel.start() }
         .onChange(of: pickerItem) { _, item in
             guard let item else { return }
