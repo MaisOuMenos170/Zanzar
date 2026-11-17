@@ -14,6 +14,7 @@ struct PlaceSuggestionSubmitButton: View {
                 if isLoading {
                     ProgressView()
                         .tint(.white)
+                        .transition(.opacity)
                 }
             }
             .font(.system(size: 14, weight: .semibold))
@@ -24,8 +25,9 @@ struct PlaceSuggestionSubmitButton: View {
             .background(Color.brandPurple500, in: .rect(cornerRadius: 30))
             .contentShape(.rect(cornerRadius: 30))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle())
         .disabled(isLoading)
+        .motion(Motion.suave, value: isLoading)
     }
 }
 

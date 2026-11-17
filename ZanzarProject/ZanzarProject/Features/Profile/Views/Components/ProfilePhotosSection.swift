@@ -38,6 +38,6 @@ struct ProfilePhotosSection: View {
             .padding(14)
             .contentShape(.rect)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle(pressedScale: 0.99))
     }
 }

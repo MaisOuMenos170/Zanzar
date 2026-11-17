@@ -24,7 +24,7 @@ struct ProfileRecentCheckInsSection: View {
                         NavigationLink(value: Route.placeDetail(checkIn.mapPlace)) {
                             ProfileCheckInCard(checkIn: checkIn, mediaPolicy: mediaPolicy)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(PressableButtonStyle())
                         .accessibilityHint("profile.checkInCard.openDetailsHint")
                     }
                 }

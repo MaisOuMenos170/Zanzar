@@ -26,22 +26,33 @@ struct AvatarEditorView: View {
             ) { value in
                 viewModel.select(value)
             }
+            // A new tab brings a new grid: the old one fades out and the new one fades in.
+            .id(viewModel.selectedTab)
+            .transition(.opacity)
 
-            Button("avatarEditor.saveButton.title") {
+            Button {
                 Task {
                     if await viewModel.save() {
                         coordinator.push(.passportIntro(avatar: viewModel.avatar, username: onboarding.username))
                     }
                 }
+            } label: {
+                Text("avatarEditor.saveButton.title")
+                    .opacity(viewModel.isSaving ? 0 : 1)
             }
             .buttonStyle(AuthPrimaryButtonStyle())
             .disabled(viewModel.isSaving)
             .overlay {
                 if viewModel.isSaving {
                     ProgressView()
+                        .transition(.opacity)
                 }
             }
+            .motion(Motion.suave, value: viewModel.isSaving)
         }
+        .motion(Motion.suave, value: viewModel.selectedTab)
+        .haptic(.selecao, trigger: viewModel.selectedTab)
+        .haptic(.selecao, trigger: viewModel.avatar)
         .padding(.horizontal, 16)
         .padding(.bottom, 16)
         .background(Color.brandBlue50.ignoresSafeArea())
