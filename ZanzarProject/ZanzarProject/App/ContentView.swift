@@ -36,6 +36,7 @@ struct ContentView: View {
                     await pushTokenManager.sendIfNeeded()
                 }
             } else {
+                pushTokenManager.forgetSentToken()
                 Task { await ProximityAlertCoordinator.shared.stop() }
             }
         }

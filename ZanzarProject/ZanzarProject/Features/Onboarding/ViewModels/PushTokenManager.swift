@@ -9,10 +9,22 @@ import UserNotifications
 final class PushTokenManager: NSObject {
     static let shared = PushTokenManager()
 
-    private let client = URLSessionNetworkClient.shared
-    private let defaults = UserDefaults.standard
+    private let client: NetworkClient
+    private let defaults: UserDefaults
+    private let tokenStore: AuthTokenStore
     private let deviceTokenKey = "zanzar.pushDeviceToken"
     private let sentKey = "zanzar.pushTokenSent"
+
+    init(
+        client: NetworkClient = URLSessionNetworkClient.shared,
+        defaults: UserDefaults = .standard,
+        tokenStore: AuthTokenStore = .shared
+    ) {
+        self.client = client
+        self.defaults = defaults
+        self.tokenStore = tokenStore
+        super.init()
+    }
 
     /// The token currently stored locally (nil if none).
     var storedToken: String? {
@@ -30,7 +42,7 @@ final class PushTokenManager: NSObject {
 
         AppLog.network.info("APNs device token received (\(tokenString.count) hex chars)")
 
-        if AuthTokenStore.shared.getToken() != nil {
+        if tokenStore.getToken() != nil {
             await sendToBackend(token: tokenString)
         }
     }
@@ -43,8 +55,14 @@ final class PushTokenManager: NSObject {
         await sendToBackend(token: token)
     }
 
+    /// The user signed out or the session expired. The backend no longer ties this phone to that account, so the
+    /// next account that signs in on it has to register the token again.
+    func forgetSentToken() {
+        defaults.removeObject(forKey: sentKey)
+    }
+
     private func sendToBackend(token: String) async {
-        guard let userID = AuthTokenStore.shared.userID, Self.isSafePathSegment(userID) else {
+        guard let userID = tokenStore.userID, Self.isSafePathSegment(userID) else {
             AppLog.network.warning("Skipping device token registration: no valid signed-in user")
             return
         }

@@ -162,6 +162,32 @@ struct SessionRefreshTests {
         #expect(harness.tokenStore.getRefreshToken() == "old-refresh")
     }
 
+    @Test("a rate limited refresh holds back the next request without sending it")
+    func rateLimitedRefreshPausesTheClient() async throws {
+        let harness = try makeHarness()
+        let requestCount = OSAllocatedUnfairLock(initialState: 0)
+        RoutedURLProtocol.install { request in
+            requestCount.withLock { $0 += 1 }
+            if request.url?.path == "/refresh" {
+                return .init(status: 429, body: Data())
+            }
+            return .init(status: 401, body: Data(#"{"success":false,"message":"Invalid JWT token"}"#.utf8))
+        }
+
+        do {
+            let _: [String] = try await harness.client.get(path: "itineraries")
+            Issue.record("Expected a rate limit error")
+        } catch APIError.rateLimited {}
+        let sentSoFar = requestCount.withLock { $0 }
+
+        do {
+            let _: [String] = try await harness.client.get(path: "itineraries")
+            Issue.record("Expected the client to stay paused")
+        } catch APIError.rateLimited {}
+
+        #expect(requestCount.withLock { $0 } == sentSoFar)
+    }
+
     @Test("a refresh that cannot reach the server keeps the session")
     func transportFailureKeepsTheSession() async throws {
         let harness = try makeHarness()

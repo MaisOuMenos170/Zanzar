@@ -7,62 +7,11 @@ protocol TipKitServicing: Sendable {
     func configure() async throws
     /// Resets all tip display state (useful for testing or "show tutorial again").
     func resetAllTips() async
-    /// Gets a tip by its identifier.
-    func tip(for identifier: String) -> (any Tip)?
 }
 
 /// Concrete implementation using Apple's TipKit framework.
 final class TipKitService: TipKitServicing {
     static let shared = TipKitService()
-    
-    /// All tips defined for the app, keyed by identifier.
-    private let tips: [String: any Tip] = [
-        // Onboarding / Welcome
-        "welcome.createAccount": WelcomeCreateAccountTip(),
-        "welcome.signIn": WelcomeSignInTip(),
-        
-        // Discover / Map tab
-        "discover.mapPins": DiscoverMapPinsTip(),
-        "discover.filterButton": DiscoverFilterTip(),
-        "discover.searchPlaces": DiscoverSearchTip(),
-        "discover.userLocation": DiscoverUserLocationTip(),
-        
-        // Check-in / Itinerary tab
-        "checkIn.createItinerary": CheckInCreateItineraryTip(),
-        "checkIn.startItinerary": CheckInStartItineraryTip(),
-        "checkIn.checkInPlace": CheckInPlaceTip(),
-        "checkIn.proximityAlerts": CheckInProximityAlertsTip(),
-        
-        // Profile tab
-        "profile.myPhotos": ProfileMyPhotosTip(),
-        "profile.mySuggestions": ProfileMySuggestionsTip(),
-        "profile.editAvatar": ProfileEditAvatarTip(),
-        "profile.settings": ProfileSettingsTip(),
-        
-        // Place Detail
-        "placeDetail.savePlace": PlaceDetailSaveTip(),
-        "placeDetail.checkIn": PlaceDetailCheckInTip(),
-        "placeDetail.addPhoto": PlaceDetailAddPhotoTip(),
-        "placeDetail.share": PlaceDetailShareTip(),
-        "placeDetail.directions": PlaceDetailDirectionsTip(),
-        
-        // Onboarding flow
-        "onboarding.avatarEditor": OnboardingAvatarEditorTip(),
-        "onboarding.passportIntro": OnboardingPassportIntroTip(),
-        "onboarding.notificationPermission": OnboardingNotificationTip(),
-        
-        // User Photos
-        "userPhotos.takePhoto": UserPhotosTakePhotoTip(),
-        "userPhotos.uploadPhoto": UserPhotosUploadTip(),
-        "userPhotos.photoStatus": UserPhotosStatusTip(),
-        
-        // Place Suggestion
-        "placeSuggestion.suggestPlace": PlaceSuggestionTip(),
-        
-        // Proximity Alerts
-        "proximityAlerts.enable": ProximityAlertsEnableTip(),
-        "proximityAlerts.customize": ProximityAlertsCustomizeTip(),
-    ]
     
     private init() {}
     
@@ -79,18 +28,6 @@ final class TipKitService: TipKitServicing {
     func resetAllTips() async {
         try? Tips.resetDatastore()
         try? await configure()
-    }
-    
-    func tip(for identifier: String) -> (any Tip)? {
-        return tips[identifier]
-    }
-    
-    /// Marks a tip as seen by updating its parameter.
-    /// Call this when the user completes the action the tip teaches.
-    func markTipAsSeen(_ identifier: String) {
-        // The parameters are static on each tip type, so we can't easily update them generically.
-        // Instead, each tip's parameter gets updated when the relevant action happens in the app.
-        // This method exists for API completeness but the actual marking happens in each feature.
     }
 }
 

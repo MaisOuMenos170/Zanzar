@@ -25,12 +25,18 @@ protocol LocationMapServicing: Sendable {
 // The project's default actor isolation is MainActor, so this class (and its
 // CLLocationManager) is implicitly MainActor-isolated and therefore Sendable.
 final class LocationMapService: LocationMapServicing {
+    static let shared = LocationMapService()
+
     private let manager = CLLocationManager()
     private let client: NetworkClient
 
     init(client: NetworkClient = URLSessionNetworkClient.shared) {
         self.client = client
     }
+
+    /// No fix after this long (no signal, location unavailable) counts as "no location", so a screen waiting
+    /// for it can carry on without one.
+    private static let locationTimeout: Duration = .seconds(10)
 
     func currentUserLocation() async throws -> UserCoordinate {
         #if DEBUG && targetEnvironment(simulator)
@@ -40,6 +46,13 @@ final class LocationMapService: LocationMapServicing {
             manager.requestWhenInUseAuthorization()
         }
 
+        return try await withTimeout(Self.locationTimeout, throwing: LocationMapError.locationUnavailable) {
+            try await self.firstLocationUpdate()
+        }
+        #endif
+    }
+
+    private func firstLocationUpdate() async throws -> UserCoordinate {
         for try await update in CLLocationUpdate.liveUpdates() {
             if update.authorizationDenied || update.authorizationRestricted {
                 AppLog.map.warning("Location authorization denied or restricted")
@@ -55,7 +68,6 @@ final class LocationMapService: LocationMapServicing {
         }
         AppLog.map.error("Location updates ended without a location", error: LocationMapError.locationUnavailable)
         throw LocationMapError.locationUnavailable
-        #endif
     }
 
     func fetchNearbyPlaces(from coordinate: UserCoordinate) async throws -> [MapPlace] {

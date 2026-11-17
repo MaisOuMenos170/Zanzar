@@ -2,7 +2,9 @@ import Foundation
 
 protocol PlaceDetailServicing: Sendable {
     func fetchPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail
-    func checkIn(placeID: String, coordinate: UserCoordinate) async throws -> CheckInResult
+    /// `mutationID` stays the same across retries of one check-in: the backend replays the full answer for an id
+    /// it already accepted, instead of answering 409 and hiding the earned seal.
+    func checkIn(placeID: String, coordinate: UserCoordinate, mutationID: String) async throws -> CheckInResult
     /// Photos users sent of the place: approved ones, plus the signed-in user's own under review.
     func fetchUserPhotos(placeID: String) async throws -> [PlacePhoto]
 }
@@ -152,10 +154,10 @@ final class PlaceDetailService: PlaceDetailServicing {
         }
     }
 
-    func checkIn(placeID: String, coordinate: UserCoordinate) async throws -> CheckInResult {
+    func checkIn(placeID: String, coordinate: UserCoordinate, mutationID: String) async throws -> CheckInResult {
         AppLog.placeDetail.info("Checking in placeId=\(placeID)...")
         do {
-            let result = try await sendCheckIn(placeID: placeID, coordinate: coordinate)
+            let result = try await sendCheckIn(placeID: placeID, coordinate: coordinate, mutationID: mutationID)
             AppLog.placeDetail.info("Checked in placeId=\(placeID) successfully (isNewStamp=\(result.isNewStamp))")
             return result
         } catch APIError.httpStatus(409, let message) {
@@ -200,14 +202,18 @@ final class PlaceDetailService: PlaceDetailServicing {
         )
     }
 
-    private func sendCheckIn(placeID: String, coordinate: UserCoordinate) async throws -> CheckInResult {
+    private func sendCheckIn(
+        placeID: String,
+        coordinate: UserCoordinate,
+        mutationID: String
+    ) async throws -> CheckInResult {
         let response: CheckInAPIResponse = try await client.send(
             path: "checkIn",
             method: .post,
             body: CheckInCreateRequest(
                 placeId: placeID,
                 datetime: Date().formatted(.iso8601),
-                clientMutationId: UUID().uuidString,
+                clientMutationId: mutationID,
                 coordinates: CheckInCoordinates(
                     lat: coordinate.latitude,
                     lng: coordinate.longitude,
@@ -231,6 +237,12 @@ final class PlaceDetailService: PlaceDetailServicing {
             return false
         } catch APIError.httpStatus(401, _), APIError.httpStatus(403, _) {
             return false
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch {
+            // A side call must not hide the place. A wrong "not checked in" is safe: check-in answers 409.
+            AppLog.placeDetail.warning("Check-in status unavailable placeId=\(placeID)")
+            return false
         }
     }
 
@@ -246,6 +258,11 @@ final class PlaceDetailService: PlaceDetailServicing {
         } catch APIError.httpStatus(404, _) {
             return nil
         } catch APIError.httpStatus(401, _), APIError.httpStatus(403, _) {
+            return nil
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch {
+            AppLog.placeDetail.warning("Reaction unavailable placeId=\(placeID)")
             return nil
         }
     }

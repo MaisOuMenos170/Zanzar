@@ -37,7 +37,7 @@ final class PlaceSuggestionService: PlaceSuggestionServicing {
 
     init(
         client: NetworkClient = URLSessionNetworkClient.shared,
-        locationService: LocationMapServicing = LocationMapService(),
+        locationService: LocationMapServicing = LocationMapService.shared,
         geocoder: PlaceGeocoding = MapKitPlaceGeocoder()
     ) {
         self.client = client
