@@ -1,23 +1,6 @@
 {
   "sourceLanguage" : "pt-BR",
   "strings" : {
-    "NSLocationAlwaysAndWhenInUseUsageDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lero uses your location, even when the app is closed, to let you know when you pass near a place or the next stop on your route."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Lero usa sua localização, mesmo com o app fechado, para avisar quando você passar perto de um lugar ou da próxima parada do seu roteiro."
-          }
-        }
-      }
-    },
     "CFBundleDisplayName" : {
       "comment" : "Name shown on the Home Screen",
       "extractionState" : "manual",
@@ -43,36 +26,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Lero"
-          }
-        }
-      }
-    },
-    "NSLocationAlwaysAndWhenInUseUsageDescription" : {
-      "comment" : "Privacy - Location Always and When In Use Usage Description",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : ""
-          }
-        }
-      }
-    },
-    "NSLocationWhenInUseUsageDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lero uses your location to center the map and confirm you're near a place when you check in."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Lero usa sua localização para centralizar o mapa e confirmar que você está perto do lugar no check-in."
+            "value" : "ZanzarProject"
           }
         }
       }
@@ -90,6 +44,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O Lero usa a câmera só quando você escolhe tirar uma foto de um lugar para enviar. A foto passa por análise antes de aparecer no app."
+          }
+        }
+      }
+    },
+    "NSHumanReadableCopyright" : {
+      "comment" : "Copyright (human-readable)",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : ""
+          }
+        }
+      }
+    },
+    "NSLocationAlwaysAndWhenInUseUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lero uses your location, even when the app is closed, to let you know when you pass near a place or the next stop on your route."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Lero usa sua localização, mesmo com o app fechado, para avisar quando você passar perto de um lugar ou da próxima parada do seu roteiro."
+          }
+        }
+      }
+    },
+    "NSLocationWhenInUseUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lero uses your location to center the map and confirm you're near a place when you check in."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Lero usa sua localização para centralizar o mapa e confirmar que você está perto do lugar no check-in."
           }
         }
       }
