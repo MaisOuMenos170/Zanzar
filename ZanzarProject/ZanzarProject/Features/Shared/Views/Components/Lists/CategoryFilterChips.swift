@@ -13,6 +13,8 @@ struct CategoryFilterChips: View {
             }
         }
         .scrollIndicators(.hidden)
+        // Chips scrolling out of the 16pt margin slide off the screen instead of being cut at its edge.
+        .scrollClipDisabled()
         .haptic(.selecao, trigger: selection)
     }
 
