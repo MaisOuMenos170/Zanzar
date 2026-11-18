@@ -29,6 +29,8 @@ struct MainTabView: View {
     @State private var pendingSuggestionOutcome: PlaceSuggestionOutcome?
     @State private var shownSuggestionOutcome: PlaceSuggestionOutcome?
     @State private var showsSuggestionAlert = false
+    @State private var suggestionGoodNewsCount = 0
+    @State private var suggestionBadNewsCount = 0
     @State private var photoStatusNotice = PhotoStatusNoticeViewModel()
     @State private var suggestionStatusNotice = SuggestionStatusNoticeViewModel()
     @Environment(ToastManager.self) private var toastManager
@@ -71,6 +73,9 @@ struct MainTabView: View {
             }
         }
         .motion(Motion.assentar, value: coordinator.presentedSheet)
+        .haptic(.selecao, trigger: selectedTab)
+        .haptic(.sucesso, trigger: suggestionGoodNewsCount)
+        .haptic(.alerta, trigger: suggestionBadNewsCount)
         .onChange(of: coordinator.presentedSheet) { previous, current in
             guard previous == .suggestPlace, current == nil else { return }
             // An alert cannot appear while the card is still leaving.
@@ -171,6 +176,11 @@ struct MainTabView: View {
         pendingSuggestionOutcome = nil
         shownSuggestionOutcome = outcome
         showsSuggestionAlert = true
+        if outcome.isGoodNews {
+            suggestionGoodNewsCount += 1
+        } else {
+            suggestionBadNewsCount += 1
+        }
     }
 
     @ViewBuilder

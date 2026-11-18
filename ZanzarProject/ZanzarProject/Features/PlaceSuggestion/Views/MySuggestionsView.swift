@@ -26,6 +26,7 @@ struct MySuggestionsView: View {
                 }
             }
         }
+        .motion(Motion.suave, value: [viewModel.hasLoaded, viewModel.suggestions.isEmpty])
         .navigationTitle("placeSuggestion.mySuggestions.title")
         .task { await viewModel.load() }
         .refreshable { await viewModel.load() }

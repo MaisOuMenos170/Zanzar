@@ -13,8 +13,9 @@ struct AvatarCategoryTabButton: View {
                 .background { background }
                 .clipShape(.rect(cornerRadius: 36))
                 .shadow(color: .black.opacity(0.03), radius: isSelected ? 2 : 1, y: 4)
+                .motion(Motion.toque, value: isSelected)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle(pressedScale: 0.95))
         .accessibilityLabel(Text(LocalizedStringKey(tab.titleKey)))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
