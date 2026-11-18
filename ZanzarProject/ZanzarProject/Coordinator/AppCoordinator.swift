@@ -108,6 +108,9 @@ final class AppCoordinator {
         switch sheet {
         case .itineraryDetail(let slug):
             ItineraryDetailSheet(slug: slug, onSelectPlace: onSelectPlace)
+        case .editName:
+            // Drawn by the tab bar's root, which has the card (see `MainTabView`).
+            EmptyView()
         case .suggestPlace:
             PlaceSuggestionSheetCard(
                 onClose: { [weak self] in self?.dismissSheet() },

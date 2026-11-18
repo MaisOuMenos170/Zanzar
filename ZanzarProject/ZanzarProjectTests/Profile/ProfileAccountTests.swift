@@ -9,48 +9,74 @@ struct ProfileAccountTests {
         recentCheckIns: []
     )
 
-    @Test("saving a new name sends it trimmed and shows it")
-    func saveNameUpdatesProfile() async {
+    @Test("saving a new name sends it trimmed")
+    func saveNameSendsTrimmedName() async {
         let service = AccountServiceSpy()
-        let viewModel = ProfileViewModel(service: service, userIDProvider: { "user-1" })
-        await viewModel.load()
+        let viewModel = EditNameViewModel(currentName: "Bia", service: service, userIDProvider: { "user-1" })
+        #expect(viewModel.name.isEmpty)
 
-        viewModel.beginEditingName()
-        #expect(viewModel.draftName == "Bia")
-        viewModel.draftName = "  Aline "
-        await viewModel.saveName()
+        viewModel.name = "  Aline "
+        #expect(viewModel.canSave)
+        let saved = await viewModel.save()
 
+        #expect(saved)
         #expect(service.renamed == ["Aline"])
-        #expect(viewModel.profile?.summary.name == "Aline")
-        #expect(!viewModel.editNameFailed)
+        #expect(viewModel.didSave)
+        #expect(viewModel.errorMessage == nil)
     }
 
-    @Test("an empty or unchanged name is not sent")
-    func saveNameIgnoresEmptyAndUnchanged() async {
+    @Test("the button stays off for an empty, too short, too long or unchanged name")
+    func canSaveNeedsAValidNewName() {
+        let viewModel = EditNameViewModel(currentName: "Bia", service: AccountServiceSpy(), userIDProvider: { "user-1" })
+
+        #expect(!viewModel.canSave)
+        viewModel.name = "   "
+        #expect(!viewModel.canSave)
+        viewModel.name = "Al"
+        #expect(!viewModel.canSave)
+        viewModel.name = String(repeating: "a", count: 31)
+        #expect(!viewModel.canSave)
+        viewModel.name = "Aline"
+        #expect(viewModel.canSave)
+    }
+
+    @Test("the current name, even with spaces around it, is not sent again")
+    func saveIgnoresTheCurrentName() async {
         let service = AccountServiceSpy()
-        let viewModel = ProfileViewModel(service: service, userIDProvider: { "user-1" })
-        await viewModel.load()
+        let viewModel = EditNameViewModel(currentName: "Bia", service: service, userIDProvider: { "user-1" })
 
-        viewModel.draftName = "   "
-        await viewModel.saveName()
-        viewModel.draftName = "Bia"
-        await viewModel.saveName()
+        viewModel.name = "  Bia "
+        #expect(!viewModel.canSave)
+        let saved = await viewModel.save()
 
+        #expect(!saved)
         #expect(service.renamed.isEmpty)
     }
 
-    @Test("a failed rename keeps the old name and flags the error")
-    func saveNameFailureKeepsName() async {
+    @Test("an invalid name is not sent")
+    func saveIgnoresInvalidName() async {
+        let service = AccountServiceSpy()
+        let viewModel = EditNameViewModel(currentName: "Bia", service: service, userIDProvider: { "user-1" })
+
+        viewModel.name = "  "
+        let saved = await viewModel.save()
+
+        #expect(!saved)
+        #expect(service.renamed.isEmpty)
+    }
+
+    @Test("a failed rename flags the error and does not count as saved")
+    func saveNameFailure() async {
         let service = AccountServiceSpy()
         service.failsAccountCalls = true
-        let viewModel = ProfileViewModel(service: service, userIDProvider: { "user-1" })
-        await viewModel.load()
+        let viewModel = EditNameViewModel(currentName: "Bia", service: service, userIDProvider: { "user-1" })
 
-        viewModel.draftName = "Aline"
-        await viewModel.saveName()
+        viewModel.name = "Aline"
+        let saved = await viewModel.save()
 
-        #expect(viewModel.profile?.summary.name == "Bia")
-        #expect(viewModel.editNameFailed)
+        #expect(!saved)
+        #expect(!viewModel.didSave)
+        #expect(viewModel.errorMessage != nil)
     }
 
     @Test("a failed account deletion keeps the user signed in")

@@ -5650,23 +5650,6 @@
         }
       }
     },
-    "profile.editName.cancelButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancelar"
-          }
-        }
-      }
-    },
     "profile.editName.errorAlert.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5684,36 +5667,53 @@
         }
       }
     },
-    "profile.editName.placeholder" : {
+    "profile.editName.field.label" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your name"
+            "value" : "Name"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu nome"
+            "value" : "Nome"
           }
         }
       }
     },
-    "profile.editName.saveButton.title" : {
+    "profile.editName.field.placeholder" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Save"
+            "value" : "Username"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salvar"
+            "value" : "Nome de usuário"
+          }
+        }
+      }
+    },
+    "profile.editName.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit your name. It appears on your profile and, if you choose to show it, on the photos you send of places."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edite seu nome. Seu nome aparece no seu perfil e, se você escolher mostrar, nas fotos que você envia dos lugares."
           }
         }
       }
@@ -5731,6 +5731,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Editar nome"
+          }
+        }
+      }
+    },
+    "profile.editName.updateButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atualizar"
           }
         }
       }

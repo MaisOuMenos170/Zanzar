@@ -17,7 +17,7 @@ struct ListNoResultsView: View {
     /// Offers "Sugerir lugar" under the message. Not shown when only a chip emptied the list.
     var offersPlaceSuggestion = false
 
-    @Environment(\.suggestPlace) private var suggestPlace
+    @Environment(\.presentSheet) private var presentSheet
 
     /// Picks the right kind: nothing at all, a search with no match, or just the chip.
     init(
@@ -60,8 +60,8 @@ struct ListNoResultsView: View {
             .multilineTextAlignment(.center)
             .padding(.horizontal, 16)
 
-            if offersPlaceSuggestion, !isFiltered, let suggestPlace {
-                Button(action: suggestPlace) {
+            if offersPlaceSuggestion, !isFiltered, let presentSheet {
+                Button { presentSheet(.suggestPlace) } label: {
                     Text("list.noResults.suggestButton")
                         .typography(.subtitle2)
                         .foregroundStyle(Color.white)
@@ -99,5 +99,5 @@ struct ListNoResultsView: View {
         offersPlaceSuggestion: true
     )
     .background(Color.profileBackground)
-    .environment(\.suggestPlace, {})
+    .environment(\.presentSheet, { _ in })
 }

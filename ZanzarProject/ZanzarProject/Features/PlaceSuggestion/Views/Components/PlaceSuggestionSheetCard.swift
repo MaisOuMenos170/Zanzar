@@ -1,8 +1,9 @@
 import SwiftUI
 
 /// Presents "Sugerir um lugar" like the Figma sheet: full width, flush with the bottom edge, 38pt top corners,
-/// a grabber, and the screen dimmed behind it (black at 30%). The system draws partial sheets inset from the sides
-/// on iOS 26, which the design does not have, so the card is laid over the screen instead of using `.sheet`.
+/// and a grabber. The system draws partial sheets inset from the sides on iOS 26, which the design does not have,
+/// so the card is laid over the screen instead of using `.sheet`. The one who presents it (`MainTabView`) adds the
+/// dimmed screen behind it and the slide in and out, so every way of closing it is animated.
 struct PlaceSuggestionSheetCard<Content: View>: View {
     let onClose: () -> Void
     @ViewBuilder let content: Content
@@ -13,15 +14,7 @@ struct PlaceSuggestionSheetCard<Content: View>: View {
     private static var closeDistance: CGFloat { 120 }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            Color.black.opacity(0.3)
-                .ignoresSafeArea()
-                .onTapGesture(perform: onClose)
-                .accessibilityHidden(true)
-                .transition(.opacity)
-
-            card
-        }
+        card
     }
 
     private var card: some View {
@@ -48,7 +41,6 @@ struct PlaceSuggestionSheetCard<Content: View>: View {
         .accessibilityElement(children: .contain)
         .accessibilityAddTraits(.isModal)
         .accessibilityAction(.escape, onClose)
-        .transition(.move(edge: .bottom))
     }
 
     private var dragToClose: some Gesture {
@@ -60,7 +52,7 @@ struct PlaceSuggestionSheetCard<Content: View>: View {
                 } else if reduceMotion {
                     dragOffset = 0
                 } else {
-                    withAnimation(.smooth(duration: 0.25)) { dragOffset = 0 }
+                    withAnimation(Motion.cartao) { dragOffset = 0 }
                 }
             }
     }

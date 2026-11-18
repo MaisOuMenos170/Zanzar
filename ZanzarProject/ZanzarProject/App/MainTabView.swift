@@ -29,8 +29,6 @@ struct MainTabView: View {
     @State private var pendingSuggestionOutcome: PlaceSuggestionOutcome?
     @State private var shownSuggestionOutcome: PlaceSuggestionOutcome?
     @State private var showsSuggestionAlert = false
-    @State private var suggestionGoodNewsCount = 0
-    @State private var suggestionBadNewsCount = 0
     @State private var photoStatusNotice = PhotoStatusNoticeViewModel()
     @State private var suggestionStatusNotice = SuggestionStatusNoticeViewModel()
     @Environment(ToastManager.self) private var toastManager
@@ -62,20 +60,9 @@ struct MainTabView: View {
                 onPlaceSuggestionFinished: finishSuggestion
             )
         }
-        // "Sugerir um lugar" is a full-width card of its own (see `PlaceSuggestionSheetCard`), not a system sheet.
-        .overlay {
-            if coordinator.presentedSheet == .suggestPlace {
-                coordinator.view(
-                    for: .suggestPlace,
-                    onSelectPlace: { _ in },
-                    onPlaceSuggestionFinished: finishSuggestion
-                )
-            }
-        }
-        .motion(Motion.assentar, value: coordinator.presentedSheet)
-        .haptic(.selecao, trigger: selectedTab)
-        .haptic(.sucesso, trigger: suggestionGoodNewsCount)
-        .haptic(.alerta, trigger: suggestionBadNewsCount)
+        // "Sugerir um lugar" and "Editar nome" are full-width cards of their own (see `PlaceSuggestionSheetCard`),
+        // not system sheets.
+        .overlay { cardHost }
         .onChange(of: coordinator.presentedSheet) { previous, current in
             guard previous == .suggestPlace, current == nil else { return }
             // An alert cannot appear while the card is still leaving.
@@ -151,6 +138,56 @@ struct MainTabView: View {
         )
     }
 
+    /// The container stays in the view tree while a card comes and goes, so the dimmer fades and the card slides
+    /// for every way of closing it (the button, a tap outside, a drag, or the form finishing).
+    private var cardHost: some View {
+        ZStack(alignment: .bottom) {
+            if let sheet = coordinator.presentedSheet, isCard(sheet) {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                    .onTapGesture { coordinator.dismissSheet() }
+                    .accessibilityHidden(true)
+                    .transition(.opacity)
+
+                card(for: sheet)
+                    .transition(.move(edge: .bottom))
+            }
+        }
+        .motion(Motion.cartao, value: coordinator.presentedSheet)
+    }
+
+    private func isCard(_ sheet: Sheet) -> Bool {
+        switch sheet {
+        case .suggestPlace, .editName: true
+        case .itineraryDetail: false
+        }
+    }
+
+    @ViewBuilder
+    private func card(for sheet: Sheet) -> some View {
+        switch sheet {
+        case .suggestPlace:
+            coordinator.view(
+                for: .suggestPlace,
+                onSelectPlace: { _ in },
+                onPlaceSuggestionFinished: finishSuggestion
+            )
+        case .editName(let currentName):
+            PlaceSuggestionSheetCard(onClose: { coordinator.dismissSheet() }, content: {
+                EditNameSheetView(
+                    currentName: currentName,
+                    onSaved: {
+                        coordinator.dismissSheet()
+                        NotificationCenter.default.post(name: AppNotification.profileNameDidChange, object: nil)
+                    },
+                    onClose: { coordinator.dismissSheet() }
+                )
+            })
+        case .itineraryDetail:
+            EmptyView()
+        }
+    }
+
     private func finishSuggestion(_ outcome: PlaceSuggestionOutcome) {
         pendingSuggestionOutcome = outcome
         coordinator.dismissSheet()
@@ -176,11 +213,6 @@ struct MainTabView: View {
         pendingSuggestionOutcome = nil
         shownSuggestionOutcome = outcome
         showsSuggestionAlert = true
-        if outcome.isGoodNews {
-            suggestionGoodNewsCount += 1
-        } else {
-            suggestionBadNewsCount += 1
-        }
     }
 
     @ViewBuilder
@@ -213,11 +245,11 @@ struct MainTabView: View {
             NavigationStack(path: Bindable(profileCoordinator).path) {
                 ProfileView()
                     .environment(profileCoordinator)
-                    .environment(\.suggestPlace) { coordinator.present(sheet: .suggestPlace) }
+                    .environment(\.presentSheet) { coordinator.present(sheet: $0) }
                     .navigationDestination(for: Route.self) { route in
                         profileCoordinator.view(for: route)
                             .environment(profileCoordinator)
-                            .environment(\.suggestPlace) { coordinator.present(sheet: .suggestPlace) }
+                            .environment(\.presentSheet) { coordinator.present(sheet: $0) }
                     }
             }
         }

@@ -81,33 +81,11 @@ struct PlaceSuggestionSheetView: View {
     // MARK: - Sections
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text("placeSuggestion.header.title")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
-                    .foregroundStyle(Color.brandSheetTitle)
-                    .accessibilityAddTraits(.isHeader)
-
-                Spacer(minLength: 8)
-
-                Button(action: onClose) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(Color.brandCloseIcon)
-                        .padding(8)
-                        .contentShape(.rect)
-                }
-                .accessibilityLabel("placeSuggestion.closeButton.label")
-            }
-            .padding(.top, 4)
-            .padding(.bottom, 4)
-
-            Text("placeSuggestion.header.subtitle")
-                .font(.system(size: 14))
-                .tracking(0.25)
-                .foregroundStyle(.black)
-        }
-        .padding(.horizontal, 8)
+        SheetHeader(
+            title: "placeSuggestion.header.title",
+            subtitle: "placeSuggestion.header.subtitle",
+            onClose: onClose
+        )
     }
 
     private var locationOptions: some View {

@@ -21,9 +21,6 @@ final class ProfileViewModel {
     var showsDeleteAccountConfirmation = false
     var deleteAccountFailed = false
     private(set) var isDeletingAccount = false
-    var showsEditName = false
-    var draftName = ""
-    var editNameFailed = false
 
     init(
         service: ProfileServicing = ProfileService(),
@@ -90,36 +87,6 @@ final class ProfileViewModel {
     /// How many check-ins the passport asks for, so the seals row and the recent cards come from one request.
     /// The backend caps `limit` at 20 (`validateGetProfileQuery`); anything above is answered with a 400.
     static let passportLimit = 20
-
-    /// Opens the rename alert with the current name filled in.
-    func beginEditingName() {
-        draftName = profile?.summary.name ?? ""
-        showsEditName = true
-    }
-
-    /// Saves `draftName`. An empty or unchanged name is ignored; a failure keeps the old name on screen.
-    func saveName() async {
-        let name = draftName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let profile, !name.isEmpty, name != profile.summary.name, let userID = userIDProvider() else { return }
-        editNameFailed = false
-        do {
-            try await service.updateName(userID: userID, name: name)
-            let summary = profile.summary
-            self.profile = Profile(
-                summary: ProfileSummary(
-                    name: name,
-                    checkInCount: summary.checkInCount,
-                    itineraryCount: summary.itineraryCount,
-                    sealCount: summary.sealCount
-                ),
-                recentCheckIns: profile.recentCheckIns
-            )
-        } catch is CancellationError {
-            return
-        } catch {
-            editNameFailed = true
-        }
-    }
 
     /// Deletes the account on the server, then ends the local session like a sign-out. A server failure keeps
     /// the user signed in so they can try again.

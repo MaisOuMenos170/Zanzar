@@ -9,6 +9,7 @@ struct ProfileView: View {
     @State private var section = ProfileSection.passport
     @Environment(AuthSession.self) private var authSession
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(\.presentSheet) private var presentSheet
 
     // Tips
     private let editAvatarTip = ProfileEditAvatarTip()
@@ -62,17 +63,6 @@ struct ProfileView: View {
             .alert("profile.deleteAccount.errorAlert.title", isPresented: $viewModel.deleteAccountFailed) {
                 Button("profile.signOutAlert.dismissButton.title", role: .cancel) {}
             }
-            .alert("profile.editName.title", isPresented: $viewModel.showsEditName) {
-                TextField("profile.editName.placeholder", text: $viewModel.draftName)
-                    .textInputAutocapitalization(.words)
-                Button("profile.editName.cancelButton.title", role: .cancel) {}
-                Button("profile.editName.saveButton.title") {
-                    Task { await viewModel.saveName() }
-                }
-            }
-            .alert("profile.editName.errorAlert.title", isPresented: $viewModel.editNameFailed) {
-                Button("profile.signOutAlert.dismissButton.title", role: .cancel) {}
-            }
             // Restarts when a pushed screen is popped; a check-in made there shows up here (see `markStale`).
             .task(id: coordinator.path.isEmpty) {
                 guard coordinator.path.isEmpty else { return }
@@ -86,6 +76,10 @@ struct ProfileView: View {
             .onReceive(NotificationCenter.default.publisher(for: AppNotification.checkInDidSucceed)) { _ in
                 viewModel.markStale()
             }
+            // The name was changed in the card drawn by the tab bar's root.
+            .onReceive(NotificationCenter.default.publisher(for: AppNotification.profileNameDidChange)) { _ in
+                Task { await viewModel.load(force: true) }
+            }
             // An itinerary being activated or abandoned changes the profile stats; refresh so the count updates.
             .onReceive(NotificationCenter.default.publisher(for: AppNotification.activeItineraryDidChange)) { _ in
                 viewModel.markStale()
@@ -95,7 +89,7 @@ struct ProfileView: View {
     private var editMenu: some View {
         Menu {
             Button("profile.menu.editName") {
-                viewModel.beginEditingName()
+                presentSheet?(.editName(currentName: viewModel.profile?.summary.name ?? ""))
             }
             Button("profile.menu.editAvatar") {
                 coordinator.push(.avatarEdit)
