@@ -1,8 +1,11 @@
 import SwiftUI
 
-/// The "Avaliação" alert shown over the map once the user has left a place they checked in at.
+/// The "Avalie a experiência" sheet shown over the map once the user has left a place they checked in at
+/// (Figma "Avaliação", frame 2020:9478): the place's photo box, five faces to choose from and "Enviar".
 struct RatingPromptView: View {
+    let placeID: String
     let placeName: String
+    let categoryTitleKey: String?
     let selectedTag: ImpressionTag?
     let isSubmitting: Bool
     let errorMessage: String?
@@ -10,121 +13,103 @@ struct RatingPromptView: View {
     let onSubmit: () -> Void
     let onDismiss: () -> Void
 
-    // Visual order from the design: orange grin (happy), pink smile (delighted), green sick face.
-    private static let topRow: [ImpressionTag] = [.happy, .delighted, .nauseated]
-    private static let bottomRow: [ImpressionTag] = [.sad, .sleepy]
+    /// Best to worst, left to right, as in the design.
+    private static let faces: [ImpressionTag] = [.delighted, .happy, .sleepy, .sad, .nauseated]
 
-    @State private var isShown = false
+    @State private var showsPhotoUpload = false
 
     var body: some View {
-        ZStack {
-            Color.black.opacity(0.2)
-                .ignoresSafeArea()
-                .contentShape(.rect)
-
-            alert
-                .popIn(isShown)
-        }
-        .haptic(.selecao, trigger: selectedTag, when: { _, tag in tag != nil })
-        .onAppear {
-            isShown = true
-        }
-    }
-
-    private var alert: some View {
-        AlertOverlayCard {
-            VStack(spacing: 10) {
-                VStack(spacing: 24) {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("ratingPrompt.title")
-                            .font(.headline)
-
-                        Text(message)
-                            .font(.body)
-                            .fixedSize(horizontal: false, vertical: true)
+        PlaceSuggestionSheetCard(onClose: onDismiss) {
+            VStack(spacing: 32) {
+                VStack(alignment: .leading, spacing: 16) {
+                    header
+                    VStack(spacing: 40) {
+                        RatingPromptPhotoCard(categoryTitleKey: categoryTitleKey) {
+                            showsPhotoUpload = true
+                        }
+                        faceRow
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
 
-                    VStack(spacing: 0) {
-                        emotionRow(Self.topRow, spacing: 5)
-                        emotionRow(Self.bottomRow, spacing: 24)
-                    }
-
+                VStack(spacing: 12) {
                     if let errorMessage {
                         Text(errorMessage)
                             .font(.footnote)
                             .foregroundStyle(Color("AuthError"))
                             .multilineTextAlignment(.center)
                     }
-                }
-                .padding(.horizontal, 8)
-                .padding(.top, 8)
-                .padding(.bottom, 24)
 
-                buttons
+                    RatingPromptSubmitButton(isEnabled: selectedTag != nil, isLoading: isSubmitting, action: onSubmit)
+                }
             }
-            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            // The Figma sheet ends 40pt below the button, counting the home indicator area.
+            .padding(.bottom, max(0, 40 - ScreenInsets.bottom))
+        }
+        .haptic(.selecao, trigger: selectedTag, when: { _, tag in tag != nil })
+        .sheet(isPresented: $showsPhotoUpload) {
+            PhotoUploadSheet(placeID: placeID, placeName: placeName, fromCheckIn: true)
         }
     }
 
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text("ratingPrompt.title")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.brandSheetTitle)
+                    .accessibilityAddTraits(.isHeader)
+
+                Spacer(minLength: 8)
+
+                Button(action: onDismiss) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(Color.brandCloseIcon)
+                        .padding(8)
+                        .contentShape(.rect)
+                        // The tap target is 8pt bigger than the glyph, but the row keeps the Figma height.
+                        .padding(-8)
+                }
+                .disabled(isSubmitting)
+                .accessibilityLabel("ratingPrompt.closeButton.label")
+            }
+            .padding(.top, 4)
+            .padding(.bottom, 8)
+
+            Text(message)
+                .font(.system(size: 14))
+                .tracking(0.25)
+                .foregroundStyle(.black)
+        }
+        .padding(.horizontal, 8)
+    }
+
+    private var faceRow: some View {
+        HStack(alignment: .top, spacing: 7.623) {
+            ForEach(Self.faces, id: \.self) { tag in
+                RatingPromptEmotionButton(
+                    tag: tag,
+                    isSelected: tag == selectedTag,
+                    isDimmed: selectedTag != nil && tag != selectedTag
+                ) {
+                    onSelect(tag)
+                }
+                .disabled(isSubmitting)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .motion(Motion.suave, value: selectedTag)
+    }
+
+    /// "Como foi sua visita ao **Jardim Botânico**?", with the place's name in semibold.
     private var message: AttributedString {
         var name = AttributedString(placeName)
         name.inlinePresentationIntent = .stronglyEmphasized
         return AttributedString(localized: "ratingPrompt.message.prefix")
             + name
             + AttributedString(localized: "ratingPrompt.message.suffix")
-    }
-
-    private func emotionRow(_ tags: [ImpressionTag], spacing: CGFloat) -> some View {
-        HStack(spacing: spacing) {
-            ForEach(tags, id: \.self) { tag in
-                RatingPromptEmotionButton(tag: tag, isSelected: tag == selectedTag) {
-                    onSelect(tag)
-                }
-            }
-        }
-    }
-
-    private var buttons: some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: 16) {
-                dismissButton
-                submitButton
-            }
-            VStack(spacing: 10) {
-                submitButton
-                dismissButton
-            }
-        }
-        .controlSize(.large)
-        .buttonBorderShape(.capsule)
-        .frame(maxWidth: .infinity)
-    }
-
-    private var dismissButton: some View {
-        Button(action: onDismiss) {
-            Text("ratingPrompt.dismissButton.title")
-                .frame(maxWidth: .infinity)
-        }
-        .tint(.primary)
-        .buttonStyle(.glass)
-        .disabled(isSubmitting)
-    }
-
-    private var submitButton: some View {
-        Button(action: onSubmit) {
-            Group {
-                if isSubmitting {
-                    ProgressView()
-                } else {
-                    Text("ratingPrompt.submitButton.title")
-                }
-            }
-            .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.glassProminent)
-        .tint(Color("RatingPromptPrimary"))
-        .disabled(selectedTag == nil || isSubmitting)
     }
 }
 
@@ -133,7 +118,9 @@ private struct RatingPromptPreview: View {
 
     var body: some View {
         RatingPromptView(
+            placeID: "place-1",
             placeName: "Jardim Botânico",
+            categoryTitleKey: "placeDetail.tag.park",
             selectedTag: selectedTag,
             isSubmitting: false,
             errorMessage: nil,
@@ -144,18 +131,10 @@ private struct RatingPromptPreview: View {
     }
 }
 
-#Preview("Nothing selected") {
+#Preview("Nothing chosen") {
     RatingPromptPreview()
 }
 
-#Preview("Happy") {
-    RatingPromptPreview(selectedTag: .happy)
-}
-
-#Preview("Delighted") {
+#Preview("Amei!") {
     RatingPromptPreview(selectedTag: .delighted)
-}
-
-#Preview("Nauseated") {
-    RatingPromptPreview(selectedTag: .nauseated)
 }

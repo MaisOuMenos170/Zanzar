@@ -264,7 +264,8 @@ final class PlaceDetailViewModel {
                 placeName: detail.displayName,
                 latitude: detail.latitude,
                 longitude: detail.longitude,
-                checkedInAt: Date()
+                checkedInAt: Date(),
+                categoryTitleKey: detail.category.titleKey
             )
         )
     }

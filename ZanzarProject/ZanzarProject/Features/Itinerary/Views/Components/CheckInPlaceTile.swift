@@ -83,8 +83,8 @@ struct CheckInPlaceTile: View {
         let thickBox = palette.isWarm ? CGSize(width: 201.997, height: 193.389) : CGSize(width: 183.043, height: 175.51)
         let thickOrigin = palette.isWarm ? CGPoint(x: -18.54, y: -38.48) : CGPoint(x: -18.54, y: -20.6)
 
-        CheckInDiagonalStripe(bar: thickBar, box: thickBox, origin: thickOrigin, color: color)
-        CheckInDiagonalStripe(
+        DiagonalStripe(bar: thickBar, box: thickBox, origin: thickOrigin, color: color)
+        DiagonalStripe(
             bar: CGSize(width: 218.039, height: 16.045),
             box: CGSize(width: 169.622, height: 161.281),
             origin: CGPoint(x: -57.5, y: -48),

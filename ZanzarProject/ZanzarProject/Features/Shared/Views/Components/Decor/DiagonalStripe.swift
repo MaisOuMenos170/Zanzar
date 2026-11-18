@@ -1,9 +1,9 @@
 import SwiftUI
 
-/// One of the soft diagonal bars drawn behind the check-in home's buttons and place tiles (Figma "checkin v2").
+/// One of the soft diagonal bars drawn behind the app's striped buttons and place tiles (Figma "checkin v2").
 /// Figma gives each bar as a rectangle rotated -43.33° inside a box at a fixed spot of its parent, so the same
 /// three numbers are kept here: the bar, the box it rotates into and where that box sits.
-struct CheckInDiagonalStripe: View {
+struct DiagonalStripe: View {
     let bar: CGSize
     let box: CGSize
     let origin: CGPoint

@@ -7085,19 +7085,70 @@
         }
       }
     },
-    "ratingPrompt.dismissButton.title" : {
+    "ratingPrompt.closeButton.label" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Not now"
+            "value" : "Close"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agora não"
+            "value" : "Fechar"
+          }
+        }
+      }
+    },
+    "ratingPrompt.success.confirm" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ok"
+          }
+        }
+      }
+    },
+    "ratingPrompt.success.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your rating was saved for this place. Thanks for telling us how it went!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua avaliação foi registrada no local. Valeu por contar como foi!"
+          }
+        }
+      }
+    },
+    "ratingPrompt.success.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Well done!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muito bem!"
           }
         }
       }
@@ -7108,13 +7159,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delighted"
+            "value" : "Loved it!"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Encantado"
+            "value" : "Amei!"
           }
         }
       }
@@ -7125,13 +7176,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Happy"
+            "value" : "Cool"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Feliz"
+            "value" : "Legal"
           }
         }
       }
@@ -7142,13 +7193,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nauseated"
+            "value" : "Hated it"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enjoado"
+            "value" : "Odiei"
           }
         }
       }
@@ -7159,13 +7210,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sad"
+            "value" : "Didn't like it"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Triste"
+            "value" : "Não gostei"
           }
         }
       }
@@ -7176,13 +7227,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sleepy"
+            "value" : "Meh"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com sono"
+            "value" : "Sei lá"
           }
         }
       }
@@ -7210,13 +7261,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "We noticed you've left "
+            "value" : "How was your visit to "
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vimos que você já saiu de "
+            "value" : "Como foi sua visita ao "
           }
         }
       }
@@ -7227,13 +7278,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : ". Would you like to rate your experience by leaving a reaction for other people?"
+            "value" : "?"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : ". Gostaria de avaliar sua experiência deixando uma reação para outras pessoas?"
+            "value" : "?"
           }
         }
       }
@@ -7244,13 +7295,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rate"
+            "value" : "Send"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avaliar"
+            "value" : "Enviar"
           }
         }
       }
@@ -7261,13 +7312,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rating"
+            "value" : "Rate your experience"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avaliação"
+            "value" : "Avalie a experiência"
           }
         }
       }
