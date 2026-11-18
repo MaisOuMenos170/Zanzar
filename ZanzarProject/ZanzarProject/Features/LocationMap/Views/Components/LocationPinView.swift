@@ -156,7 +156,7 @@ private struct PinLook {
 }
 
 private let previewCategories: [ZanzarPlaceCategory] = [
-    .restaurant, .bar, .cafe, .museum, .park, .tourist, .historic, .curiosity, .party
+    .restaurant, .bar, .cafe, .museum, .park, .tourist, .historic, .curiosity, .party, .center
 ]
 
 #Preview("Pin v2") {
