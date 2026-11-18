@@ -22,7 +22,12 @@ struct AllCheckInsView: View {
             filter: $filter,
             count: Text("profile.allCheckIns.count \(visibleCheckIns.count)")
         ) {
-            content
+            VStack(spacing: 16) {
+                content
+                if viewModel.hasMore && !visibleCheckIns.isEmpty || viewModel.loadMoreFailed {
+                    loadMoreFooter
+                }
+            }
         }
         .task { await viewModel.load() }
         .refreshable { await viewModel.load() }
@@ -42,6 +47,9 @@ struct AllCheckInsView: View {
             }
         } else if viewModel.checkIns.isEmpty && !viewModel.hasLoaded {
             ListLoadingView()
+        } else if visibleCheckIns.isEmpty && viewModel.hasMore {
+            // The check-ins that match may be on a page that is not loaded yet.
+            loadMoreFooter
         } else if visibleCheckIns.isEmpty {
             ListNoResultsView(
                 hasItems: !viewModel.checkIns.isEmpty,
@@ -61,5 +69,13 @@ struct AllCheckInsView: View {
                 }
             }
         }
+    }
+
+    private var loadMoreFooter: some View {
+        ListLoadMoreView(
+            failed: viewModel.loadMoreFailed,
+            onLoadMore: { await viewModel.loadMore() },
+            onRetry: { await viewModel.retryLoadMore() }
+        )
     }
 }

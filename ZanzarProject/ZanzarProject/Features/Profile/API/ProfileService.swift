@@ -3,6 +3,8 @@ import Foundation
 protocol ProfileServicing: Sendable {
     func fetchProfile(userID: String, limit: Int) async throws -> Profile
     func logout() async throws
+    /// One page of the user's check-ins, newest first. `before` is the `nextCursor` of the previous page.
+    func fetchCheckIns(userID: String, limit: Int, before: String?) async throws -> ProfileCheckInsPage
     /// Changes the name shown on the profile.
     func updateName(userID: String, name: String) async throws
     /// Deletes the account and everything that belongs to it.
@@ -10,6 +12,10 @@ protocol ProfileServicing: Sendable {
 }
 
 extension ProfileServicing {
+    func fetchCheckIns(userID: String, limit: Int, before: String?) async throws -> ProfileCheckInsPage {
+        throw APIError.invalidRequest
+    }
+
     // Defaults so test doubles that never edit the account don't have to implement these.
     func updateName(userID: String, name: String) async throws {
         throw APIError.invalidRequest
@@ -17,6 +23,25 @@ extension ProfileServicing {
 
     func deleteAccount(userID: String) async throws {
         throw APIError.invalidRequest
+    }
+}
+
+/// `GET user/{id}/check-ins`: a page of check-ins and where the next page starts.
+struct CheckInsPageAPIResponse: Decodable, Sendable {
+    let checkIns: [RecentCheckInAPIResponse]
+    /// Sent back as `before` to ask for the next page; `nil` on the last one.
+    let nextCursor: String?
+
+    func makePage() -> ProfileCheckInsPage {
+        // One malformed entry is dropped (and logged) instead of failing the whole page.
+        let items = checkIns.compactMap { response -> ProfileCheckIn? in
+            guard let checkIn = try? response.makeCheckIn() else {
+                AppLog.profile.warning("Skipping a check-in with an unparseable datetime")
+                return nil
+            }
+            return checkIn
+        }
+        return ProfileCheckInsPage(checkIns: items, nextCursor: nextCursor)
     }
 }
 
@@ -168,6 +193,29 @@ final class ProfileService: ProfileServicing {
 
     private static func isSafePathSegment(_ value: String) -> Bool {
         !value.isEmpty && value.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "-" || $0 == "_") }
+    }
+
+    func fetchCheckIns(userID: String, limit: Int, before: String?) async throws -> ProfileCheckInsPage {
+        guard Self.isSafePathSegment(userID) else {
+            AppLog.profile.error("Refusing to fetch check-ins for a malformed user id")
+            throw APIError.invalidRequest
+        }
+        var queryItems = [URLQueryItem(name: "limit", value: String(limit))]
+        if let before {
+            queryItems.append(URLQueryItem(name: "before", value: before))
+        }
+        do {
+            let response: CheckInsPageAPIResponse = try await client.get(
+                path: "user/\(userID)/check-ins",
+                queryItems: queryItems
+            )
+            let page = response.makePage()
+            AppLog.profile.info("Check-ins page fetched (count=\(page.checkIns.count), hasMore=\(page.nextCursor != nil))")
+            return page
+        } catch {
+            AppLog.profile.error("Check-ins request failed", error: error)
+            throw error
+        }
     }
 
     func updateName(userID: String, name: String) async throws {

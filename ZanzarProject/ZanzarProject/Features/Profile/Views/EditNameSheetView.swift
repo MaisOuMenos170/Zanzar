@@ -37,6 +37,9 @@ struct EditNameSheetView: View {
                         isRequired: true,
                         autocapitalization: .never
                     )
+                    Text("profile.editName.hint")
+                        .font(.footnote)
+                        .foregroundStyle(viewModel.showsInvalidHint ? Color.brandErrorRed : Color.brandNeutral600)
                     if let message = viewModel.errorMessage {
                         Text(message)
                             .font(.footnote)

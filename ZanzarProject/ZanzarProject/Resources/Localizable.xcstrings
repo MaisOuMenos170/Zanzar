@@ -1608,6 +1608,40 @@
         }
       }
     },
+    "list.loadMore.errorMessage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't load more."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível carregar mais."
+          }
+        }
+      }
+    },
+    "list.loadMore.retryButton" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentar de novo"
+          }
+        }
+      }
+    },
     "list.noResults.blocked.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5718,6 +5752,23 @@
         }
       }
     },
+    "profile.editName.hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use 3 to 30 letters, numbers or _ (underscore)."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use de 3 a 30 letras, números ou _ (sublinhado)."
+          }
+        }
+      }
+    },
     "profile.editName.subtitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5731,6 +5782,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Edite seu nome. Seu nome aparece no seu perfil e, se você escolher mostrar, nas fotos que você envia dos lugares."
+          }
+        }
+      }
+    },
+    "profile.editName.takenError" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That name is already taken. Pick another one."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esse nome já está em uso. Escolha outro."
           }
         }
       }

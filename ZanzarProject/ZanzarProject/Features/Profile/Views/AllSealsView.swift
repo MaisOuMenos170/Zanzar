@@ -30,7 +30,12 @@ struct AllSealsView: View {
             filter: $filter,
             count: Text("profile.allSeals.count \(visibleSeals.count)")
         ) {
-            content
+            VStack(spacing: 16) {
+                content
+                if viewModel.hasMore && !visibleSeals.isEmpty || viewModel.loadMoreFailed {
+                    loadMoreFooter
+                }
+            }
         }
         .task { await viewModel.load() }
         .refreshable { await viewModel.load() }
@@ -50,6 +55,9 @@ struct AllSealsView: View {
             }
         } else if viewModel.checkIns.isEmpty && !viewModel.hasLoaded {
             ListLoadingView()
+        } else if visibleSeals.isEmpty && viewModel.hasMore {
+            // The seals that match may be on a page that is not loaded yet.
+            loadMoreFooter
         } else if visibleSeals.isEmpty {
             ListNoResultsView(
                 hasItems: viewModel.checkIns.contains { $0.sealCategory != nil },
@@ -68,5 +76,13 @@ struct AllSealsView: View {
                 }
             }
         }
+    }
+
+    private var loadMoreFooter: some View {
+        ListLoadMoreView(
+            failed: viewModel.loadMoreFailed,
+            onLoadMore: { await viewModel.loadMore() },
+            onRetry: { await viewModel.retryLoadMore() }
+        )
     }
 }

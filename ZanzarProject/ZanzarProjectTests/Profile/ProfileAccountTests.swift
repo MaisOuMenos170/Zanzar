@@ -40,6 +40,34 @@ struct ProfileAccountTests {
         #expect(viewModel.canSave)
     }
 
+    @Test("only letters, digits and underscore are accepted, like the backend")
+    func nameAllowsOnlyBackendCharacters() {
+        let viewModel = EditNameViewModel(currentName: "Bia", service: AccountServiceSpy(), userIDProvider: { "user-1" })
+
+        viewModel.name = "Aline Silva"
+        #expect(!viewModel.canSave)
+        #expect(viewModel.showsInvalidHint)
+        viewModel.name = "Aline-Silva"
+        #expect(!viewModel.canSave)
+        viewModel.name = "açaí"
+        #expect(!viewModel.canSave)
+        viewModel.name = "aline_silva2"
+        #expect(viewModel.canSave)
+        #expect(!viewModel.showsInvalidHint)
+    }
+
+    @Test("a name already taken is explained")
+    func takenNameMessage() async {
+        let service = AccountServiceSpy()
+        service.renameError = APIError.httpStatus(409, message: "Username already in use")
+        let viewModel = EditNameViewModel(currentName: "Bia", service: service, userIDProvider: { "user-1" })
+
+        viewModel.name = "aline"
+        _ = await viewModel.save()
+
+        #expect(viewModel.errorMessage == L10n.string("profile.editName.takenError"))
+    }
+
     @Test("the current name, even with spaces around it, is not sent again")
     func saveIgnoresTheCurrentName() async {
         let service = AccountServiceSpy()
@@ -118,6 +146,7 @@ struct ProfileAccountTests {
 
 private final class AccountServiceSpy: ProfileServicing, @unchecked Sendable {
     var failsAccountCalls = false
+    var renameError: Error?
     private(set) var renamed: [String] = []
     private(set) var deletedUserIDs: [String] = []
 
@@ -128,6 +157,7 @@ private final class AccountServiceSpy: ProfileServicing, @unchecked Sendable {
     func logout() async throws {}
 
     func updateName(userID: String, name: String) async throws {
+        if let renameError { throw renameError }
         if failsAccountCalls { throw APIError.invalidRequest }
         renamed.append(name)
     }

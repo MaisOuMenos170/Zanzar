@@ -1,17 +1,20 @@
 import Foundation
 import Observation
 
-/// Every check-in of the signed-in user, for "all check-ins" and "all seals".
+/// The user's check-ins, a page at a time, for "all check-ins" and "all seals".
 @Observable
 final class ProfileCheckInsViewModel {
-    /// How many check-ins one request asks for: the most the backend allows (`limit` is capped at 20, above that
-    /// it answers 400). It has no paging, so these lists show the 20 latest.
-    static let fetchLimit = 20
+    /// How many check-ins one request asks for (the backend takes up to 50).
+    static let pageSize = 30
 
     private(set) var checkIns: [ProfileCheckIn] = []
     private(set) var isLoading = false
+    private(set) var isLoadingMore = false
     private(set) var hasLoaded = false
     private(set) var errorMessage: String?
+    /// The next page failed; the list shows a retry instead of loading again by itself.
+    private(set) var loadMoreFailed = false
+    private var nextCursor: String?
 
     private let service: ProfileServicing
     private let userIDProvider: @Sendable () -> String?
@@ -24,7 +27,12 @@ final class ProfileCheckInsViewModel {
         self.userIDProvider = userIDProvider
     }
 
-    /// A failed refresh keeps the check-ins already on screen.
+    /// There are older check-ins to fetch.
+    var hasMore: Bool {
+        nextCursor != nil
+    }
+
+    /// Loads the first page again. A failed refresh keeps the check-ins already on screen.
     func load() async {
         guard let userID = userIDProvider() else {
             errorMessage = L10n.string("profile.loadError.notAuthenticated")
@@ -37,13 +45,40 @@ final class ProfileCheckInsViewModel {
             hasLoaded = true
         }
         do {
-            checkIns = try await service.fetchProfile(userID: userID, limit: Self.fetchLimit).recentCheckIns
+            let page = try await service.fetchCheckIns(userID: userID, limit: Self.pageSize, before: nil)
+            checkIns = page.checkIns
+            nextCursor = page.nextCursor
             errorMessage = nil
+            loadMoreFailed = false
         } catch is CancellationError {
             return
         } catch {
             guard checkIns.isEmpty else { return }
             errorMessage = APIError.rateLimitedMessage(for: error) ?? L10n.string("profile.errorState.message")
         }
+    }
+
+    /// Appends the next page, once at a time. Called when the end of the list comes into view.
+    func loadMore() async {
+        guard let cursor = nextCursor, !isLoading, !isLoadingMore, !loadMoreFailed,
+              let userID = userIDProvider() else { return }
+        isLoadingMore = true
+        defer { isLoadingMore = false }
+        do {
+            let page = try await service.fetchCheckIns(userID: userID, limit: Self.pageSize, before: cursor)
+            let known = Set(checkIns.map(\.id))
+            checkIns += page.checkIns.filter { !known.contains($0.id) }
+            nextCursor = page.nextCursor
+        } catch is CancellationError {
+            return
+        } catch {
+            loadMoreFailed = true
+        }
+    }
+
+    /// Tries the failed page again.
+    func retryLoadMore() async {
+        loadMoreFailed = false
+        await loadMore()
     }
 }

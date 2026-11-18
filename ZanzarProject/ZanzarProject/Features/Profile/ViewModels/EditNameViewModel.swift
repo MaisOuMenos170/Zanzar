@@ -4,8 +4,12 @@ import Observation
 /// The "Editar nome" card: the name being typed and sending it.
 @Observable
 final class EditNameViewModel {
-    /// The backend accepts names of 3 to 30 characters.
+    /// The backend accepts names of 3 to 30 characters: letters, digits and underscore.
     static let lengthRange = 3...30
+
+    static func isValid(_ name: String) -> Bool {
+        lengthRange.contains(name.count) && name.wholeMatch(of: /[A-Za-z0-9_]+/) != nil
+    }
 
     var name: String
     private(set) var isSaving = false
@@ -35,8 +39,13 @@ final class EditNameViewModel {
     /// The button works once the name is filled in, fits what the backend accepts and is not the one already in use.
     var canSave: Bool {
         !isSaving
-            && Self.lengthRange.contains(trimmedName.count)
+            && Self.isValid(trimmedName)
             && trimmedName != currentName
+    }
+
+    /// What was typed breaks the rule, so the hint turns red. An empty field is not a mistake yet.
+    var showsInvalidHint: Bool {
+        !trimmedName.isEmpty && !Self.isValid(trimmedName)
     }
 
     @discardableResult
@@ -52,8 +61,19 @@ final class EditNameViewModel {
         } catch is CancellationError {
             return false
         } catch {
-            errorMessage = APIError.rateLimitedMessage(for: error) ?? L10n.string("profile.editName.errorAlert.title")
+            errorMessage = Self.message(for: error)
             return false
         }
+    }
+
+    private static func message(for error: Error) -> String {
+        if let rateLimited = APIError.rateLimitedMessage(for: error) {
+            return rateLimited
+        }
+        // The backend answers 409 when another account has the name.
+        if case .httpStatus(409, _)? = error as? APIError {
+            return L10n.string("profile.editName.takenError")
+        }
+        return L10n.string("profile.editName.errorAlert.title")
     }
 }
