@@ -33,7 +33,7 @@ enum CategoryFilter: String, CaseIterable, Identifiable {
         switch self {
         case .all: Set(ZanzarPlaceCategory.filterOptions)
         case .parks: [.park]
-        case .center: [.tourist, .historic]
+        case .center: [.center, .tourist, .historic]
         case .eat: [.restaurant, .cafe, .bar]
         case .museums: [.museum]
         case .onFoot: [.curiosity, .party]

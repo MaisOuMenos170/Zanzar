@@ -150,7 +150,7 @@ struct MainTabView: View {
                     .transition(.opacity)
 
                 card(for: sheet)
-                    .transition(.move(edge: .bottom))
+                    .transition(SheetSlideTransition())
             }
         }
         .motion(Motion.cartao, value: coordinator.presentedSheet)

@@ -65,6 +65,8 @@ struct PlaceSuggestionSheetView: View {
         }
         // On the stack, not on the scroll view: a navigation stack takes all the height it is offered.
         .frame(maxHeight: contentHeight ?? .infinity)
+        // Until the height is measured the stack would take all the screen for a frame and then shrink.
+        .opacity(contentHeight == nil ? 0 : 1)
         .animation(reduceMotion ? nil : .default, value: viewModel.results)
         .animation(reduceMotion ? nil : .default, value: viewModel.isManualEntry)
         // Re-runs when the option changes, so choosing "use my location" again retries a failed lookup.

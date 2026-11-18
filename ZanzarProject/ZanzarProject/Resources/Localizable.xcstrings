@@ -4286,6 +4286,23 @@
         }
       }
     },
+    "placeDetail.tag.center" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Downtown"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centro"
+          }
+        }
+      }
+    },
     "placeDetail.tag.curiosity" : {
       "extractionState" : "manual",
       "localizations" : {

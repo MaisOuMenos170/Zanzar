@@ -25,6 +25,11 @@ struct PlaceSuggestionSheetCard<Content: View>: View {
                 .frame(width: 36, height: 5)
                 .padding(.top, 6)
                 .padding(.bottom, 15)
+                .frame(maxWidth: .infinity)
+                .contentShape(.rect)
+                // Dragging down closes the card from its top strip only: a drag anywhere on it would fight the
+                // scrolling of the form inside.
+                .gesture(dragToClose)
                 .accessibilityHidden(true)
 
             content
@@ -37,7 +42,6 @@ struct PlaceSuggestionSheetCard<Content: View>: View {
                 .ignoresSafeArea(.container, edges: .bottom)
         }
         .offset(y: max(dragOffset, 0))
-        .gesture(dragToClose)
         .accessibilityElement(children: .contain)
         .accessibilityAddTraits(.isModal)
         .accessibilityAction(.escape, onClose)

@@ -34,7 +34,8 @@ struct EditNameSheetView: View {
                         placeholderKey: "profile.editName.field.placeholder",
                         text: $viewModel.name,
                         isFocused: $isNameFocused,
-                        isRequired: true
+                        isRequired: true,
+                        autocapitalization: .never
                     )
                     if let message = viewModel.errorMessage {
                         Text(message)
@@ -65,7 +66,11 @@ struct EditNameSheetView: View {
             let cleaned = String(newValue.replacing("\n", with: "").prefix(EditNameViewModel.lengthRange.upperBound))
             if cleaned != newValue { viewModel.name = cleaned }
         }
-        .task { isNameFocused = true }
+        // The keyboard comes once the card has settled: both moving at the same time makes the slide stutter.
+        .task {
+            try? await Task.sleep(for: .milliseconds(450))
+            isNameFocused = true
+        }
     }
 }
 

@@ -32,6 +32,7 @@ nonisolated enum ZanzarPlaceCategory: String, CaseIterable, Sendable {
     case historic
     case curiosity
     case party
+    case center
     case unknown
 
     init(rawCategory: String) {
@@ -64,6 +65,8 @@ nonisolated enum ZanzarPlaceCategory: String, CaseIterable, Sendable {
             "placeDetail.tag.curiosity"
         case .party:
             "placeDetail.tag.party"
+        case .center:
+            "placeDetail.tag.center"
         case .unknown:
             "placeDetail.tag.touristSpot"
         }
@@ -90,6 +93,8 @@ nonisolated enum ZanzarPlaceCategory: String, CaseIterable, Sendable {
             "eyes.inverse"
         case .party:
             "party.popper"
+        case .center:
+            "building.2.fill"
         case .unknown:
             "mappin"
         }
@@ -116,6 +121,8 @@ nonisolated enum ZanzarPlaceCategory: String, CaseIterable, Sendable {
             "PlaceCategorySealCuriosity"
         case .party:
             "PlaceCategorySealParty"
+        case .center:
+            "PlaceCategorySealCenter"
         case .unknown:
             "PlaceCategorySealRestaurant"
         }
