@@ -254,6 +254,8 @@ nonisolated extension PlaceDetail {
             categoryTag("curiosity", label: L10n.string("placeDetail.tag.curiosity"), style: .category)
         case .party:
             categoryTag("party", label: L10n.string("placeDetail.tag.party"), style: .category)
+        case .center:
+            categoryTag("center", label: L10n.string("placeDetail.tag.center"), style: .category)
         case .unknown:
             nil
         }

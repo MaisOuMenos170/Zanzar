@@ -21,7 +21,7 @@ O app é o único cliente. O backend não serve telas, só JSON (e um proxy de f
 | `LoginService` | `POST /login` | `auth.routes` |
 | `PasswordResetService` | `POST /password/forgot`, `POST /password/verify` (`{email, code}`), `POST /password/reset` | `auth.routes` (ver abaixo) |
 | `SessionRefresher` | `POST /refresh` | só em `origin/develop` (ver abaixo) |
-| `ProfileService` | `POST /logout`, `GET /user/:id/profile` | `auth`, `users` |
+| `ProfileService` | `POST /logout`, `GET /user/:id/profile` (`limit` de 1 a 20), `GET /user/:id/check-ins` (`limit` de 1 a 50, cursor `before`/`nextCursor`), `PATCH /user/:id` (troca o `username`: 3 a 30, letras/números/`_`, 409 se em uso), `DELETE /user/:id` | `auth`, `users` |
 | `LocationMapService` | `GET /places` | `place.routes` |
 | `PlaceSearchService` | `GET /places/search?q=&lat=&lng=&categories=&limit=` (busca por nome, apelido ou endereço em todos os lugares, mais perto primeiro; `q` de 2 a 80 caracteres, `categories` separadas por vírgula, `limit` padrão 20) | `place.routes` (só em `feat/place-search` até o merge) |
 | `PlaceDetailService` | `GET /places/:id`, `POST` e `GET /checkIn`, `GET /rating`, `GET /places/:id/photos` | `place`, `checkin`, `rating`, `user-photo-community` |

@@ -124,6 +124,8 @@ struct PlaceDetailStatsCard: View {
             L10n.string("placeDetail.tag.curiosity")
         case .party:
             L10n.string("placeDetail.tag.party")
+        case .center:
+            L10n.string("placeDetail.tag.center")
         case .unknown:
             L10n.string("placeDetail.statsCard.categoryUnknown")
         }

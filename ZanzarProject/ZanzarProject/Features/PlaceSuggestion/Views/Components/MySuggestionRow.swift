@@ -1,36 +1,29 @@
 import SwiftUI
 
+/// One of the user's suggestions in a list card: the place, the date and where the suggestion stands.
 struct MySuggestionRow: View {
     let suggestion: MySuggestion
-
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
-    private var lineLimit: Int? {
-        dynamicTypeSize.isAccessibilitySize ? nil : 2
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(suggestion.displayName)
-                .font(.headline)
-                .lineLimit(lineLimit)
-            if suggestion.name != nil {
-                Text(suggestion.address)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(lineLimit)
+                .typography(.subtitle2)
+                .foregroundStyle(Color.black)
+                .lineLimit(1)
+            HStack(spacing: 8) {
+                Text(suggestion.createdAt.formatted(date: .numeric, time: .omitted))
+                    .typography(.caption1)
+                    .foregroundStyle(Color.brandNeutral600)
+                PlaceSuggestionStatusIndicator(status: suggestion.status)
             }
-            PlaceSuggestionStatusBadge(status: suggestion.status)
             if let reason = shownReason {
                 Text(LocalizedStringKey(reason.messageKey))
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .typography(.caption1)
+                    .foregroundStyle(Color.brandNeutral600)
             }
-            Text(suggestion.createdAt, format: .dateTime.day().month().year())
-                .font(.caption)
-                .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
         .accessibilityElement(children: .combine)
     }
 

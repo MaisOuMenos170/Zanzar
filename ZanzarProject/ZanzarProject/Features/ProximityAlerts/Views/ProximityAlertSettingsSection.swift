@@ -1,7 +1,7 @@
 import SwiftUI
 import TipKit
 
-/// The Profile section where the user chooses what the proximity alerts tell them, and fixes what blocks them.
+/// The Ajustes section where the user chooses what the proximity alerts tell them, and fixes what blocks them.
 struct ProximityAlertSettingsSection: View {
     @State private var viewModel = ProximityAlertSettingsViewModel(
         service: SystemProximityPermissionService(),
@@ -14,23 +14,35 @@ struct ProximityAlertSettingsSection: View {
     private let customizeTip = ProximityAlertsCustomizeTip()
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("proximitySettings.title")
-                .font(.headline)
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("proximitySettings.title")
+                    .typography(.headline6)
+                    .foregroundStyle(Color.black)
+                    .accessibilityAddTraits(.isHeader)
+                Text("proximitySettings.subtitle")
+                    .typography(.caption2)
+                    .foregroundStyle(Color.brandSlate500)
+            }
 
-            VStack(spacing: 12) {
+            ListCard {
                 Toggle(isOn: nearbyBinding) {
                     label("proximitySettings.nearby.title", "proximitySettings.nearby.subtitle")
                 }
                 .popoverTip(enableTip, arrowEdge: .trailing)
-                
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+
                 Toggle(isOn: itineraryBinding) {
                     label("proximitySettings.itinerary.title", "proximitySettings.itinerary.subtitle")
                 }
                 .popoverTip(customizeTip, arrowEdge: .trailing)
-            }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
 
-            permissionRow
+                permissionRow
+            }
+            .tint(Color.brandPurple600)
         }
         .task { await viewModel.load() }
         // The user may have changed the permissions in the Settings app.
@@ -57,42 +69,42 @@ struct ProximityAlertSettingsSection: View {
     private func label(_ title: LocalizedStringKey, _ subtitle: LocalizedStringKey) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
+                .typography(.subtitle2)
+                .foregroundStyle(Color.brandNeutral950)
             Text(subtitle)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                .typography(.caption1)
+                .foregroundStyle(Color.brandNeutral600)
         }
     }
 
+    /// What is missing to alert with the app closed: one more row of the card. It opens the Settings app, where
+    /// the user grants the notifications and the "Always" location themselves.
     @ViewBuilder
     private var permissionRow: some View {
         switch viewModel.permissions {
-        case .unknown:
+        case .unknown, .complete:
+            // When complete, the line under the title already says the alerts work with the app closed.
             EmptyView()
-        case .complete:
-            Label("proximitySettings.complete.message", systemImage: "checkmark.circle")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
         case .canTurnOn:
-            VStack(alignment: .leading, spacing: 8) {
-                Text("proximitySettings.turnOn.message")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                Button("proximitySettings.turnOnButton.title") {
-                    Task { await viewModel.turnOn() }
-                }
-                .buttonStyle(.glassProminent)
-                .disabled(viewModel.isWorking)
-            }
+            settingsRow(message: "proximitySettings.turnOn.message")
         case .needsSettings(let missing):
-            VStack(alignment: .leading, spacing: 8) {
-                Text(missing == .notifications
-                     ? "proximityPermission.settings.notifications.message"
-                     : "proximityPermission.settings.location.message")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                Button("proximityPermission.settingsButton.title", action: viewModel.openSettings)
-                    .buttonStyle(.glass)
+            settingsRow(
+                message: missing == .notifications
+                    ? "proximityPermission.settings.notifications.message"
+                    : "proximityPermission.settings.location.message"
+            )
+        }
+    }
+
+    private func settingsRow(message: LocalizedStringKey) -> some View {
+        Button(action: viewModel.openSettings) {
+            ProfileSettingsRow(title: Text("proximityPermission.settingsButton.title"), subtitle: Text(message)) {
+                Image(systemName: "chevron.right")
+                    .font(.callout.weight(.semibold))
+                    .foregroundStyle(Color.brandNeutral950)
+                    .accessibilityHidden(true)
             }
         }
+        .buttonStyle(.plain)
     }
 }

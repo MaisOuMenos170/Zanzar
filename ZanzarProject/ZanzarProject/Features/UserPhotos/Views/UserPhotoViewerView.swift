@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// One of the user's own photos at full size, opened from "My photos".
+/// One of the user's own photos, full screen. It opens with the system's zoom out of the thumbnail
+/// (`UserPhotoListCard` sets the transition) and closes with the close button or a swipe down.
 struct UserPhotoViewerView: View {
     let photo: UserPhoto
 
@@ -28,7 +29,7 @@ struct UserPhotoViewerView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(.black)
+            .background(Color.black)
             .navigationTitle(photoTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

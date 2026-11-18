@@ -2,6 +2,9 @@ import SwiftUI
 import TipKit
 
 struct AvatarEditorView: View {
+    /// From the profile the editor just goes back when saved; during onboarding it continues to the passport.
+    var finishesByPopping = false
+
     @State private var viewModel = AvatarEditorViewModel()
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(OnboardingGate.self) private var onboarding
@@ -33,7 +36,11 @@ struct AvatarEditorView: View {
             Button {
                 Task {
                     if await viewModel.save() {
-                        coordinator.push(.passportIntro(avatar: viewModel.avatar, username: onboarding.username))
+                        if finishesByPopping {
+                            coordinator.pop()
+                        } else {
+                            coordinator.push(.passportIntro(avatar: viewModel.avatar, username: onboarding.username))
+                        }
                     }
                 }
             } label: {
@@ -67,6 +74,8 @@ struct AvatarEditorView: View {
             }
         }
         .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
+        // Opened from the profile, the editor takes the whole screen: no tab bar under the save button.
+        .toolbar(.hidden, for: .tabBar)
         .toast(for: viewModel.saveError)
         .task {
             await viewModel.load()

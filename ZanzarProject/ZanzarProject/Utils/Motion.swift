@@ -13,6 +13,10 @@ enum Motion {
     /// Things that arrive and stop: cards, sheets, pins.
     static let assentar: Animation = .smooth(duration: 0.35)
 
+    /// A card rising from the bottom edge and going back down: it follows the finger's pace and settles without
+    /// a visible bounce.
+    static let cartao: Animation = .spring(duration: 0.45, bounce: 0.05)
+
     /// The paper stamp press and its celebrations. No bounce.
     static func carimbo(duration: TimeInterval) -> Animation {
         .easeOut(duration: duration)

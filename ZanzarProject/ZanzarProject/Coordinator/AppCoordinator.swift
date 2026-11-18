@@ -52,6 +52,8 @@ final class AppCoordinator {
             AvatarView()
         case .avatarEditor:
             AvatarEditorView()
+        case .avatarEdit:
+            AvatarEditorView(finishesByPopping: true)
         case .passportIntro(let avatar, let username):
             PassportIntroView(avatar: avatar, username: username)
         case .notificationPermission:
@@ -62,6 +64,12 @@ final class AppCoordinator {
             MySuggestionsView()
         case .photoPrivacy:
             PhotoPrivacyView()
+        case .allCheckIns:
+            AllCheckInsView()
+        case .allSeals:
+            AllSealsView()
+        case .blockedProfiles:
+            BlockedProfilesView()
         }
     }
 
@@ -100,6 +108,9 @@ final class AppCoordinator {
         switch sheet {
         case .itineraryDetail(let slug):
             ItineraryDetailSheet(slug: slug, onSelectPlace: onSelectPlace)
+        case .editName:
+            // Drawn by the tab bar's root, which has the card (see `MainTabView`).
+            EmptyView()
         case .suggestPlace:
             PlaceSuggestionSheetCard(
                 onClose: { [weak self] in self?.dismissSheet() },

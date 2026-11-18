@@ -12,16 +12,23 @@ enum Route: Hashable {
     case placeDetail(MapPlace, zoomsFromPin: Bool = false)
     case avatar
     case avatarEditor
+    /// The avatar editor opened from the profile: saving goes back instead of continuing the onboarding.
+    case avatarEdit
     case passportIntro(avatar: Avatar, username: String?)
     case notificationPermission
     case myPhotos
     case mySuggestions
     case photoPrivacy
+    case allCheckIns
+    case allSeals
+    case blockedProfiles
 }
 
 enum Sheet: Identifiable, Hashable {
     case itineraryDetail(slug: String)
     case suggestPlace
+    /// Edits the profile name. Carries the current name so the card can start from it.
+    case editName(currentName: String)
 
     var id: Self { self }
 }

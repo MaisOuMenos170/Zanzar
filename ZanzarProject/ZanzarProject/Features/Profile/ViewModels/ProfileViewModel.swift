@@ -18,6 +18,9 @@ final class ProfileViewModel {
     var errorMessage: String?
     var showsSignOutConfirmation = false
     var signOutFailed = false
+    var showsDeleteAccountConfirmation = false
+    var deleteAccountFailed = false
+    private(set) var isDeletingAccount = false
 
     init(
         service: ProfileServicing = ProfileService(),
@@ -78,6 +81,36 @@ final class ProfileViewModel {
             // The server's message is never shown: the service already logged the details.
             guard generation == loadGeneration, profile == nil else { return }
             errorMessage = APIError.rateLimitedMessage(for: error) ?? String(localized: "profile.errorState.message")
+        }
+    }
+
+    /// How many check-ins the passport asks for, so the seals row and the recent cards come from one request.
+    /// The backend caps `limit` at 20 (`validateGetProfileQuery`); anything above is answered with a 400.
+    static let passportLimit = 20
+
+    /// Deletes the account on the server, then ends the local session like a sign-out. A server failure keeps
+    /// the user signed in so they can try again.
+    func deleteAccount(using authSession: AuthSession, coordinator: AppCoordinator) async {
+        guard !isDeletingAccount, let userID = userIDProvider() else { return }
+        isDeletingAccount = true
+        defer { isDeletingAccount = false }
+        deleteAccountFailed = false
+
+        do {
+            try await service.deleteAccount(userID: userID)
+        } catch is CancellationError {
+            return
+        } catch {
+            deleteAccountFailed = true
+            return
+        }
+
+        do {
+            try authSession.signOut()
+            coordinator.popToRoot()
+        } catch {
+            AppLog.profile.warning("Account deleted but the local sign-out failed")
+            deleteAccountFailed = true
         }
     }
 

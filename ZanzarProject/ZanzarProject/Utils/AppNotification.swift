@@ -6,6 +6,8 @@ enum AppNotification {
     static let checkInDidSucceed = Notification.Name("checkInDidSucceed")
     /// The user just started a roteiro: a good moment to offer the proximity alerts.
     static let itineraryDidStart = Notification.Name("itineraryDidStart")
+    /// The user changed their name: the profile on screen is outdated.
+    static let profileNameDidChange = Notification.Name("profileNameDidChange")
     /// The session ended because the tokens could no longer be refreshed; the user has to sign in again.
     static let sessionExpired = Notification.Name("sessionExpired")
 }

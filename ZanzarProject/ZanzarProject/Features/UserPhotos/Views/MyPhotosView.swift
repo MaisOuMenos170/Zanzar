@@ -1,86 +1,46 @@
 import SwiftUI
 
-/// The user's photos and where each stands. Reached from the profile.
+/// All the photos the user sent and where each one stands. Reached from the profile.
 struct MyPhotosView: View {
     @State private var viewModel = MyPhotosViewModel()
-    @State private var photoBeingViewed: UserPhoto?
+    @State private var searchText = ""
+
+    private var visiblePhotos: [UserPhoto] {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return viewModel.photos }
+        return viewModel.photos.filter { $0.placeName?.localizedStandardContains(query) == true }
+    }
 
     var body: some View {
-        Group {
-            if viewModel.photos.isEmpty && viewModel.hasLoaded {
-                ContentUnavailableView(
-                    "userPhotos.myPhotos.empty.title",
-                    systemImage: "photo.on.rectangle.angled",
-                    description: Text("userPhotos.myPhotos.empty.message")
-                )
-            } else if viewModel.photos.isEmpty {
-                ProgressView()
-            } else {
-                List {
-                    Section {
-                        ForEach(viewModel.photos) { photo in
-                            Button {
-                                photoBeingViewed = photo
-                            } label: {
-                                MyPhotoRow(photo: photo)
-                                    .contentShape(.rect)
-                            }
-                            .buttonStyle(.plain)
-                            .accessibilityHint("userPhotos.myPhotos.openHint")
-                            .swipeActions { deleteButton(for: photo) }
-                                .contextMenu { deleteButton(for: photo) }
-                        }
-                    } footer: {
-                        Text("userPhotos.myPhotos.footer")
-                    }
-                }
-            }
+        ListScreenScaffold(
+            title: "userPhotos.myPhotos.screenTitle",
+            searchPrompt: "userPhotos.myPhotos.search.prompt",
+            searchText: $searchText,
+            count: Text("userPhotos.myPhotos.count \(visiblePhotos.count)")
+        ) {
+            content
         }
         .motion(Motion.suave, value: [viewModel.hasLoaded, viewModel.photos.isEmpty])
         .motion(Motion.assentar, value: viewModel.photos.map(\.id))
         .haptic(.alerta, trigger: viewModel.photoPendingDeletion?.id, when: { _, photoID in photoID != nil })
-        .navigationTitle("userPhotos.myPhotos.title")
         .task { await viewModel.load() }
         .refreshable { await viewModel.load() }
-        .fullScreenCover(item: $photoBeingViewed) { photo in
-            UserPhotoViewerView(photo: photo)
-        }
-        .alert(
-            "userPhotos.myPhotos.deleteConfirmation.title",
-            isPresented: deletionIsPresented,
-            presenting: viewModel.photoPendingDeletion
-        ) { photo in
-            Button("userPhotos.myPhotos.deleteConfirmation.confirmButton.title", role: .destructive) {
-                Task { await viewModel.delete(photo) }
-            }
-            Button("userPhotos.myPhotos.deleteConfirmation.cancelButton.title", role: .cancel) {}
-        } message: { _ in
-            Text("userPhotos.myPhotos.deleteConfirmation.message")
-        }
-        .alert("userPhotos.myPhotos.errorAlert.title", isPresented: errorIsPresented) {
-            Button("userPhotos.myPhotos.errorAlert.dismissButton.title", role: .cancel) {}
-        } message: {
-            if let message = viewModel.errorMessage { Text(message) }
-        }
     }
 
-    private func deleteButton(for photo: UserPhoto) -> some View {
-        Button("userPhotos.myPhotos.deleteButton.title", systemImage: "trash", role: .destructive) {
-            viewModel.photoPendingDeletion = photo
+    @ViewBuilder
+    private var content: some View {
+        if viewModel.photos.isEmpty && !viewModel.hasLoaded {
+            ListLoadingView()
+        } else if visiblePhotos.isEmpty {
+            ListNoResultsView(
+                hasItems: !viewModel.photos.isEmpty,
+                query: searchText,
+                emptyTitle: "userPhotos.myPhotos.empty.title",
+                emptyMessage: "userPhotos.myPhotos.empty.message",
+                notFoundMessage: "list.noResults.place.message"
+            )
+        } else {
+            UserPhotoListCard(photos: visiblePhotos, viewModel: viewModel)
         }
-    }
-
-    private var deletionIsPresented: Binding<Bool> {
-        Binding(
-            get: { viewModel.photoPendingDeletion != nil },
-            set: { if !$0 { viewModel.photoPendingDeletion = nil } }
-        )
-    }
-
-    private var errorIsPresented: Binding<Bool> {
-        Binding(
-            get: { viewModel.errorMessage != nil && viewModel.hasLoaded },
-            set: { if !$0 { viewModel.errorMessage = nil } }
-        )
     }
 }
