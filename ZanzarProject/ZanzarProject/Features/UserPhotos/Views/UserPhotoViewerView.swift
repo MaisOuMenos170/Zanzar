@@ -1,19 +1,14 @@
 import SwiftUI
 
-/// One of the user's own photos, opened over the dimmed list it came from.
+/// One of the user's own photos, full screen. It opens with the system's zoom out of the thumbnail
+/// (`UserPhotoListCard` sets the transition) and closes with the close button or a swipe down.
 struct UserPhotoViewerView: View {
     let photo: UserPhoto
 
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        ZStack {
-            // A tap outside the photo closes it.
-            Color.clear
-                .contentShape(.rect)
-                .onTapGesture { dismiss() }
-                .accessibilityHidden(true)
-
+        NavigationStack {
             AsyncImage(url: photo.viewerURL) { phase in
                 switch phase {
                 case .success(let image):
@@ -28,33 +23,22 @@ struct UserPhotoViewerView: View {
                         unavailable
                     } else {
                         ProgressView()
-                            .frame(maxWidth: .infinity, minHeight: 258)
                     }
                 @unknown default:
                     unavailable
                 }
             }
-            .frame(maxWidth: 350)
-            .background(Color.brandNeutral100)
-            .clipShape(.rect(cornerRadius: 8))
-            .shadow(color: .black.opacity(0.25), radius: 8, y: 1)
-            .overlay(alignment: .topTrailing) {
-                Button {
-                    dismiss()
-                } label: {
-                    Label("userPhotos.viewer.closeButton.title", systemImage: "xmark")
-                        .labelStyle(.iconOnly)
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(Color.primary)
-                        .frame(width: 30, height: 30)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.black)
+            .navigationTitle(photoTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(role: .close) { dismiss() }
                 }
-                .buttonStyle(.glass)
-                .buttonBorderShape(.circle)
-                .padding(8)
             }
-            .padding(.horizontal, 22)
         }
-        .presentationBackground(Color.black.opacity(0.35))
+        .preferredColorScheme(.dark)
     }
 
     private var photoTitle: String {
@@ -67,6 +51,5 @@ struct UserPhotoViewerView: View {
             systemImage: "photo.badge.exclamationmark",
             description: Text("userPhotos.viewer.error.message")
         )
-        .frame(maxWidth: .infinity, minHeight: 258)
     }
 }

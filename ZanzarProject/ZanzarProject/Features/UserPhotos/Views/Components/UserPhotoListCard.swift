@@ -7,6 +7,7 @@ struct UserPhotoListCard: View {
     @Bindable var viewModel: MyPhotosViewModel
 
     @State private var photoBeingViewed: UserPhoto?
+    @Namespace private var zoomNamespace
 
     var body: some View {
         ListCard {
@@ -14,12 +15,15 @@ struct UserPhotoListCard: View {
                 UserPhotoRow(
                     photo: photo,
                     onOpen: { photoBeingViewed = photo },
-                    onDelete: { viewModel.photoPendingDeletion = photo }
+                    onDelete: { viewModel.photoPendingDeletion = photo },
+                    zoomNamespace: zoomNamespace
                 )
             }
         }
         .fullScreenCover(item: $photoBeingViewed) { photo in
+            // The system's zoom: the photo grows out of its thumbnail and shrinks back into it.
             UserPhotoViewerView(photo: photo)
+                .navigationTransition(.zoom(sourceID: photo.id, in: zoomNamespace))
         }
         // Cancel is the filled button (the default action) and the destructive one is red text on gray, as in the
         // Figma alert. Cancel keeps its `.cancel` role: without one the system adds its own extra "Cancelar"

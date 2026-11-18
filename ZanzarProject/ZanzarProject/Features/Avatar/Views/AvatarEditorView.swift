@@ -74,6 +74,8 @@ struct AvatarEditorView: View {
             }
         }
         .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
+        // Opened from the profile, the editor takes the whole screen: no tab bar under the save button.
+        .toolbar(.hidden, for: .tabBar)
         .toast(for: viewModel.saveError)
         .task {
             await viewModel.load()

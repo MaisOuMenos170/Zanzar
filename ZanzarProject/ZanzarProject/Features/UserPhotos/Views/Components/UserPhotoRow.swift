@@ -6,6 +6,8 @@ struct UserPhotoRow: View {
     let photo: UserPhoto
     let onOpen: () -> Void
     let onDelete: () -> Void
+    /// The namespace the full-screen viewer zooms out of; the thumbnail is where the zoom starts.
+    var zoomNamespace: Namespace.ID?
 
     var body: some View {
         HStack(spacing: 12) {
@@ -19,6 +21,7 @@ struct UserPhotoRow: View {
                         }
                         .frame(width: 56, height: 56)
                         .clipShape(.rect(cornerRadius: 8))
+                        .zoomSource(id: photo.id, in: zoomNamespace)
                         .accessibilityHidden(true)
                     }
 
@@ -53,5 +56,17 @@ struct UserPhotoRow: View {
             .buttonStyle(.plain)
         }
         .padding(12)
+    }
+}
+
+private extension View {
+    /// Marks this view as where the full-screen zoom of `id` starts, when there is a namespace to zoom in.
+    @ViewBuilder
+    func zoomSource(id: String, in namespace: Namespace.ID?) -> some View {
+        if let namespace {
+            matchedTransitionSource(id: id, in: namespace)
+        } else {
+            self
+        }
     }
 }
