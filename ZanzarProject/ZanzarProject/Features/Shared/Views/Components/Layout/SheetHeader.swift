@@ -23,11 +23,13 @@ struct SheetHeader: View {
                         .foregroundStyle(Color.brandCloseIcon)
                         .padding(8)
                         .contentShape(.rect)
+                        // The tap target is 8pt bigger than the glyph, but the row keeps the Figma height.
+                        .padding(-8)
                 }
                 .accessibilityLabel("placeSuggestion.closeButton.label")
             }
             .padding(.top, 4)
-            .padding(.bottom, 4)
+            .padding(.bottom, 8)
 
             Text(subtitle)
                 .font(.system(size: 14))

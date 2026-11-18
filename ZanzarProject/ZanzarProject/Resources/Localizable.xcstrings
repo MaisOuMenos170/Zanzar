@@ -5190,13 +5190,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "E.g. Botanical Garden, R. Engo. Ostoja Roguski, 350"
+            "value" : "E.g. Parque Náutico, R. Engo. Ostoja Roguski, 350"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ex: Jardim Botânico, R. Engo. Ostoja Roguski, 350"
+            "value" : "Ex: Parque Náutico, R. Engo. Ostoja Roguski, 350"
           }
         }
       }
