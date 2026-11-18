@@ -21,7 +21,9 @@ struct PlaceSuggestionLocationOption: View {
                     .foregroundStyle(.black)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(16)
+            // 16pt of padding plus the 1pt border, which Figma counts in the pill's 53pt height.
+            .padding(17)
+            .frame(minHeight: 53)
             .background(isSelected ? Color.brandPurple50 : Color.brandNeutral50, in: .capsule)
             .overlay {
                 Capsule()

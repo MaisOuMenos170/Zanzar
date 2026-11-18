@@ -56,7 +56,7 @@ struct PlaceSuggestionSheetView: View {
                 .padding(.top, 8)
                 // The Figma sheet ends 40pt below the button, counting the home indicator area, which the card's
                 // content already stays clear of.
-                .padding(.bottom, max(8, 40 - ScreenInsets.bottom))
+                .padding(.bottom, max(0, 40 - ScreenInsets.bottom))
                 .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { contentHeight = $0 }
             }
             .scrollBounceBehavior(.basedOnSize)
