@@ -16,6 +16,8 @@ final class PlaceDetailViewModel {
     private let pendingRatingStore: PendingRatingStoring
     private let applePlaceLookup: ApplePlaceLookingUp
     private var loadGeneration = 0
+    /// One id per place for every try of the check-in, so a retry after a lost answer is a replay, not a 409.
+    private let checkInMutationID = UUID().uuidString
 
     var detail: PlaceDetail?
     /// Photos users sent; loaded after the detail and never blocking it.
@@ -39,7 +41,7 @@ final class PlaceDetailViewModel {
         place: MapPlace,
         userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.userID },
         userCoordinateProvider: @escaping @Sendable () async throws -> UserCoordinate = {
-            try await LocationMapService().currentUserLocation()
+            try await LocationMapService.shared.currentUserLocation()
         },
         service: PlaceDetailServicing = PlaceDetailService(),
         pendingRatingStore: PendingRatingStoring? = nil,
@@ -161,7 +163,11 @@ final class PlaceDetailViewModel {
         guard let coordinate = await verifiedCheckInCoordinate(for: currentDetail) else { return }
 
         do {
-            let result = try await service.checkIn(placeID: currentDetail.id, coordinate: coordinate)
+            let result = try await service.checkIn(
+                placeID: currentDetail.id,
+                coordinate: coordinate,
+                mutationID: checkInMutationID
+            )
             applySuccessfulCheckIn(to: &currentDetail, result: result)
             detail = currentDetail
             queueRatingPrompt(for: currentDetail, userID: userID)

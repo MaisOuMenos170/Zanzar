@@ -23,7 +23,7 @@ final class NearbyPlacesStore {
     private var isDirty = false
     private var inFlight: Task<Void, Error>?
 
-    init(service: LocationMapServicing = LocationMapService(), now: @escaping () -> Date = { Date() }) {
+    init(service: LocationMapServicing = LocationMapService.shared, now: @escaping () -> Date = { Date() }) {
         self.service = service
         self.now = now
     }

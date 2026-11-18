@@ -221,7 +221,13 @@ final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
                 throw error
             }
 
-            try await refresher.refresh(after: rejectedToken)
+            do {
+                try await refresher.refresh(after: rejectedToken)
+            } catch APIError.rateLimited(let retryAfter) {
+                // Hold back every other request too, as after a 429 on any other call.
+                blockedUntil.withLock { $0 = now().addingTimeInterval(retryAfter) }
+                throw APIError.rateLimited(retryAfter: retryAfter)
+            }
 
             do {
                 return try await performRequest(authorizedRequest(from: request, path: path))

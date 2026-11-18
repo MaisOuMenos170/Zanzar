@@ -35,11 +35,4 @@ final class TipKitViewModel {
         
         await service.resetAllTips()
     }
-    
-    /// Marks a tip parameter as seen/updated.
-    /// Call this when the user performs the action the tip teaches.
-    @MainActor
-    func markTipParameterAsSeen(_ parameter: inout Bool) {
-        parameter = true
-    }
 }

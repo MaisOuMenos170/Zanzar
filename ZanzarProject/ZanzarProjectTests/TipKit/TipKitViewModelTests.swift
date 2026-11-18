@@ -55,7 +55,6 @@ final class MockTipKitService: TipKitServicing, @unchecked Sendable {
     var configureCalled = false
     var resetAllTipsCalled = false
     var shouldFailConfigure = false
-    var lastTipIdentifier: String?
     var configureError: Error?
     
     func configure() async throws {
@@ -67,10 +66,5 @@ final class MockTipKitService: TipKitServicing, @unchecked Sendable {
     
     func resetAllTips() async {
         resetAllTipsCalled = true
-    }
-    
-    func tip(for identifier: String) -> (any Tip)? {
-        lastTipIdentifier = identifier
-        return nil
     }
 }

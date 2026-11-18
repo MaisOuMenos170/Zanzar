@@ -30,7 +30,7 @@ final class LocationMapViewModel {
     /// The app passes the store it shares with the other tabs; without one (tests, previews) the view model
     /// builds its own on top of `service`.
     init(service: LocationMapServicing? = nil, store: NearbyPlacesStore? = nil) {
-        self.store = store ?? NearbyPlacesStore(service: service ?? LocationMapService())
+        self.store = store ?? NearbyPlacesStore(service: service ?? LocationMapService.shared)
     }
 
     /// Centers the camera on the user the first time and shows the places. Later loads leave the camera where

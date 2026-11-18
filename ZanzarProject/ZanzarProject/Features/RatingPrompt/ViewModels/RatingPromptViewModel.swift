@@ -22,7 +22,7 @@ final class RatingPromptViewModel {
         store: PendingRatingStoring? = nil,
         userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.userID },
         userCoordinateProvider: @escaping @Sendable () async throws -> UserCoordinate = {
-            try await LocationMapService().currentUserLocation()
+            try await LocationMapService.shared.currentUserLocation()
         },
         now: @escaping @Sendable () -> Date = { Date() },
         sleep: @escaping @Sendable (Duration) async throws -> Void = { try await Task.sleep(for: $0) }

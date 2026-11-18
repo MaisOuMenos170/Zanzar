@@ -166,15 +166,51 @@ struct PlaceDetailServiceTests {
         let service = PlaceDetailService(client: client)
 
         let coordinate = UserCoordinate(latitude: -25.43, longitude: -49.27, accuracyMeters: 8)
-        let result = try await service.checkIn(placeID: "ChIJ1", coordinate: coordinate)
+        let result = try await service.checkIn(placeID: "ChIJ1", coordinate: coordinate, mutationID: "mutation-1")
 
         #expect(result.isNewStamp)
         #expect(result.sealCategory == .bar)
         #expect(client.lastSendPath == "checkIn")
-        let body = try JSONDecoder().decode(SentCheckInBody.self, from: try #require(client.lastSendBody))
+        #expect(try body(of: client).clientMutationId == "mutation-1")
+        let body = try body(of: client)
         #expect(body.coordinates.lat == coordinate.latitude)
         #expect(body.coordinates.lng == coordinate.longitude)
         #expect(body.coordinates.accuracyMeters == 8)
+    }
+
+    @Test("the place still loads when the check-in status and reaction calls fail with a server error")
+    func sideCallFailuresDoNotHideThePlace() async throws {
+        let client = PathAwareNetworkClient(
+            responsesByPathPrefix: ["places/ChIJ1": Self.placeJSON, "places": "[]"],
+            getErrors: [
+                "checkIn": APIError.httpStatus(500, message: nil),
+                "rating": URLError(.timedOut)
+            ]
+        )
+        let service = PlaceDetailService(client: client)
+        let context = PlaceDetailLoadContext(
+            place: MapPlace(
+                id: "ChIJ1",
+                name: "Bar do Zé",
+                latitude: -25.43,
+                longitude: -49.27,
+                category: .bar,
+                distanceMeters: 50,
+                pinStyle: .available
+            ),
+            userCoordinate: nil,
+            userID: "user-1"
+        )
+
+        let detail = try await service.fetchPlaceDetail(context: context)
+
+        #expect(detail.id == "ChIJ1")
+        #expect(detail.hasCheckedIn == false)
+        #expect(detail.selectedReactionTag == nil)
+    }
+
+    private func body(of client: PathAwareNetworkClient) throws -> SentCheckInBody {
+        try JSONDecoder().decode(SentCheckInBody.self, from: try #require(client.lastSendBody))
     }
 }
 
@@ -186,6 +222,7 @@ private struct SentCheckInBody: Decodable {
     }
 
     let coordinates: Coordinates
+    let clientMutationId: String
 }
 
 private final class PathAwareNetworkClient: NetworkClient, @unchecked Sendable {
@@ -194,14 +231,23 @@ private final class PathAwareNetworkClient: NetworkClient, @unchecked Sendable {
     private(set) var lastSendPath: String?
     private(set) var lastSendBody: Data?
     private(set) var getPaths: [String] = []
+    private let getErrors: [String: Error]
 
-    init(responsesByPathPrefix: [String: String], sendResponseJSON: String? = nil) {
+    init(
+        responsesByPathPrefix: [String: String],
+        sendResponseJSON: String? = nil,
+        getErrors: [String: Error] = [:]
+    ) {
         self.responsesByPathPrefix = responsesByPathPrefix
         self.sendResponseJSON = sendResponseJSON
+        self.getErrors = getErrors
     }
 
     func get<Response: Decodable>(path: String, queryItems: [URLQueryItem]) async throws -> Response {
         getPaths.append(path)
+        if let error = getErrors.first(where: { path.hasPrefix($0.key) })?.value {
+            throw error
+        }
         if path.hasPrefix("checkIn") || path == "checkIn" {
             throw APIError.httpStatus(404, message: nil)
         }
