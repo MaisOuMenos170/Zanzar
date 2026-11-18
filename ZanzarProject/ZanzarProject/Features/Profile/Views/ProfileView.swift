@@ -4,6 +4,8 @@ import TipKit
 struct ProfileView: View {
     @State private var viewModel = ProfileViewModel(checkInsLimit: ProfileViewModel.passportLimit)
     @State private var blockedProfiles = BlockedProfilesViewModel()
+    @State private var photos = MyPhotosViewModel()
+    @State private var suggestions = MySuggestionsViewModel()
     @State private var section = ProfileSection.passport
     @Environment(AuthSession.self) private var authSession
     @Environment(AppCoordinator.self) private var coordinator
@@ -75,7 +77,10 @@ struct ProfileView: View {
             .task(id: coordinator.path.isEmpty) {
                 guard coordinator.path.isEmpty else { return }
                 await viewModel.load()
-                await blockedProfiles.load()
+                async let blocked: Void = blockedProfiles.load()
+                async let photosLoad: Void = photos.load()
+                async let suggestionsLoad: Void = suggestions.load()
+                _ = await (blocked, photosLoad, suggestionsLoad)
             }
             // A check-in makes the loaded profile outdated; the load above then skips its freshness window.
             .onReceive(NotificationCenter.default.publisher(for: AppNotification.checkInDidSucceed)) { _ in
@@ -116,6 +121,8 @@ struct ProfileView: View {
                         passport(profile)
                     case .settings:
                         ProfileSettingsView(
+                            photosCount: photos.hasLoaded ? photos.photos.count : nil,
+                            suggestionsCount: suggestions.hasLoaded ? suggestions.suggestions.count : nil,
                             blockedCount: blockedProfiles.hasLoaded ? blockedProfiles.blockedUsers.count : nil,
                             onSignOut: {
                                 viewModel.showsSignOutConfirmation = true
@@ -157,8 +164,6 @@ struct ProfileView: View {
                 checkIns: Array(profile.recentCheckIns.prefix(recentCheckInsCount)),
                 onSeeMore: { coordinator.push(.allCheckIns) }
             )
-            ProfilePhotosSection(onSeeMore: { coordinator.push(.myPhotos) })
-            ProfileSuggestionsSection(onSeeMore: { coordinator.push(.mySuggestions) })
         }
     }
 

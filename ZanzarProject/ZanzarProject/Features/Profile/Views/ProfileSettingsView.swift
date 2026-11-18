@@ -1,18 +1,26 @@
 import SwiftUI
+import TipKit
 
 /// The "Ajustes" half of the profile: notifications, privacy and the account.
 struct ProfileSettingsView: View {
-    /// `nil` until the list of blocked people has loaded.
+    /// How many photos and suggested places the user sent, and how many people they blocked.
+    /// Each is `nil` until its list has loaded.
+    let photosCount: Int?
+    let suggestionsCount: Int?
     let blockedCount: Int?
     let onSignOut: () -> Void
     let onDeleteAccount: () -> Void
 
     @State private var showsMailComposer = false
+
+    private let myPhotosTip = ProfileMyPhotosTip()
+    private let mySuggestionsTip = ProfileMySuggestionsTip()
     @Environment(\.openURL) private var openURL
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             ProximityAlertSettingsSection()
+            submissionsSection
             privacySection
             accountSection
         }
@@ -26,14 +34,31 @@ struct ProfileSettingsView: View {
         }
     }
 
+    private var submissionsSection: some View {
+        ProfileSettingsSection(title: "profile.settings.submissions.title") {
+            NavigationLink(value: Route.myPhotos) {
+                ProfileSettingsRow(title: Text("profile.settings.photos.title")) {
+                    countAndChevron(photosCount)
+                }
+            }
+            .buttonStyle(.plain)
+            .popoverTip(myPhotosTip, arrowEdge: .bottom)
+
+            NavigationLink(value: Route.mySuggestions) {
+                ProfileSettingsRow(title: Text("profile.settings.suggestions.title")) {
+                    countAndChevron(suggestionsCount)
+                }
+            }
+            .buttonStyle(.plain)
+            .popoverTip(mySuggestionsTip, arrowEdge: .bottom)
+        }
+    }
+
     private var privacySection: some View {
         ProfileSettingsSection(title: "profile.settings.privacy.title") {
             NavigationLink(value: Route.blockedProfiles) {
-                ProfileSettingsRow(
-                    title: Text("profile.settings.blocked.title"),
-                    subtitle: blockedSubtitle
-                ) {
-                    chevron
+                ProfileSettingsRow(title: Text("profile.settings.blocked.title")) {
+                    countAndChevron(blockedCount)
                 }
             }
             .buttonStyle(.plain)
@@ -96,11 +121,15 @@ struct ProfileSettingsView: View {
         }
     }
 
-    private var blockedSubtitle: Text {
-        if let blockedCount {
-            Text("profile.settings.blocked.subtitle \(blockedCount)")
-        } else {
-            Text("profile.settings.blocked.subtitleUnknown")
+    /// "(10) ›": how many there are, once known, and the chevron of a row that opens a list.
+    private func countAndChevron(_ count: Int?) -> some View {
+        HStack(spacing: 4) {
+            if let count {
+                Text(verbatim: "(\(count))")
+                    .typography(.caption1)
+                    .foregroundStyle(Color.brandNeutral600)
+            }
+            chevron
         }
     }
 
@@ -124,7 +153,7 @@ struct ProfileSettingsView: View {
 #Preview {
     NavigationStack {
         ScrollView {
-            ProfileSettingsView(blockedCount: 2, onSignOut: {}, onDeleteAccount: {})
+            ProfileSettingsView(photosCount: 10, suggestionsCount: 21, blockedCount: 5, onSignOut: {}, onDeleteAccount: {})
                 .padding()
         }
         .background(Color.profileBackground)

@@ -5905,23 +5905,6 @@
         }
       }
     },
-    "profile.photosSection.empty" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You haven't sent any photos yet!"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você ainda não enviou fotos!"
-          }
-        }
-      }
-    },
     "profile.photosSection.myPhotos.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6126,64 +6109,6 @@
         }
       }
     },
-    "profile.settings.blocked.subtitle %lld" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld person · tap to manage"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld people · tap to manage"
-                }
-              }
-            }
-          }
-        },
-        "pt-BR" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld pessoa · toque para gerenciar"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld pessoas · toque para gerenciar"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "profile.settings.blocked.subtitleUnknown" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tap to manage"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque para gerenciar"
-          }
-        }
-      }
-    },
     "profile.settings.blocked.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6235,6 +6160,23 @@
         }
       }
     },
+    "profile.settings.photos.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My photos"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minhas fotos"
+          }
+        }
+      }
+    },
     "profile.settings.privacy.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6282,6 +6224,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sair da conta"
+          }
+        }
+      }
+    },
+    "profile.settings.submissions.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Submissions"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Submissões"
+          }
+        }
+      }
+    },
+    "profile.settings.suggestions.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggested places"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lugares sugeridos"
           }
         }
       }
@@ -6537,23 +6513,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Selos"
-          }
-        }
-      }
-    },
-    "profile.suggestionsSection.empty" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You haven't suggested any places yet!"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você ainda não sugeriu lugares!"
           }
         }
       }
