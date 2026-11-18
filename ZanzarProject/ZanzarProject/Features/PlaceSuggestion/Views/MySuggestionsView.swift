@@ -22,6 +22,7 @@ struct MySuggestionsView: View {
         ) {
             content
         }
+        .motion(Motion.suave, value: [viewModel.hasLoaded, viewModel.suggestions.isEmpty])
         .task { await viewModel.load() }
         .refreshable { await viewModel.load() }
         .alert("placeSuggestion.mySuggestions.errorAlert.title", isPresented: errorIsPresented) {

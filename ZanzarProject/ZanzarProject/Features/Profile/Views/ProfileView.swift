@@ -7,6 +7,8 @@ struct ProfileView: View {
     @State private var photos = MyPhotosViewModel()
     @State private var suggestions = MySuggestionsViewModel()
     @State private var section = ProfileSection.passport
+    /// The profile rises in once when it first loads, not again after a check-in refreshes it.
+    @State private var contentShown = false
     /// Turns on a moment after the delete-account alert appears, so the button is not tapped by reflex.
     @State private var canConfirmDeleteAccount = false
     @Environment(AuthSession.self) private var authSession
@@ -44,6 +46,7 @@ struct ProfileView: View {
             // In the alerts, cancel is the filled button (the default action) and the destructive one is red text on
             // gray, as in the Figma. Cancel keeps its `.cancel` role: without one the system adds its own extra
             // "Cancelar" button, and the system always puts the cancel button last.
+            .haptic(.alerta, trigger: viewModel.showsSignOutConfirmation, when: { _, shown in shown })
             .alert("profile.signOutConfirmation.title", isPresented: $viewModel.showsSignOutConfirmation) {
                 Button("profile.signOutConfirmation.confirmButton.title", role: .destructive) {
                     Task { await viewModel.signOut(using: authSession, coordinator: coordinator) }
@@ -121,13 +124,16 @@ struct ProfileView: View {
             ScrollView {
                 VStack(spacing: 24) {
                     ProfileHeaderView()
+                        .entrance(contentShown, order: 0)
 
                     ProfileSegmentedControl(selection: $section)
                         .popoverTip(settingsTip, arrowEdge: .top)
+                        .entrance(contentShown, order: 1)
 
                     switch section {
                     case .passport:
                         passport(profile)
+                            .entrance(contentShown, order: 2)
                     case .settings:
                         ProfileSettingsView(
                             photosCount: photos.hasLoaded ? photos.photos.count : nil,
@@ -139,9 +145,13 @@ struct ProfileView: View {
                             },
                             onDeleteAccount: { viewModel.showsDeleteAccountConfirmation = true }
                         )
+                        .entrance(contentShown, order: 2)
                     }
                 }
                 .padding(16)
+                .onAppear {
+                    contentShown = true
+                }
             }
             .refreshable { await viewModel.load(force: true) }
             .motion(Motion.suave, value: section)
