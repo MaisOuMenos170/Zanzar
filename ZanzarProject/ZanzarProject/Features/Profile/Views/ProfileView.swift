@@ -7,6 +7,8 @@ struct ProfileView: View {
     @State private var photos = MyPhotosViewModel()
     @State private var suggestions = MySuggestionsViewModel()
     @State private var section = ProfileSection.passport
+    /// Turns on a moment after the delete-account alert appears, so the button is not tapped by reflex.
+    @State private var canConfirmDeleteAccount = false
     @Environment(AuthSession.self) private var authSession
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(\.presentSheet) private var presentSheet
@@ -39,11 +41,15 @@ struct ProfileView: View {
                     }
                 }
             }
+            // In the alerts, cancel is the filled button (the default action) and the destructive one is red text on
+            // gray, as in the Figma. Cancel keeps its `.cancel` role: without one the system adds its own extra
+            // "Cancelar" button, and the system always puts the cancel button last.
             .alert("profile.signOutConfirmation.title", isPresented: $viewModel.showsSignOutConfirmation) {
                 Button("profile.signOutConfirmation.confirmButton.title", role: .destructive) {
                     Task { await viewModel.signOut(using: authSession, coordinator: coordinator) }
                 }
                 Button("profile.signOutConfirmation.cancelButton.title", role: .cancel) {}
+                    .keyboardShortcut(.defaultAction)
             } message: {
                 Text("profile.signOutConfirmation.message")
             }
@@ -53,12 +59,21 @@ struct ProfileView: View {
                 }
             }
             .alert("profile.deleteAccount.confirmation.title", isPresented: $viewModel.showsDeleteAccountConfirmation) {
-                Button("profile.deleteAccount.confirmation.cancelButton.title", role: .cancel) {}
                 Button("profile.deleteAccount.confirmation.confirmButton.title", role: .destructive) {
                     Task { await viewModel.deleteAccount(using: authSession, coordinator: coordinator) }
                 }
+                .disabled(!canConfirmDeleteAccount)
+                Button("profile.deleteAccount.confirmation.cancelButton.title", role: .cancel) {}
+                    .keyboardShortcut(.defaultAction)
             } message: {
                 Text("profile.deleteAccount.confirmation.message")
+            }
+            .task(id: viewModel.showsDeleteAccountConfirmation) {
+                canConfirmDeleteAccount = false
+                guard viewModel.showsDeleteAccountConfirmation else { return }
+                try? await Task.sleep(for: .seconds(2))
+                guard !Task.isCancelled else { return }
+                canConfirmDeleteAccount = true
             }
             .alert("profile.deleteAccount.errorAlert.title", isPresented: $viewModel.deleteAccountFailed) {
                 Button("profile.signOutAlert.dismissButton.title", role: .cancel) {}

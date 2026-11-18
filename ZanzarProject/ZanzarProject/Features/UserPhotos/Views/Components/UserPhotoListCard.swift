@@ -21,15 +21,19 @@ struct UserPhotoListCard: View {
         .fullScreenCover(item: $photoBeingViewed) { photo in
             UserPhotoViewerView(photo: photo)
         }
+        // Cancel is the filled button (the default action) and the destructive one is red text on gray, as in the
+        // Figma alert. Cancel keeps its `.cancel` role: without one the system adds its own extra "Cancelar"
+        // button, and the system always puts the cancel button last.
         .alert(
             "userPhotos.myPhotos.deleteConfirmation.title",
             isPresented: deletionIsPresented,
             presenting: viewModel.photoPendingDeletion
         ) { photo in
-            Button("userPhotos.myPhotos.deleteConfirmation.cancelButton.title", role: .cancel) {}
             Button("userPhotos.myPhotos.deleteConfirmation.confirmButton.title", role: .destructive) {
                 Task { await viewModel.delete(photo) }
             }
+            Button("userPhotos.myPhotos.deleteConfirmation.cancelButton.title", role: .cancel) {}
+                .keyboardShortcut(.defaultAction)
         } message: { _ in
             Text("userPhotos.myPhotos.deleteConfirmation.message")
         }
