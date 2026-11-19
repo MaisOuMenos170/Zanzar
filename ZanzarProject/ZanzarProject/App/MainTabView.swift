@@ -34,8 +34,8 @@ struct MainTabView: View {
     @Namespace private var placeZoom
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            ForEach(MainTab.allCases, id: \.self) { tab in
+        TabView(selection: tabSelection) {
+            ForEach(MainTab.screenTabs, id: \.self) { tab in
                 Tab(tab.titleKey, systemImage: tab.systemImage, value: tab) {
                     // tab bar's cascades into everything inside the tabs
                     // we overwrite with a .tint on the content inside
@@ -43,6 +43,17 @@ struct MainTabView: View {
                         .tint(.primary)
                 }
             }
+            // The separate tab on the trailing side of the bar. It is an action, not a screen: see `tabSelection`.
+            Tab(
+                MainTab.suggest.titleKey,
+                systemImage: MainTab.suggest.systemImage,
+                value: MainTab.suggest,
+                role: .search
+            ) {
+                Color.clear
+            }
+            // Only the Discover tab offers it.
+            .hidden(selectedTab != .discover)
         }
         // The system tab bar, with the app's new blue (Blue/600 in the Figma) for the selected tab.
         .tint(.brandBlue600)
@@ -117,6 +128,21 @@ struct MainTabView: View {
             guard tab != .profile else { return }
             Task { try? await nearbyPlaces.refreshIfNeeded() }
         }
+    }
+
+    /// Tapping the separate "Sugerir um lugar" tab opens the suggestion card and keeps the current tab selected,
+    /// so the haptic and the places refresh keyed on `selectedTab` do not fire for it.
+    private var tabSelection: Binding<MainTab> {
+        Binding(
+            get: { selectedTab },
+            set: { tab in
+                if tab == .suggest {
+                    coordinator.present(sheet: .suggestPlace)
+                } else {
+                    selectedTab = tab
+                }
+            }
+        )
     }
 
     /// The system sheet only carries the roteiro detail; the suggestion form is drawn by the overlay.
@@ -243,6 +269,8 @@ struct MainTabView: View {
                             .environment(\.presentSheet) { coordinator.present(sheet: $0) }
                     }
             }
+        case .suggest:
+            EmptyView()
         }
     }
 }
