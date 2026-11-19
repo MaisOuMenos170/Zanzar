@@ -33,13 +33,7 @@ enum PlaceSuggestionErrorMapper {
         }
     }
 
-    static func searchMessage(for error: Error) -> String {
-        if let rateLimited = APIError.rateLimitedMessage(for: error) {
-            return rateLimited
-        }
-        if case .rejected(503, "osm_unavailable", _)? = error as? APIError {
-            return L10n.string("placeSuggestion.error.osmUnavailable")
-        }
-        return L10n.string("placeSuggestion.error.search")
+    static func searchMessage() -> String {
+        L10n.string("placeSuggestion.error.search")
     }
 }

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// One place found by the search. Tapping it selects it for the suggestion.
+/// One place Apple Maps found. Tapping it selects it for the suggestion; a result with no name shows its address.
 struct PlaceSuggestionResultRow: View {
     let place: SuggestedPlace
     let isSelected: Bool
@@ -14,16 +14,20 @@ struct PlaceSuggestionResultRow: View {
                 Image(systemName: isSelected ? "inset.filled.circle" : "circle")
                     .font(.body.weight(.medium))
                     .foregroundStyle(isSelected ? Color.brandPurple500 : Color.brandOptionIdleIcon)
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(place.name)
+                    Text(place.hasName ? place.title : ShortAddress.format(place.title))
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.primary)
                         .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
-                    Text(place.address)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+                    // The address is the title already when the place has no name.
+                    if place.hasName, let address = place.address {
+                        Text(ShortAddress.format(address))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -48,17 +52,27 @@ struct PlaceSuggestionResultRow: View {
 }
 
 #Preview {
-    PlaceSuggestionResultRow(
-        place: SuggestedPlace(
-            osmType: "node",
-            osmID: 1,
-            name: "Jardim Botânico",
-            address: "Rua Engenheiro Ostoja Roguski, Curitiba",
-            latitude: -25.44,
-            longitude: -49.24
-        ),
-        isSelected: true,
-        action: {}
-    )
+    VStack {
+        PlaceSuggestionResultRow(
+            place: SuggestedPlace(
+                name: "Jardim Botânico",
+                address: "Rua Engenheiro Ostoja Roguski, 350, Jardim Botânico, Curitiba - PR, Brasil",
+                latitude: -25.44,
+                longitude: -49.24
+            ),
+            isSelected: true,
+            action: {}
+        )
+        PlaceSuggestionResultRow(
+            place: SuggestedPlace(
+                name: nil,
+                address: "Rua Engenheiro Ostoja Roguski, 360, Curitiba - PR, Brasil",
+                latitude: -25.44,
+                longitude: -49.24
+            ),
+            isSelected: false,
+            action: {}
+        )
+    }
     .padding()
 }

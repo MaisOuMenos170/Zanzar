@@ -5,50 +5,54 @@ import Testing
 @MainActor
 @Suite("PlaceSuggestionViewModel")
 struct PlaceSuggestionViewModelTests {
-    private static let home = SuggestedLocation(
+    static let home = SuggestedLocation(
         latitude: -25.43,
         longitude: -49.27,
         address: "Rua XV de Novembro, 1200"
     )
 
-    private func makeViewModel(
-        service: MockPlaceSuggestionService = MockPlaceSuggestionService()
-    ) -> PlaceSuggestionViewModel {
-        PlaceSuggestionViewModel(service: service)
-    }
-
-    private static let garden = SuggestedPlace(
-        osmType: "way",
-        osmID: 42,
+    /// Apple Maps knows both its name and its address.
+    static let garden = SuggestedPlace(
         name: "Jardim Botânico",
-        address: "Rua Engenheiro Ostoja Roguski, Curitiba",
+        address: "Rua Engenheiro Ostoja Roguski, 350, Curitiba",
         latitude: -25.44,
         longitude: -49.24
     )
 
-    private func makeViewModelWithResults(service: MockPlaceSuggestionService) async -> PlaceSuggestionViewModel {
-        service.searchResult = .success([Self.garden])
+    /// An address with nothing attached to it.
+    static let bareAddress = SuggestedPlace(
+        name: nil,
+        address: "Rua Engenheiro Ostoja Roguski, 360, Curitiba",
+        latitude: -25.45,
+        longitude: -49.25
+    )
+
+    /// A place Apple Maps names but has no address for.
+    static let bakery = SuggestedPlace(
+        name: "Padaria Central",
+        address: nil,
+        latitude: -25.41,
+        longitude: -49.26
+    )
+
+    func makeViewModel(
+        service: MockPlaceSuggestionService = MockPlaceSuggestionService()
+    ) -> PlaceSuggestionViewModel {
+        PlaceSuggestionViewModel(service: service, debounce: .zero)
+    }
+
+    func makeViewModel(
+        searching results: [SuggestedPlace],
+        service: MockPlaceSuggestionService
+    ) async -> PlaceSuggestionViewModel {
+        service.searchResult = .success(results)
         let viewModel = makeViewModel(service: service)
         viewModel.query = "jardim"
-        await viewModel.search()
+        await viewModel.waitForSearch()
         return viewModel
     }
 
-    @Test("the button stays disabled until a place is chosen and the reason is filled")
-    func cannotSubmitWithoutPlaceAndNote() async {
-        let viewModel = await makeViewModelWithResults(service: MockPlaceSuggestionService())
-
-        #expect(!viewModel.canSubmit)
-
-        viewModel.select(Self.garden)
-        #expect(!viewModel.canSubmit)
-
-        viewModel.note = "   "
-        #expect(!viewModel.canSubmit)
-
-        viewModel.note = "O jardim de inverno é lindo"
-        #expect(viewModel.canSubmit)
-    }
+    // MARK: Search
 
     @Test("searching needs at least two letters and is limited like the backend")
     func searchLimits() {
@@ -72,7 +76,7 @@ struct PlaceSuggestionViewModelTests {
         await viewModel.loadCurrentLocation()
         viewModel.query = "  jardim  "
 
-        await viewModel.search()
+        await viewModel.waitForSearch()
 
         #expect(service.searches == [.init(query: "jardim", near: Self.home)])
         #expect(viewModel.hasSearched)
@@ -86,63 +90,209 @@ struct PlaceSuggestionViewModelTests {
 
         await viewModel.loadCurrentLocation()
         viewModel.query = "jardim"
-        await viewModel.search()
+        await viewModel.waitForSearch()
 
         #expect(service.currentLocationCalls == 0)
         #expect(service.searches == [.init(query: "jardim", near: nil)])
     }
 
-    @Test("a new search clears the chosen place and the manual choice")
+    @Test("a new search clears the chosen place and what was typed for it")
     func searchResetsSelection() async {
-        let viewModel = await makeViewModelWithResults(service: MockPlaceSuggestionService())
-        viewModel.select(Self.garden)
-        viewModel.enterManually()
+        let service = MockPlaceSuggestionService()
+        let viewModel = await makeViewModel(searching: [Self.bareAddress], service: service)
+        viewModel.select(Self.bareAddress)
+        viewModel.customName = "Cantinho"
 
-        await viewModel.search()
+        viewModel.query = "jardim botânico"
+        await viewModel.waitForSearch()
 
         #expect(viewModel.selectedPlace == nil)
-        #expect(!viewModel.isManualEntry)
+        #expect(viewModel.customName.isEmpty)
+        #expect(viewModel.customAddress.isEmpty)
+    }
+
+    @Test("typing searches once, after the pause, with the last text")
+    func debouncesTyping() async {
+        let service = MockPlaceSuggestionService()
+        let viewModel = PlaceSuggestionViewModel(service: service, debounce: .milliseconds(100))
+
+        viewModel.query = "ja"
+        viewModel.query = "jar"
+        viewModel.query = "jard"
+        #expect(service.searches.isEmpty)
+        await viewModel.waitForSearch()
+
+        #expect(service.searches == [.init(query: "jard", near: nil)])
+    }
+
+    @Test("the keyboard's search key skips the pause")
+    func submitSearchSkipsPause() async {
+        let service = MockPlaceSuggestionService()
+        let viewModel = PlaceSuggestionViewModel(service: service, debounce: .seconds(60))
+        viewModel.query = "jardim"
+
+        viewModel.submitSearch()
+        await viewModel.waitForSearch()
+
+        #expect(service.searches == [.init(query: "jardim", near: nil)])
+        #expect(viewModel.hasSearched)
+    }
+
+    @Test("erasing the text clears the results and what was asked for")
+    func shortTextClearsResults() async {
+        let service = MockPlaceSuggestionService()
+        let viewModel = await makeViewModel(searching: [Self.bareAddress], service: service)
+        viewModel.select(Self.bareAddress)
+        viewModel.customName = "Cantinho"
+
+        viewModel.query = "j"
+
+        #expect(viewModel.results.isEmpty)
+        #expect(!viewModel.hasSearched)
+        #expect(viewModel.selection == .none)
+        #expect(viewModel.customName.isEmpty)
+        #expect(!viewModel.isSearching)
+    }
+
+    @Test("a text that is too short is never searched")
+    func shortTextIsNotSearched() async {
+        let service = MockPlaceSuggestionService()
+        let viewModel = makeViewModel(service: service)
+
+        viewModel.query = "j"
+        await viewModel.waitForSearch()
+
+        #expect(service.searches.isEmpty)
     }
 
     @Test("a failed search shows its message and keeps the form")
     func searchFailure() async {
         let service = MockPlaceSuggestionService()
-        service.searchResult = .failure(APIError.rejected(503, code: "osm_unavailable", message: nil))
+        service.searchResult = .failure(URLError(.notConnectedToInternet))
         let viewModel = makeViewModel(service: service)
         viewModel.query = "jardim"
 
-        await viewModel.search()
+        await viewModel.waitForSearch()
 
-        #expect(viewModel.searchErrorMessage == L10n.string("placeSuggestion.error.osmUnavailable"))
+        #expect(viewModel.searchErrorMessage == L10n.string("placeSuggestion.error.search"))
         #expect(viewModel.results.isEmpty)
         #expect(!viewModel.hasSearched)
         #expect(!viewModel.isSearching)
+        #expect(viewModel.selection == .none)
     }
 
-    @Test("choosing to send what was typed needs the typed text and the reason")
-    func manualEntryNeedsQueryAndNote() {
-        let viewModel = makeViewModel()
-        viewModel.note = "Vale a pena"
-        viewModel.enterManually()
+    // MARK: Which fields the place needs
+
+    @Test("a place with a name and an address asks for nothing else")
+    func completePlaceNeedsNothing() async {
+        let viewModel = await makeViewModel(searching: [Self.garden], service: MockPlaceSuggestionService())
+
+        viewModel.select(Self.garden)
+
+        #expect(!viewModel.needsName)
+        #expect(!viewModel.needsAddress)
+        #expect(viewModel.canSubmit)
+    }
+
+    @Test("an address with no name asks for the name")
+    func addressWithoutNameAsksForName() async {
+        let viewModel = await makeViewModel(searching: [Self.bareAddress], service: MockPlaceSuggestionService())
+
+        viewModel.select(Self.bareAddress)
+
+        #expect(viewModel.needsName)
+        #expect(!viewModel.needsAddress)
         #expect(!viewModel.canSubmit)
 
-        viewModel.query = "Restaurante Spaghetto"
+        viewModel.customName = "   "
+        #expect(!viewModel.canSubmit)
+
+        viewModel.customName = "Cantinho do Café"
+        #expect(viewModel.canSubmit)
+    }
+
+    @Test("a named place with no address asks for the address")
+    func nameWithoutAddressAsksForAddress() async {
+        let viewModel = await makeViewModel(searching: [Self.bakery], service: MockPlaceSuggestionService())
+
+        viewModel.select(Self.bakery)
+
+        #expect(!viewModel.needsName)
+        #expect(viewModel.needsAddress)
+        #expect(!viewModel.canSubmit)
+
+        viewModel.customAddress = "Rua A, 10"
+        #expect(viewModel.canSubmit)
+    }
+
+    @Test("nothing chosen asks for nothing and cannot be sent")
+    func nothingChosen() async {
+        let viewModel = await makeViewModel(searching: [Self.garden], service: MockPlaceSuggestionService())
+
+        #expect(!viewModel.needsName)
+        #expect(!viewModel.needsAddress)
+        #expect(!viewModel.canSubmit)
+    }
+
+    @Test("a search with no results opens the manual form with the searched text as the name")
+    func emptyResultsOpenManualForm() async {
+        let viewModel = await makeViewModel(searching: [], service: MockPlaceSuggestionService())
+
+        #expect(viewModel.hasSearched)
+        #expect(viewModel.isManualEntry)
+        #expect(viewModel.needsName)
+        #expect(viewModel.needsAddress)
+        #expect(viewModel.customName == "jardim")
+        #expect(!viewModel.canSubmit)
+
+        viewModel.customAddress = "Rua A, 10"
+        #expect(viewModel.canSubmit)
+    }
+
+    @Test("choosing to fill it in by hand keeps a name already typed")
+    func manualEntryKeepsTypedName() async {
+        let viewModel = await makeViewModel(searching: [Self.garden], service: MockPlaceSuggestionService())
+        viewModel.select(Self.garden)
+
+        viewModel.enterManually()
+        #expect(viewModel.selectedPlace == nil)
+        #expect(viewModel.isManualEntry)
+        #expect(viewModel.customName == "jardim")
+
+        viewModel.customName = "Meu lugar"
+        viewModel.enterManually()
+        #expect(viewModel.customName == "Meu lugar")
+    }
+
+    @Test("a name or address over the limit blocks the button")
+    func fieldLimits() async {
+        let viewModel = await makeViewModel(searching: [], service: MockPlaceSuggestionService())
+        viewModel.customAddress = "Rua A, 10"
         #expect(viewModel.canSubmit)
 
-        viewModel.query = String(repeating: "y", count: PlaceSuggestionLimits.addressMaxLength + 1)
+        viewModel.customName = String(repeating: "x", count: PlaceSuggestionLimits.nameMaxLength + 1)
+        #expect(!viewModel.canSubmit)
+
+        viewModel.customName = "Lugar"
+        viewModel.customAddress = String(repeating: "y", count: PlaceSuggestionLimits.addressMaxLength + 1)
         #expect(!viewModel.canSubmit)
     }
 
-    @Test("a reason over the backend limit blocks the button")
-    func noteLimitBlocksSubmit() async {
-        let viewModel = await makeViewModelWithResults(service: MockPlaceSuggestionService())
+    @Test("the note is optional but has a limit")
+    func noteIsOptionalWithLimit() async {
+        let viewModel = await makeViewModel(searching: [Self.garden], service: MockPlaceSuggestionService())
         viewModel.select(Self.garden)
+        #expect(viewModel.note.isEmpty)
+        #expect(viewModel.canSubmit)
+
         viewModel.note = String(repeating: "x", count: PlaceSuggestionLimits.noteMaxLength + 1)
         #expect(!viewModel.canSubmit)
 
         viewModel.note = String(repeating: "x", count: PlaceSuggestionLimits.noteMaxLength)
         #expect(viewModel.canSubmit)
     }
+
+    // MARK: Position of the user
 
     @Test("a position that is already known is not looked up again")
     func loadsOnce() async {
@@ -171,230 +321,5 @@ struct PlaceSuggestionViewModelTests {
 
         #expect(viewModel.currentLocation == Self.home)
         #expect(viewModel.locationErrorMessage == nil)
-    }
-
-}
-
-extension PlaceSuggestionViewModelTests {
-    @Test("a place that goes straight into the app is told as published")
-    func submitPublished() async {
-        let service = MockPlaceSuggestionService()
-        service.submitPlaceResult = .success(Self.suggestion(status: .approved, name: "Jardim Botânico"))
-        let viewModel = await makeViewModelWithResults(service: service)
-        viewModel.select(Self.garden)
-        viewModel.note = "  O jardim de inverno é lindo \n"
-
-        let succeeded = await viewModel.submit()
-
-        #expect(succeeded)
-        #expect(viewModel.outcome == .published(placeName: "Jardim Botânico"))
-        #expect(!viewModel.isSubmitting)
-        #expect(service.submittedPlaces == [.init(place: Self.garden, note: "O jardim de inverno é lindo")])
-    }
-
-    @Test("a place held for the team is told as under review")
-    func submitUnderReview() async {
-        let service = MockPlaceSuggestionService()
-        service.submitPlaceResult = .success(Self.suggestion(status: .needsReview, name: "Jardim Botânico"))
-        let viewModel = await makeViewModelWithResults(service: service)
-        viewModel.select(Self.garden)
-        viewModel.note = "Vale a pena"
-
-        await viewModel.submit()
-
-        #expect(viewModel.outcome == .success)
-    }
-
-    @Test("a place the check refused is told with its reason")
-    func submitRefused() async {
-        let service = MockPlaceSuggestionService()
-        service.submitPlaceResult = .success(
-            Self.suggestion(status: .rejected, name: "Jardim Botânico", reason: .duplicate)
-        )
-        let viewModel = await makeViewModelWithResults(service: service)
-        viewModel.select(Self.garden)
-        viewModel.note = "Vale a pena"
-
-        await viewModel.submit()
-
-        #expect(viewModel.outcome == .refused(.duplicate))
-    }
-
-    @Test("sending what was typed goes to the team with the position when it is known")
-    func submitManual() async {
-        let service = MockPlaceSuggestionService()
-        let viewModel = makeViewModel(service: service)
-        await viewModel.loadCurrentLocation()
-        viewModel.query = "  Restaurante Spaghetto "
-        viewModel.enterManually()
-        viewModel.note = "A comida é muito boa"
-
-        let succeeded = await viewModel.submit()
-
-        #expect(succeeded)
-        #expect(viewModel.outcome == .success)
-        let expected = PlaceSuggestion(
-            location: SuggestedLocation(latitude: -25.43, longitude: -49.27, address: "Restaurante Spaghetto"),
-            note: "A comida é muito boa"
-        )
-        #expect(service.submitted == [expected])
-    }
-
-    @Test("sending what was typed without a position uses zero coordinates")
-    func submitManualWithoutLocation() async {
-        let service = MockPlaceSuggestionService()
-        let viewModel = makeViewModel(service: service)
-        viewModel.searchNearMe = false
-        viewModel.query = "Restaurante Spaghetto"
-        viewModel.enterManually()
-        viewModel.note = "A comida é muito boa"
-
-        await viewModel.submit()
-
-        let expected = PlaceSuggestion(
-            location: SuggestedLocation(latitude: 0, longitude: 0, address: "Restaurante Spaghetto"),
-            note: "A comida é muito boa"
-        )
-        #expect(service.submitted == [expected])
-    }
-
-    @Test("a server failure keeps the form and shows an error")
-    func submitServerFailure() async {
-        let service = MockPlaceSuggestionService()
-        service.submitPlaceResult = .failure(APIError.httpStatus(500, message: nil))
-        let viewModel = await makeViewModelWithResults(service: service)
-        viewModel.select(Self.garden)
-        viewModel.note = "Vale a pena"
-
-        let succeeded = await viewModel.submit()
-
-        #expect(!succeeded)
-        #expect(viewModel.outcome == .failure(message: L10n.string("placeSuggestion.error.generic")))
-        #expect(viewModel.note == "Vale a pena")
-        #expect(!viewModel.isSubmitting)
-    }
-
-    @Test("a 400 from the backend gets its own message")
-    func submitValidationFailure() async {
-        let service = MockPlaceSuggestionService()
-        service.submitPlaceResult = .failure(APIError.httpStatus(400, message: "invalid"))
-        let viewModel = await makeViewModelWithResults(service: service)
-        viewModel.select(Self.garden)
-        viewModel.note = "Vale a pena"
-
-        await viewModel.submit()
-
-        #expect(viewModel.outcome == .failure(message: L10n.string("placeSuggestion.error.invalid")))
-    }
-
-    @Test("a place the server cannot find gets its own message")
-    func submitNotFound() async {
-        let service = MockPlaceSuggestionService()
-        service.submitPlaceResult = .failure(APIError.rejected(404, code: "place_not_found", message: nil))
-        let viewModel = await makeViewModelWithResults(service: service)
-        viewModel.select(Self.garden)
-        viewModel.note = "Vale a pena"
-
-        await viewModel.submit()
-
-        #expect(viewModel.outcome == .failure(message: L10n.string("placeSuggestion.error.notFound")))
-    }
-
-    @Test("a cancelled request is not reported as an error")
-    func submitCancellationIsSilent() async {
-        let service = MockPlaceSuggestionService()
-        service.submitPlaceResult = .failure(URLError(.cancelled))
-        let viewModel = await makeViewModelWithResults(service: service)
-        viewModel.select(Self.garden)
-        viewModel.note = "Vale a pena"
-
-        let succeeded = await viewModel.submit()
-
-        #expect(!succeeded)
-        #expect(viewModel.outcome == nil)
-    }
-
-    @Test("submitting is ignored while the form is not valid")
-    func submitIgnoredWhenInvalid() async {
-        let service = MockPlaceSuggestionService()
-        let viewModel = makeViewModel(service: service)
-
-        let succeeded = await viewModel.submit()
-
-        #expect(!succeeded)
-        #expect(service.submitted.isEmpty)
-        #expect(service.submittedPlaces.isEmpty)
-    }
-
-    nonisolated static func suggestion(
-        status: PlaceSuggestionStatus,
-        name: String? = nil,
-        reason: PlaceSuggestionDecisionReason? = nil
-    ) -> MySuggestion {
-        MySuggestion(
-            id: "s1",
-            status: status,
-            name: name,
-            address: "Rua A",
-            note: nil,
-            decisionReason: reason,
-            placeID: nil,
-            createdAt: Date(timeIntervalSince1970: 1_000),
-            decidedAt: nil
-        )
-    }
-}
-
-final class MockPlaceSuggestionService: PlaceSuggestionServicing, @unchecked Sendable {
-    struct Search: Equatable {
-        let query: String
-        let near: SuggestedLocation?
-    }
-
-    struct SubmittedPlace: Equatable {
-        let place: SuggestedPlace
-        let note: String
-    }
-
-    var currentLocationResult: Result<SuggestedLocation, Error> = .success(
-        SuggestedLocation(latitude: -25.43, longitude: -49.27, address: "Rua XV de Novembro, 1200")
-    )
-    var submitResult: Result<Void, Error> = .success(())
-    var searchResult: Result<[SuggestedPlace], Error> = .success([])
-    var submitPlaceResult: Result<MySuggestion, Error> = .success(
-        PlaceSuggestionViewModelTests.suggestion(status: .needsReview)
-    )
-    var fetchMineResult: Result<[MySuggestion], Error> = .success([])
-
-    private(set) var currentLocationCalls = 0
-    private(set) var submitted: [PlaceSuggestion] = []
-    private(set) var searches: [Search] = []
-    private(set) var submittedPlaces: [SubmittedPlace] = []
-    private(set) var fetchMineCalls = 0
-
-    func currentLocation() async throws -> SuggestedLocation {
-        currentLocationCalls += 1
-        return try currentLocationResult.get()
-    }
-
-    func submit(_ suggestion: PlaceSuggestion) async throws {
-        try submitResult.get()
-        submitted.append(suggestion)
-    }
-
-    func searchPlaces(query: String, near: SuggestedLocation?) async throws -> [SuggestedPlace] {
-        searches.append(Search(query: query, near: near))
-        return try searchResult.get()
-    }
-
-    func submit(_ place: SuggestedPlace, note: String) async throws -> MySuggestion {
-        let suggestion = try submitPlaceResult.get()
-        submittedPlaces.append(SubmittedPlace(place: place, note: note))
-        return suggestion
-    }
-
-    func fetchMine() async throws -> [MySuggestion] {
-        fetchMineCalls += 1
-        return try fetchMineResult.get()
     }
 }

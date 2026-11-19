@@ -1,31 +1,5 @@
 import Foundation
 
-/// One result of `GET /place-suggestions/search`. `category` is nil for kinds of place the app does not take.
-nonisolated struct SuggestedPlaceAPIResponse: Decodable, Sendable {
-    let osmType: String
-    let osmId: Int
-    let name: String
-    let address: String
-    let latitude: Double
-    let longitude: Double
-    let category: String?
-
-    private static let knownTypes: Set<String> = ["node", "way", "relation"]
-
-    /// Nil when the app could not suggest it anyway.
-    var suggestedPlace: SuggestedPlace? {
-        guard category != nil, Self.knownTypes.contains(osmType) else { return nil }
-        return SuggestedPlace(
-            osmType: osmType,
-            osmID: osmId,
-            name: name,
-            address: address,
-            latitude: latitude,
-            longitude: longitude
-        )
-    }
-}
-
 /// A suggestion as `POST` and `GET /place-suggestions` return it.
 nonisolated struct MySuggestionAPIResponse: Decodable, Sendable {
     let id: String
@@ -56,10 +30,4 @@ nonisolated struct MySuggestionAPIResponse: Decodable, Sendable {
             decidedAt: decidedAt.flatMap(APIDate.parse)
         )
     }
-}
-
-nonisolated struct OSMPlaceSuggestionRequest: Encodable, Sendable {
-    let osmType: String
-    let osmId: Int
-    let note: String?
 }
