@@ -16,4 +16,16 @@ nonisolated enum PlaceSuggestionOutcome: Hashable, Sendable {
         case .refused, .failure: false
         }
     }
+
+    /// What the user is told once the backend has checked the suggestion.
+    init(_ suggestion: MySuggestion) {
+        switch suggestion.status {
+        case .approved:
+            self = .published(placeName: suggestion.displayName)
+        case .rejected:
+            self = .refused(suggestion.decisionReason ?? .other(""))
+        case .pending, .needsReview:
+            self = .success
+        }
+    }
 }

@@ -16,13 +16,36 @@ nonisolated struct KeychainStore: AuthTokenPersisting {
     private let service = "com.zanzar.auth"
     private let accessAccount = "authToken"
     private let refreshAccount = "refreshToken"
+    /// The keychain group the app and the share extension have in common. It is the app's own default group, so
+    /// tokens saved before the extension existed are already in it. `nil` (no team in the build) leaves the
+    /// attribute out, which means each process uses its own default group.
+    private let accessGroup: String?
+
+    init(accessGroup: String? = Self.configuredAccessGroup) {
+        self.accessGroup = accessGroup
+    }
+
+    /// `ZanzarKeychainGroup` in Info.plist is `$(AppIdentifierPrefix)dalpra.Zanzar`; an unexpanded value means
+    /// the build had no team prefix to give it.
+    static var configuredAccessGroup: String? {
+        accessGroup(from: Bundle.main.object(forInfoDictionaryKey: "ZanzarKeychainGroup"))
+    }
+
+    static func accessGroup(from value: Any?) -> String? {
+        guard let group = value as? String, !group.isEmpty, !group.contains("$(") else { return nil }
+        return group
+    }
 
     private func query(account: String) -> [String: Any] {
-        [
+        var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: account
         ]
+        if let accessGroup {
+            query[kSecAttrAccessGroup as String] = accessGroup
+        }
+        return query
     }
 
     private var protectedAttributes: [String: Any] {

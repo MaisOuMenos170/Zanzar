@@ -133,7 +133,7 @@ final class PlaceSuggestionViewModel {
         do {
             if let selectedPlace {
                 let suggestion = try await service.submit(selectedPlace, note: trimmedNote)
-                outcome = Self.outcome(for: suggestion)
+                outcome = PlaceSuggestionOutcome(suggestion)
             } else {
                 let location = manualLocation()
                 try await service.submit(PlaceSuggestion(location: location, note: trimmedNote))
@@ -144,18 +144,6 @@ final class PlaceSuggestionViewModel {
             guard !PlaceSuggestionErrorMapper.isCancellation(error) else { return false }
             outcome = .failure(message: PlaceSuggestionErrorMapper.submitMessage(for: error))
             return false
-        }
-    }
-
-    /// What the user is told once the backend has checked the suggestion.
-    static func outcome(for suggestion: MySuggestion) -> PlaceSuggestionOutcome {
-        switch suggestion.status {
-        case .approved:
-            .published(placeName: suggestion.displayName)
-        case .rejected:
-            .refused(suggestion.decisionReason ?? .other(""))
-        case .pending, .needsReview:
-            .success
         }
     }
 
