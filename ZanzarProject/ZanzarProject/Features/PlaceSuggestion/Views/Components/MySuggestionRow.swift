@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// One of the user's suggestions in a list card: the place, the date and where the suggestion stands.
 struct MySuggestionRow: View {
     let suggestion: MySuggestion
 

@@ -3,11 +3,8 @@ import Foundation
 protocol ProfileServicing: Sendable {
     func fetchProfile(userID: String, limit: Int) async throws -> Profile
     func logout() async throws
-    /// One page of the user's check-ins, newest first. `before` is the `nextCursor` of the previous page.
     func fetchCheckIns(userID: String, limit: Int, before: String?) async throws -> ProfileCheckInsPage
-    /// Changes the name shown on the profile.
     func updateName(userID: String, name: String) async throws
-    /// Deletes the account and everything that belongs to it.
     func deleteAccount(userID: String) async throws
 }
 
@@ -26,10 +23,8 @@ extension ProfileServicing {
     }
 }
 
-/// `GET user/{id}/check-ins`: a page of check-ins and where the next page starts.
 struct CheckInsPageAPIResponse: Decodable, Sendable {
     let checkIns: [RecentCheckInAPIResponse]
-    /// Sent back as `before` to ask for the next page; `nil` on the last one.
     let nextCursor: String?
 
     func makePage() -> ProfileCheckInsPage {
@@ -45,7 +40,6 @@ struct CheckInsPageAPIResponse: Decodable, Sendable {
     }
 }
 
-/// Body of `PATCH user/{id}`.
 nonisolated struct UpdateNameRequest: Encodable, Sendable {
     let username: String
 }

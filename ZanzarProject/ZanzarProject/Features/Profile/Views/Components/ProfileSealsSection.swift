@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// "Selos colecionados": the seals the user has earned, most recent first.
 struct ProfileSealsSection: View {
     let categories: [ZanzarPlaceCategory]
     let onSeeMore: () -> Void

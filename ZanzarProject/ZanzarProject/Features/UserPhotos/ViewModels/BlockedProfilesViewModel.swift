@@ -1,7 +1,6 @@
 import Foundation
 import Observation
 
-/// The people the user blocked, and unblocking them.
 @Observable
 final class BlockedProfilesViewModel {
     private(set) var blockedUsers: [BlockedUser] = []

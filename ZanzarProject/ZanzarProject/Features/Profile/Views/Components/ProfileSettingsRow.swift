@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// A row of a settings card: a title, an optional line under it and something on the trailing side.
 struct ProfileSettingsRow<Trailing: View>: View {
     let title: Text
     var subtitle: Text?
@@ -36,7 +35,6 @@ extension ProfileSettingsRow where Trailing == EmptyView {
     }
 }
 
-/// A section of the settings: a title and the card under it.
 struct ProfileSettingsSection<Content: View>: View {
     let title: LocalizedStringKey
     @ViewBuilder let content: Content

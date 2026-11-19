@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The state of a photo: "Em análise", "Publicada" or "Rejeitada".
 struct UserPhotoStatusIndicator: View {
     let status: UserPhotoStatus
 

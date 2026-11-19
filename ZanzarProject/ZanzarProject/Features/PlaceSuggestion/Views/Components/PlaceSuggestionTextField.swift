@@ -8,7 +8,6 @@ struct PlaceSuggestionTextField: View {
     @Binding var text: String
     var isFocused: FocusState<Bool>.Binding
     var isRequired = false
-    /// Capitalizes each word by default, for addresses; a name or a handle can ask for no capitalization.
     var autocapitalization: TextInputAutocapitalization = .words
     /// Runs the place search; the keyboard's search key and the magnifier at the end of the field both call it.
     var onSearch: (() -> Void)?

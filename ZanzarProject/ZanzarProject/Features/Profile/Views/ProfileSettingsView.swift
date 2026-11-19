@@ -1,10 +1,7 @@
 import SwiftUI
 import TipKit
 
-/// The "Ajustes" half of the profile: notifications, privacy and the account.
 struct ProfileSettingsView: View {
-    /// How many photos and suggested places the user sent, and how many people they blocked.
-    /// Each is `nil` until its list has loaded.
     let photosCount: Int?
     let suggestionsCount: Int?
     let blockedCount: Int?
@@ -121,7 +118,6 @@ struct ProfileSettingsView: View {
         }
     }
 
-    /// "(10) ›": how many there are, once known, and the chevron of a row that opens a list.
     private func countAndChevron(_ count: Int?) -> some View {
         HStack(spacing: 4) {
             if let count {

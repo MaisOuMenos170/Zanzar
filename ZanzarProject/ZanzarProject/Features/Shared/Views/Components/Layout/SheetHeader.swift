@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// The top of the cards drawn over the app ("Sugerir um lugar", "Editar nome"): a rounded title, the close
-/// button and a line of explanation under them.
 struct SheetHeader: View {
     let title: LocalizedStringKey
     let subtitle: LocalizedStringKey

@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// The end of a paged list: a spinner that asks for the next page as it comes into view, or a retry when the
-/// last request failed.
 struct ListLoadMoreView: View {
     let failed: Bool
     let onLoadMore: () async -> Void

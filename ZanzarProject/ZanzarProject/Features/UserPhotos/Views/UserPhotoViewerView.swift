@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// One of the user's own photos, full screen. It opens with the system's zoom out of the thumbnail
-/// (`UserPhotoListCard` sets the transition) and closes with the close button or a swipe down.
 struct UserPhotoViewerView: View {
     let photo: UserPhoto
 

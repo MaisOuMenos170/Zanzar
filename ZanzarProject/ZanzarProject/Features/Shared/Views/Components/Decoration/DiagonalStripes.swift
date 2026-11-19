@@ -27,7 +27,6 @@ struct DiagonalStripes: View {
 }
 
 extension DiagonalStripes {
-    /// On the orange pill of the profile's segmented control.
     static let pill = DiagonalStripes(
         stripes: [
             Stripe(center: CGPoint(x: 67, y: 18), size: CGSize(width: 91.14, height: 14.88)),
@@ -36,7 +35,6 @@ extension DiagonalStripes {
         tint: .white.opacity(0.1)
     )
 
-    /// On the yellow check-in cards.
     static let warmCard = DiagonalStripes(
         stripes: [
             Stripe(center: CGPoint(x: 82.5, y: 58.2), size: CGSize(width: 244.1, height: 35.6)),
@@ -45,7 +43,6 @@ extension DiagonalStripes {
         tint: .white.opacity(0.1)
     )
 
-    /// On the purple check-in cards.
     static let coolCard = DiagonalStripes(
         stripes: [
             Stripe(center: CGPoint(x: 73, y: 67.2), size: CGSize(width: 218.04, height: 35.6)),

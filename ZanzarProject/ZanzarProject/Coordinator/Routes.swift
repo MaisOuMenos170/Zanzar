@@ -27,7 +27,6 @@ enum Route: Hashable {
 enum Sheet: Identifiable, Hashable {
     case itineraryDetail(slug: String)
     case suggestPlace
-    /// Edits the profile name. Carries the current name so the card can start from it.
     case editName(currentName: String)
 
     var id: Self { self }

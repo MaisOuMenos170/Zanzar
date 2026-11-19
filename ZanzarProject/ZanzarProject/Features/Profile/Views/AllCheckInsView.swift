@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// "Todos os check-ins": every check-in as a card, filtered by category and place name.
 struct AllCheckInsView: View {
     @State private var viewModel = ProfileCheckInsViewModel()
     @State private var searchText = ""

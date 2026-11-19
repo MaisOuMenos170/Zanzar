@@ -1,25 +1,17 @@
 import SwiftUI
 
-/// What a profile list shows when it has nothing to list: because there is nothing yet, because the search found
-/// nothing, or because the chip emptied it. A title, a line about it and, where it makes sense, a button to
-/// suggest a place.
 struct ListNoResultsView: View {
     enum Kind {
-        /// The list has nothing at all yet.
         case empty(title: LocalizedStringKey, message: LocalizedStringKey)
-        /// The search found nothing. `query` is what the user typed.
         case notFound(query: String, message: LocalizedStringKey)
-        /// Only a category chip emptied the list.
         case filtered
     }
 
     let kind: Kind
-    /// Offers "Sugerir lugar" under the message. Not shown when only a chip emptied the list.
     var offersPlaceSuggestion = false
 
     @Environment(\.presentSheet) private var presentSheet
 
-    /// Picks the right kind: nothing at all, a search with no match, or just the chip.
     init(
         hasItems: Bool,
         query: String,
