@@ -7,8 +7,15 @@ struct ListNoResultsView: View {
         case filtered
     }
 
+    /// A button under the text, for a way forward the screen itself offers.
+    struct Action {
+        let title: LocalizedStringKey
+        let perform: () -> Void
+    }
+
     let kind: Kind
     var offersPlaceSuggestion = false
+    var action: Action?
 
     @Environment(\.presentSheet) private var presentSheet
 
@@ -31,9 +38,10 @@ struct ListNoResultsView: View {
         self.offersPlaceSuggestion = offersPlaceSuggestion
     }
 
-    init(kind: Kind, offersPlaceSuggestion: Bool = false) {
+    init(kind: Kind, offersPlaceSuggestion: Bool = false, action: Action? = nil) {
         self.kind = kind
         self.offersPlaceSuggestion = offersPlaceSuggestion
+        self.action = action
     }
 
     var body: some View {
@@ -53,15 +61,11 @@ struct ListNoResultsView: View {
             .padding(.horizontal, 16)
 
             if offersPlaceSuggestion, !isFiltered, let presentSheet {
-                Button { presentSheet(.suggestPlace) } label: {
-                    Text("list.noResults.suggestButton")
-                        .typography(.subtitle2)
-                        .foregroundStyle(Color.white)
-                        .padding(16)
-                        .background(Color.brandPurple500, in: .rect(cornerRadius: 30))
-                        .contentShape(.rect(cornerRadius: 30))
-                }
-                .buttonStyle(.plain)
+                pillButton("list.noResults.suggestButton") { presentSheet(.suggestPlace) }
+            }
+
+            if let action {
+                pillButton(action.title, perform: action.perform)
             }
         }
         .frame(maxWidth: .infinity, minHeight: 400)
@@ -72,6 +76,18 @@ struct ListNoResultsView: View {
     private var isFiltered: Bool {
         if case .filtered = kind { return true }
         return false
+    }
+
+    private func pillButton(_ title: LocalizedStringKey, perform: @escaping () -> Void) -> some View {
+        Button(action: perform) {
+            Text(title)
+                .typography(.subtitle2)
+                .foregroundStyle(Color.white)
+                .padding(16)
+                .background(Color.brandPurple500, in: .rect(cornerRadius: 30))
+                .contentShape(.rect(cornerRadius: 30))
+        }
+        .buttonStyle(.plain)
     }
 
     @ViewBuilder

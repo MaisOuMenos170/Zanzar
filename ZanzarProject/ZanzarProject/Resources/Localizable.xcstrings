@@ -4820,23 +4820,6 @@
         }
       }
     },
-    "placeSuggestion.failureAlert.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn't send suggestion"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível enviar"
-          }
-        }
-      }
-    },
     "placeSuggestion.header.subtitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5286,74 +5269,6 @@
         }
       }
     },
-    "placeSuggestion.publishedAlert.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ is now on Lero. Thanks for contributing!"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ já está no Lero. Obrigado por contribuir!"
-          }
-        }
-      }
-    },
-    "placeSuggestion.publishedAlert.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Place added!"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lugar adicionado!"
-          }
-        }
-      }
-    },
-    "placeSuggestion.refusedAlert.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suggestion not approved"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sugestão não aprovada"
-          }
-        }
-      }
-    },
-    "placeSuggestion.results.empty" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "We couldn't find that place on Apple Maps."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não achamos esse lugar no Apple Maps."
-          }
-        }
-      }
-    },
     "placeSuggestion.searchButton.label" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5418,6 +5333,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Em análise"
+          }
+        }
+      }
+    },
+    "placeSuggestion.search.empty.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try another term or fill in the name and address yourself."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tente outro termo ou preencha o nome e o endereço à mão."
+          }
+        }
+      }
+    },
+    "placeSuggestion.search.empty.title %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No places matching “%@”"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum lugar com “%@”"
           }
         }
       }
@@ -5507,36 +5456,53 @@
         }
       }
     },
-    "placeSuggestion.successAlert.message" : {
+    "placeSuggestion.toast.published" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your request is being reviewed by our moderators."
+            "value" : "Place added! %@ is now on Lero"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu pedido está em análise pela moderação."
+            "value" : "Lugar adicionado! %@ já está no Lero"
           }
         }
       }
     },
-    "placeSuggestion.successAlert.title" : {
+    "placeSuggestion.toast.refused" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suggestion sent!"
+            "value" : "Suggestion not approved. %@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sugestão enviada!"
+            "value" : "Sugestão não aprovada. %@"
+          }
+        }
+      }
+    },
+    "placeSuggestion.toast.success" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestion sent! Your request is under review by the moderators"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sugestão enviada! Seu pedido está em análise pela moderação"
           }
         }
       }

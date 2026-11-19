@@ -25,10 +25,6 @@ struct MainTabView: View {
         store: UserDefaultsProximityAlertStore(),
         onPermissionsChanged: { await ProximityAlertCoordinator.shared.refresh() }
     )
-    /// Held until the sheet is fully dismissed so the alert is not lost mid-dismissal.
-    @State private var pendingSuggestionOutcome: PlaceSuggestionOutcome?
-    @State private var shownSuggestionOutcome: PlaceSuggestionOutcome?
-    @State private var showsSuggestionAlert = false
     @State private var suggestionGoodNewsCount = 0
     @State private var suggestionBadNewsCount = 0
     @State private var photoStatusNotice = PhotoStatusNoticeViewModel()
@@ -52,7 +48,7 @@ struct MainTabView: View {
         .tint(.brandBlue600)
         // Presented here, not by ContentView, so the sheet sees the shared places and can open a place
         // on the check-in tab's path once it closes.
-        .sheet(item: itinerarySheet, onDismiss: presentPendingSuggestionAlert) { sheet in
+        .sheet(item: itinerarySheet) { sheet in
             coordinator.view(
                 for: sheet,
                 onSelectPlace: { place in
@@ -68,15 +64,6 @@ struct MainTabView: View {
         .haptic(.selecao, trigger: selectedTab)
         .haptic(.sucesso, trigger: suggestionGoodNewsCount)
         .haptic(.alerta, trigger: suggestionBadNewsCount)
-        .onChange(of: coordinator.presentedSheet) { previous, current in
-            guard previous == .suggestPlace, current == nil else { return }
-            // An alert cannot appear while the card is still leaving.
-            Task {
-                try? await Task.sleep(for: .milliseconds(400))
-                presentPendingSuggestionAlert()
-            }
-        }
-        .placeSuggestionOutcomeAlert(isPresented: $showsSuggestionAlert, outcome: shownSuggestionOutcome)
         .environment(nearbyPlaces)
         .overlay {
             if proximityPermission.isVisible {
@@ -193,9 +180,15 @@ struct MainTabView: View {
         }
     }
 
+    /// Closes the card and tells the user how the suggestion went, in a toast above the tab bar.
     private func finishSuggestion(_ outcome: PlaceSuggestionOutcome) {
-        pendingSuggestionOutcome = outcome
         coordinator.dismissSheet()
+        toastManager.show(outcome.toastMessage, style: outcome.toastStyle, position: .bottom)
+        if outcome.isGoodNews {
+            suggestionGoodNewsCount += 1
+        } else {
+            suggestionBadNewsCount += 1
+        }
     }
 
     /// The user tapped a proximity alert: show that place on Discover, whatever they were looking at.
@@ -211,18 +204,6 @@ struct MainTabView: View {
         coordinator.popToRoot()
         selectedTab = .discover
         coordinator.push(.placeDetail(place))
-    }
-
-    private func presentPendingSuggestionAlert() {
-        guard let outcome = pendingSuggestionOutcome else { return }
-        pendingSuggestionOutcome = nil
-        shownSuggestionOutcome = outcome
-        showsSuggestionAlert = true
-        if outcome.isGoodNews {
-            suggestionGoodNewsCount += 1
-        } else {
-            suggestionBadNewsCount += 1
-        }
     }
 
     @ViewBuilder

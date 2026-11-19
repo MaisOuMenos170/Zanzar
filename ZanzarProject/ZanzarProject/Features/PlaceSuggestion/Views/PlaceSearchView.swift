@@ -82,16 +82,16 @@ struct PlaceSearchView: View {
         }
     }
 
-    /// The view model already opened the manual form for a search without results; going back shows it.
+    /// The same no-results text as the lists of the app. The view model already opened the manual form for a
+    /// search without results; going back shows it.
     private var emptyState: some View {
-        ContentUnavailableView {
-            Label("placeSuggestion.results.empty", systemImage: "magnifyingglass")
-        } actions: {
-            Button("placeSuggestion.search.fillByHand") {
-                onClose()
-            }
-            .tint(Color.brandPurple500)
-        }
+        ListNoResultsView(
+            kind: .empty(
+                title: "placeSuggestion.search.empty.title \(viewModel.trimmedQuery)",
+                message: "placeSuggestion.search.empty.message"
+            ),
+            action: .init(title: "placeSuggestion.search.fillByHand", perform: onClose)
+        )
     }
 }
 
