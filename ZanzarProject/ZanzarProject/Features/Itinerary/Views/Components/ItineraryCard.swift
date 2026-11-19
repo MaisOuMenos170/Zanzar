@@ -57,13 +57,13 @@ struct ItineraryCard: View {
                 .background {
                     ZStack {
                         Color.brandPurple500
-                        CheckInDiagonalStripe(
+                        DiagonalStripe(
                             bar: CGSize(width: 91.141, height: 14.883),
                             box: CGSize(width: 76.512, height: 73.363),
                             origin: CGPoint(x: 19.9, y: -17),
                             color: Self.stripeColor
                         )
-                        CheckInDiagonalStripe(
+                        DiagonalStripe(
                             bar: CGSize(width: 91.141, height: 6.707),
                             box: CGSize(width: 70.902, height: 67.416),
                             origin: CGPoint(x: -8.92, y: -28.45),
