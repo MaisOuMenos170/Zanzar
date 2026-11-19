@@ -1376,13 +1376,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check-in"
+            "value" : "Routes"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check-in"
+            "value" : "Roteiros"
           }
         }
       }
@@ -2216,13 +2216,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check in"
+            "value" : "Routes"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check in"
+            "value" : "Roteiros"
           }
         }
       }
