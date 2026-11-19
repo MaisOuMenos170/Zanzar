@@ -28,10 +28,15 @@ final class PlaceSuggestionViewModel {
     /// What is searched. Exclusive to the search: the name and the address have fields of their own.
     var query = "" {
         didSet {
-            guard query != oldValue else { return }
+            guard query != oldValue, !isWritingQuietly else { return }
+            typedQuery = query
             scheduleSearch(afterDebounce: true)
         }
     }
+    /// What the user typed in the search field, as opposed to the text of the place they chose from the results.
+    private var typedQuery = ""
+    /// The field is being filled by the view model, which must not start a search that would drop the choice.
+    private var isWritingQuietly = false
     var searchNearMe = true
     /// Optional.
     var note = ""
@@ -238,16 +243,32 @@ final class PlaceSuggestionViewModel {
         }
     }
 
+    /// Chooses a place from the results and writes it in the search field.
     func select(_ place: SuggestedPlace) {
+        // A search still waiting for its turn would answer for the text typed before, and drop this choice.
+        searchTask?.cancel()
+        searchTask = nil
+        searchGeneration += 1
+        isSearching = false
+
         selection = .place(place)
         addressErrorMessage = nil
+        writeQueryQuietly(place.searchFieldText)
+    }
+
+    private func writeQueryQuietly(_ text: String) {
+        isWritingQuietly = true
+        query = text
+        isWritingQuietly = false
     }
 
     /// For a place Apple Maps does not have: the name (what was searched, to start with) and the address are typed.
     func enterManually() {
         selection = .notFound
         addressErrorMessage = nil
-        if trimmedName.isEmpty { customName = trimmedQuery }
+        // The field goes back to what was searched, if a result had been written in it.
+        writeQueryQuietly(typedQuery)
+        if trimmedName.isEmpty { customName = typedQuery.trimmingCharacters(in: .whitespacesAndNewlines) }
     }
 
     @discardableResult

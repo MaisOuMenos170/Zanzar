@@ -47,7 +47,7 @@ struct PlaceSuggestionSheetView: View {
                             locationOptions
                             VStack(alignment: .leading, spacing: 16) {
                                 searchSection
-                                selectionSection
+                                manualEntrySection
                                 missingFieldsSection
                                 PlaceSuggestionNoteField(text: $viewModel.note)
                             }
@@ -162,14 +162,11 @@ struct PlaceSuggestionSheetView: View {
         }
     }
 
-    /// The place picked on the search screen, or the note that it will be filled in by hand.
+    /// The note that the place will be filled in by hand. A place picked in the search is written in the search
+    /// field itself.
     @ViewBuilder
-    private var selectionSection: some View {
-        if let place = viewModel.selectedPlace {
-            PlaceSuggestionResultRow(place: place, isSelected: true) {
-                isSearchPresented = true
-            }
-        } else if viewModel.isManualEntry {
+    private var manualEntrySection: some View {
+        if viewModel.isManualEntry {
             Label("placeSuggestion.manual.selected", systemImage: "checkmark.circle.fill")
                 .font(.footnote)
                 .foregroundStyle(Color.brandPurple500)

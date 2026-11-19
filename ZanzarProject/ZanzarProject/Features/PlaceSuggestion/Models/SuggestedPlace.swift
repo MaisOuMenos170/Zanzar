@@ -16,4 +16,11 @@ nonisolated struct SuggestedPlace: Identifiable, Hashable, Sendable {
 
     /// What the result list shows in bold: the name, or the address when there is no name.
     var title: String { name ?? address ?? "" }
+
+    /// The text that stands for the place in the search field once it is chosen: its name and its address, or
+    /// whichever of the two it has.
+    var searchFieldText: String {
+        let shortAddress = address.map(ShortAddress.format)
+        return [name, shortAddress].compactMap(\.self).joined(separator: ", ")
+    }
 }
