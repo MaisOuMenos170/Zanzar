@@ -10,10 +10,14 @@ struct ItineraryListView: View {
     @State private var contentShown = false
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(NearbyPlacesStore.self) private var nearbyPlacesStore
-    
+
     // Tips
     private let createItineraryTip = CheckInCreateItineraryTip()
     private let startItineraryTip = CheckInStartItineraryTip()
+
+    /// How many roteiros the home highlights, and how many nearby places it shows (two rows of two).
+    private static let featuredCount = 2
+    private static let nearbyCount = 4
 
     var body: some View {
         @Bindable var viewModel = viewModel
@@ -36,7 +40,7 @@ struct ItineraryListView: View {
                 listContent
             }
         }
-        .background(Color(.systemBackground))
+        .background(Color.brandBlue50)
         .toolbar(.hidden, for: .navigationBar)
         .task {
             // The map normally has the places already; this only fetches if it has not, or they went stale.
@@ -69,6 +73,15 @@ struct ItineraryListView: View {
         viewModel.activeItinerary?.placeCards(from: nearbyPlacesStore.places) ?? []
     }
 
+    /// The places closest to the user, nearest first.
+    private var nearbyPlaces: [MapPlace] {
+        nearbyPlacesStore.places
+            .filter { $0.distanceMeters != nil }
+            .sorted { ($0.distanceMeters ?? .infinity) < ($1.distanceMeters ?? .infinity) }
+            .prefix(Self.nearbyCount)
+            .map { $0 }
+    }
+
     private func refreshNearbyPlaces(force: Bool = false) async {
         if force {
             try? await nearbyPlacesStore.refresh()
@@ -77,48 +90,43 @@ struct ItineraryListView: View {
         }
     }
 
+    private func sectionTitle(_ key: LocalizedStringKey) -> some View {
+        Text(key)
+            .font(.system(size: 20, weight: .bold, design: .rounded))
+            .tracking(0.15)
+            .foregroundStyle(.black)
+            .accessibilityAddTraits(.isHeader)
+    }
+
     private var listContent: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                VStack(alignment: .leading, spacing: 8) {
-                    if viewModel.activeItinerary == nil {
-                        Text("itinerary.list.header.title")
-                            .font(.title2.bold())
-                        Text("itinerary.list.header.subtitle")
-                            .font(.caption.weight(.light))
-                            .foregroundStyle(.primary)
-                            .popoverTip(createItineraryTip, arrowEdge: .top)
-                    } else {
-                        Text("itinerary.activeCard.title")
-                            .font(.title2.bold())
-                            .popoverTip(startItineraryTip, arrowEdge: .top)
-                    }
-                }
-                .entrance(contentShown, order: 0)
-
-                if let activeItinerary = viewModel.activeItinerary {
-                    ActiveItineraryProgressCard(activeItinerary: activeItinerary) {
-                        sheetCoordinator.present(sheet: .itineraryDetail(slug: activeItinerary.slug))
-                        CheckInStartItineraryTip.hasStartedItinerary = true
-                    }
-                    .entrance(contentShown, order: 1)
-                    .transition(.opacity.combined(with: .scale(scale: 0.96, anchor: .top)))
-                }
+            VStack(alignment: .leading, spacing: 32) {
+                header
+                    .entrance(contentShown, order: 0)
 
                 if !viewModel.itineraries.isEmpty {
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("itinerary.list.sections.itineraries")
-                            .font(.callout.bold())
+                        sectionTitle("itinerary.list.sections.featured")
                             .entrance(contentShown, order: 2)
 
-                        ForEach(viewModel.itineraries.enumerated(), id: \.element.id) { index, itinerary in
-                            ItineraryCard(itinerary: itinerary) {
-                                sheetCoordinator.present(sheet: .itineraryDetail(slug: itinerary.slug))
+                        VStack(spacing: 8) {
+                            let featured = viewModel.itineraries.prefix(Self.featuredCount)
+                            ForEach(featured.enumerated(), id: \.element.id) { index, itinerary in
+                                ItineraryCard(itinerary: itinerary) {
+                                    sheetCoordinator.present(sheet: .itineraryDetail(slug: itinerary.slug))
+                                }
+                                .entrance(contentShown, order: 2 + index)
                             }
-                            // Only the first few cards stagger, so a long list does not take long to settle.
-                            .entrance(contentShown, order: 2 + min(index, 3))
                         }
                     }
+                }
+
+                if !nearbyPlaces.isEmpty {
+                    VStack(alignment: .leading, spacing: 16) {
+                        sectionTitle("itinerary.list.sections.nearby")
+                        nearbyGrid
+                    }
+                    .entrance(contentShown, order: 4)
                 }
 
                 if !itineraryPlaces.isEmpty {
@@ -133,7 +141,9 @@ struct ItineraryListView: View {
                     .entrance(contentShown, order: 5)
                 }
             }
-            .padding(16)
+            .padding(.horizontal, 16)
+            .padding(.top, 10)
+            .padding(.bottom, 16)
             // Starting or leaving a roteiro swaps the progress card in or out instead of cutting.
             .motion(Motion.assentar, value: viewModel.activeItinerary?.slug)
             .onAppear {
@@ -141,6 +151,46 @@ struct ItineraryListView: View {
             }
         }
         .scrollIndicators(.hidden)
+    }
+
+    /// "Check-in" and, under it, the roteiro in progress, or the dashed hint to pick one.
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            if let activeItinerary = viewModel.activeItinerary {
+                sectionTitle("itinerary.list.header.title")
+                    .popoverTip(startItineraryTip, arrowEdge: .top)
+
+                ActiveItineraryProgressCard(activeItinerary: activeItinerary) {
+                    sheetCoordinator.present(sheet: .itineraryDetail(slug: activeItinerary.slug))
+                    CheckInStartItineraryTip.hasStartedItinerary = true
+                }
+                .transition(.opacity.combined(with: .scale(scale: 0.96, anchor: .top)))
+            } else {
+                sectionTitle("itinerary.list.header.title")
+                    .popoverTip(createItineraryTip, arrowEdge: .top)
+
+                CheckInEmptySlot()
+            }
+        }
+    }
+
+    private var nearbyGrid: some View {
+        let places = nearbyPlaces
+        return Grid(horizontalSpacing: 8, verticalSpacing: 8) {
+            ForEach(Array(stride(from: 0, to: places.count, by: 2)), id: \.self) { rowStart in
+                GridRow {
+                    ForEach(rowStart..<min(rowStart + 2, places.count), id: \.self) { index in
+                        CheckInPlaceTile(
+                            place: places[index],
+                            palette: CheckInPlaceTile.Palette(position: index),
+                            isSecondRow: rowStart > 0
+                        ) {
+                            coordinator.push(.placeDetail(places[index]))
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

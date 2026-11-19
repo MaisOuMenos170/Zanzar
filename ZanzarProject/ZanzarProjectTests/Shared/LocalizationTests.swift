@@ -27,12 +27,21 @@ struct LocalizationTests {
     func itineraryCounts() {
         let bundle = Bundle(for: AppCoordinator.self)
 
-        for key in ["itinerary.card.placesCount %lld", "itinerary.card.completedCount %lld",
-                    "itinerary.detail.placesCount %lld", "itinerary.detail.completedCount %lld"] {
+        for key in ["itinerary.detail.placesCount %lld", "itinerary.detail.completedCount %lld"] {
             let format = bundle.localizedString(forKey: key, value: nil, table: nil)
 
             #expect(format != key, "\(key) has no translation")
             #expect(String(format: format, 12).contains("12"), "\(key)")
         }
+    }
+
+    @Test("the places count on a featured roteiro card has a singular and a plural form")
+    func featuredCardPlaces() {
+        let one = String(localized: "itinerary.featuredCard.places \(1)")
+        let four = String(localized: "itinerary.featuredCard.places \(4)")
+
+        #expect(one.contains("1") && !one.contains("itinerary."))
+        #expect(four.contains("4") && !four.contains("itinerary."))
+        #expect(one != four.replacing("4", with: "1"), "1 and 4 read the same, so the plural form is missing")
     }
 }

@@ -1,94 +1,85 @@
 import SwiftUI
 
+/// "Roteiros em destaque" card of the check-in home (Figma "checkin v2", node 1998:4128): a ticket-shaped tile with
+/// how many places the roteiro has, its name, a "Ver detalhes" button and the dashed route drawing on the right.
 struct ItineraryCard: View {
     let itinerary: Itinerary
     let onViewDetails: () -> Void
 
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
     var body: some View {
-        content
-            .padding(8)
-            .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 8))
-            .accessibilityElement(children: .contain)
-    }
+        ZStack(alignment: .topLeading) {
+            Image(.checkInRouteIllustration)
+                .resizable()
+                .frame(width: 162, height: 101.503)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                .padding(.top, 27.62)
+                .padding(.trailing, 29.5)
+                .accessibilityHidden(true)
 
-    @ViewBuilder
-    private var content: some View {
-        if dynamicTypeSize.isAccessibilitySize {
             VStack(alignment: .leading, spacing: 8) {
-                metrics
-                name(alignment: .leading)
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 3) {
+                        Image(systemName: "mappin")
+                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .accessibilityHidden(true)
+                        Text("itinerary.featuredCard.places \(itinerary.placesCount)")
+                            .font(.system(size: 12, design: .rounded))
+                    }
+
+                    Text(itinerary.name)
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .frame(width: 200, alignment: .leading)
+                }
+                .tracking(0.15)
+                .foregroundStyle(Color.brandSheetTitle)
+
                 detailsButton
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        } else {
-            HStack(alignment: .top, spacing: 8) {
-                metrics
-
-                Image("ItineraryRoutePath")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity, maxHeight: 76)
-                    .accessibilityHidden(true)
-
-                VStack(alignment: .trailing, spacing: 8) {
-                    name(alignment: .trailing)
-                    detailsButton
-                }
-                .frame(maxWidth: 120)
-            }
+            .padding(.leading, 16.5)
+            .padding(.top, 28)
         }
-    }
-
-    private var metrics: some View {
-        HStack(spacing: 7) {
-            ItineraryMetricPill(
-                systemImage: "mappin.and.ellipse",
-                value: itinerary.placesCount,
-                accessibilityLabel: Text("itinerary.card.placesCount \(itinerary.placesCount)")
-            )
-            ItineraryMetricPill(
-                systemImage: "figure.walk",
-                value: itinerary.completedCount,
-                accessibilityLabel: Text("itinerary.card.completedCount \(itinerary.completedCount)")
-            )
+        .frame(maxWidth: .infinity)
+        .frame(height: 149)
+        .background {
+            Image(.checkInFeaturedBackground)
+                .resizable()
         }
-    }
-
-    private func name(alignment: Alignment) -> some View {
-        Text(itinerary.name)
-            .font(.caption.weight(.medium))
-            .foregroundStyle(Color("PlaceDetailNearbyTitle"))
-            .multilineTextAlignment(alignment == .leading ? .leading : .trailing)
-            .frame(maxWidth: .infinity, alignment: alignment)
+        .accessibilityElement(children: .contain)
     }
 
     private var detailsButton: some View {
-        Button("itinerary.card.viewDetails", action: onViewDetails)
-            .buttonStyle(.borderedProminent)
-            .controlSize(.small)
-            .tint(Color("TabBarSelected"))
-    }
-}
-
-private struct ItineraryMetricPill: View {
-    let systemImage: String
-    let value: Int
-    let accessibilityLabel: Text
-
-    var body: some View {
-        HStack(spacing: 2) {
-            Image(systemName: systemImage)
-            Text(value, format: .number)
+        Button(action: onViewDetails) {
+            Text("itinerary.card.viewDetails")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background {
+                    ZStack {
+                        Color.brandPurple500
+                        DiagonalStripe(
+                            bar: CGSize(width: 91.141, height: 14.883),
+                            box: CGSize(width: 76.512, height: 73.363),
+                            origin: CGPoint(x: 19.9, y: -17),
+                            color: Self.stripeColor
+                        )
+                        DiagonalStripe(
+                            bar: CGSize(width: 91.141, height: 6.707),
+                            box: CGSize(width: 70.902, height: 67.416),
+                            origin: CGPoint(x: -8.92, y: -28.45),
+                            color: Self.stripeColor
+                        )
+                    }
+                }
+                .clipShape(.rect(cornerRadius: 16))
+                .contentShape(.rect(cornerRadius: 16))
         }
-        .font(.caption)
-        .foregroundStyle(.primary)
-        .padding(.horizontal, 5)
-        .padding(.vertical, 3)
-        .background(Color(.systemBackground), in: .capsule)
-        .accessibilityLabel(accessibilityLabel)
+        .buttonStyle(PressableButtonStyle())
+        .accessibilityHint(Text(itinerary.name))
     }
+
+    /// Indigo at 20%, the same in both bars.
+    private static let stripeColor = Color(red: 66 / 255, green: 56 / 255, blue: 201 / 255).opacity(0.2)
 }
 
 #Preview {
@@ -105,21 +96,5 @@ private struct ItineraryMetricPill: View {
         onViewDetails: {}
     )
     .padding()
-}
-
-#Preview("Accessibility 5") {
-    ItineraryCard(
-        itinerary: Itinerary(
-            slug: "centro-historico",
-            name: "Bora passear no centro histórico?",
-            category: "historic",
-            routeType: .fixed,
-            placesCount: 4,
-            completedCount: 20,
-            coverImageURL: nil
-        ),
-        onViewDetails: {}
-    )
-    .padding()
-    .dynamicTypeSize(.accessibility5)
+    .background(Color.brandBlue50)
 }

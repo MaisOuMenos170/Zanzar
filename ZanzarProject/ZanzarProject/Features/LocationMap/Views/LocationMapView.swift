@@ -65,9 +65,12 @@ struct LocationMapView: View {
             }
         }
         .overlay {
+            // The sheet slides up and its dimming fades in by themselves (see `PlaceSuggestionSheetCard`).
             if ratingPrompt.isPresented, let pendingRating = ratingPrompt.pendingRating {
                 RatingPromptView(
+                    placeID: pendingRating.placeID,
                     placeName: pendingRating.placeName,
+                    categoryTitleKey: pendingRating.categoryTitleKey,
                     selectedTag: ratingPrompt.selectedTag,
                     isSubmitting: ratingPrompt.isSubmitting,
                     errorMessage: ratingPrompt.errorMessage,
@@ -75,8 +78,14 @@ struct LocationMapView: View {
                     onSubmit: { Task { await ratingPrompt.submit() } },
                     onDismiss: { ratingPrompt.dismiss() }
                 )
-                .transition(.opacity)
             }
+        }
+        // The sheet covers the whole screen, tab bar included, as in the design.
+        .toolbar(ratingPrompt.isPresented ? .hidden : .automatic, for: .tabBar)
+        .alert("ratingPrompt.success.title", isPresented: $ratingPrompt.showsSuccess) {
+            Button("ratingPrompt.success.confirm") {}
+        } message: {
+            Text("ratingPrompt.success.message")
         }
         .overlay(alignment: .top) {
             discoverControls

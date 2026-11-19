@@ -251,9 +251,9 @@ struct RatingPromptViewModelTests {
 
         #expect(service.submitted.map(\.placeID) == ["place-1"])
         #expect(service.submitted.map(\.tag) == [.delighted])
-        #expect(viewModel.isPresented == false)
-        #expect(viewModel.isSubmitting == false)
+        #expect(viewModel.isPresented == false && viewModel.isSubmitting == false)
         #expect(store.stored == nil)
+        #expect(viewModel.showsSuccess, "a saved rating is acknowledged with the \"Muito bem!\" alert")
     }
 
     @Test("submit without a selection does nothing")
@@ -285,6 +285,7 @@ struct RatingPromptViewModelTests {
         #expect(viewModel.isPresented == false)
         #expect(viewModel.errorMessage == nil)
         #expect(store.stored == nil)
+        #expect(viewModel.showsSuccess == false, "nothing was saved now, so there is nothing to celebrate")
     }
 
     @Test("submit keeps the prompt open and shows the error on failure")

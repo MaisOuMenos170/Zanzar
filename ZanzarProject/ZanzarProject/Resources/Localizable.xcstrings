@@ -1030,40 +1030,6 @@
         }
       }
     },
-    "itinerary.card.completedCount %lld" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld people completed"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld pessoas completaram"
-          }
-        }
-      }
-    },
-    "itinerary.card.placesCount %lld" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld places to visit"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld lugares para conhecer"
-          }
-        }
-      }
-    },
     "itinerary.card.viewDetails" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1404,53 +1370,111 @@
         }
       }
     },
-    "itinerary.list.header.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose your next route or check in at nearby places."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escolha seu próximo roteiro ou faça check in em lugares próximos."
-          }
-        }
-      }
-    },
     "itinerary.list.header.title" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check in"
+            "value" : "Check-in"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check in"
+            "value" : "Check-in"
           }
         }
       }
     },
-    "itinerary.list.sections.itineraries" : {
+    "itinerary.featuredCard.places %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld place"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld places"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lugar"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lugares"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "itinerary.list.empty.hint" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Routes"
+            "value" : "Pick a route to start your journey!"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Roteiros"
+            "value" : "Escolha um roteiro para começar sua jornada!"
+          }
+        }
+      }
+    },
+    "itinerary.list.sections.featured" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Featured routes"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Roteiros em destaque"
+          }
+        }
+      }
+    },
+    "itinerary.tile.distance %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ away"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ de distância"
           }
         }
       }
@@ -7061,19 +7085,70 @@
         }
       }
     },
-    "ratingPrompt.dismissButton.title" : {
+    "ratingPrompt.closeButton.label" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Not now"
+            "value" : "Close"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agora não"
+            "value" : "Fechar"
+          }
+        }
+      }
+    },
+    "ratingPrompt.success.confirm" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ok"
+          }
+        }
+      }
+    },
+    "ratingPrompt.success.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your rating was saved for this place. Thanks for telling us how it went!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua avaliação foi registrada no local. Valeu por contar como foi!"
+          }
+        }
+      }
+    },
+    "ratingPrompt.success.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Well done!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muito bem!"
           }
         }
       }
@@ -7084,13 +7159,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delighted"
+            "value" : "Loved it!"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Encantado"
+            "value" : "Amei!"
           }
         }
       }
@@ -7101,13 +7176,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Happy"
+            "value" : "Cool"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Feliz"
+            "value" : "Legal"
           }
         }
       }
@@ -7118,13 +7193,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nauseated"
+            "value" : "Hated it"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enjoado"
+            "value" : "Odiei"
           }
         }
       }
@@ -7135,13 +7210,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sad"
+            "value" : "Didn't like it"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Triste"
+            "value" : "Não gostei"
           }
         }
       }
@@ -7152,13 +7227,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sleepy"
+            "value" : "Meh"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com sono"
+            "value" : "Sei lá"
           }
         }
       }
@@ -7186,13 +7261,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "We noticed you've left "
+            "value" : "How was your visit to "
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vimos que você já saiu de "
+            "value" : "Como foi sua visita ao "
           }
         }
       }
@@ -7203,13 +7278,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : ". Would you like to rate your experience by leaving a reaction for other people?"
+            "value" : "?"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : ". Gostaria de avaliar sua experiência deixando uma reação para outras pessoas?"
+            "value" : "?"
           }
         }
       }
@@ -7220,13 +7295,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rate"
+            "value" : "Send"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avaliar"
+            "value" : "Enviar"
           }
         }
       }
@@ -7237,13 +7312,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rating"
+            "value" : "Rate your experience"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avaliação"
+            "value" : "Avalie a experiência"
           }
         }
       }
