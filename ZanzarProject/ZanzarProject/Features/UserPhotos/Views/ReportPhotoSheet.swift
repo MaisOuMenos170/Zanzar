@@ -48,7 +48,7 @@ struct ReportPhotoSheet: View {
             .screenTitle("userPhotos.report.title")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("userPhotos.report.cancelButton.title") { dismiss() }
+                    Button(role: .close) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("userPhotos.report.sendButton.title") {

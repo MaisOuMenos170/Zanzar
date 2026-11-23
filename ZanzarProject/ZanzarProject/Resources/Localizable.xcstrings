@@ -5428,23 +5428,6 @@
         }
       }
     },
-    "placeSuggestion.closeButton.label" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Close"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fechar"
-          }
-        }
-      }
-    },
     "placeSuggestion.decisionReason.acceptedManual" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8078,23 +8061,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ativar avisos"
-          }
-        }
-      }
-    },
-    "ratingPrompt.closeButton.label" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Close"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fechar"
           }
         }
       }
@@ -10935,23 +10901,6 @@
         }
       }
     },
-    "userPhotos.report.cancelButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancelar"
-          }
-        }
-      }
-    },
     "userPhotos.report.error.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11696,23 +11645,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Envie uma foto de %@: a fachada, o ambiente, um prato ou uma bebida."
-          }
-        }
-      }
-    },
-    "userPhotos.upload.closeButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Close"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fechar"
           }
         }
       }

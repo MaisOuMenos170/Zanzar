@@ -46,6 +46,7 @@ struct RatingPromptView: View {
             .padding(.top, 8)
             // The Figma sheet ends 40pt below the button, counting the home indicator area.
             .padding(.bottom, max(0, 40 - ScreenInsets.bottom))
+            .sheetCloseButton(hugsContent: true, isDisabled: isSubmitting, action: onDismiss)
         }
         .haptic(.selecao, trigger: selectedTag, when: { _, tag in tag != nil })
         .sheet(isPresented: $showsPhotoUpload) {
@@ -62,19 +63,9 @@ struct RatingPromptView: View {
                     .accessibilityAddTraits(.isHeader)
 
                 Spacer(minLength: 8)
-
-                Button(action: onDismiss) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(Color.brandCloseIcon)
-                        .padding(8)
-                        .contentShape(.rect)
-                        // The tap target is 8pt bigger than the glyph, but the row keeps the Figma height.
-                        .padding(-8)
-                }
-                .disabled(isSubmitting)
-                .accessibilityLabel("ratingPrompt.closeButton.label")
             }
+            // Room for the system close button, which floats over the corner.
+            .padding(.trailing, 44)
             .padding(.top, 4)
             .padding(.bottom, 8)
 

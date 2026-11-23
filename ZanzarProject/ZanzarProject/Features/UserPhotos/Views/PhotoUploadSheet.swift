@@ -28,7 +28,7 @@ struct PhotoUploadSheet: View {
                     : LocalizedStringKey("userPhotos.upload.title"))
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("userPhotos.upload.closeButton.title") { dismiss() }
+                        Button(role: .close) { dismiss() }
                             .disabled(viewModel.step == .uploading)
                     }
                 }

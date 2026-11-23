@@ -1,9 +1,10 @@
 import SwiftUI
 
+/// The title and subtitle at the top of a sheet. The close button is not here: it is the system's, put on the
+/// sheet with `sheetCloseButton`, and this leaves room for it beside the title.
 struct SheetHeader: View {
     let title: LocalizedStringKey
     let subtitle: LocalizedStringKey
-    let onClose: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -14,15 +15,6 @@ struct SheetHeader: View {
                     .accessibilityAddTraits(.isHeader)
 
                 Spacer(minLength: 8)
-
-                Button(action: onClose) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(Color.brandCloseIcon)
-                        .padding(8)
-                        .contentShape(.rect)
-                }
-                .accessibilityLabel("placeSuggestion.closeButton.label")
             }
             .padding(.top, 4)
             .padding(.bottom, 4)
@@ -32,10 +24,12 @@ struct SheetHeader: View {
                 .tracking(0.25)
                 .foregroundStyle(.black)
         }
+        // Room for the close button, which floats over the corner and reaches the line under the title.
+        .padding(.trailing, 44)
     }
 }
 
 #Preview {
-    SheetHeader(title: "Sugerir um lugar", subtitle: "Conheça um lugar e conte pra gente!", onClose: {})
+    SheetHeader(title: "Sugerir um lugar", subtitle: "Conheça um lugar e conte pra gente!")
         .padding()
 }
