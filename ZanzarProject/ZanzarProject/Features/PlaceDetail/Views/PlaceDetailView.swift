@@ -50,6 +50,8 @@ struct PlaceDetailView: View {
                     ) {
                         Label("placeDetail.shareButton.label", systemImage: "square.and.arrow.up")
                     }
+                    // Pushed from the check-in tab, the screen inherits that tab's orange tint; this button stays black.
+                    .tint(.black)
                 }
             }
         }
