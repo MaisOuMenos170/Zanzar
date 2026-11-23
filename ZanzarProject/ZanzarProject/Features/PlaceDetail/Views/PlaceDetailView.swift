@@ -8,7 +8,6 @@ struct PlaceDetailView: View {
     @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var showsPhotoUpload = false
     /// The content rises in once when it first loads, not again when a nested screen is popped.
     @State private var contentShown = false
@@ -39,9 +38,21 @@ struct PlaceDetailView: View {
             }
         }
         .background(Color.profileBackground)
-        .navigationBarBackButtonHidden()
-        // The screen draws its own header and back button, and takes the whole screen: no system bars.
-        .toolbar(.hidden, for: .navigationBar)
+        // The system bar carries the back button and the share button; the tab bar stays out of the way.
+        .screenTitle("placeDetail.header.title")
+        .toolbar {
+            if let detail = viewModel.detail {
+                ToolbarItem(placement: .topBarTrailing) {
+                    ShareLink(
+                        item: PlaceLink.url(for: detail.id),
+                        subject: Text(detail.displayName),
+                        message: Text(detail.displayName)
+                    ) {
+                        Label("placeDetail.shareButton.label", systemImage: "square.and.arrow.up")
+                    }
+                }
+            }
+        }
         .toolbar(.hidden, for: .tabBar)
         .task {
             // The view reappears when a nested detail is popped; what is already on screen is still current.
@@ -192,31 +203,12 @@ struct PlaceDetailView: View {
     }
 
     private func content(for detail: PlaceDetail) -> some View {
-        let header = PlaceDetailHeaderView(
-            onBack: { coordinator.pop() },
-            shareURL: PlaceLink.url(for: detail.id),
-            shareName: detail.displayName
-        )
-            .padding(.top, 8)
-            .padding(.bottom, 16)
-        let scrollsHeader = dynamicTypeSize.isAccessibilitySize
-
-        return VStack(alignment: .leading, spacing: 0) {
-            if !scrollsHeader {
-                header
-            }
-
-            ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    if scrollsHeader {
-                        header
-                    }
-                    detailBody(for: detail)
-                }
+        ScrollView {
+            detailBody(for: detail)
+                .padding(.top, 8)
                 .padding(.bottom, 32)
-            }
-            .scrollIndicators(.hidden)
         }
+        .scrollIndicators(.hidden)
     }
 
     private func detailBody(for detail: PlaceDetail) -> some View {
