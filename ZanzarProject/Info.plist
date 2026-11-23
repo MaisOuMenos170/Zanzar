@@ -10,6 +10,8 @@
 	</array>
 	<key>ZanzarAPIBaseURL</key>
 	<string>$(ZANZAR_API_BASE_URL)</string>
+	<key>ZanzarKeychainGroup</key>
+	<string>$(AppIdentifierPrefix)dalpra.Zanzar</string>
 	<key>ZanzarSupportEmail</key>
 	<string>$(ZANZAR_SUPPORT_EMAIL)</string>
 </dict>

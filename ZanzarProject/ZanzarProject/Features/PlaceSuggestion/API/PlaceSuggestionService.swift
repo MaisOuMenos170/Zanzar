@@ -1,3 +1,4 @@
+import CoreLocation
 import Foundation
 
 protocol PlaceSuggestionServicing: Sendable {
@@ -31,25 +32,31 @@ struct PlaceSuggestionResponse: Decodable, Sendable {
     }
 }
 
+/// Where the user is now. It is all the service needs of the map's location service, so the share extension can
+/// use the service without compiling the map (`PlaceSuggestionService+LocationMap.swift` connects the two).
+typealias UserPositionProvider = @Sendable () async throws -> (latitude: Double, longitude: Double)
+
 final class PlaceSuggestionService: PlaceSuggestionServicing {
     private let client: NetworkClient
-    private let locationService: LocationMapServicing
+    private let userPosition: UserPositionProvider
     private let geocoder: PlaceGeocoding
 
     init(
         client: NetworkClient = URLSessionNetworkClient.shared,
-        locationService: LocationMapServicing = LocationMapService.shared,
+        userPosition: @escaping UserPositionProvider,
         geocoder: PlaceGeocoding = MapKitPlaceGeocoder()
     ) {
         self.client = client
-        self.locationService = locationService
+        self.userPosition = userPosition
         self.geocoder = geocoder
     }
 
     func currentLocation() async throws -> SuggestedLocation {
-        let position = try await locationService.currentUserLocation()
+        let position = try await userPosition()
         // A reverse-geocoding failure must not block the suggestion: the position itself is what matters.
-        let reverseGeocoded = try? await geocoder.address(for: position.clLocationCoordinate2D)
+        let reverseGeocoded = try? await geocoder.address(
+            for: CLLocationCoordinate2D(latitude: position.latitude, longitude: position.longitude)
+        )
         try Task.checkCancellation()
         let address = reverseGeocoded.flatMap(Self.nonEmpty)
             ?? SuggestedLocation.coordinateText(latitude: position.latitude, longitude: position.longitude)

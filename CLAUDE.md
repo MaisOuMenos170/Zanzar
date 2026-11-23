@@ -20,7 +20,10 @@ ZanzarProject/ZanzarProject/
   Coordinator/    AppCoordinator, Routes
   Features/<X>/   API/ (Service + DTOs), Models/, ViewModels/, Views/(Components/)
                   X = Auth, HTTP, Itinerary, LocationMap, Login, PlaceDetail, Profile,
-                      RatingPrompt, Shared, SignUp, Welcome
+                      PlaceShare, RatingPrompt, Shared, SignUp, Welcome
+ZanzarProject/ZanzarShare/   extensão de compartilhamento ("O Lero" na folha de compartilhar): só o ShareViewController;
+                             o resto vem de Features/PlaceShare e de pastas do app compartilhadas por grupos
+                             sincronizados no alvo ZanzarShare (ver project.pbxproj)
   Utils/          AppLog, AppLanguage, AppNotification, DataFreshness
   Resources/      Assets.xcassets, Localizable.xcstrings
 ZanzarProject/ZanzarProjectTests/<Feature>/   testes (Swift Testing) + TestHelpers/
