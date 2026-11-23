@@ -73,9 +73,19 @@ final class PlaceDetailViewModel {
         }
     }
 
-    /// Flips the bookmark at once and puts it back if the backend refuses.
-    func toggleSaved() async {
-        guard let userID = userIDProvider(), !isUpdatingSaved else { return }
+    /// What happened when the bookmark was tapped, for the toast that tells the user.
+    enum SaveOutcome: Equatable {
+        case saved
+        case removed
+        /// The bookmark went back to what it was; `message` says why.
+        case failed(message: String)
+    }
+
+    /// Flips the bookmark at once and puts it back if the backend refuses. `nil` when nothing was asked of the
+    /// backend: no user, or a request already running.
+    @discardableResult
+    func toggleSaved() async -> SaveOutcome? {
+        guard let userID = userIDProvider(), !isUpdatingSaved else { return nil }
         isUpdatingSaved = true
         defer { isUpdatingSaved = false }
 
@@ -87,16 +97,20 @@ final class PlaceDetailViewModel {
             } else {
                 try await savedPlaces.save(placeID: place.id, userID: userID)
             }
+            // The profile's "Lugares salvos" and its list are outdated now.
+            NotificationCenter.default.post(name: AppNotification.savedPlacesDidChange, object: nil)
+            return wasSaved ? .removed : .saved
         } catch is CancellationError {
             isSaved = wasSaved
+            return nil
         } catch {
             isSaved = wasSaved
             AppLog.placeDetail.error("Failed to update saved place placeId=\(place.id)", error: error)
             if case APIError.httpStatus(409, _) = error {
-                errorMessage = L10n.string("placeDetail.saveButton.limitReached")
-            } else {
-                errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                return .failed(message: L10n.string("placeDetail.saveButton.limitReached"))
             }
+            return .failed(message: APIError.rateLimitedMessage(for: error)
+                ?? L10n.string("placeDetail.saveButton.failedToast"))
         }
     }
 

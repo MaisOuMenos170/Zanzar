@@ -8,10 +8,21 @@ final class FakeSavedPlacesService: SavedPlacesServicing {
     private(set) var saveCalls: [String] = []
     private(set) var removeCalls: [String] = []
     private var failure: Error?
+    /// Makes only removing fail, so a list can be loaded first.
+    var removeFailure: Error?
 
     init(savedIDs: Set<String> = [], failure: Error? = nil) {
         self.savedIDs = savedIDs
         self.failure = failure
+    }
+
+    /// What `fetchSavedPlaces` returns; when empty, one entry is made up for each saved id.
+    var listed: [SavedPlace] = []
+
+    func fetchSavedPlaces(userID: String) async throws -> [SavedPlace] {
+        if let failure { throw failure }
+        if !listed.isEmpty { return listed.filter { savedIDs.contains($0.placeID) } }
+        return savedIDs.sorted().map { SavedPlace(placeID: $0, name: nil, imageURL: nil, savedAt: .distantPast) }
     }
 
     func savedPlaceIDs(userID: String) async throws -> Set<String> {
@@ -28,6 +39,7 @@ final class FakeSavedPlacesService: SavedPlacesServicing {
     func remove(placeID: String, userID: String) async throws {
         removeCalls.append(placeID)
         if let failure { throw failure }
+        if let removeFailure { throw removeFailure }
         savedIDs.remove(placeID)
     }
 }

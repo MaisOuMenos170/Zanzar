@@ -39,12 +39,14 @@ struct PlaceDetailSavedPlaceTests {
         let saved = FakeSavedPlacesService()
         let viewModel = makeViewModel(saved: saved)
 
-        await viewModel.toggleSaved()
+        let saving = await viewModel.toggleSaved()
         #expect(viewModel.isSaved)
+        #expect(saving == .saved)
         #expect(saved.saveCalls == ["place-1"])
 
-        await viewModel.toggleSaved()
+        let removing = await viewModel.toggleSaved()
         #expect(!viewModel.isSaved)
+        #expect(removing == .removed)
         #expect(saved.removeCalls == ["place-1"])
     }
 
@@ -52,20 +54,20 @@ struct PlaceDetailSavedPlaceTests {
     func revertsOnFailure() async {
         let viewModel = makeViewModel(saved: FakeSavedPlacesService(failure: APIError.httpStatus(500, message: "boom")))
 
-        await viewModel.toggleSaved()
+        let outcome = await viewModel.toggleSaved()
 
         #expect(!viewModel.isSaved)
-        #expect(viewModel.errorMessage != nil)
+        #expect(outcome == .failed(message: L10n.string("placeDetail.saveButton.failedToast")))
     }
 
     @Test("the limit of saved places gets its own message")
     func limitReached() async {
         let viewModel = makeViewModel(saved: FakeSavedPlacesService(failure: APIError.httpStatus(409, message: nil)))
 
-        await viewModel.toggleSaved()
+        let outcome = await viewModel.toggleSaved()
 
         #expect(!viewModel.isSaved)
-        #expect(viewModel.errorMessage == L10n.string("placeDetail.saveButton.limitReached"))
+        #expect(outcome == .failed(message: L10n.string("placeDetail.saveButton.limitReached")))
     }
 
     @Test("does nothing without a signed-in user")
@@ -73,8 +75,9 @@ struct PlaceDetailSavedPlaceTests {
         let saved = FakeSavedPlacesService()
         let viewModel = makeViewModel(saved: saved, userID: nil)
 
-        await viewModel.toggleSaved()
+        let outcome = await viewModel.toggleSaved()
 
+        #expect(outcome == nil)
         #expect(!viewModel.isSaved)
         #expect(saved.saveCalls.isEmpty)
     }

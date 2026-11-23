@@ -21,6 +21,7 @@ enum Route: Hashable {
     case photoPrivacy
     case allCheckIns
     case allSeals
+    case savedPlaces
     case blockedProfiles
     /// "Ver mais" of the check-in home's "Roteiros em destaque".
     case allItineraries

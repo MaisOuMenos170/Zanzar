@@ -1,8 +1,10 @@
 import Foundation
 
-/// The places the user bookmarked (`/user/:id/saved-places`). The place detail only needs to know whether one
-/// place is on the list and to put it on or take it off.
+/// The places the user bookmarked (`/user/:id/saved-places`): the list itself, and putting a place on it or
+/// taking it off.
 protocol SavedPlacesServicing: Sendable {
+    /// The saved places, the most recently saved first.
+    func fetchSavedPlaces(userID: String) async throws -> [SavedPlace]
     func savedPlaceIDs(userID: String) async throws -> Set<String>
     /// Idempotent: saving a place that is already saved succeeds. Throws `APIError.httpStatus(409, …)` at the limit.
     func save(placeID: String, userID: String) async throws
@@ -12,6 +14,20 @@ protocol SavedPlacesServicing: Sendable {
 
 private struct SavedPlaceAPIResponse: Decodable, Sendable {
     let placeId: String
+    /// Only the list sends the rest; the response of saving a place carries just what it needs.
+    let savedAt: String?
+    let placeName: String?
+    let imageUrl: String?
+
+    func makeSavedPlace() -> SavedPlace {
+        SavedPlace(
+            placeID: placeId,
+            name: placeName,
+            // The app only loads photos from `https`.
+            imageURL: imageUrl.flatMap(URL.init(string:)).flatMap { $0.scheme == "https" ? $0 : nil },
+            savedAt: savedAt.flatMap(APIDate.parse) ?? .distantPast
+        )
+    }
 }
 
 private struct SavePlaceRequest: Encodable, Sendable {
@@ -25,9 +41,14 @@ final class SavedPlacesService: SavedPlacesServicing {
         self.client = client
     }
 
-    func savedPlaceIDs(userID: String) async throws -> Set<String> {
+    func fetchSavedPlaces(userID: String) async throws -> [SavedPlace] {
         let places: [SavedPlaceAPIResponse] = try await client.get(path: "user/\(userID)/saved-places")
-        return Set(places.map(\.placeId))
+        return places.map { $0.makeSavedPlace() }
+    }
+
+    func savedPlaceIDs(userID: String) async throws -> Set<String> {
+        let places = try await fetchSavedPlaces(userID: userID)
+        return Set(places.map(\.placeID))
     }
 
     func save(placeID: String, userID: String) async throws {
