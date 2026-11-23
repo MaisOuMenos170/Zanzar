@@ -9,12 +9,12 @@ import Testing
 struct PlaceShareViewModelTests {
     private static let appleLink = URL(string: "https://maps.apple.com/?ll=-25.4284,-49.2733&q=Padaria%20Central")!
 
-    private static func place(_ id: Int, _ name: String, latitude: Double, longitude: Double) -> SuggestedPlace {
-        SuggestedPlace(osmType: "node", osmID: id, name: name, address: "Rua XV, Curitiba", latitude: latitude, longitude: longitude)
+    private static func place(_ name: String, latitude: Double, longitude: Double) -> SuggestedPlace {
+        SuggestedPlace(name: name, address: "Rua XV, Curitiba", latitude: latitude, longitude: longitude)
     }
 
-    private static let near = place(1, "Padaria Central", latitude: -25.4285, longitude: -49.2733)
-    private static let far = place(2, "Padaria Central Filial", latitude: -25.4500, longitude: -49.2000)
+    private static let near = place("Padaria Central", latitude: -25.4285, longitude: -49.2733)
+    private static let far = place("Padaria Central Filial", latitude: -25.4500, longitude: -49.2000)
 
     private func makeModel(
         texts: [String] = [],
@@ -167,7 +167,7 @@ struct PlaceShareViewModelTests {
         await model.submit()
 
         #expect(model.phase == .done(.success))
-        let sent = service.submittedManually.first
+        let sent = service.submitted.first
         #expect(sent?.location.latitude == -25.4284)
         #expect(sent?.location.address == "Padaria Central")
         #expect(sent?.note == "Muito bom")
@@ -179,36 +179,41 @@ struct PlaceShareViewModelTests {
         let model = makeModel(texts: ["Rua das Flores, 10"], service: service)
         await model.load()
         await model.submit()
-        #expect(service.submittedManually.first?.location == SuggestedLocation(latitude: 0, longitude: 0, address: "Rua das Flores, 10"))
+        #expect(service.submitted.first?.location == SuggestedLocation(latitude: 0, longitude: 0, address: "Rua das Flores, 10"))
     }
 
-    @Test("a place found on the map is sent by its OpenStreetMap id and says how it went")
+    @Test("a place found on the map is sent with its name, address and position")
     func sendsFoundPlace() async {
         let service = FakeShareService(results: ["Padaria Central": [Self.near]])
-        service.submitPlaceResult = .success(PlaceSuggestionViewModelTests.suggestion(status: .approved, name: "Padaria Central"))
         let model = makeModel(urls: [Self.appleLink], service: service)
         await model.load()
+        model.note = "Pão quentinho"
         await model.submit()
 
-        #expect(model.phase == .done(.published(placeName: "Padaria Central")))
-        #expect(service.submittedPlaces.map(\.place) == [Self.near])
+        #expect(model.phase == .done(.success))
+        let sent = service.submitted.first
+        #expect(sent?.name == "Padaria Central")
+        #expect(sent?.location == SuggestedLocation(latitude: -25.4285, longitude: -49.2733, address: "Rua XV, Curitiba"))
+        #expect(sent?.note == "Pão quentinho")
     }
 
-    @Test("choosing \"none of these\" sends it for review instead")
+    @Test("choosing \"none of these\" sends the shared address and position instead of the found place")
     func chooseManualInstead() async {
         let service = FakeShareService(results: ["Padaria Central": [Self.near]])
         let model = makeModel(urls: [Self.appleLink], service: service)
         await model.load()
         model.chooseManual()
         await model.submit()
-        #expect(service.submittedPlaces.isEmpty)
-        #expect(service.submittedManually.count == 1)
+
+        #expect(service.submitted.count == 1)
+        #expect(service.submitted.first?.location.address == "Padaria Central")
+        #expect(service.submitted.first?.location.latitude == -25.4284)
     }
 
     @Test("a failed send stays on the sheet with a message, so it can be tried again")
     func failedSend() async {
         let service = FakeShareService(results: ["Padaria Central": [Self.near]])
-        service.submitPlaceResult = .failure(APIError.rateLimited(retryAfter: 60))
+        service.submitError = APIError.rateLimited(retryAfter: 60)
         let model = makeModel(urls: [Self.appleLink], service: service)
         await model.load()
         await model.submit()
@@ -221,7 +226,7 @@ struct PlaceShareViewModelTests {
     @Test("a refused session while sending asks to sign in")
     func expiredSessionWhileSending() async {
         let service = FakeShareService(results: ["Padaria Central": [Self.near]])
-        service.submitPlaceResult = .failure(APIError.httpStatus(401, message: nil))
+        service.submitError = APIError.httpStatus(401, message: nil)
         let model = makeModel(urls: [Self.appleLink], service: service)
         await model.load()
         await model.submit()
@@ -249,12 +254,9 @@ final class FakeShareService: PlaceSuggestionServicing, @unchecked Sendable {
 
     private let results: [String: [SuggestedPlace]]
     var searchError: Error?
-    var submitPlaceResult: Result<MySuggestion, Error> = .success(
-        PlaceSuggestionViewModelTests.suggestion(status: .needsReview)
-    )
+    var submitError: Error?
     private(set) var searches: [Search] = []
-    private(set) var submittedPlaces: [(place: SuggestedPlace, note: String)] = []
-    private(set) var submittedManually: [PlaceSuggestion] = []
+    private(set) var submitted: [PlaceSuggestion] = []
 
     init(results: [String: [SuggestedPlace]] = [:]) {
         self.results = results
@@ -269,14 +271,11 @@ final class FakeShareService: PlaceSuggestionServicing, @unchecked Sendable {
         return results[query] ?? []
     }
 
-    func submit(_ place: SuggestedPlace, note: String) async throws -> MySuggestion {
-        let suggestion = try submitPlaceResult.get()
-        submittedPlaces.append((place, note))
-        return suggestion
-    }
+    func resolveAddress(_ text: String, near: SuggestedLocation?) async throws -> SuggestedPlace? { nil }
 
     func submit(_ suggestion: PlaceSuggestion) async throws {
-        submittedManually.append(suggestion)
+        if let submitError { throw submitError }
+        submitted.append(suggestion)
     }
 }
 
@@ -288,6 +287,12 @@ final class FakeShareGeocoder: PlaceGeocoding, @unchecked Sendable {
     }
 
     func address(for coordinate: CLLocationCoordinate2D) async throws -> String? { address }
+
+    func places(
+        matching query: String,
+        near: CLLocationCoordinate2D?,
+        includingPointsOfInterest: Bool
+    ) async throws -> [SuggestedPlace] { [] }
 }
 
 // swiftlint:enable line_length

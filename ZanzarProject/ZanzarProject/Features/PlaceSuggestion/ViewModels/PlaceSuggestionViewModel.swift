@@ -278,13 +278,6 @@ final class PlaceSuggestionViewModel {
         addressErrorMessage = nil
         defer { isSubmitting = false }
         do {
-            if let selectedPlace {
-                let suggestion = try await service.submit(selectedPlace, note: trimmedNote)
-                outcome = PlaceSuggestionOutcome(suggestion)
-            } else {
-                let location = manualLocation()
-                try await service.submit(PlaceSuggestion(location: location, note: trimmedNote))
-                outcome = .success
             guard let suggestion = try await makeSuggestion() else {
                 addressErrorMessage = L10n.string("placeSuggestion.error.addressNotFound")
                 return false
@@ -300,14 +293,6 @@ final class PlaceSuggestionViewModel {
         }
     }
 
-    /// The typed text with the user's position when it is known, so the team can find the place on a map.
-    private func manualLocation() -> SuggestedLocation {
-        let known = searchNearMe ? currentLocation : nil
-        return SuggestedLocation(
-            latitude: known?.latitude ?? 0,
-            longitude: known?.longitude ?? 0,
-            address: trimmedQuery
-        )
     // MARK: - Private
 
     /// The position of the user, when they asked to search near it.

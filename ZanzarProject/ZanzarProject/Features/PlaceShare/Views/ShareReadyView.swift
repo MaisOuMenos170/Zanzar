@@ -63,13 +63,10 @@ struct ShareReadyView: View {
                     .font(.system(size: 14))
                     .foregroundStyle(.black)
                 ForEach(model.candidates) { place in
-                    PlaceSuggestionResultRow(place: place, isSelected: model.selectedPlace == place) {
+                    PlaceShareCandidateRow(place: place, isSelected: model.selectedPlace == place) {
                         model.select(place)
                     }
                 }
-                Text("placeSuggestion.results.attribution")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
                 manualOption
             }
         }
