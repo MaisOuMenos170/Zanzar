@@ -82,3 +82,15 @@ As três só funcionam depois que o PR 4 do LeroSite for mesclado e o Railway pu
 6. Nomes dos responsáveis: a política cita a equipe + ou − 1,70 m (pessoas físicas) sem nomes. A LGPD pede identificar o controlador. Acrescentar os nomes se quiserem.
 7. Backend de produção: o Release e os links universais usam `zanzarbackend-development.up.railway.app` (decisão: manter).
 8. Opcional: ícone do site (`app-icon-96.webp`) ainda é o das carinhas.
+
+## Auditoria final (2026-11-23, noite)
+
+**Só iPhone, verificado no binário de Release:** app, widget e extensão de compartilhar com `UIDeviceFamily = [1]`; `SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD` e `SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD` = NO no app; no ASC, Mac e Vision Pro desmarcados em Pricing and Availability. iPad ainda pode instalar o app em modo de compatibilidade (regra da Apple). iPhone Duo é iPhone: deixar as screenshots dele vazias.
+
+**Pronto:** ícone novo, privacy manifest (app, widget, share), deployment target 26.0, `ITSAppUsesNonExemptEncryption = NO`, links universais (AASA do backend ok), exclusão de conta no app, política de privacidade no app, versão 1.0, 746 testes, build de Release, App Compliance sem pendência, rascunho de acessibilidade (Larger Text), App Privacy publicado, classificação 13+, direitos de conteúdo, contato da revisão, notas da revisão, URLs de suporte/marketing/privacidade preenchidas, liberação automática.
+
+**Falta (nenhum item é código):**
+1. Terminar o domínio `lero.social` no Railway: o DNS já aponta para o Railway, mas o certificado ainda é o genérico (`*.up.railway.app`), então https://lero.social/privacidade e /suporte não abrem.
+2. ASC: subir as 5 screenshots (0 de 10 hoje), senha da conta de demonstração, anexar o vídeo, trocar a build 1 pela nova, conferir o preço "Grátis" (o campo Current Price apareceu em branco) e a disponibilidade (hoje 1 país).
+3. Mesclar #112 e #113 (CI ainda rodando) para o Xcode Cloud gerar a build. O workflow do Xcode Cloud não pôde ser conferido pelo navegador embutido.
+4. Opcional: localização em inglês no ASC, descrição mais longa.
