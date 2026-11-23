@@ -1,0 +1,59 @@
+# Envio para a App Store: o que foi feito e o que falta
+
+Estado em 2026-11-23. App "Lero: Descubra lugares" (Apple ID 6821126406, bundle `dalpra.Zanzar`), versão 1.0, "Prepare for Submission". O ASC ainda usa a build 1 e as três carinhas como ícone.
+
+## Feito (branch `chore/app-store-release`)
+
+- Ícone novo exportado do Figma (frame "App Icon", arquivo Macro-Challenge, nó 2512:12620): 1024x1024, RGB, sem alpha. Está em `AppIcon.appiconset/AppIcon.png`. O ícone do ASC só muda com a build nova.
+- `PrivacyInfo.xcprivacy` no app, no widget e na extensão de compartilhar. Declara `UserDefaults` (CA92.1 e 1C8F.1, app group), sem rastreamento, e os tipos de dado coletados (e-mail, ID de usuário, localização precisa, fotos, outro conteúdo do usuário), todos para funcionalidade do app e ligados à conta. Sem o arquivo, o upload recebe o aviso ITMS-91053.
+- Widget: deployment target 27.2 -> 26.0 (igual ao app). Projeto: 27.0 -> 26.0. Build Release para o simulador passa.
+- `scripts/testflight-preflight.sh`: lê `ITSAppUsesNonExemptEncryption` e a permissão de localização do `.pbxproj` (não estão mais no Info.plist) e confere os 3 manifestos. Passa.
+- Link da política de privacidade dentro do app (Perfil > Ajustes > Privacidade > Política de privacidade) abre https://lero.social/privacidade. A diretriz 5.1.1 exige o link no app.
+- Site (repo `MaisOuMenos170/LeroSite`, PR 4): `/privacidade` (pt/en), `/suporte` (pt/en), FAQ com e-mail, domínio `lero.social` no canonical/og/sitemap/robots. `/termos` segue placeholder.
+- `docs/politica-de-privacidade.md` igual ao texto publicado. Os "pontos em aberto" viraram a seção abaixo.
+- Testes: 730 testes passam (`xcodebuild test`, iPhone 17 Pro).
+
+## URLs para o App Store Connect
+
+| Campo | Valor |
+|---|---|
+| Privacy Policy URL | https://lero.social/privacidade |
+| Support URL (hoje está o GitHub) | https://lero.social/suporte |
+| Marketing URL | https://lero.social |
+| Contato | contato@lero.social |
+
+As três só funcionam depois que o PR 4 do LeroSite for mesclado e o Railway publicar.
+
+## Textos prontos para o ASC
+
+**Subtítulo (30 caracteres):** `O passaporte de Curitiba` (24).
+
+**Categoria:** primária Viagens (Travel), secundária Estilo de vida (Lifestyle).
+
+**Classificação etária** (respostas, tabela da Apple lida em 2026-11-03): User-Generated Content = Sim (fotos moderadas antes de publicar). Álcool/tabaco/drogas = Frequente (lista bares e festas). Mensagens/chat = Não. Redes sociais = Não. Localização compartilhada com outros = Não. Anúncios = Não. Web irrestrita = Não. Apostas, violência, conteúdo sexual = Nenhum. Controles parentais/verificação de idade: o envio de fotos exige autodeclaração de 18+. Resultado esperado 18+. Confira o pictograma do Brasil depois de salvar.
+
+**App Privacy** (todos: coletado, ligado ao usuário, sem rastreamento, finalidade App Functionality): E-mail, ID do usuário, Localização precisa, Fotos ou vídeos, Outro conteúdo do usuário. Conferir se o nome de usuário (crédito da foto) precisa entrar como "Name". Política: https://lero.social/privacidade.
+
+**Direitos de conteúdo:** o app mostra dados de terceiros (OpenStreetMap, Google Places). Responda "Sim, contém conteúdo de terceiros" e confirme que a atribuição do OpenStreetMap está visível. Decisão de vocês.
+
+**Notas para a revisão (inglês):**
+
+> Lero is a place-discovery app for Curitiba, Brazil. Check-ins only work within 150 m of a place, so a reviewer outside Curitiba cannot complete one. The attached screen recording shows the full flow (map, place, check-in near and far away, stamp earned, itinerary, rating). Everything else works from anywhere: sign in, browse the map, open a place, view stamps and itineraries, save places, suggest a place, upload and report photos, block users, and delete the account (Profile > Settings > Delete my account).
+> User photos: every photo is checked on the device (resize, EXIF/GPS removal, face detection with blur) and on our server (validation, duplicate detection, AI review by Cloudflare Workers AI). A photo is shown to others only after approval; uncertain ones go to a human queue. Users can report any photo (••• menu), block its author, and delete their own photos. Uploading requires accepting the photo terms and declaring 18+.
+> Privacy policy: https://lero.social/privacidade. Support: contato@lero.social.
+> Demo account: lero-reviewer@maisoumenos170.com / [senha]
+
+**Contato da revisão:** nome, telefone e e-mail de uma pessoa do time (campos obrigatórios).
+
+**Conta de demonstração:** e-mail em `docs/app-review.md`. Criar na API de produção (`POST /register`, 8+ caracteres, letra e número) e guardar a senha no secret `APP_REVIEW_PASSWORD`. A senha não vai em arquivo.
+
+## Falta (precisa de vocês)
+
+1. Mesclar o PR 4 do LeroSite (publica privacidade e suporte).
+2. Gerar a build nova: mesclar `chore/app-store-release` em `develop` e depois `develop` em `main` (o Xcode Cloud carimba o número da build). Hoje `main` está 2 commits à frente de `develop` e `develop` 63 à frente de `main`. A `feat/place-detail-v2` (PR 110) não está no `develop`.
+3. No ASC: privacidade, classificação etária, subtítulo, categoria, direitos de conteúdo, contato da revisão, conta de demonstração, notas, vídeo da revisão (anexo), selecionar a build nova, conferir preço Grátis e screenshots 6,9". A página da versão não mostrou a seção de screenshots no navegador embutido: conferir a mão.
+4. Gravar o vídeo da revisão (há gravações em `recordings/` e vídeos no site).
+5. Decidir o tempo de guarda do registro de auditoria das fotos (hoje 1 ano; havia proposta de 5), as regiões dos servidores (Atlas, Supabase, Railway) e o prazo de logs do Railway. Revisão jurídica das bases legais.
+6. Nomes dos responsáveis: a política cita a equipe + ou − 1,70 m (pessoas físicas) sem nomes. A LGPD pede identificar o controlador. Acrescentar os nomes se quiserem.
+7. Backend de produção: o Release e os links universais usam `zanzarbackend-development.up.railway.app` (decisão: manter).
+8. Opcional: ícone do site (`app-icon-96.webp`) ainda é o das carinhas.

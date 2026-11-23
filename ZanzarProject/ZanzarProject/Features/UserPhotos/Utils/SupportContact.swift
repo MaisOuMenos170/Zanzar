@@ -4,6 +4,8 @@ import Foundation
 /// in the xcconfig via the `ZanzarSupportEmail` Info.plist key. Without one (Debug builds) it is the Lero address.
 nonisolated enum SupportContact {
     static let defaultEmail = "contato@lero.social"
+    /// Public privacy policy (also the URL in App Store Connect). Guideline 5.1.1 wants it reachable inside the app.
+    static let privacyPolicyURL = URL(string: "https://lero.social/privacidade")!
 
     static var email: String? {
         guard let value = Bundle.main.object(forInfoDictionaryKey: "ZanzarSupportEmail") as? String else {
