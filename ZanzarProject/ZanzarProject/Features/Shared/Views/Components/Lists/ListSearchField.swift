@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The white pill with a magnifier that sits above the profile lists ("Campo / busca" in the Figma).
 struct ListSearchField: View {
     let prompt: LocalizedStringKey
     @Binding var text: String

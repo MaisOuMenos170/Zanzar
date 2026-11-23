@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// All the photos the user sent and where each one stands. Reached from the profile.
 struct MyPhotosView: View {
     @State private var viewModel = MyPhotosViewModel()
     @State private var searchText = ""

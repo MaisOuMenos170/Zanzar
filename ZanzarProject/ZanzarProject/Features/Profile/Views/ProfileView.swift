@@ -19,9 +19,7 @@ struct ProfileView: View {
     private let editAvatarTip = ProfileEditAvatarTip()
     private let settingsTip = ProfileSettingsTip()
 
-    /// How many of the loaded check-ins show as cards on the passport.
     private let recentCheckInsCount = 4
-    /// How many seals show on the passport.
     private let sealsPreviewCount = 8
 
     var body: some View {
@@ -94,7 +92,6 @@ struct ProfileView: View {
             .onReceive(NotificationCenter.default.publisher(for: AppNotification.checkInDidSucceed)) { _ in
                 viewModel.markStale()
             }
-            // The name was changed in the card drawn by the tab bar's root.
             .onReceive(NotificationCenter.default.publisher(for: AppNotification.profileNameDidChange)) { _ in
                 Task { await viewModel.load(force: true) }
             }
@@ -186,7 +183,6 @@ struct ProfileView: View {
         }
     }
 
-    /// The kinds of seal the user has, most recent first, one of each.
     private func earnedSealCategories(in profile: Profile) -> [ZanzarPlaceCategory] {
         var seen: Set<ZanzarPlaceCategory> = []
         return profile.recentCheckIns

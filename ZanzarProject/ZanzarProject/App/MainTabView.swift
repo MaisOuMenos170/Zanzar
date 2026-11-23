@@ -25,10 +25,6 @@ struct MainTabView: View {
         store: UserDefaultsProximityAlertStore(),
         onPermissionsChanged: { await ProximityAlertCoordinator.shared.refresh() }
     )
-    /// Held until the sheet is fully dismissed so the alert is not lost mid-dismissal.
-    @State private var pendingSuggestionOutcome: PlaceSuggestionOutcome?
-    @State private var shownSuggestionOutcome: PlaceSuggestionOutcome?
-    @State private var showsSuggestionAlert = false
     @State private var suggestionGoodNewsCount = 0
     @State private var suggestionBadNewsCount = 0
     @State private var photoStatusNotice = PhotoStatusNoticeViewModel()
@@ -38,8 +34,8 @@ struct MainTabView: View {
     @Namespace private var placeZoom
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            ForEach(MainTab.allCases, id: \.self) { tab in
+        TabView(selection: tabSelection) {
+            ForEach(MainTab.screenTabs, id: \.self) { tab in
                 Tab(tab.titleKey, systemImage: tab.systemImage, value: tab) {
                     // tab bar's cascades into everything inside the tabs
                     // we overwrite with a .tint on the content inside
@@ -47,12 +43,23 @@ struct MainTabView: View {
                         .tint(.primary)
                 }
             }
+            // The separate tab on the trailing side of the bar. It is an action, not a screen: see `tabSelection`.
+            Tab(
+                MainTab.suggest.titleKey,
+                systemImage: MainTab.suggest.systemImage,
+                value: MainTab.suggest,
+                role: .search
+            ) {
+                Color.clear
+            }
+            // Only the Discover tab offers it.
+            .hidden(selectedTab != .discover)
         }
         // The system tab bar, with the app's new blue (Blue/600 in the Figma) for the selected tab.
         .tint(.brandBlue600)
         // Presented here, not by ContentView, so the sheet sees the shared places and can open a place
         // on the check-in tab's path once it closes.
-        .sheet(item: itinerarySheet, onDismiss: presentPendingSuggestionAlert) { sheet in
+        .sheet(item: itinerarySheet) { sheet in
             coordinator.view(
                 for: sheet,
                 onSelectPlace: { place in
@@ -68,15 +75,6 @@ struct MainTabView: View {
         .haptic(.selecao, trigger: selectedTab)
         .haptic(.sucesso, trigger: suggestionGoodNewsCount)
         .haptic(.alerta, trigger: suggestionBadNewsCount)
-        .onChange(of: coordinator.presentedSheet) { previous, current in
-            guard previous == .suggestPlace, current == nil else { return }
-            // An alert cannot appear while the card is still leaving.
-            Task {
-                try? await Task.sleep(for: .milliseconds(400))
-                presentPendingSuggestionAlert()
-            }
-        }
-        .placeSuggestionOutcomeAlert(isPresented: $showsSuggestionAlert, outcome: shownSuggestionOutcome)
         .environment(nearbyPlaces)
         .overlay {
             if proximityPermission.isVisible {
@@ -130,6 +128,21 @@ struct MainTabView: View {
             guard tab != .profile else { return }
             Task { try? await nearbyPlaces.refreshIfNeeded() }
         }
+    }
+
+    /// Tapping the separate "Sugerir um lugar" tab opens the suggestion card and keeps the current tab selected,
+    /// so the haptic and the places refresh keyed on `selectedTab` do not fire for it.
+    private var tabSelection: Binding<MainTab> {
+        Binding(
+            get: { selectedTab },
+            set: { tab in
+                if tab == .suggest {
+                    coordinator.present(sheet: .suggestPlace)
+                } else {
+                    selectedTab = tab
+                }
+            }
+        )
     }
 
     /// The system sheet only carries the roteiro detail; the suggestion form is drawn by the overlay.
@@ -193,9 +206,15 @@ struct MainTabView: View {
         }
     }
 
+    /// Closes the card and tells the user how the suggestion went, in a toast above the tab bar.
     private func finishSuggestion(_ outcome: PlaceSuggestionOutcome) {
-        pendingSuggestionOutcome = outcome
         coordinator.dismissSheet()
+        toastManager.show(outcome.toastMessage, style: outcome.toastStyle, position: .bottom)
+        if outcome.isGoodNews {
+            suggestionGoodNewsCount += 1
+        } else {
+            suggestionBadNewsCount += 1
+        }
     }
 
     /// The user tapped a proximity alert: show that place on Discover, whatever they were looking at.
@@ -211,18 +230,6 @@ struct MainTabView: View {
         coordinator.popToRoot()
         selectedTab = .discover
         coordinator.push(.placeDetail(place))
-    }
-
-    private func presentPendingSuggestionAlert() {
-        guard let outcome = pendingSuggestionOutcome else { return }
-        pendingSuggestionOutcome = nil
-        shownSuggestionOutcome = outcome
-        showsSuggestionAlert = true
-        if outcome.isGoodNews {
-            suggestionGoodNewsCount += 1
-        } else {
-            suggestionBadNewsCount += 1
-        }
     }
 
     @ViewBuilder
@@ -262,6 +269,8 @@ struct MainTabView: View {
                             .environment(\.presentSheet) { coordinator.present(sheet: $0) }
                     }
             }
+        case .suggest:
+            EmptyView()
         }
     }
 }

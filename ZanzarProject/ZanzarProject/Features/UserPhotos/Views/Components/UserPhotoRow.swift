@@ -1,12 +1,9 @@
 import SwiftUI
 
-/// One of the user's photos in a list card: the thumbnail, the place, the date, where the photo stands
-/// and a trash button. A photo with no thumbnail has no picture slot.
 struct UserPhotoRow: View {
     let photo: UserPhoto
     let onOpen: () -> Void
     let onDelete: () -> Void
-    /// The namespace the full-screen viewer zooms out of; the thumbnail is where the zoom starts.
     var zoomNamespace: Namespace.ID?
 
     var body: some View {
@@ -60,7 +57,6 @@ struct UserPhotoRow: View {
 }
 
 private extension View {
-    /// Marks this view as where the full-screen zoom of `id` starts, when there is a namespace to zoom in.
     @ViewBuilder
     func zoomSource(id: String, in namespace: Namespace.ID?) -> some View {
         if let namespace {

@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The four card colors the check-in cards rotate through.
 enum ProfileCheckInTone: CaseIterable {
     case sand
     case periwinkle
@@ -20,7 +19,6 @@ enum ProfileCheckInTone: CaseIterable {
         }
     }
 
-    /// The color of the chevron in the white pill.
     var accent: Color {
         switch self {
         case .sand, .gold: .brandOrange400

@@ -1,7 +1,6 @@
 import Foundation
 import Observation
 
-/// The user's check-ins, a page at a time, for "all check-ins" and "all seals".
 @Observable
 final class ProfileCheckInsViewModel {
     /// How many check-ins one request asks for (the backend takes up to 50).
@@ -27,7 +26,6 @@ final class ProfileCheckInsViewModel {
         self.userIDProvider = userIDProvider
     }
 
-    /// There are older check-ins to fetch.
     var hasMore: Bool {
         nextCursor != nil
     }
@@ -58,7 +56,6 @@ final class ProfileCheckInsViewModel {
         }
     }
 
-    /// Appends the next page, once at a time. Called when the end of the list comes into view.
     func loadMore() async {
         guard let cursor = nextCursor, !isLoading, !isLoadingMore, !loadMoreFailed,
               let userID = userIDProvider() else { return }
@@ -76,7 +73,6 @@ final class ProfileCheckInsViewModel {
         }
     }
 
-    /// Tries the failed page again.
     func retryLoadMore() async {
         loadMoreFailed = false
         await loadMore()

@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// "Perfis bloqueados": who the user blocked, with a button to unblock each one. Reached from the profile settings.
 struct BlockedProfilesView: View {
     @State private var viewModel = BlockedProfilesViewModel()
     @State private var searchText = ""

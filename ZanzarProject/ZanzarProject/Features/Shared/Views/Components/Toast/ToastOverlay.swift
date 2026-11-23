@@ -9,6 +9,9 @@ struct ToastOverlay: View {
 
     /// The height of an inline navigation bar, where the back button and the other toolbar buttons sit.
     private static let navigationBarHeight: CGFloat = 44
+    /// How far a toast at the bottom stays clear of the edge, so it sits above the tab bar (and the gap the design
+    /// leaves between them) instead of over it.
+    private static let tabBarClearance: CGFloat = 64
     /// How far each toast behind the front one sits from it, and how much smaller it gets.
     private static let stepOffset: CGFloat = 10
     private static let stepScale: CGFloat = 0.05
@@ -46,6 +49,7 @@ struct ToastOverlay: View {
         .padding(.vertical, 8)
         // The root overlay cannot see the navigation bar, so a toast at the top leaves room for its buttons.
         .padding(.top, position == .top ? Self.navigationBarHeight : 0)
+        .padding(.bottom, position == .bottom ? Self.tabBarClearance : 0)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: position.alignment)
         .animation(.spring(duration: 0.4, bounce: 0.15), value: visible.map(\.id))
         .onChange(of: toastManager.current?.position) { _, newPosition in

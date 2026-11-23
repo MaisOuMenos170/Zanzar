@@ -28,4 +28,22 @@ nonisolated enum PlaceSuggestionOutcome: Hashable, Sendable {
             self = .success
         }
     }
+    /// The toast that tells the user how it went.
+    @MainActor
+    var toastMessage: String {
+        switch self {
+        case .success:
+            L10n.string("placeSuggestion.toast.success")
+        case .published(let placeName):
+            L10n.string("placeSuggestion.toast.published", placeName)
+        case .refused(let reason):
+            L10n.string("placeSuggestion.toast.refused", L10n.string(reason.messageKey))
+        case .failure(let message):
+            message
+        }
+    }
+
+    var toastStyle: ToastStyle {
+        isGoodNews ? .positive : .negative
+    }
 }

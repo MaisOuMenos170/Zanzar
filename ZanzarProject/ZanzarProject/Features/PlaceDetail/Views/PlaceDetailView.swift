@@ -40,6 +40,9 @@ struct PlaceDetailView: View {
         }
         .background(.background)
         .navigationBarBackButtonHidden()
+        // The screen draws its own header and back button, and takes the whole screen: no system bars.
+        .toolbar(.hidden, for: .navigationBar)
+        .toolbar(.hidden, for: .tabBar)
         .task {
             // The view reappears when a nested detail is popped; what is already on screen is still current.
             guard viewModel.detail == nil else { return }

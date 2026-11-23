@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// A scrolling row of chips: the selected one is filled coral, the others are outlined.
 struct CategoryFilterChips: View {
     @Binding var selection: CategoryFilter
 

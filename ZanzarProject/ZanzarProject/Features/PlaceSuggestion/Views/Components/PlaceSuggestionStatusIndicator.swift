@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The state of a suggestion: "Em análise", "Adicionado" or "Não aprovado".
 struct PlaceSuggestionStatusIndicator: View {
     let status: PlaceSuggestionStatus
 

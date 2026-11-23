@@ -36,17 +36,18 @@ struct PlaceSuggestionServiceTests {
         )
     }
 
-    @Test("submit posts the coordinates, address and note to place-suggestions")
+    @Test("submit posts the coordinates, the name with the address, and the note to place-suggestions")
     func submitSendsExpectedRequest() async throws {
         let client = PlaceSuggestionStubNetworkClient(responseJSON: Self.createdJSON)
         let service = makeService(client: client)
 
-        try await service.submit(PlaceSuggestion(location: Self.curitiba, note: "Vale a pena"))
+        try await service.submit(PlaceSuggestion(name: "Padaria Central", location: Self.curitiba, note: "Vale a pena"))
 
         #expect(client.lastSendPath == "place-suggestions")
         #expect(client.lastSendMethod == .post)
         let body = try #require(client.lastBodyJSON)
-        #expect(body["address"] as? String == "Rua XV de Novembro, 1200")
+        #expect(body["address"] as? String == "Padaria Central — Rua XV de Novembro, 1200")
+        #expect(body["name"] == nil)
         #expect(body["note"] as? String == "Vale a pena")
         let coordinates = try #require(body["coordinates"] as? [String: Double])
         #expect(coordinates["latitude"] == -25.43)
@@ -59,7 +60,7 @@ struct PlaceSuggestionServiceTests {
         let client = PlaceSuggestionStubNetworkClient(responseJSON: Self.createdJSON)
         let service = makeService(client: client)
 
-        try await service.submit(PlaceSuggestion(location: Self.curitiba, note: "   \n "))
+        try await service.submit(PlaceSuggestion(name: "Padaria", location: Self.curitiba, note: "   \n "))
 
         let body = try #require(client.lastBodyJSON)
         #expect(body["note"] == nil)
@@ -72,11 +73,12 @@ struct PlaceSuggestionServiceTests {
         let longAddress = String(repeating: "a", count: PlaceSuggestionLimits.addressMaxLength + 40)
         let location = SuggestedLocation(latitude: 1, longitude: 2, address: longAddress)
 
-        try await service.submit(PlaceSuggestion(location: location, note: "ok"))
+        try await service.submit(PlaceSuggestion(name: "Padaria", location: location, note: "ok"))
 
         let body = try #require(client.lastBodyJSON)
         let sent = try #require(body["address"] as? String)
         #expect(sent.count == PlaceSuggestionLimits.addressMaxLength)
+        #expect(sent.hasPrefix("Padaria — "))
     }
 
     @Test("submit rethrows the server error")
@@ -86,7 +88,7 @@ struct PlaceSuggestionServiceTests {
         let service = makeService(client: client)
 
         await #expect(throws: APIError.self) {
-            try await service.submit(PlaceSuggestion(location: Self.curitiba, note: "ok"))
+            try await service.submit(PlaceSuggestion(name: "Padaria", location: Self.curitiba, note: "ok"))
         }
     }
 
@@ -136,6 +138,63 @@ struct PlaceSuggestionServiceTests {
 
         await #expect(throws: LocationMapError.self) {
             try await service.currentLocation()
+        }
+    }
+
+    @Test("search asks Apple Maps for named places and addresses, near the user when known")
+    func searchUsesGeocoder() async throws {
+        let place = SuggestedPlace(name: "Jardim Botânico", address: "Curitiba", latitude: -25.44, longitude: -49.24)
+        let geocoder = PlaceSuggestionStubGeocoder()
+        geocoder.places = [place]
+        let service = makeService(geocoder: geocoder)
+
+        let found = try await service.searchPlaces(query: "jardim", near: Self.curitiba)
+
+        #expect(found == [place])
+        #expect(geocoder.lastQuery == "jardim")
+        #expect(geocoder.lastIncludedPointsOfInterest == true)
+        #expect(geocoder.lastNear?.latitude == -25.43)
+    }
+
+    @Test("searching without a position passes none")
+    func searchWithoutPosition() async throws {
+        let geocoder = PlaceSuggestionStubGeocoder()
+        let service = makeService(geocoder: geocoder)
+
+        _ = try await service.searchPlaces(query: "jardim", near: nil)
+
+        #expect(geocoder.lastNear == nil)
+    }
+
+    @Test("resolving an address looks only at addresses and takes the first one")
+    func resolveAddressTakesFirstAddress() async throws {
+        let first = SuggestedPlace(name: nil, address: "Rua A, 1", latitude: -25.4, longitude: -49.2)
+        let second = SuggestedPlace(name: nil, address: "Rua A, 2", latitude: -25.5, longitude: -49.3)
+        let geocoder = PlaceSuggestionStubGeocoder()
+        geocoder.places = [first, second]
+        let service = makeService(geocoder: geocoder)
+
+        let found = try await service.resolveAddress("Rua A, 1", near: nil)
+
+        #expect(found == first)
+        #expect(geocoder.lastIncludedPointsOfInterest == false)
+    }
+
+    @Test("an address Apple Maps cannot place resolves to nothing")
+    func resolveAddressWithoutMatch() async throws {
+        let service = makeService(geocoder: PlaceSuggestionStubGeocoder())
+
+        #expect(try await service.resolveAddress("xyz", near: nil) == nil)
+    }
+
+    @Test("a search failure is passed through")
+    func searchFailure() async {
+        let geocoder = PlaceSuggestionStubGeocoder()
+        geocoder.error = URLError(.notConnectedToInternet)
+        let service = makeService(geocoder: geocoder)
+
+        await #expect(throws: URLError.self) {
+            _ = try await service.searchPlaces(query: "jardim", near: nil)
         }
     }
 
@@ -201,7 +260,12 @@ private final class PlaceSuggestionStubLocationService: LocationMapServicing, @u
 
 private final class PlaceSuggestionStubGeocoder: PlaceGeocoding, @unchecked Sendable {
     var address: String?
+    var places: [SuggestedPlace] = []
     var error: Error?
+
+    private(set) var lastQuery: String?
+    private(set) var lastNear: CLLocationCoordinate2D?
+    private(set) var lastIncludedPointsOfInterest: Bool?
 
     init(address: String? = nil) {
         self.address = address
@@ -210,5 +274,17 @@ private final class PlaceSuggestionStubGeocoder: PlaceGeocoding, @unchecked Send
     func address(for coordinate: CLLocationCoordinate2D) async throws -> String? {
         if let error { throw error }
         return address
+    }
+
+    func places(
+        matching query: String,
+        near: CLLocationCoordinate2D?,
+        includingPointsOfInterest: Bool
+    ) async throws -> [SuggestedPlace] {
+        lastQuery = query
+        lastNear = near
+        lastIncludedPointsOfInterest = includingPointsOfInterest
+        if let error { throw error }
+        return places
     }
 }

@@ -1,7 +1,6 @@
 import SwiftUI
 import TipKit
 
-/// The Ajustes section where the user chooses what the proximity alerts tell them, and fixes what blocks them.
 struct ProximityAlertSettingsSection: View {
     @State private var viewModel = ProximityAlertSettingsViewModel(
         service: SystemProximityPermissionService(),
@@ -77,13 +76,10 @@ struct ProximityAlertSettingsSection: View {
         }
     }
 
-    /// What is missing to alert with the app closed: one more row of the card. It opens the Settings app, where
-    /// the user grants the notifications and the "Always" location themselves.
     @ViewBuilder
     private var permissionRow: some View {
         switch viewModel.permissions {
         case .unknown, .complete:
-            // When complete, the line under the title already says the alerts work with the app closed.
             EmptyView()
         case .canTurnOn:
             settingsRow(message: "proximitySettings.turnOn.message")

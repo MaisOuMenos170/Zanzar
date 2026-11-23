@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// A colored dot and a short state, like "Em análise", under the title of a list row.
 struct StatusDotLabel: View {
     let title: LocalizedStringKey
     let color: Color

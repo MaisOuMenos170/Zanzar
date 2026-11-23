@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// All the places the user suggested and where each one stands. Reached from the profile.
 struct MySuggestionsView: View {
     @State private var viewModel = MySuggestionsViewModel()
     @State private var searchText = ""

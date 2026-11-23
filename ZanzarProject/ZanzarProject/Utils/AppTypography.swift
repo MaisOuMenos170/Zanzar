@@ -12,29 +12,17 @@ enum AppTypography {
     case body2
     /// SF Pro Semibold 14, for buttons and links.
     case subtitle2
-    /// SF Pro Rounded Bold 24, for the name on the profile.
     case headline5
-    /// SF Pro Rounded Bold 20, for section titles.
     case headline6
-    /// SF Pro Rounded Semibold 16, for card titles.
     case subtitle3
-    /// SF Pro Rounded Semibold 15, for the label of a stat tile.
     case subtitle4
-    /// SF Pro Regular 12, for dates, counters and secondary lines.
     case caption1
-    /// SF Pro Regular 11, for the line under a section title.
     case caption2
-    /// SF Pro Bold 12, for chips and small buttons.
     case caption3
-    /// SF Pro Regular 10 with wide tracking, for the uppercase label of a tile.
     case overline
-    /// SF Pro Semibold 16 with wide tracking, for the filled buttons of the design system.
     case button
-    /// SF Pro Semibold 16, for the buttons of alerts.
     case button2
-    /// SF Pro Rounded Semibold 80, for the big number of a tile.
     case display1
-    /// SF Pro Rounded Regular 44, for the number of a small tile.
     case display2
 
     var size: CGFloat {

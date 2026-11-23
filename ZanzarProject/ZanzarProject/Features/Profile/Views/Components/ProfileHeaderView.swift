@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The user's avatar, large, under the name in the navigation bar.
 struct ProfileHeaderView: View {
     @State private var viewModel = AvatarViewModel()
     @Environment(AppCoordinator.self) private var coordinator

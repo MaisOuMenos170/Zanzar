@@ -172,12 +172,6 @@ struct LocationMapView: View {
                     onSelect: openSearchResult
                 )
                 .transition(.opacity.combined(with: .scale(scale: 0.96, anchor: .top)))
-            } else {
-                DiscoverSuggestButton {
-                    isSearchFocused = false
-                    coordinator.present(sheet: .suggestPlace)
-                }
-                .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .topTrailing)))
             }
         }
         .motion(Motion.suave, value: searchViewModel.showsResultsPanel)

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The "Descrição" field of "Sugerir um lugar" (Figma node 1998:4949): gray box, at least 98pt tall.
+/// The optional "Descrição" field of "Sugerir um lugar" (Figma node 1998:4949): gray box, at least 98pt tall.
 struct PlaceSuggestionNoteField: View {
     @Binding var text: String
     @FocusState private var isFocused: Bool

@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// A white rounded card whose rows are separated by a hairline, like the settings and photo lists of the profile.
-/// Every child of `content` (including the ones a `ForEach` makes) is a row.
 struct ListCard<Content: View>: View {
     @ViewBuilder let content: Content
 

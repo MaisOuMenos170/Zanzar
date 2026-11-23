@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The three big numbers of the passport: check-ins, completed roteiros and seals.
 struct ProfileStatsView: View {
     let summary: ProfileSummary
 

@@ -1,7 +1,6 @@
 import Foundation
 import Observation
 
-/// The "Editar nome" card: the name being typed and sending it.
 @Observable
 final class EditNameViewModel {
     /// The backend accepts names of 3 to 30 characters: letters, digits and underscore.
@@ -26,7 +25,6 @@ final class EditNameViewModel {
         userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.userID }
     ) {
         self.currentName = currentName
-        // Starts empty: the field shows its placeholder and the user types the new name.
         self.name = ""
         self.service = service
         self.userIDProvider = userIDProvider
@@ -36,14 +34,12 @@ final class EditNameViewModel {
         name.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    /// The button works once the name is filled in, fits what the backend accepts and is not the one already in use.
     var canSave: Bool {
         !isSaving
             && Self.isValid(trimmedName)
             && trimmedName != currentName
     }
 
-    /// What was typed breaks the rule, so the hint turns red. An empty field is not a mistake yet.
     var showsInvalidHint: Bool {
         !trimmedName.isEmpty && !Self.isValid(trimmedName)
     }
