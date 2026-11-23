@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// "Todos os selos": every seal the user earned, filtered by category and name.
 struct AllSealsView: View {
     private struct EarnedSeal: Identifiable {
         let id: String

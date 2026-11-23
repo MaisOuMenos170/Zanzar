@@ -61,8 +61,12 @@ struct DiscoverSearchBar: View {
         .padding(.horizontal, 14)
         // 10.5 because a text field is about 3pt taller than its 19pt line, which makes the bar 43pt like Figma's.
         .padding(.vertical, 10.5)
-        .background(Color.brandNeutral50, in: .rect(cornerRadius: 24))
-        .shadow(color: .black.opacity(0.25), radius: 4, y: 1)
+        // The shadow belongs to the white shape only: on the whole bar it also falls on the text and icons.
+        .background {
+            RoundedRectangle(cornerRadius: 24)
+                .fill(Color.brandNeutral50)
+                .shadow(color: .black.opacity(0.15), radius: 4, y: 1)
+        }
     }
 }
 

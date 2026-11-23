@@ -5,12 +5,16 @@ struct PlaceSuggestionSheetView: View {
     @State private var viewModel: PlaceSuggestionViewModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @FocusState private var isQueryFocused: Bool
+    @FocusState private var isNameFocused: Bool
+    @FocusState private var isAddressFocused: Bool
     /// Height of everything in the sheet, so it is only as tall as its content (the Figma sheet hugs it) until
     /// the screen runs out of room, and then it scrolls.
     @State private var contentHeight: CGFloat?
+    /// The search is typed on a screen of its own, over the whole screen.
+    @State private var isSearchPresented = false
     private let onFinished: (PlaceSuggestionOutcome) -> Void
     private let onClose: () -> Void
-    
+
     private let suggestTip = PlaceSuggestionTip()
 
     init(
@@ -43,7 +47,8 @@ struct PlaceSuggestionSheetView: View {
                             locationOptions
                             VStack(alignment: .leading, spacing: 16) {
                                 searchSection
-                                resultsSection
+                                manualEntrySection
+                                missingFieldsSection
                                 PlaceSuggestionNoteField(text: $viewModel.note)
                             }
                         }
@@ -67,8 +72,10 @@ struct PlaceSuggestionSheetView: View {
         .frame(maxHeight: contentHeight ?? .infinity)
         // Until the height is measured the stack would take all the screen for a frame and then shrink.
         .opacity(contentHeight == nil ? 0 : 1)
-        .animation(reduceMotion ? nil : .default, value: viewModel.results)
-        .animation(reduceMotion ? nil : .default, value: viewModel.isManualEntry)
+        .animation(reduceMotion ? nil : .default, value: viewModel.selection)
+        .fullScreenCover(isPresented: $isSearchPresented) {
+            PlaceSearchView(viewModel: viewModel) { isSearchPresented = false }
+        }
         // Re-runs when the option changes, so choosing "use my location" again retries a failed lookup.
         .task(id: viewModel.searchNearMe) {
             await viewModel.loadCurrentLocation()
@@ -127,22 +134,25 @@ struct PlaceSuggestionSheetView: View {
         return nil
     }
 
+    /// Shows what was searched and opens the search screen, where it is typed.
     private var searchSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             PlaceSuggestionTextField(
-                labelKey: "placeSuggestion.placeField.label",
-                placeholderKey: "placeSuggestion.placeField.placeholder",
+                labelKey: "placeSuggestion.searchField.label",
+                placeholderKey: "placeSuggestion.searchField.placeholder",
                 text: $viewModel.query,
                 isFocused: $isQueryFocused,
-                isRequired: true,
-                onSearch: {
-                    // Drop the keyboard first, or it keeps covering the results this search is about to show.
-                    isQueryFocused = false
-                    Task { await viewModel.search() }
-                },
-                canSearch: viewModel.canSearch,
-                isSearching: viewModel.isSearching
+                submitLabel: .search,
+                onTap: { isSearchPresented = true },
+                leadingSystemImage: "magnifyingglass",
+                placeholderColor: .brandNeutral600
             )
+            // VoiceOver and a hardware keyboard focus the field without tapping it.
+            .onChange(of: isQueryFocused) {
+                guard isQueryFocused else { return }
+                isQueryFocused = false
+                isSearchPresented = true
+            }
 
             if let message = viewModel.searchErrorMessage {
                 Text(message)
@@ -152,49 +162,66 @@ struct PlaceSuggestionSheetView: View {
         }
     }
 
+    /// The note that the place will be filled in by hand. A place picked in the search is written in the search
+    /// field itself.
     @ViewBuilder
-    private var resultsSection: some View {
-        if viewModel.hasSearched {
-            VStack(alignment: .leading, spacing: 8) {
-                if viewModel.results.isEmpty {
-                    Text("placeSuggestion.results.empty")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                } else {
-                    ForEach(viewModel.results) { place in
-                        PlaceSuggestionResultRow(
-                            place: place,
-                            isSelected: viewModel.selectedPlace == place
-                        ) {
-                            viewModel.select(place)
+    private var manualEntrySection: some View {
+        if viewModel.isManualEntry {
+            Label("placeSuggestion.manual.selected", systemImage: "checkmark.circle.fill")
+                .font(.footnote)
+                .foregroundStyle(Color.brandPurple500)
+        }
+    }
+
+    /// What the chosen place lacks: a name, an address, or both when nothing was found.
+    @ViewBuilder
+    private var missingFieldsSection: some View {
+        if viewModel.needsName || viewModel.needsAddress {
+            VStack(alignment: .leading, spacing: 16) {
+                if viewModel.needsName {
+                    VStack(alignment: .leading, spacing: 8) {
+                        if !viewModel.isManualEntry {
+                            hint("placeSuggestion.nameField.hint")
                         }
+                        PlaceSuggestionTextField(
+                            labelKey: "placeSuggestion.nameField.label",
+                            placeholderKey: "placeSuggestion.nameField.placeholder",
+                            text: $viewModel.customName,
+                            isFocused: $isNameFocused,
+                            isRequired: true,
+                            submitLabel: .next
+                        )
                     }
-                    Text("placeSuggestion.results.attribution")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
                 }
 
-                manualEntry
+                if viewModel.needsAddress {
+                    VStack(alignment: .leading, spacing: 8) {
+                        if !viewModel.isManualEntry {
+                            hint("placeSuggestion.addressField.hint")
+                        }
+                        PlaceSuggestionTextField(
+                            labelKey: "placeSuggestion.addressField.label",
+                            placeholderKey: "placeSuggestion.addressField.placeholder",
+                            text: $viewModel.customAddress,
+                            isFocused: $isAddressFocused,
+                            isRequired: true,
+                            submitLabel: .done
+                        )
+                        if let message = viewModel.addressErrorMessage {
+                            Text(message)
+                                .font(.footnote)
+                                .foregroundStyle(Color.brandErrorRed)
+                        }
+                    }
+                }
             }
         }
     }
 
-    @ViewBuilder
-    private var manualEntry: some View {
-        if viewModel.isManualEntry {
-            Label(
-                L10n.string("placeSuggestion.manual.selected", viewModel.trimmedQuery),
-                systemImage: "checkmark.circle.fill"
-            )
+    private func hint(_ key: LocalizedStringKey) -> some View {
+        Text(key)
             .font(.footnote)
-            .foregroundStyle(Color.brandPurple500)
-        } else {
-            Button("placeSuggestion.manual.button") {
-                viewModel.enterManually()
-            }
-            .font(.footnote.weight(.semibold))
-            .tint(Color.brandPurple500)
-        }
+            .foregroundStyle(Color.brandNeutral600)
     }
 
     private var submitButton: some View {

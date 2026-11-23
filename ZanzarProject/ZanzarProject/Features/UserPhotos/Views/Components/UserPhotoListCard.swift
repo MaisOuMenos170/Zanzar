@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// The user's photos as rows of a white card, with the viewer, the delete confirmation and the error alert
-/// every list of photos needs. Used by the profile and by "all photos".
 struct UserPhotoListCard: View {
     let photos: [UserPhoto]
     @Bindable var viewModel: MyPhotosViewModel
@@ -21,7 +19,6 @@ struct UserPhotoListCard: View {
             }
         }
         .fullScreenCover(item: $photoBeingViewed) { photo in
-            // The system's zoom: the photo grows out of its thumbnail and shrinks back into it.
             UserPhotoViewerView(photo: photo)
                 .navigationTransition(.zoom(sourceID: photo.id, in: zoomNamespace))
         }

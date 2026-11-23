@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The chips above the lists of the profile: "All" plus the groups of place categories the design names.
 enum CategoryFilter: String, CaseIterable, Identifiable {
     case all
     case parks

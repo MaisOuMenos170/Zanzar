@@ -1,25 +1,24 @@
 import SwiftUI
 
-/// What a profile list shows when it has nothing to list: because there is nothing yet, because the search found
-/// nothing, or because the chip emptied it. A title, a line about it and, where it makes sense, a button to
-/// suggest a place.
 struct ListNoResultsView: View {
     enum Kind {
-        /// The list has nothing at all yet.
         case empty(title: LocalizedStringKey, message: LocalizedStringKey)
-        /// The search found nothing. `query` is what the user typed.
         case notFound(query: String, message: LocalizedStringKey)
-        /// Only a category chip emptied the list.
         case filtered
     }
 
+    /// A button under the text, for a way forward the screen itself offers.
+    struct Action {
+        let title: LocalizedStringKey
+        let perform: () -> Void
+    }
+
     let kind: Kind
-    /// Offers "Sugerir lugar" under the message. Not shown when only a chip emptied the list.
     var offersPlaceSuggestion = false
+    var action: Action?
 
     @Environment(\.presentSheet) private var presentSheet
 
-    /// Picks the right kind: nothing at all, a search with no match, or just the chip.
     init(
         hasItems: Bool,
         query: String,
@@ -39,9 +38,10 @@ struct ListNoResultsView: View {
         self.offersPlaceSuggestion = offersPlaceSuggestion
     }
 
-    init(kind: Kind, offersPlaceSuggestion: Bool = false) {
+    init(kind: Kind, offersPlaceSuggestion: Bool = false, action: Action? = nil) {
         self.kind = kind
         self.offersPlaceSuggestion = offersPlaceSuggestion
+        self.action = action
     }
 
     var body: some View {
@@ -61,15 +61,11 @@ struct ListNoResultsView: View {
             .padding(.horizontal, 16)
 
             if offersPlaceSuggestion, !isFiltered, let presentSheet {
-                Button { presentSheet(.suggestPlace) } label: {
-                    Text("list.noResults.suggestButton")
-                        .typography(.subtitle2)
-                        .foregroundStyle(Color.white)
-                        .padding(16)
-                        .background(Color.brandPurple500, in: .rect(cornerRadius: 30))
-                        .contentShape(.rect(cornerRadius: 30))
-                }
-                .buttonStyle(.plain)
+                pillButton("list.noResults.suggestButton") { presentSheet(.suggestPlace) }
+            }
+
+            if let action {
+                pillButton(action.title, perform: action.perform)
             }
         }
         .frame(maxWidth: .infinity, minHeight: 400)
@@ -80,6 +76,18 @@ struct ListNoResultsView: View {
     private var isFiltered: Bool {
         if case .filtered = kind { return true }
         return false
+    }
+
+    private func pillButton(_ title: LocalizedStringKey, perform: @escaping () -> Void) -> some View {
+        Button(action: perform) {
+            Text(title)
+                .typography(.subtitle2)
+                .foregroundStyle(Color.white)
+                .padding(16)
+                .background(Color.brandPurple500, in: .rect(cornerRadius: 30))
+                .contentShape(.rect(cornerRadius: 30))
+        }
+        .buttonStyle(.plain)
     }
 
     @ViewBuilder

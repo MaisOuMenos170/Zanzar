@@ -2,7 +2,6 @@ import SwiftUI
 import TipKit
 
 struct AvatarEditorView: View {
-    /// From the profile the editor just goes back when saved; during onboarding it continues to the passport.
     var finishesByPopping = false
 
     @State private var viewModel = AvatarEditorViewModel()

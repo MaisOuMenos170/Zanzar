@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The content of the "Editar nome" card, drawn inside `PlaceSuggestionSheetCard` like "Sugerir um lugar".
 struct EditNameSheetView: View {
     @State private var viewModel: EditNameViewModel
     @FocusState private var isNameFocused: Bool

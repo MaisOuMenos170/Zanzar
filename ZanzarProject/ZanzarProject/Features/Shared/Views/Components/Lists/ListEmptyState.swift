@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// What a profile section shows when it has nothing to list yet: a white card with one line of text.
 struct ListEmptyState: View {
     let message: LocalizedStringKey
 

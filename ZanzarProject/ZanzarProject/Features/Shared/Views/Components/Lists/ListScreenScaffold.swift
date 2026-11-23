@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// The frame the profile's list screens share: a centered title, a search field, optional category chips,
-/// a counter and then the list itself, on the profile background.
 struct ListScreenScaffold<Content: View>: View {
     let title: LocalizedStringKey
     let searchPrompt: LocalizedStringKey

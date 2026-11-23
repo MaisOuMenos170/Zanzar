@@ -1376,13 +1376,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check-in"
+            "value" : "Routes"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check-in"
+            "value" : "Roteiros"
           }
         }
       }
@@ -2216,13 +2216,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check in"
+            "value" : "Routes"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check in"
+            "value" : "Roteiros"
           }
         }
       }
@@ -4633,6 +4633,74 @@
         }
       }
     },
+    "placeSuggestion.error.addressNotFound" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't find that address on the map. Check it and try again."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não encontramos esse endereço no mapa. Confira e tente de novo."
+          }
+        }
+      }
+    },
+    "placeSuggestion.addressField.hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't find an address for this place. Type it so we can put it on the map."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não achamos o endereço desse lugar. Digite para a gente localizar no mapa."
+          }
+        }
+      }
+    },
+    "placeSuggestion.addressField.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Address"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Endereço"
+          }
+        }
+      }
+    },
+    "placeSuggestion.addressField.placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E.g. R. Engo. Ostoja Roguski, 350, Curitiba"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ex: R. Engo. Ostoja Roguski, 350, Curitiba"
+          }
+        }
+      }
+    },
     "placeSuggestion.error.generic" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4752,23 +4820,6 @@
         }
       }
     },
-    "placeSuggestion.failureAlert.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn't send suggestion"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível enviar"
-          }
-        }
-      }
-    },
     "placeSuggestion.header.subtitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4843,13 +4894,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Can't find it. Send it to the team to review"
+            "value" : "None of these? Fill it in myself"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não encontrei. Enviar para a equipe analisar"
+            "value" : "Não é nenhum desses? Preencher à mão"
           }
         }
       }
@@ -4860,13 +4911,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "We'll send “%@” to the team to review"
+            "value" : "Fill in the name and address below"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vamos mandar “%@” para a equipe analisar"
+            "value" : "Preencha o nome e o endereço abaixo"
           }
         }
       }
@@ -5082,19 +5133,70 @@
         }
       }
     },
+    "placeSuggestion.nameField.hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This address has no name on the map. What is the place called?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esse endereço não tem nome no mapa. Qual é o nome do lugar?"
+          }
+        }
+      }
+    },
+    "placeSuggestion.nameField.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place name"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nome do lugar"
+          }
+        }
+      }
+    },
+    "placeSuggestion.nameField.placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E.g. Botanical Garden"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ex: Jardim Botânico"
+          }
+        }
+      }
+    },
     "placeSuggestion.noteField.label" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Description"
+            "value" : "Description (optional)"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descrição"
+            "value" : "Descrição (opcional)"
           }
         }
       }
@@ -5167,125 +5269,6 @@
         }
       }
     },
-    "placeSuggestion.placeField.label" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Name/Address"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nome/Endereço"
-          }
-        }
-      }
-    },
-    "placeSuggestion.placeField.placeholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "E.g. Botanical Garden, R. Engo. Ostoja Roguski, 350"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ex: Jardim Botânico, R. Engo. Ostoja Roguski, 350"
-          }
-        }
-      }
-    },
-    "placeSuggestion.publishedAlert.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ is now on Lero. Thanks for contributing!"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ já está no Lero. Obrigado por contribuir!"
-          }
-        }
-      }
-    },
-    "placeSuggestion.publishedAlert.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Place added!"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lugar adicionado!"
-          }
-        }
-      }
-    },
-    "placeSuggestion.refusedAlert.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suggestion not approved"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sugestão não aprovada"
-          }
-        }
-      }
-    },
-    "placeSuggestion.results.attribution" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Data © OpenStreetMap contributors"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dados © colaboradores do OpenStreetMap"
-          }
-        }
-      }
-    },
-    "placeSuggestion.results.empty" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "We couldn't find bars, restaurants, cafés, parks, museums or sights with that name in Curitiba and the region."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não achamos bares, restaurantes, cafés, parques, museus ou pontos turísticos com esse nome em Curitiba e região."
-          }
-        }
-      }
-    },
     "placeSuggestion.searchButton.label" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5354,6 +5337,108 @@
         }
       }
     },
+    "placeSuggestion.search.empty.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try another term or fill in the name and address yourself."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tente outro termo ou preencha o nome e o endereço à mão."
+          }
+        }
+      }
+    },
+    "placeSuggestion.search.empty.title %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No places matching “%@”"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum lugar com “%@”"
+          }
+        }
+      }
+    },
+    "placeSuggestion.search.fillByHand" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fill in name and address"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preencher nome e endereço"
+          }
+        }
+      }
+    },
+    "placeSuggestion.search.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find the place"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar lugar"
+          }
+        }
+      }
+    },
+    "placeSuggestion.searchField.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search by name or address"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar pelo nome ou endereço"
+          }
+        }
+      }
+    },
+    "placeSuggestion.searchField.placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pesquisar"
+          }
+        }
+      }
+    },
     "placeSuggestion.submitButton.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5371,36 +5456,53 @@
         }
       }
     },
-    "placeSuggestion.successAlert.message" : {
+    "placeSuggestion.toast.published" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your request is being reviewed by our moderators."
+            "value" : "Place added! %@ is now on Lero"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu pedido está em análise pela moderação."
+            "value" : "Lugar adicionado! %@ já está no Lero"
           }
         }
       }
     },
-    "placeSuggestion.successAlert.title" : {
+    "placeSuggestion.toast.refused" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suggestion sent!"
+            "value" : "Suggestion not approved. %@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sugestão enviada!"
+            "value" : "Sugestão não aprovada. %@"
+          }
+        }
+      }
+    },
+    "placeSuggestion.toast.success" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestion sent! Your request is under review by the moderators"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sugestão enviada! Seu pedido está em análise pela moderação"
           }
         }
       }

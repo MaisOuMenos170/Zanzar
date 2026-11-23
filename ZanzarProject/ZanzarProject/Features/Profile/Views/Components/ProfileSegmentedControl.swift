@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// "Meu passaporte | Ajustes": a white pill whose selected option is a coral pill with a soft sheen.
 struct ProfileSegmentedControl: View {
     @Binding var selection: ProfileSection
     @Namespace private var selectionNamespace

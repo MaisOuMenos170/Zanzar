@@ -2,12 +2,13 @@ import Foundation
 
 protocol PlaceSuggestionServicing: Sendable {
     func currentLocation() async throws -> SuggestedLocation
-    /// Typed by hand (nothing to check it against): a person decides.
+    /// Always has a position: the backend takes the older shape of the request (coordinates, address and note),
+    /// which a person reviews.
     func submit(_ suggestion: PlaceSuggestion) async throws
-    /// Places on OpenStreetMap that match `query`, near `near` when the user allows it.
+    /// Places Apple Maps finds for a name or an address, near `near` when the user allows it.
     func searchPlaces(query: String, near: SuggestedLocation?) async throws -> [SuggestedPlace]
-    /// Suggests a place found by `searchPlaces`; the backend checks it and answers with where it stands.
-    func submit(_ place: SuggestedPlace, note: String) async throws -> MySuggestion
+    /// The position and the written form of an address the user typed; `nil` when Apple Maps cannot place it.
+    func resolveAddress(_ text: String, near: SuggestedLocation?) async throws -> SuggestedPlace?
     func fetchMine() async throws -> [MySuggestion]
 }
 
@@ -64,7 +65,7 @@ final class PlaceSuggestionService: PlaceSuggestionServicing {
         let note = suggestion.note.trimmingCharacters(in: .whitespacesAndNewlines)
         let request = PlaceSuggestionRequest(
             coordinates: .init(latitude: suggestion.location.latitude, longitude: suggestion.location.longitude),
-            address: Self.truncated(suggestion.location.address),
+            address: suggestion.addressText,
             note: note.isEmpty ? nil : note
         )
         do {
@@ -81,38 +82,19 @@ final class PlaceSuggestionService: PlaceSuggestionServicing {
     }
 
     func searchPlaces(query: String, near: SuggestedLocation?) async throws -> [SuggestedPlace] {
-        var queryItems = [URLQueryItem(name: "q", value: query)]
-        if let near {
-            queryItems.append(URLQueryItem(name: "lat", value: String(near.latitude)))
-            queryItems.append(URLQueryItem(name: "lng", value: String(near.longitude)))
-        }
-        let response: [SuggestedPlaceAPIResponse] = try await client.get(
-            path: "place-suggestions/search",
-            queryItems: queryItems
+        try await geocoder.places(
+            matching: query,
+            near: near?.clLocationCoordinate2D,
+            includingPointsOfInterest: true
         )
-        return response.compactMap(\.suggestedPlace)
     }
 
-    func submit(_ place: SuggestedPlace, note: String) async throws -> MySuggestion {
-        AppLog.suggestion.info("Submitting suggestion of an OpenStreetMap place")
-        let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
-        let request = OSMPlaceSuggestionRequest(
-            osmType: place.osmType,
-            osmId: place.osmID,
-            note: trimmed.isEmpty ? nil : trimmed
-        )
-        do {
-            let response: MySuggestionAPIResponse = try await client.send(
-                path: "place-suggestions",
-                method: .post,
-                body: request
-            )
-            AppLog.suggestion.info("Suggestion answered with status \(response.status)")
-            return response.mySuggestion
-        } catch {
-            AppLog.suggestion.error("Place suggestion request failed", error: error)
-            throw error
-        }
+    func resolveAddress(_ text: String, near: SuggestedLocation?) async throws -> SuggestedPlace? {
+        try await geocoder.places(
+            matching: text,
+            near: near?.clLocationCoordinate2D,
+            includingPointsOfInterest: false
+        ).first
     }
 
     func fetchMine() async throws -> [MySuggestion] {

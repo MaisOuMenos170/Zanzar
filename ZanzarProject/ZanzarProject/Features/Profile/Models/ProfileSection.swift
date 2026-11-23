@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The two halves of the profile screen, picked with the segmented control under the avatar.
 enum ProfileSection: CaseIterable, Identifiable {
     case passport
     case settings

@@ -1,11 +1,8 @@
 import SwiftUI
 
-/// A check-in as a colored card: the place, the date, a pill to open it and the seal it earned.
 struct ProfileCheckInCard: View {
     enum Layout {
-        /// Half the width, two to a row, on the passport.
         case compact
-        /// Full width, with the reaction left of the seal, in "all check-ins".
         case wide
     }
 

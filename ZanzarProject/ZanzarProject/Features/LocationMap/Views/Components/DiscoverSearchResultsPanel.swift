@@ -12,8 +12,12 @@ struct DiscoverSearchResultsPanel: View {
     var body: some View {
         content
             .frame(maxWidth: .infinity)
-            .background(Color.brandNeutral50, in: .rect(cornerRadius: 24))
-            .shadow(color: .black.opacity(0.25), radius: 4, y: 1)
+            // The shadow belongs to the white card only: on the whole panel it also falls on the rows' text.
+            .background {
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(Color.brandNeutral50)
+                    .shadow(color: .black.opacity(0.15), radius: 4, y: 1)
+            }
             // The card grows and shrinks to its rows instead of jumping when the results arrive.
             .motion(Motion.assentar, value: listHeight)
             .motion(Motion.suave, value: phase)

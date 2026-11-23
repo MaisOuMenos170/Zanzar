@@ -16,7 +16,6 @@ nonisolated enum ShortAddress {
         return kept.isEmpty ? address : kept.joined(separator: ", ")
     }
 
-    /// A Brazilian postal code: "80020-310" or "80020310".
     private static func isPostalCode(_ part: String) -> Bool {
         part.wholeMatch(of: /\d{5}-?\d{3}/) != nil
     }
