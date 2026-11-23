@@ -34,8 +34,8 @@ Estado em 2026-11-23 (noite). App "Lero: Descubra lugares" (Apple ID 6821126406,
 - Estilo: uma cor da marca por tela (roxo, laranja, turquesa, rosa, amarelo), títulos grandes SF Pro Rounded Black com no máximo 2 linhas, bandeirinhas da capa no topo e o aparelho grande cortado na base. Boas práticas seguidas: as 3 primeiras decidem a conversão, frase curta legível em miniatura, sistema visual coeso.
 - Textos de exemplo trocados nos clones: nome no passaporte ("Ana Souza") e lugares/distâncias da lista de roteiros. A foto do Jardim Botânico é de Halley Pacheco de Oliveira (CC BY-SA 3.0, Wikimedia Commons), com crédito visível.
 - Mapas do design (página Handoff) usam Varsóvia como placeholder, por isso nenhuma tela de mapa entrou. Troque o mapa do design por Curitiba se quiserem uma tela de "Descobrir".
-- PNGs prontos em `docs/app-store-screenshots/pt-BR/` (1320x2868, RGB, sem alpha). `fontes/` guarda as capturas do app (simulador), que não são usadas nesta versão.
-- No ASC: iPhone 6,9" (obrigatório; os outros tamanhos de iPhone saem dele). O app é só iPhone, então iPad não precisa.
+- **Para subir no ASC use `docs/app-store-screenshots/pt-BR-1206x2622/`** (1206x2622, RGB, sem alpha). O ASC atual só lista "iPhone with Dynamic Island (medium display)" e aceita 1179x2556 ou 1206x2622 (o campo só aparece em tela larga, na aba "App Previews and Screenshots"). Os PNGs de `docs/app-store-screenshots/pt-BR/` (1320x2868) são o mestre em 6,9". `fontes/` guarda as capturas do app (simulador), que não são usadas nesta versão.
+- No ASC: grupo iPhone with Dynamic Island (medium display). O app é só iPhone, então iPad não precisa.
 - Referências lidas para decidir o estilo: [Guia 2026 de screenshots](https://dev.to/appscreenshotstudio/app-store-screenshots-that-convert-the-2026-design-guide-1d94), [AppTweak](https://www.apptweak.com/en/aso-blog/how-to-optimize-your-app-screenshots) e [Apple: especificações](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications).
 
 ## URLs para o App Store Connect
