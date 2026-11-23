@@ -19,7 +19,8 @@ Estado em 2026-11-23 (noite). App "Lero: Descubra lugares" (Apple ID 6821126406,
 - Classificação etária respondida: resultado 18+ (álcool "Frequente" e conteúdo gerado por usuário). Se quiserem 13+, mude álcool para "Infrequente" em App Information > Age Ratings.
 - App Privacy publicado: e-mail, ID do usuário, ID do dispositivo (push), localização precisa, fotos e outro conteúdo do usuário; todos ligados à conta, sem rastreamento. Política: https://lero.social/privacidade.
 - Versão 1.0: Support URL https://lero.social/suporte, Marketing URL https://lero.social, usuário de demonstração teste@teste.com, notas da revisão em inglês.
-- **Não preenchido de propósito:** senha da conta de demonstração, contato da revisão (nome, telefone, e-mail), direitos de conteúdo (declaração legal), anexo do vídeo, seleção da build e envio. "Release" está em "automático após aprovação": troque para manual se quiserem controlar o dia.
+- Classificação etária agora 13+ (álcool "Infrequente"; Brasil 12+). Contato da revisão preenchido. Release em "automático após aprovação".
+- **Não preenchido:** senha da conta de demonstração, direitos de conteúdo (declaração legal), anexo do vídeo (`docs/app-review/lero-checkin-review.mp4`, o navegador embutido não consegue anexar arquivo), seleção da build e envio.
 
 ## PRs
 
@@ -28,11 +29,14 @@ Estado em 2026-11-23 (noite). App "Lero: Descubra lugares" (Apple ID 6821126406,
 
 ## Screenshots da App Store
 
-- Figma: arquivo Macro-Challenge, página "App Store" (https://www.figma.com/design/8hydbYFSjLxZ8DLsNjLRm7/Macro-Challenge?node-id=2679-2032). Cinco quadros de 1320x2868 ("App Store 6.9\" — 01 ... 05"), na identidade do Lero: fundo saturado por tela (roxo, laranja, rosa, turquesa, azul), título SF Pro Rounded Black branco com contorno "adesivo", ícone novo + "Lero", carinhas espiando atrás do aparelho, selos como adesivo e confete. As telas são capturas reais do app (simulador iPhone 17 Pro Max, build Debug, status bar 9:41).
-- Frases: "Carimbe Curitiba! / Um lugar de cada vez." · "Chegou? Faça check-in! / Só vale perto do lugar." · "Cada lugar ganha um selo / Colecione todos." · "Roteiros prontos pra passear / Parada por parada." · "Seu passaporte de Curitiba / Check-ins, selos e roteiros."
-- PNGs prontos em `docs/app-store-screenshots/pt-BR/` (1320x2868, RGB, sem alpha). Capturas sem moldura em `docs/app-store-screenshots/fontes/` (a 2 é a das Ruínas de São Francisco, com o botão "Fazer check-in").
+- Figma: arquivo Macro-Challenge, página "App Store" (https://www.figma.com/design/8hydbYFSjLxZ8DLsNjLRm7/Macro-Challenge?node-id=2679-2032). Cinco quadros de 1320x2868 ("App Store 6.9\" — 01 ... 05"). As telas dentro do aparelho são clones dos frames do design (página Handoff), não capturas do app, porque o app ainda está sendo codado. Elas continuam editáveis e vetoriais.
+- Ordem (a promessa vem primeiro): 1 "Carimbe Curitiba!" (passaporte com carimbo LERO), 2 "Crie seu personagem" (construtor de avatar), 3 "Faça check-in, ganhe selos" (Jardim Botânico, com foto), 4 "Siga roteiros pela cidade" (Visitando parques), 5 "Conte como foi lá" (avaliação com as carinhas).
+- Estilo: uma cor da marca por tela (roxo, laranja, turquesa, rosa, amarelo), títulos grandes SF Pro Rounded Black com no máximo 2 linhas, bandeirinhas da capa no topo e o aparelho grande cortado na base. Boas práticas seguidas: as 3 primeiras decidem a conversão, frase curta legível em miniatura, sistema visual coeso.
+- Textos de exemplo trocados nos clones: nome no passaporte ("Ana Souza") e lugares/distâncias da lista de roteiros. A foto do Jardim Botânico é de Halley Pacheco de Oliveira (CC BY-SA 3.0, Wikimedia Commons), com crédito visível.
+- Mapas do design (página Handoff) usam Varsóvia como placeholder, por isso nenhuma tela de mapa entrou. Troque o mapa do design por Curitiba se quiserem uma tela de "Descobrir".
+- PNGs prontos em `docs/app-store-screenshots/pt-BR/` (1320x2868, RGB, sem alpha). `fontes/` guarda as capturas do app (simulador), que não são usadas nesta versão.
 - No ASC: iPhone 6,9" (obrigatório; os outros tamanhos de iPhone saem dele). O app é só iPhone, então iPad não precisa.
-- Para refazer: Debug no simulador com `Config.xcconfig` apontando para o backend do Railway, `xcrun simctl status_bar <udid> override --time 9:41 ...` e `xcrun simctl io <udid> screenshot`. Troque a imagem de cada quadro no Figma (fill da camada "App screen") e exporte em PNG 1x. Os adesivos e as carinhas vêm de `LeroSite/public/assets`.
+- Referências lidas para decidir o estilo: [Guia 2026 de screenshots](https://dev.to/appscreenshotstudio/app-store-screenshots-that-convert-the-2026-design-guide-1d94), [AppTweak](https://www.apptweak.com/en/aso-blog/how-to-optimize-your-app-screenshots) e [Apple: especificações](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications).
 
 ## URLs para o App Store Connect
 
