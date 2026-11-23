@@ -7,6 +7,7 @@ struct PlaceDetailView: View {
     @State private var viewModel: PlaceDetailViewModel
     @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(ToastManager.self) private var toasts
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var showsPhotoUpload = false
     /// The content rises in once when it first loads, not again when a nested screen is popped.
@@ -27,8 +28,7 @@ struct PlaceDetailView: View {
             if let detail = viewModel.detail {
                 content(for: detail)
             } else if viewModel.isLoading {
-                ProgressView("placeDetail.loadingIndicator.title")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                PlaceDetailSkeleton()
             } else {
                 ContentUnavailableView(
                     "placeDetail.errorState.title",
@@ -131,7 +131,7 @@ struct PlaceDetailView: View {
     /// The bookmark in the corner of the photo box: white behind it, so it reads over a photo too.
     private var bookmarkButton: some View {
         Button {
-            Task { await viewModel.toggleSaved() }
+            Task { showSaveToast(for: await viewModel.toggleSaved()) }
         } label: {
             Label(
                 viewModel.isSaved ? "placeDetail.saveButton.remove" : "placeDetail.saveButton.save",
@@ -148,6 +148,20 @@ struct PlaceDetailView: View {
         .buttonStyle(.plain)
         .motion(Motion.suave, value: viewModel.isSaved)
         .haptic(.selecao, trigger: viewModel.isSaved)
+    }
+
+    /// Tells the user whether the place was saved, taken off the list, or neither.
+    private func showSaveToast(for outcome: PlaceDetailViewModel.SaveOutcome?) {
+        switch outcome {
+        case .saved:
+            toasts.show(L10n.string("placeDetail.saveButton.savedToast"), style: .positive, position: .bottom)
+        case .removed:
+            toasts.show(L10n.string("placeDetail.saveButton.removedToast"), style: .positive, position: .bottom)
+        case .failed(let message):
+            toasts.show(message, style: .negative, position: .bottom)
+        case nil:
+            break
+        }
     }
 
     private func checkInConfirmationMessage(for placeName: String) -> AttributedString {

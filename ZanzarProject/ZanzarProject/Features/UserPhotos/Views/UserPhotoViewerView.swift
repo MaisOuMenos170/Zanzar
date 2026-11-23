@@ -20,7 +20,9 @@ struct UserPhotoViewerView: View {
                     if photo.viewerURL == nil {
                         unavailable
                     } else {
-                        ProgressView()
+                        // Light on the black of the viewer, so the wait reads as a photo on its way.
+                        Color.white.opacity(0.12)
+                            .shimmering()
                     }
                 @unknown default:
                     unavailable

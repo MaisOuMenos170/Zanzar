@@ -22,8 +22,7 @@ struct ItineraryListView: View {
         @Bindable var viewModel = viewModel
         Group {
             if viewModel.itineraries.isEmpty, viewModel.isLoading {
-                ProgressView("itinerary.loadingIndicator.title")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                ItineraryListSkeleton()
             } else if let errorMessage = viewModel.errorMessage, viewModel.itineraries.isEmpty {
                 ContentUnavailableView {
                     Label("itinerary.errorState.title", systemImage: "exclamationmark.triangle")

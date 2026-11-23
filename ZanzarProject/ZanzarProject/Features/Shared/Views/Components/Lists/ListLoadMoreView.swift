@@ -19,7 +19,12 @@ struct ListLoadMoreView: View {
                     .foregroundStyle(Color.brandPurple500)
                 }
             } else {
-                ProgressView()
+                // The next card, shining where it will appear.
+                SkeletonBlock(height: 88)
+                    .shimmering()
+                    .padding(.vertical, 8)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(Text("list.loading.accessibilityLabel"))
                     .task { await onLoadMore() }
             }
         }

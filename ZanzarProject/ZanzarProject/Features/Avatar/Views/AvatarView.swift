@@ -43,8 +43,14 @@ struct AvatarView: View {
                 .disabled(viewModel.isLoading)
             }
         } else {
-            ProgressView("avatar.loadingIndicator.title")
+            // The face is on its way: a round shape that shines where it will be.
+            Circle()
+                .fill(Color.brandNeutral200.opacity(0.85))
+                .shimmering()
+                .padding(32)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(Text("avatar.loadingIndicator.title"))
         }
     }
 }

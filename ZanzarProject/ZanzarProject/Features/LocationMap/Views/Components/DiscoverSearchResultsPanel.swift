@@ -29,13 +29,9 @@ struct DiscoverSearchResultsPanel: View {
         case .idle:
             EmptyView()
         case .searching where results.isEmpty:
-            HStack(spacing: 10) {
-                ProgressView()
-                Text("discover.search.searching")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.brandNeutral600)
-            }
-            .padding(16)
+            SkeletonRows()
+                .padding(16)
+                .accessibilityLabel(Text("discover.search.searching"))
         case .failed:
             message("discover.search.error")
         case .results where results.isEmpty:

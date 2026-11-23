@@ -20,8 +20,7 @@ struct ItineraryDetailView: View {
             if let detail = viewModel.detail {
                 detailContent(for: detail)
             } else if viewModel.isLoading {
-                ProgressView("itinerary.detail.loadingIndicator.title")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                ItineraryDetailSkeleton()
             } else {
                 ContentUnavailableView {
                     Label("itinerary.detail.errorState.title", systemImage: "exclamationmark.triangle")
