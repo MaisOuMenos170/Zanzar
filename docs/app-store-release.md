@@ -19,8 +19,8 @@ Estado em 2026-11-23 (noite). App "Lero: Descubra lugares" (Apple ID 6821126406,
 - Classificação etária respondida: resultado 18+ (álcool "Frequente" e conteúdo gerado por usuário). Se quiserem 13+, mude álcool para "Infrequente" em App Information > Age Ratings.
 - App Privacy publicado: e-mail, ID do usuário, ID do dispositivo (push), localização precisa, fotos e outro conteúdo do usuário; todos ligados à conta, sem rastreamento. Política: https://lero.social/privacidade.
 - Versão 1.0: Support URL https://lero.social/suporte, Marketing URL https://lero.social, usuário de demonstração teste@teste.com, notas da revisão em inglês.
-- Classificação etária agora 13+ (álcool "Infrequente"; Brasil 12+). Contato da revisão preenchido. Release em "automático após aprovação".
-- **Não preenchido:** senha da conta de demonstração, direitos de conteúdo (declaração legal), anexo do vídeo (`docs/app-review/lero-checkin-review.mp4`, o navegador embutido não consegue anexar arquivo), seleção da build e envio.
+- Direitos de conteúdo marcados ("contém conteúdo de terceiros e tenho os direitos"). Classificação etária agora 13+ (álcool "Infrequente"; Brasil 12+). Contato da revisão preenchido. Release em "automático após aprovação".
+- **Não preenchido:** senha da conta de demonstração, anexo do vídeo (`docs/app-review/lero-checkin-review.mp4`, o navegador embutido não consegue anexar arquivo), seleção da build e envio.
 
 ## PRs
 
