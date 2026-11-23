@@ -2,43 +2,13 @@ import SwiftUI
 
 struct CategoryFilterChips: View {
     @Binding var selection: CategoryFilter
+    /// What the first chip says when it is not "Todos" (the places list calls it "Mais próximos").
+    var allTitle: LocalizedStringKey?
 
     var body: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: 4) {
-                ForEach(CategoryFilter.allCases) { filter in
-                    chip(filter)
-                }
-            }
+        FilterChips(options: CategoryFilter.allCases, selection: $selection) { filter in
+            if filter == .all, let allTitle { allTitle } else { filter.titleKey }
         }
-        .scrollIndicators(.hidden)
-        // Chips scrolling out of the 16pt margin slide off the screen instead of being cut at its edge.
-        .scrollClipDisabled()
-        .haptic(.selecao, trigger: selection)
-    }
-
-    private func chip(_ filter: CategoryFilter) -> some View {
-        let isSelected = selection == filter
-        return Button {
-            selection = filter
-        } label: {
-            Text(filter.titleKey)
-                .typography(isSelected ? .caption3 : .caption1)
-                .foregroundStyle(isSelected ? Color.brandNeutral50 : Color.brandNeutral600)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 6)
-                .frame(minHeight: 32)
-                .background {
-                    if isSelected {
-                        Capsule().fill(Color.brandOrange600)
-                    } else {
-                        Capsule().strokeBorder(Color.brandChipBorder, lineWidth: 1)
-                    }
-                }
-                .contentShape(.capsule)
-        }
-        .buttonStyle(.plain)
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 

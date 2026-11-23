@@ -1,6 +1,7 @@
 import SwiftUI
 
-struct ProfileSectionHeader: View {
+/// A section title with its "Ver mais >" link, as in the profile and the check-in home.
+struct SectionHeader: View {
     let title: LocalizedStringKey
     let onSeeMore: () -> Void
 

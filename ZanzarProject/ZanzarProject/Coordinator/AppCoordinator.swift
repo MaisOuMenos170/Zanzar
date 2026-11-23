@@ -70,6 +70,10 @@ final class AppCoordinator {
             AllSealsView()
         case .blockedProfiles:
             BlockedProfilesView()
+        case .allItineraries:
+            AllItinerariesView()
+        case .allPlaces:
+            AllPlacesView()
         }
     }
 

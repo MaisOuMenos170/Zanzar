@@ -1,12 +1,29 @@
 import SwiftUI
 
-struct ListScreenScaffold<Content: View>: View {
+/// The frame of the "Todos os…" lists: title, search field, filter chips, a count and the list itself.
+struct ListScreenScaffold<Filters: View, Content: View>: View {
     let title: LocalizedStringKey
     let searchPrompt: LocalizedStringKey
     @Binding var searchText: String
-    var filter: Binding<CategoryFilter>?
     let count: Text
-    @ViewBuilder let content: Content
+    let filters: Filters
+    let content: Content
+
+    init(
+        title: LocalizedStringKey,
+        searchPrompt: LocalizedStringKey,
+        searchText: Binding<String>,
+        count: Text,
+        @ViewBuilder filters: () -> Filters,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.title = title
+        self.searchPrompt = searchPrompt
+        _searchText = searchText
+        self.count = count
+        self.filters = filters()
+        self.content = content()
+    }
 
     var body: some View {
         ScrollView {
@@ -14,9 +31,7 @@ struct ListScreenScaffold<Content: View>: View {
                 ListSearchField(prompt: searchPrompt, text: $searchText)
 
                 VStack(alignment: .leading, spacing: 16) {
-                    if let filter {
-                        CategoryFilterChips(selection: filter)
-                    }
+                    filters
                     count
                         .typography(.caption1)
                         .foregroundStyle(Color.black)
@@ -38,5 +53,45 @@ struct ListScreenScaffold<Content: View>: View {
                     .accessibilityAddTraits(.isHeader)
             }
         }
+    }
+}
+
+extension ListScreenScaffold where Filters == EmptyView {
+    init(
+        title: LocalizedStringKey,
+        searchPrompt: LocalizedStringKey,
+        searchText: Binding<String>,
+        count: Text,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.init(
+            title: title,
+            searchPrompt: searchPrompt,
+            searchText: searchText,
+            count: count,
+            filters: { EmptyView() },
+            content: content
+        )
+    }
+}
+
+extension ListScreenScaffold where Filters == CategoryFilterChips {
+    init(
+        title: LocalizedStringKey,
+        searchPrompt: LocalizedStringKey,
+        searchText: Binding<String>,
+        filter: Binding<CategoryFilter>,
+        allFilterTitle: LocalizedStringKey? = nil,
+        count: Text,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.init(
+            title: title,
+            searchPrompt: searchPrompt,
+            searchText: searchText,
+            count: count,
+            filters: { CategoryFilterChips(selection: filter, allTitle: allFilterTitle) },
+            content: content
+        )
     }
 }

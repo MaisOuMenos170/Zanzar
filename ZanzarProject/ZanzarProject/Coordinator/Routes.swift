@@ -22,6 +22,10 @@ enum Route: Hashable {
     case allCheckIns
     case allSeals
     case blockedProfiles
+    /// "Ver mais" of the check-in home's "Roteiros em destaque".
+    case allItineraries
+    /// "Ver mais" of the check-in home's "Lugares próximos".
+    case allPlaces
 }
 
 enum Sheet: Identifiable, Hashable {

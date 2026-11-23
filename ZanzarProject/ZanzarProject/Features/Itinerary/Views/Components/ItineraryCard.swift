@@ -55,23 +55,8 @@ struct ItineraryCard: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background {
-                    ZStack {
-                        Color.brandPurple500
-                        DiagonalStripe(
-                            bar: CGSize(width: 91.141, height: 14.883),
-                            box: CGSize(width: 76.512, height: 73.363),
-                            origin: CGPoint(x: 19.9, y: -17),
-                            color: Self.stripeColor
-                        )
-                        DiagonalStripe(
-                            bar: CGSize(width: 91.141, height: 6.707),
-                            box: CGSize(width: 70.902, height: 67.416),
-                            origin: CGPoint(x: -8.92, y: -28.45),
-                            color: Self.stripeColor
-                        )
-                    }
+                    StripedCapsuleBackground(color: .brandPurple500, stripeColor: Self.stripeColor)
                 }
-                .clipShape(.rect(cornerRadius: 16))
                 .contentShape(.rect(cornerRadius: 16))
         }
         .buttonStyle(PressableButtonStyle())

@@ -24,6 +24,7 @@ struct ItineraryDetailSheet: View {
             .toolbar(.hidden, for: .navigationBar)
         }
         .presentationDragIndicator(.visible)
+        .presentationCornerRadius(38)
     }
 }
 

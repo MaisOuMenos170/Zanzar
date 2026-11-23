@@ -1,17 +1,19 @@
-import MapKit
 import SwiftUI
 
+/// The sheet of a roteiro (Figma "checkin v2", nodes 1931:4071, 1937:6463, 2005:11919, 2005:12148 and 2313:6808):
+/// who finished it, what it asks for, the seals the user has, the places to go next and the button to start it
+/// or to leave it.
 struct ItineraryDetailView: View {
     @Bindable var viewModel: ItineraryDetailViewModel
     let onItineraryChanged: () -> Void
     let onSelectPlace: (MapPlace) -> Void
-    @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
     /// The content rises in once when it first loads.
     @State private var contentShown = false
     @State private var startCount = 0
     @State private var abandonCount = 0
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(NearbyPlacesStore.self) private var nearbyPlacesStore
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         Group {
@@ -48,287 +50,218 @@ struct ItineraryDetailView: View {
         }
     }
 
-    private func countsRow(for detail: ItineraryDetail) -> some View {
-        let places = Label {
-            Text("itinerary.detail.placesCount \(detail.placesCount)")
-        } icon: {
-            Image(systemName: "mappin.and.ellipse")
-        }
-        let completed = Label {
-            Text("itinerary.detail.completedCount \(detail.completedCount)")
-        } icon: {
-            Image(systemName: "figure.walk")
-        }
-
-        return ViewThatFits(in: .horizontal) {
-            HStack(alignment: .firstTextBaseline) {
-                places
-                Spacer(minLength: 8)
-                completed
-            }
-            VStack(alignment: .leading, spacing: 4) {
-                places
-                completed
-            }
-        }
-        .font(.caption)
-        .foregroundStyle(.primary)
-    }
-
-    @ViewBuilder
     private func detailContent(for detail: ItineraryDetail) -> some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(alignment: .center, spacing: 12) {
-                    Text(detail.name)
-                        .font(.title2.bold())
-                        .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(alignment: .leading, spacing: 16) {
+                header(for: detail)
+                    .entrance(contentShown, order: 0)
 
-                    Button("itinerary.detail.close", systemImage: "xmark", action: coordinator.dismissSheet)
-                        .labelStyle(.iconOnly)
-                        .buttonStyle(.bordered)
-                        .buttonBorderShape(.circle)
+                VStack(alignment: .leading, spacing: 16) {
+                    completersRow(for: detail)
+                    goal(for: detail)
                 }
-                .entrance(contentShown, order: 0)
+                .entrance(contentShown, order: 1)
 
-                if !detail.objectives.isEmpty {
-                    ItineraryObjectiveTagsView(objectives: detail.objectives)
-                        .entrance(contentShown, order: 1)
-                }
+                ItineraryTicketCard(
+                    slots: viewModel.sealSlots,
+                    collectedCount: viewModel.collectedCount,
+                    tags: detail.objectives
+                )
+                .entrance(contentShown, order: 2)
 
-                countsRow(for: detail)
-                    .entrance(contentShown, order: 1)
-
-                VStack(alignment: .leading, spacing: 32) {
-                    VStack(alignment: .leading, spacing: 12) {
-                        switch detail.routeType {
-                        case .free:
-                            ItineraryFreeRouteStampsView(count: detail.placesCount)
-                            if !detail.places.isEmpty {
-                                Text("itinerary.detail.eligiblePlaces.title")
-                                    .font(.subheadline.bold())
-                                ItineraryPlaceListView(places: detail.places)
-                            }
-                        case .fixed:
-                            ItineraryFixedRouteMapView(places: detail.places)
-                            ItineraryPlaceListView(places: detail.places)
-                        }
-
-                        Text(detail.description)
-                            .font(.subheadline.weight(.light))
-                            .foregroundStyle(.primary)
-                    }
-                    .entrance(contentShown, order: 2)
-
-                    actionButtons
-                        .entrance(contentShown, order: 3)
-
-                    placesSection(for: detail)
-                        .entrance(contentShown, order: 4)
-                }
+                suggestedPlaces(for: detail)
+                    .entrance(contentShown, order: 3)
             }
-            .padding(16)
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            .padding(.bottom, 16)
             .onAppear {
                 contentShown = true
             }
         }
         .scrollIndicators(.hidden)
+        .safeAreaInset(edge: .bottom) {
+            actionButton
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
+                .padding(.top, 8)
+        }
     }
 
-    /// Free routes have no map or route list, so their places are shown as cards, as in the design.
-    @ViewBuilder
-    private func placesSection(for detail: ItineraryDetail) -> some View {
-        let cards = detail.placeCards(from: nearbyPlacesStore.places)
-        if detail.routeType == .free, !cards.isEmpty {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("itinerary.detail.sections.places")
-                    .font(.callout.bold())
+    private func header(for detail: ItineraryDetail) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            Text(detail.name)
+                .font(.system(.title2, design: .rounded, weight: .bold))
+                .foregroundStyle(Color.brandSheetTitle)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .accessibilityAddTraits(.isHeader)
 
-                NearbyPlacesCarousel(places: cards, mediaPolicy: mediaPolicy, onSelect: onSelectPlace)
+            Button(action: coordinator.dismissSheet) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(Color.brandCloseIcon)
+                    .frame(width: 32, height: 32)
+                    .contentShape(.rect)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("itinerary.detail.close")
+        }
+    }
+
+    @ViewBuilder
+    private func completersRow(for detail: ItineraryDetail) -> some View {
+        let routeStops = detail.routeStops
+        if detail.completedCount > 0 || !routeStops.isEmpty {
+            HStack(alignment: .center, spacing: 12) {
+                if detail.completedCount > 0 {
+                    ItineraryCompletersView(
+                        avatars: detail.recentCompleters,
+                        completedCount: detail.completedCount
+                    )
+                }
+                Spacer(minLength: 0)
+                if !routeStops.isEmpty {
+                    viewRouteButton(stops: routeStops)
+                }
+            }
+        }
+    }
+
+    private func viewRouteButton(stops: [ItineraryDetailPlace]) -> some View {
+        Button {
+            if let url = ItineraryRouteLink.url(for: stops) {
+                openURL(url)
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Text("itinerary.detail.viewRoute")
+                    .typography(.subtitle2)
+                Image(systemName: "arrow.up.right")
+                    .font(.caption.weight(.semibold))
+                    .accessibilityHidden(true)
+            }
+            .foregroundStyle(Color.brandOrange600)
+            .contentShape(.rect.inset(by: -10))
+        }
+        .buttonStyle(.plain)
+    }
+
+    /// What the roteiro asks for. A free route says it with the category and how many places; a fixed one has a
+    /// text of its own.
+    @ViewBuilder
+    private func goal(for detail: ItineraryDetail) -> some View {
+        if detail.routeType == .free, let category = detail.targetCategory, let count = detail.targetCount {
+            let name = Text("“\(L10n.string(category.titleKey))”").bold()
+            Text("itinerary.detail.goal \(count) \(name)")
+                .typography(.body2)
+                .foregroundStyle(.black)
+        } else if !detail.description.isEmpty {
+            Text(detail.description)
+                .typography(.body2)
+                .foregroundStyle(.black)
+        }
+    }
+
+    @ViewBuilder
+    private func suggestedPlaces(for detail: ItineraryDetail) -> some View {
+        let places = detail.suggestedPlaces(from: nearbyPlacesStore.places)
+        if !places.isEmpty {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("itinerary.detail.nearbyPlaces")
+                    .typography(.subtitle1)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.black)
+                    .accessibilityAddTraits(.isHeader)
+
+                HStack(alignment: .top, spacing: 8) {
+                    ForEach(places.enumerated(), id: \.element.id) { index, place in
+                        CheckInPlaceTile(
+                            place: place,
+                            palette: CheckInPlaceTile.Palette(position: index == 0 ? 0 : 1)
+                        ) {
+                            onSelectPlace(place)
+                        }
+                        .frame(height: 124)
+                    }
+                    if places.count == 1 {
+                        Color.clear.frame(maxWidth: .infinity)
+                    }
+                }
             }
         }
     }
 
     @ViewBuilder
-    private var actionButtons: some View {
+    private var actionButton: some View {
         if viewModel.isCurrentItineraryActive {
-            Button(role: .destructive) {
-                Task {
-                    if await viewModel.abandonItinerary() {
-                        abandonCount += 1
-                        onItineraryChanged()
-                        coordinator.dismissSheet()
-                    }
-                }
-            } label: {
-                Text("itinerary.detail.abandonButton")
-                    .frame(maxWidth: .infinity)
-                    .opacity(viewModel.isPerformingAction ? 0 : 1)
+            Button(action: abandon) {
+                actionLabel("itinerary.detail.abandonButton", foreground: Color.brandErrorRed, background: .clear)
+                    .overlay { Capsule().strokeBorder(Color.brandErrorRed, lineWidth: 1) }
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
+            .buttonStyle(.plain)
             .disabled(viewModel.isPerformingAction)
-            .overlay {
-                if viewModel.isPerformingAction {
-                    ProgressView()
-                        .tint(.white)
-                        .transition(.opacity)
-                }
-            }
-            .motion(Motion.suave, value: viewModel.isPerformingAction)
         } else {
-            VStack(alignment: .leading, spacing: 8) {
-                Button {
-                    Task {
-                        if await viewModel.activateItinerary() {
-                            startCount += 1
-                            onItineraryChanged()
-                            coordinator.dismissSheet()
-                        }
-                    }
-                } label: {
-                    Text("itinerary.detail.startButton")
-                        .frame(maxWidth: .infinity)
-                        .opacity(viewModel.isPerformingAction ? 0 : 1)
+            VStack(spacing: 8) {
+                Button(action: start) {
+                    actionLabel(
+                        "itinerary.detail.startButton",
+                        foreground: .white,
+                        background: viewModel.hasDifferentActiveItinerary
+                            ? Color.brandPurple500.opacity(0.4) : Color.brandPurple500
+                    )
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .tint(Color("TabBarSelected"))
+                .buttonStyle(.plain)
                 .disabled(viewModel.isPerformingAction || viewModel.hasDifferentActiveItinerary)
-                .overlay {
-                    if viewModel.isPerformingAction {
-                        ProgressView()
-                            .tint(.white)
-                            .transition(.opacity)
-                    }
-                }
-                .motion(Motion.suave, value: viewModel.isPerformingAction)
 
                 if viewModel.hasDifferentActiveItinerary {
                     Text("itinerary.detail.actionError.alreadyActive")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .typography(.caption1)
+                        .foregroundStyle(Color.brandNeutral600)
+                        .multilineTextAlignment(.center)
                 }
             }
         }
     }
-}
 
-private struct ItineraryObjectiveTagsView: View {
-    let objectives: [String]
-
-    var body: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: 8) {
-                ForEach(objectives, id: \.self) { objective in
-                    Text(objective)
-                        .font(.caption)
-                        .foregroundStyle(Color("PlaceDetailTagGreen"))
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 4)
-                        .background(Color("PlaceDetailTagGreenBackground"), in: .capsule)
-                        .overlay {
-                            Capsule()
-                                .strokeBorder(Color("PlaceDetailTagGreen"))
-                        }
+    /// A pill the width of the sheet that shows a spinner in place of its text while the request runs.
+    private func actionLabel(_ title: LocalizedStringKey, foreground: Color, background: Color) -> some View {
+        Text(title)
+            .typography(.subtitle2)
+            .foregroundStyle(foreground)
+            .opacity(viewModel.isPerformingAction ? 0 : 1)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(background, in: .capsule)
+            .overlay {
+                if viewModel.isPerformingAction {
+                    ProgressView()
+                        .tint(foreground)
+                        .transition(.opacity)
                 }
             }
-        }
-        .scrollIndicators(.hidden)
+            .contentShape(.capsule)
+            .motion(Motion.suave, value: viewModel.isPerformingAction)
     }
-}
 
-private struct ItineraryFreeRouteStampsView: View {
-    let count: Int
-
-    var body: some View {
-        ItineraryStampTrack(slots: (0..<count).map { index in
-            ItineraryStampTrack.Slot(id: "stamp-\(index)", isEarned: true)
-        })
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 8)
-        .background(Color("ItineraryProgressBackground"), in: .rect(cornerRadius: 8))
-    }
-}
-
-private struct ItineraryFixedRouteMapView: View {
-    let places: [ItineraryDetailPlace]
-    @State private var cameraPosition: MapCameraPosition = .automatic
-
-    var body: some View {
-        Map(position: $cameraPosition) {
-            if places.count > 1 {
-                MapPolyline(coordinates: places.map(\.coordinate))
-                    .stroke(Color("TabBarSelected"), lineWidth: 3)
-            }
-            ForEach(places) { place in
-                Annotation(place.name, coordinate: place.coordinate, anchor: .bottom) {
-                    LocationPinView(category: place.category, style: .inCurrentItinerary)
-                }
+    private func start() {
+        guard !viewModel.hasDifferentActiveItinerary else { return }
+        Task {
+            if await viewModel.activateItinerary() {
+                startCount += 1
+                onItineraryChanged()
+                coordinator.dismissSheet()
             }
         }
-        .mapStyle(.standard(elevation: .flat))
-        .frame(height: 173)
-        .clipShape(.rect(cornerRadius: 8))
-        .allowsHitTesting(false)
-        .onAppear {
-            cameraPosition = .region(region(for: places))
-        }
     }
 
-    private func region(for places: [ItineraryDetailPlace]) -> MKCoordinateRegion {
-        guard !places.isEmpty else {
-            return MKCoordinateRegion(
-                center: CLLocationCoordinate2D(latitude: -25.43, longitude: -49.27),
-                span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-            )
-        }
-
-        let latitudes = places.map(\.latitude)
-        let longitudes = places.map(\.longitude)
-        let minLat = latitudes.min() ?? places[0].latitude
-        let maxLat = latitudes.max() ?? places[0].latitude
-        let minLng = longitudes.min() ?? places[0].longitude
-        let maxLng = longitudes.max() ?? places[0].longitude
-        let center = CLLocationCoordinate2D(
-            latitude: (minLat + maxLat) / 2,
-            longitude: (minLng + maxLng) / 2
-        )
-        let span = MKCoordinateSpan(
-            latitudeDelta: max(0.01, (maxLat - minLat) * 1.6 + 0.01),
-            longitudeDelta: max(0.01, (maxLng - minLng) * 1.6 + 0.01)
-        )
-        return MKCoordinateRegion(center: center, span: span)
-    }
-}
-
-private struct ItineraryPlaceListView: View {
-    let places: [ItineraryDetailPlace]
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 8) {
-            Image(systemName: "mappin.and.ellipse")
-                .font(.caption)
-                .accessibilityHidden(true)
-
-            VStack(alignment: .leading, spacing: 4) {
-                ForEach(places) { place in
-                    Text(place.name)
-                        .font(.caption)
-                        .foregroundStyle(.primary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
+    private func abandon() {
+        Task {
+            if await viewModel.abandonItinerary() {
+                abandonCount += 1
+                onItineraryChanged()
+                coordinator.dismissSheet()
             }
         }
-        .padding(8)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color("ItineraryPlaceListBackground"), in: .rect(cornerRadius: 8))
-    }
-}
-
-private extension ItineraryDetailPlace {
-    var coordinate: CLLocationCoordinate2D {
-        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 }
 

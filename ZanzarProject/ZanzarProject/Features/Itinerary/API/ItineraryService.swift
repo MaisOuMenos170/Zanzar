@@ -16,6 +16,8 @@ struct ItineraryListItemAPIResponse: Decodable, Sendable {
     let placesCount: Int
     let completedCount: Int
     let coverImageUrl: String?
+    /// Older backends do not send it; a theme this app does not know is skipped instead of failing the list.
+    let themes: [String]?
 
     func makeItinerary() -> Itinerary {
         Itinerary(
@@ -25,7 +27,8 @@ struct ItineraryListItemAPIResponse: Decodable, Sendable {
             routeType: routeType,
             placesCount: placesCount,
             completedCount: completedCount,
-            coverImageURL: coverImageUrl
+            coverImageURL: coverImageUrl,
+            themes: (themes ?? []).compactMap(ItineraryTheme.init(rawValue:))
         )
     }
 }
@@ -43,6 +46,8 @@ struct ItineraryDetailAPIResponse: Decodable, Sendable {
     let completedCount: Int
     let coverImageUrl: String?
     let places: [Place]
+    /// Older backends do not send it.
+    let recentCompleters: [AvatarAPIResponse]?
 
     struct Place: Decodable, Sendable {
         let placeId: String
@@ -75,7 +80,8 @@ struct ItineraryDetailAPIResponse: Decodable, Sendable {
                     longitude: $0.location.lng,
                     category: $0.category.map { ZanzarPlaceCategory(rawCategory: $0) } ?? .unknown
                 )
-            }
+            },
+            recentCompleters: (recentCompleters ?? []).map { $0.makeAvatar() }
         )
     }
 }

@@ -5,7 +5,6 @@ struct ItineraryListView: View {
     let sheetCoordinator: AppCoordinator
 
     @State private var viewModel = ItineraryListViewModel()
-    @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
     /// The list rises in once when it first loads, not each time the tab is shown again.
     @State private var contentShown = false
     @Environment(AppCoordinator.self) private var coordinator
@@ -40,7 +39,7 @@ struct ItineraryListView: View {
                 listContent
             }
         }
-        .background(Color.brandBlue50)
+        .background(Color.profileBackground)
         .toolbar(.hidden, for: .navigationBar)
         .task {
             // The map normally has the places already; this only fetches if it has not, or they went stale.
@@ -69,8 +68,10 @@ struct ItineraryListView: View {
         }
     }
 
-    private var itineraryPlaces: [PlaceDetailNearbyPlace] {
-        viewModel.activeItinerary?.placeCards(from: nearbyPlacesStore.places) ?? []
+    /// How far the next stop of the roteiro in progress is, when the map already knows that place.
+    private func nextStopDistance(of itinerary: ActiveItinerary) -> String? {
+        guard let placeID = ActiveItineraryProgress(itinerary).nextPlaceID else { return nil }
+        return nearbyPlacesStore.places.first { $0.id == placeID }?.roundedDistanceText
     }
 
     /// The places closest to the user, nearest first.
@@ -106,8 +107,10 @@ struct ItineraryListView: View {
 
                 if !viewModel.itineraries.isEmpty {
                     VStack(alignment: .leading, spacing: 16) {
-                        sectionTitle("itinerary.list.sections.featured")
-                            .entrance(contentShown, order: 2)
+                        SectionHeader(title: "itinerary.list.sections.featured") {
+                            coordinator.push(.allItineraries)
+                        }
+                        .entrance(contentShown, order: 2)
 
                         VStack(spacing: 8) {
                             let featured = viewModel.itineraries.prefix(Self.featuredCount)
@@ -123,22 +126,12 @@ struct ItineraryListView: View {
 
                 if !nearbyPlaces.isEmpty {
                     VStack(alignment: .leading, spacing: 16) {
-                        sectionTitle("itinerary.list.sections.nearby")
+                        SectionHeader(title: "itinerary.list.sections.nearby") {
+                            coordinator.push(.allPlaces)
+                        }
                         nearbyGrid
                     }
                     .entrance(contentShown, order: 4)
-                }
-
-                if !itineraryPlaces.isEmpty {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("itinerary.list.sections.places")
-                            .font(.callout.bold())
-
-                        NearbyPlacesCarousel(places: itineraryPlaces, mediaPolicy: mediaPolicy) { place in
-                            coordinator.push(.placeDetail(place))
-                        }
-                    }
-                    .entrance(contentShown, order: 5)
                 }
             }
             .padding(.horizontal, 16)
@@ -160,7 +153,10 @@ struct ItineraryListView: View {
                 sectionTitle("itinerary.list.header.title")
                     .popoverTip(startItineraryTip, arrowEdge: .top)
 
-                ActiveItineraryProgressCard(activeItinerary: activeItinerary) {
+                ActiveItineraryProgressCard(
+                    activeItinerary: activeItinerary,
+                    nextStopDistance: nextStopDistance(of: activeItinerary)
+                ) {
                     sheetCoordinator.present(sheet: .itineraryDetail(slug: activeItinerary.slug))
                     CheckInStartItineraryTip.hasStartedItinerary = true
                 }
