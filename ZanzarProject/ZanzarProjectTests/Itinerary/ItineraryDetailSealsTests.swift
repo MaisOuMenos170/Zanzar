@@ -105,6 +105,41 @@ struct ItineraryDetailSealsTests {
         #expect(model.sealSlots.allSatisfy { $0.category == .park })
     }
 
+    @Test("the seals match the places a fixed route asks for")
+    func sealsMatchFixedPlaces() async {
+        let places = (0..<5).map {
+            ItineraryDetailPlace(placeID: "p\($0)", name: "P\($0)", latitude: 0, longitude: 0, category: .park)
+        }
+        let model = await loadedModel(detail: Self.detail(routeType: .fixed, places: places), active: nil)
+
+        #expect(model.sealSlots.count == 5)
+        #expect(model.detail?.requiredStops == 5)
+    }
+
+    @Test("the seals match the number of places a free route asks for")
+    func sealsMatchFreeTarget() async {
+        let model = await loadedModel(
+            detail: Self.detail(routeType: .free, targetCategory: .park, placesCount: 5),
+            active: nil
+        )
+
+        #expect(model.sealSlots.count == 5)
+    }
+
+    @Test("a roteiro in progress with fewer stops listed still shows every seal it asks for")
+    func progressShorterThanRequired() async {
+        let places = (0..<4).map {
+            ItineraryDetailPlace(placeID: "p\($0)", name: "P\($0)", latitude: 0, longitude: 0, category: .park)
+        }
+        let model = await loadedModel(
+            detail: Self.detail(routeType: .fixed, places: places),
+            active: Self.active([("p0", true)])
+        )
+
+        #expect(model.sealSlots.count == 4)
+        #expect(model.sealSlots.map(\.isEarned) == [true, false, false, false])
+    }
+
     // MARK: - Places near the roteiro
 
     private static func mapPlace(

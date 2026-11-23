@@ -9,6 +9,15 @@ struct ItinerarySealSlot: Identifiable, Hashable {
 }
 
 extension ItineraryDetail {
+    /// How many places the roteiro asks the user to visit, which is how many seals its ticket has: the places of a
+    /// fixed route, the number of places a free route asks for.
+    var requiredStops: Int {
+        switch routeType {
+        case .free: targetCount ?? placesCount
+        case .fixed: places.isEmpty ? placesCount : places.count
+        }
+    }
+
     /// The seal of the stop at `index`: the category of the roteiro for a free route, the category of that place
     /// for a fixed one.
     func sealCategory(forPlaceID placeID: String?, at index: Int) -> ZanzarPlaceCategory {
@@ -50,8 +59,10 @@ extension ItineraryDetailViewModel {
     /// The seals of the ticket: the progress of the roteiro the user follows, or empty seals when it is not theirs yet.
     var sealSlots: [ItinerarySealSlot] {
         guard let detail else { return [] }
+        let required = detail.requiredStops
+        var slots: [ItinerarySealSlot] = []
         if let activeItinerary, isCurrentItineraryActive {
-            return activeItinerary.places.enumerated().map { index, slot in
+            slots = activeItinerary.places.enumerated().map { index, slot in
                 ItinerarySealSlot(
                     id: index,
                     category: detail.sealCategory(forPlaceID: slot.placeID, at: index),
@@ -59,9 +70,13 @@ extension ItineraryDetailViewModel {
                 )
             }
         }
-        return (0..<detail.placesCount).map { index in
-            ItinerarySealSlot(id: index, category: detail.sealCategory(forPlaceID: nil, at: index), isEarned: false)
+        // Whatever the roteiro asks for and the progress did not list yet is still a seal to earn.
+        let known = slots.count
+        for index in known..<max(known, required) {
+            let category = detail.sealCategory(forPlaceID: nil, at: index)
+            slots.append(ItinerarySealSlot(id: index, category: category, isEarned: false))
         }
+        return slots
     }
 
     var collectedCount: Int {

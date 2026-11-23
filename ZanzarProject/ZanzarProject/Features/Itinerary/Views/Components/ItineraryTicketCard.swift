@@ -1,11 +1,15 @@
 import SwiftUI
 
 /// The seals of a roteiro on a ticket: a card with a notch on each side, a row of seals (earned or still a "?"),
-/// how many were collected and the tags of the roteiro (Figma "checkin v2", node 2313:6941).
+/// how many were collected and the tags of the roteiro.
+///
+/// A roteiro the user has not started is a dashed outline (Figma "checkin v2", node 2676:1603). Once it is
+/// followed the ticket is filled, and the more stops are done the stronger its color gets.
 struct ItineraryTicketCard: View {
     let slots: [ItinerarySealSlot]
     let collectedCount: Int
     let tags: [String]
+    var isActive = false
 
     private static let slotSize: CGFloat = 44.787
     private static let earnedSealSize: CGFloat = 55
@@ -43,7 +47,16 @@ struct ItineraryTicketCard: View {
         .padding(.horizontal, 16.5)
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity, minHeight: 149, alignment: .leading)
-        .background {
+        .background { background }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text("itinerary.stampTrack.progress \(collectedCount) \(slots.count)"))
+    }
+
+    @ViewBuilder
+    private var background: some View {
+        if isActive {
+            let emphasis = Self.emphasis(collected: collectedCount, total: slots.count)
+            let tint = Self.tint(emphasis: emphasis)
             TicketShape()
                 .fill(Self.base)
                 .overlay {
@@ -51,7 +64,7 @@ struct ItineraryTicketCard: View {
                         .fill(
                             LinearGradient(
                                 stops: [
-                                    .init(color: Self.tint.opacity(0.2), location: 0.0699),
+                                    .init(color: tint.opacity(0.2 + 0.6 * emphasis), location: 0.0699),
                                     .init(color: .white.opacity(0.2), location: 0.99885)
                                 ],
                                 startPoint: UnitPoint(x: 0.952, y: -0.185),
@@ -59,9 +72,21 @@ struct ItineraryTicketCard: View {
                             )
                         )
                 }
+        } else {
+            Image(.itineraryTicketDashed)
+                .resizable()
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("itinerary.stampTrack.progress \(collectedCount) \(slots.count)"))
+    }
+
+    /// How far along the roteiro is, from 0 (nothing done) to 1 (everything done).
+    static func emphasis(collected: Int, total: Int) -> Double {
+        guard total > 0 else { return 0 }
+        return min(max(Double(collected) / Double(total), 0), 1)
+    }
+
+    /// The lavender of the ticket, moving toward the app's purple as the roteiro gets done.
+    private static func tint(emphasis: Double) -> Color {
+        lavender.mix(with: Color.brandPurple500, by: emphasis * 0.7)
     }
 
     private func seal(for slot: ItinerarySealSlot) -> some View {
@@ -69,14 +94,14 @@ struct ItineraryTicketCard: View {
             if slot.isEarned {
                 PlaceCategorySealView(category: slot.category, state: .earned, size: Self.earnedSealSize)
             } else {
-                CheckInUnknownSealView(size: Self.slotSize)
+                CheckInUnknownSealView(size: Self.slotSize, style: isActive ? .onColor : .onTicket)
             }
         }
         .frame(width: Self.slotSize, height: Self.slotSize)
     }
 
     private static let base = Color(red: 242 / 255, green: 243 / 255, blue: 1)
-    private static let tint = Color(red: 161 / 255, green: 162 / 255, blue: 1)
+    private static let lavender = Color(red: 161 / 255, green: 162 / 255, blue: 1)
 }
 
 /// A rounded card with a half circle cut out of the middle of each side.

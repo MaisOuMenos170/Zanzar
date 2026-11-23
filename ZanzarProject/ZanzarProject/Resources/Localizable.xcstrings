@@ -1410,6 +1410,23 @@
         }
       }
     },
+    "itinerary.detail.completedByNobody" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No one has completed this route yet"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguém completou esse roteiro ainda"
+          }
+        }
+      }
+    },
     "itinerary.detail.completedCount %lld" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4928,6 +4945,23 @@
         }
       }
     },
+    "placeLink.openError" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not open this place. Try again."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível abrir este lugar. Tente de novo."
+          }
+        }
+      }
+    },
     "places.all.count %lld" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6139,9 +6173,6 @@
 
     },
     "placeSuggestion.refusedAlert.title" : {
-
-    },
-    "placeSuggestion.results.attribution" : {
 
     },
     "placeSuggestion.search.empty.message" : {
@@ -12447,40 +12478,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lero"
-          }
-        }
-      }
-    },
-    "placeLink.openError" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Could not open this place. Try again."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível abrir este lugar. Tente de novo."
-          }
-        }
-      }
-    },
-    "itinerary.detail.completedByNobody" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No one has completed this route yet"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ninguém completou esse roteiro ainda"
           }
         }
       }

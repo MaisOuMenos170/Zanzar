@@ -63,7 +63,8 @@ struct ItineraryDetailView: View {
                     ItineraryTicketCard(
                         slots: viewModel.sealSlots,
                         collectedCount: viewModel.collectedCount,
-                        tags: detail.objectives
+                        tags: detail.objectives,
+                        isActive: viewModel.isCurrentItineraryActive
                     )
                     .entrance(contentShown, order: 1)
                 }
