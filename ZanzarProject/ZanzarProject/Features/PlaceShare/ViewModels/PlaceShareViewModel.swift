@@ -128,10 +128,9 @@ final class PlaceShareViewModel {
         let trimmedNote = note.trimmingCharacters(in: .whitespacesAndNewlines)
         let text = String(trimmedNote.prefix(PlaceSuggestionLimits.noteMaxLength))
         do {
-            if let selectedPlace {
-                phase = .done(PlaceSuggestionOutcome(try await service.submit(selectedPlace, note: text)))
-            } else if let location = manualLocation {
-                try await service.submit(PlaceSuggestion(location: location, note: text))
+            if let suggestion = suggestion(note: text) {
+                try await service.submit(suggestion)
+                // The backend takes this shape of request for a person to review, so there is no instant verdict.
                 phase = .done(.success)
             }
         } catch {
@@ -144,6 +143,23 @@ final class PlaceShareViewModel {
                 phase = .ready
             }
         }
+    }
+
+    /// The place the person confirmed, or the shared address and position when none was found on the map.
+    private func suggestion(note: String) -> PlaceSuggestion? {
+        if let selectedPlace {
+            let (latitude, longitude) = (selectedPlace.latitude, selectedPlace.longitude)
+            let address = selectedPlace.address ?? hint.address
+                ?? SuggestedLocation.coordinateText(latitude: latitude, longitude: longitude)
+            let location = SuggestedLocation(
+                latitude: selectedPlace.latitude,
+                longitude: selectedPlace.longitude,
+                address: address
+            )
+            return PlaceSuggestion(name: selectedPlace.name ?? hint.name ?? "", location: location, note: note)
+        }
+        guard let location = manualLocation else { return nil }
+        return PlaceSuggestion(name: hint.name ?? "", location: location, note: note)
     }
 
     // MARK: - Looking the place up
@@ -167,7 +183,7 @@ final class PlaceShareViewModel {
                 return
             } catch {
                 guard !PlaceSuggestionErrorMapper.isCancellation(error) else { return }
-                searchErrorMessage = PlaceSuggestionErrorMapper.searchMessage(for: error)
+                searchErrorMessage = PlaceSuggestionErrorMapper.searchMessage()
                 return
             }
         }
