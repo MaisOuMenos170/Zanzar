@@ -90,7 +90,7 @@ As três só funcionam depois que o PR 4 do LeroSite for mesclado e o Railway pu
 **Pronto:** ícone novo, privacy manifest (app, widget, share), deployment target 26.0, `ITSAppUsesNonExemptEncryption = NO`, links universais (AASA do backend ok), exclusão de conta no app, política de privacidade no app, versão 1.0, 746 testes, build de Release, App Compliance sem pendência, rascunho de acessibilidade (Larger Text), App Privacy publicado, classificação 13+, direitos de conteúdo, contato da revisão, notas da revisão, URLs de suporte/marketing/privacidade preenchidas, liberação automática.
 
 **Falta (nenhum item é código):**
-1. Terminar o domínio `lero.social` no Railway: o DNS já aponta para o Railway, mas o certificado ainda é o genérico (`*.up.railway.app`), então https://lero.social/privacidade e /suporte não abrem.
-2. ASC: subir as 5 screenshots (0 de 10 hoje), senha da conta de demonstração, anexar o vídeo, trocar a build 1 pela nova, conferir o preço "Grátis" (o campo Current Price apareceu em branco) e a disponibilidade (hoje 1 país).
+1. ~~Domínio `lero.social`~~ abre no navegador do Lucas (home, /privacidade e /suporte) em 2026-11-23 19:30.
+2. ASC: subir as 5 screenshots (0 de 10 hoje), (senha e vídeo já colocados pelo Lucas), trocar a build 1 pela nova, (preço já está Grátis em todas as regiões; disponibilidade: só Brasil, "Available on App Release").
 3. Mesclar #112 e #113 (CI ainda rodando) para o Xcode Cloud gerar a build. O workflow do Xcode Cloud não pôde ser conferido pelo navegador embutido.
 4. Opcional: localização em inglês no ASC, descrição mais longa.
