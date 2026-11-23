@@ -11,7 +11,6 @@ struct LocationMapView: View {
     @State private var viewModel: LocationMapViewModel
     @State private var searchViewModel: DiscoverSearchViewModel
     @FocusState private var isSearchFocused: Bool
-    @State private var ratingPrompt = RatingPromptViewModel()
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(ToastManager.self) private var toasts
     @Environment(\.scenePhase) private var scenePhase
@@ -64,29 +63,6 @@ struct LocationMapView: View {
                     .background(.regularMaterial, in: .rect(cornerRadius: 12))
             }
         }
-        .overlay {
-            // The sheet slides up and its dimming fades in by themselves (see `PlaceSuggestionSheetCard`).
-            if ratingPrompt.isPresented, let pendingRating = ratingPrompt.pendingRating {
-                RatingPromptView(
-                    placeID: pendingRating.placeID,
-                    placeName: pendingRating.placeName,
-                    categoryTitleKey: pendingRating.categoryTitleKey,
-                    selectedTag: ratingPrompt.selectedTag,
-                    isSubmitting: ratingPrompt.isSubmitting,
-                    errorMessage: ratingPrompt.errorMessage,
-                    onSelect: { ratingPrompt.select($0) },
-                    onSubmit: { Task { await ratingPrompt.submit() } },
-                    onDismiss: { ratingPrompt.dismiss() }
-                )
-            }
-        }
-        // The sheet covers the whole screen, tab bar included, as in the design.
-        .toolbar(ratingPrompt.isPresented ? .hidden : .automatic, for: .tabBar)
-        .alert("ratingPrompt.success.title", isPresented: $ratingPrompt.showsSuccess) {
-            Button("ratingPrompt.success.confirm") {}
-        } message: {
-            Text("ratingPrompt.success.message")
-        }
         .overlay(alignment: .top) {
             discoverControls
         }
@@ -94,7 +70,6 @@ struct LocationMapView: View {
             TipView(mapPinsTip, arrowEdge: .top)
                 .padding(.bottom, 100)
         }
-        .animation(reduceMotion ? nil : .default, value: ratingPrompt.isPresented)
         .haptic(.toqueSuave, trigger: pinTaps)
         // Kept for the back button of the screens pushed from here; the bar itself is hidden because the
         // search bar and the suggestion button float over the map.
@@ -108,13 +83,9 @@ struct LocationMapView: View {
             await viewModel.load()
         }
         // The map stays mounted underneath pushed screens, so neither `.task` nor `scenePhase` fires when the
-        // user pops back from a check-in. Keying on visibility restarts the monitor on pop and on foreground.
-        .task(id: isMonitoringRating) {
-            guard isMonitoringRating else { return }
-            await ratingPrompt.monitorLeaving()
-            // `monitorLeaving` swallows cancellation and returns. A reload started after that
-            // is the request URLSession then cancels, which used to toast "couldn't load places".
-            guard !Task.isCancelled, isMonitoringRating else { return }
+        // user pops back from a check-in. Keying on visibility reloads the pins on pop and on foreground.
+        .task(id: isMapVisible) {
+            guard isMapVisible else { return }
             await viewModel.reloadPlaces()
         }
         // Another screen (or the tab bar) may have refreshed the shared places while the map was out of sight.
@@ -190,7 +161,7 @@ struct LocationMapView: View {
         }
     }
 
-    private var isMonitoringRating: Bool {
+    private var isMapVisible: Bool {
         coordinator.path.isEmpty && scenePhase == .active
     }
 

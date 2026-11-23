@@ -50,7 +50,7 @@ struct PlaceDetailCheckInButton: View {
                     Text(titleKey)
                         .opacity(isLoading ? 0 : 1)
                 }
-                .buttonStyle(AuthPrimaryButtonStyle(background: .brandBlue500))
+                .buttonStyle(AuthPrimaryButtonStyle(background: .brandPurple500))
                 .disabled(isLoading)
                 .overlay {
                     if isLoading {

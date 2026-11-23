@@ -10,16 +10,19 @@ struct PlaceDetailDirectionsButton: View {
     @State private var pendingNavigationApp: PlaceDetailNavigationApp?
 
     var body: some View {
+        // "Ver rota ↗" in coral, the link on the right of the title (Figma node 2005:9655).
         Button(action: showDirections) {
-            Label("placeDetail.directionsButton.title", systemImage: "arrow.up.forward")
-                .font(.body)
-                .fontWeight(.medium)
-                .foregroundStyle(.primary)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 8)
+            HStack(spacing: 4) {
+                Text("placeDetail.directionsButton.title")
+                Image(systemName: "arrow.up.forward")
+                    .accessibilityHidden(true)
+            }
+            .typography(.subtitle2)
+            .foregroundStyle(Color.brandCoral500)
+            .padding(.vertical, 8)
+            .contentShape(.rect)
         }
-        .buttonStyle(.glass)
-        .buttonBorderShape(.capsule)
+        .buttonStyle(.plain)
         .sheet(item: $navigationAppOptions, onDismiss: openPendingNavigationApp) { options in
             PlaceDetailNavigationAppsSheet(apps: options.apps) { app in
                 pendingNavigationApp = app

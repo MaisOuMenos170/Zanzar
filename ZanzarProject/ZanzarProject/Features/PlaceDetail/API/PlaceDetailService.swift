@@ -73,9 +73,18 @@ nonisolated struct PlaceDetailAPIResponse: Decodable, Sendable {
 
 nonisolated struct PlaceDetailOpeningHoursResponse: Decodable, Sendable {
     let openNow: Bool?
+    /// The weekly periods, from which "open until 18h" is worked out. Malformed periods are not fatal here.
+    let periods: [PlaceOpeningHoursAPIResponse.PeriodResponse]?
 
     enum CodingKeys: String, CodingKey {
         case openNow = "open_now"
+        case periods
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        openNow = try container.decodeIfPresent(Bool.self, forKey: .openNow)
+        periods = try? container.decodeIfPresent([PlaceOpeningHoursAPIResponse.PeriodResponse].self, forKey: .periods)
     }
 }
 

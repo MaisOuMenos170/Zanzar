@@ -5,6 +5,7 @@ struct PlaceDetailHeroImage: View {
     let mediaPolicy: PlaceMediaAccessPolicy
     /// What VoiceOver says for the photo. `nil` keeps the photo out of the accessibility tree.
     var accessibilityLabel: String?
+    var height: CGFloat = 191
 
     var body: some View {
         image
@@ -38,7 +39,7 @@ struct PlaceDetailHeroImage: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 191)
+        .frame(height: height)
         .clipShape(.rect(cornerRadius: 16))
     }
 }
