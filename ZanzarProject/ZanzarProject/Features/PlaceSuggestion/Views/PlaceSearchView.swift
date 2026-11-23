@@ -19,8 +19,7 @@ struct PlaceSearchView: View {
             .scrollBounceBehavior(.basedOnSize)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.brandNeutral50)
-            .navigationTitle("placeSuggestion.search.title")
-            .navigationBarTitleDisplayMode(.inline)
+            .screenTitle("placeSuggestion.search.title")
             .searchable(
                 text: $viewModel.query,
                 isPresented: $isSearchActive,

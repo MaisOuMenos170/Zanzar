@@ -31,7 +31,7 @@ struct ProfileView: View {
                 ToolbarItem(placement: .principal) {
                     Text(viewModel.profile?.summary.name ?? L10n.string("mainTab.profileTab.title"))
                         .typography(.headline5)
-                        .foregroundStyle(Color.black)
+                        .foregroundStyle(Color.brandNeutral950)
                         .lineLimit(1)
                         .accessibilityAddTraits(.isHeader)
                 }

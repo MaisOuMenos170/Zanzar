@@ -45,8 +45,7 @@ struct ReportPhotoSheet: View {
                     Text(errorMessage).foregroundStyle(.red)
                 }
             }
-            .navigationTitle("userPhotos.report.title")
-            .navigationBarTitleDisplayMode(.inline)
+            .screenTitle("userPhotos.report.title")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("userPhotos.report.cancelButton.title") { dismiss() }

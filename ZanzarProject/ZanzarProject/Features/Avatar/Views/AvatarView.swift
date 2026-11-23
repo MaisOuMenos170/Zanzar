@@ -6,8 +6,7 @@ struct AvatarView: View {
     var body: some View {
         content
             .background(Color(.systemBackground))
-            .navigationTitle("avatar.navigationTitle.title")
-            .navigationBarTitleDisplayMode(.inline)
+            .screenTitle("avatar.navigationTitle.title")
             .task { await viewModel.load() }
             .alert("avatar.createErrorAlert.title", isPresented: $viewModel.createFailed) {
                 Button("avatar.createErrorAlert.dismissButton.title", role: .cancel) {}

@@ -43,16 +43,7 @@ struct ListScreenScaffold<Filters: View, Content: View>: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .background(Color.profileBackground)
-        .navigationTitle(title)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text(title)
-                    .typography(.subtitle1)
-                    .foregroundStyle(Color.titleBrown)
-                    .accessibilityAddTraits(.isHeader)
-            }
-        }
+        .screenTitle(title)
     }
 }
 
