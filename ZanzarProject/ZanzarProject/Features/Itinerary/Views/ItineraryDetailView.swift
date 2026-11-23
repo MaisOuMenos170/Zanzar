@@ -50,79 +50,80 @@ struct ItineraryDetailView: View {
         }
     }
 
+    /// Spacing as in the design: 24 between the blocks, 16 between the text and the ticket, and the title and
+    /// the text inset 8 more than the cards.
     private func detailContent(for detail: ItineraryDetail) -> some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                header(for: detail)
-                    .entrance(contentShown, order: 0)
-
+            VStack(alignment: .leading, spacing: 24) {
                 VStack(alignment: .leading, spacing: 16) {
-                    completersRow(for: detail)
-                    goal(for: detail)
-                }
-                .entrance(contentShown, order: 1)
+                    intro(for: detail)
+                        .padding(.horizontal, 8)
+                        .entrance(contentShown, order: 0)
 
-                ItineraryTicketCard(
-                    slots: viewModel.sealSlots,
-                    collectedCount: viewModel.collectedCount,
-                    tags: detail.objectives
-                )
-                .entrance(contentShown, order: 2)
+                    ItineraryTicketCard(
+                        slots: viewModel.sealSlots,
+                        collectedCount: viewModel.collectedCount,
+                        tags: detail.objectives
+                    )
+                    .entrance(contentShown, order: 1)
+                }
 
                 suggestedPlaces(for: detail)
-                    .entrance(contentShown, order: 3)
+                    .entrance(contentShown, order: 2)
             }
             .padding(.horizontal, 16)
-            .padding(.top, 8)
-            .padding(.bottom, 16)
             .onAppear {
                 contentShown = true
             }
         }
         .scrollIndicators(.hidden)
-        .safeAreaInset(edge: .bottom) {
+        // The close button floats over the top of the sheet, on the row of the title, as in the design.
+        .ignoresSafeArea(edges: .top)
+        .scrollEdgeEffectHidden(true, for: .top)
+        .contentMargins(.top, 28, for: .scrollContent)
+        .safeAreaInset(edge: .bottom, spacing: 24) {
             actionButton
                 .padding(.horizontal, 16)
-                .padding(.bottom, 16)
-                .padding(.top, 8)
+                .padding(.bottom, 8)
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(role: .close) {
+                    coordinator.dismissSheet()
+                }
+            }
         }
     }
 
-    private func header(for detail: ItineraryDetail) -> some View {
-        HStack(alignment: .top, spacing: 12) {
+    /// The name, who finished the roteiro and what it asks for.
+    private func intro(for detail: ItineraryDetail) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
             Text(detail.name)
                 .font(.system(.title2, design: .rounded, weight: .bold))
                 .foregroundStyle(Color.brandSheetTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                // Leaves room for the close button.
+                .padding(.trailing, 40)
+                .padding(.top, 4)
                 .accessibilityAddTraits(.isHeader)
 
-            Button(action: coordinator.dismissSheet) {
-                Image(systemName: "xmark")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(Color.brandCloseIcon)
-                    .frame(width: 32, height: 32)
-                    .contentShape(.rect)
+            VStack(alignment: .leading, spacing: 16) {
+                completersRow(for: detail)
+                goal(for: detail)
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("itinerary.detail.close")
         }
     }
 
-    @ViewBuilder
     private func completersRow(for detail: ItineraryDetail) -> some View {
-        let routeStops = detail.routeStops
-        if detail.completedCount > 0 || !routeStops.isEmpty {
-            HStack(alignment: .center, spacing: 12) {
-                if detail.completedCount > 0 {
-                    ItineraryCompletersView(
-                        avatars: detail.recentCompleters,
-                        completedCount: detail.completedCount
-                    )
-                }
-                Spacer(minLength: 0)
-                if !routeStops.isEmpty {
-                    viewRouteButton(stops: routeStops)
-                }
+        HStack(alignment: .center, spacing: 12) {
+            ItineraryCompletersView(
+                avatars: detail.recentCompleters,
+                completedCount: detail.completedCount,
+                seed: detail.slug
+            )
+            Spacer(minLength: 0)
+            if !detail.routeStops.isEmpty {
+                viewRouteButton(stops: detail.routeStops)
             }
         }
     }

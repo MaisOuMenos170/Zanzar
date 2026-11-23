@@ -13,10 +13,10 @@ struct ItineraryListView: View {
     // Tips
     private let createItineraryTip = CheckInCreateItineraryTip()
     private let startItineraryTip = CheckInStartItineraryTip()
-
-    /// How many roteiros the home highlights, and how many nearby places it shows (two rows of two).
+    /// How many roteiros the home highlights, and how many nearby places it shows (four rows of two).
+    /// "Ver mais" opens the rest.
     private static let featuredCount = 2
-    private static let nearbyCount = 4
+    private static let nearbyCount = 8
 
     var body: some View {
         @Bindable var viewModel = viewModel

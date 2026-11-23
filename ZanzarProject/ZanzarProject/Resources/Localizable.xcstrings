@@ -12467,6 +12467,23 @@
           }
         }
       }
+    },
+    "itinerary.detail.completedByNobody" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No one has completed this route yet"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguém completou esse roteiro ainda"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
