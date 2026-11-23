@@ -29,6 +29,10 @@ struct MainTabView: View {
     @State private var suggestionBadNewsCount = 0
     @State private var photoStatusNotice = PhotoStatusNoticeViewModel()
     @State private var suggestionStatusNotice = SuggestionStatusNoticeViewModel()
+    /// Asks how the visit went once the user has left a place they checked in at, on whichever screen they are.
+    @State private var ratingPrompt = RatingPromptViewModel()
+    /// A check-in saves a pending rating, so the monitor that waits for the user to leave has to start again.
+    @State private var checkInEvents = 0
     @Environment(ToastManager.self) private var toastManager
     @Environment(\.scenePhase) private var scenePhase
     @Namespace private var placeZoom
@@ -76,6 +80,15 @@ struct MainTabView: View {
         .haptic(.sucesso, trigger: suggestionGoodNewsCount)
         .haptic(.alerta, trigger: suggestionBadNewsCount)
         .environment(nearbyPlaces)
+        .alert("ratingPrompt.success.title", isPresented: $ratingPrompt.showsSuccess) {
+            Button("ratingPrompt.success.confirm") {}
+        } message: {
+            Text("ratingPrompt.success.message")
+        }
+        .task(id: ratingMonitorKey) {
+            guard scenePhase == .active else { return }
+            await ratingPrompt.monitorLeaving()
+        }
         .overlay {
             if proximityPermission.isVisible {
                 ProximityPermissionPromptView(viewModel: proximityPermission)
@@ -93,6 +106,7 @@ struct MainTabView: View {
             itineraryFeed.refresh()
         }
         .onReceive(NotificationCenter.default.publisher(for: AppNotification.checkInDidSucceed)) { _ in
+            checkInEvents += 1
             itineraryFeed.refresh()
             Task { await proximityPermission.momentOccurred(.firstCheckIn) }
         }
@@ -170,8 +184,35 @@ struct MainTabView: View {
                 card(for: sheet)
                     .transition(SheetSlideTransition())
             }
+
+            // The rating sheet is not dismissed by a tap outside: closing it drops the pending rating for good.
+            if ratingPrompt.isPresented, let pendingRating = ratingPrompt.pendingRating {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                    .accessibilityHidden(true)
+                    .transition(.opacity)
+
+                RatingPromptView(
+                    placeID: pendingRating.placeID,
+                    placeName: pendingRating.placeName,
+                    categoryTitleKey: pendingRating.categoryTitleKey,
+                    selectedTag: ratingPrompt.selectedTag,
+                    isSubmitting: ratingPrompt.isSubmitting,
+                    errorMessage: ratingPrompt.errorMessage,
+                    onSelect: { ratingPrompt.select($0) },
+                    onSubmit: { Task { await ratingPrompt.submit() } },
+                    onDismiss: { ratingPrompt.dismiss() }
+                )
+                .transition(SheetSlideTransition())
+            }
         }
         .motion(Motion.cartao, value: coordinator.presentedSheet)
+        .motion(Motion.cartao, value: ratingPrompt.isPresented)
+    }
+
+    /// Changes when the app comes to the foreground or a check-in is made, which is when to look again.
+    private var ratingMonitorKey: Int {
+        (scenePhase == .active ? 1 : 0) + checkInEvents * 2
     }
 
     private func isCard(_ sheet: Sheet) -> Bool {
@@ -225,7 +266,22 @@ struct MainTabView: View {
             loaded: nearbyPlaces.places,
             saved: UserDefaultsProximityAlertStore().loadMonitoredPlaces()
         )
-        guard let place else { return }
+        if let place {
+            open(place)
+            return
+        }
+        // A shared link can name a place the app has not loaded.
+        Task {
+            do {
+                open(try await PlaceLinkService().place(id: placeID))
+            } catch {
+                AppLog.placeDetail.error("Failed to open the place of a link", error: error)
+                toastManager.show(L10n.string("placeLink.openError"), style: .negative)
+            }
+        }
+    }
+
+    private func open(_ place: MapPlace) {
         coordinator.dismissSheet()
         coordinator.popToRoot()
         selectedTab = .discover

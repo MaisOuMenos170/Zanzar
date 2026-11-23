@@ -15,6 +15,7 @@ final class PlaceDetailViewModel {
     private let userCoordinateProvider: @Sendable () async throws -> UserCoordinate
     private let pendingRatingStore: PendingRatingStoring
     private let applePlaceLookup: ApplePlaceLookingUp
+    private let savedPlaces: SavedPlacesServicing
     private var loadGeneration = 0
     /// One id per place for every try of the check-in, so a retry after a lost answer is a replay, not a 409.
     private let checkInMutationID = UUID().uuidString
@@ -30,6 +31,9 @@ final class PlaceDetailViewModel {
     var checkInWarning: CheckInWarning?
     var earnedSealPresentation: EarnedSealPresentation?
     var showsCompletedItineraryAlert = false
+    /// Whether the user bookmarked this place.
+    private(set) var isSaved = false
+    private var isUpdatingSaved = false
     private var pendingCompletedItineraryAlert = false
     /// The place in Apple Maps, for Apple's place card (its photos and reviews). `nil` until found.
     var applePlaceItem: MKMapItem?
@@ -45,7 +49,8 @@ final class PlaceDetailViewModel {
         },
         service: PlaceDetailServicing = PlaceDetailService(),
         pendingRatingStore: PendingRatingStoring? = nil,
-        applePlaceLookup: ApplePlaceLookingUp? = nil
+        applePlaceLookup: ApplePlaceLookingUp? = nil,
+        savedPlaces: SavedPlacesServicing = SavedPlacesService()
     ) {
         self.place = place
         self.userIDProvider = userIDProvider
@@ -53,6 +58,46 @@ final class PlaceDetailViewModel {
         self.service = service
         self.pendingRatingStore = pendingRatingStore ?? UserDefaultsPendingRatingStore()
         self.applePlaceLookup = applePlaceLookup ?? ApplePlaceLookupService.shared
+        self.savedPlaces = savedPlaces
+    }
+
+    /// Whether the place is on the user's saved list. A failure leaves the bookmark empty: it must not hide the place.
+    func loadSavedState() async {
+        guard let userID = userIDProvider() else { return }
+        do {
+            isSaved = try await savedPlaces.savedPlaceIDs(userID: userID).contains(place.id)
+        } catch is CancellationError {
+            return
+        } catch {
+            AppLog.placeDetail.warning("Saved places unavailable placeId=\(place.id)")
+        }
+    }
+
+    /// Flips the bookmark at once and puts it back if the backend refuses.
+    func toggleSaved() async {
+        guard let userID = userIDProvider(), !isUpdatingSaved else { return }
+        isUpdatingSaved = true
+        defer { isUpdatingSaved = false }
+
+        let wasSaved = isSaved
+        isSaved = !wasSaved
+        do {
+            if wasSaved {
+                try await savedPlaces.remove(placeID: place.id, userID: userID)
+            } else {
+                try await savedPlaces.save(placeID: place.id, userID: userID)
+            }
+        } catch is CancellationError {
+            isSaved = wasSaved
+        } catch {
+            isSaved = wasSaved
+            AppLog.placeDetail.error("Failed to update saved place placeId=\(place.id)", error: error)
+            if case APIError.httpStatus(409, _) = error {
+                errorMessage = L10n.string("placeDetail.saveButton.limitReached")
+            } else {
+                errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            }
+        }
     }
 
     /// Finds the place in Apple Maps so its card can show Apple's photos. Safe to call again: it does nothing

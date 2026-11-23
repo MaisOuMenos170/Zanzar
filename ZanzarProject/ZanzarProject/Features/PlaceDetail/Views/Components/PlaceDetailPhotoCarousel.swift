@@ -6,6 +6,7 @@ struct PlaceDetailPhotoCarousel: View {
     let photos: [PlacePhoto]
     let placeName: String
     let mediaPolicy: PlaceMediaAccessPolicy
+    var height: CGFloat = 191
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -16,7 +17,7 @@ struct PlaceDetailPhotoCarousel: View {
         if photos.count > 1 {
             carousel
         } else {
-            PlaceDetailHeroImage(photo: photos.first, mediaPolicy: mediaPolicy)
+            PlaceDetailHeroImage(photo: photos.first, mediaPolicy: mediaPolicy, height: height)
         }
     }
 
@@ -30,7 +31,8 @@ struct PlaceDetailPhotoCarousel: View {
                     PlaceDetailHeroImage(
                         photo: photo,
                         mediaPolicy: mediaPolicy,
-                        accessibilityLabel: accessibilityLabel(forPhotoAt: index)
+                        accessibilityLabel: accessibilityLabel(forPhotoAt: index),
+                        height: height
                     )
                     .containerRelativeFrame(.horizontal) { width, _ in
                         width * Self.photoWidthFraction

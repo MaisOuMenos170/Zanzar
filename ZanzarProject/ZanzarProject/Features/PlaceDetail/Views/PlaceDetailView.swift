@@ -38,7 +38,7 @@ struct PlaceDetailView: View {
                 )
             }
         }
-        .background(.background)
+        .background(Color.profileBackground)
         .navigationBarBackButtonHidden()
         // The screen draws its own header and back button, and takes the whole screen: no system bars.
         .toolbar(.hidden, for: .navigationBar)
@@ -48,6 +48,9 @@ struct PlaceDetailView: View {
             guard viewModel.detail == nil else { return }
             await viewModel.load()
             viewModel.updateCellularImagesPromptIfNeeded(using: mediaPolicy)
+        }
+        .task {
+            await viewModel.loadSavedState()
         }
         .onChange(of: mediaPolicy.usesCellular) { _, _ in
             viewModel.updateCellularImagesPromptIfNeeded(using: mediaPolicy)
@@ -114,6 +117,28 @@ struct PlaceDetailView: View {
         .haptic(.alerta, trigger: viewModel.errorMessage, when: { _, message in message != nil })
     }
 
+    /// The bookmark in the corner of the photo box: white behind it, so it reads over a photo too.
+    private var bookmarkButton: some View {
+        Button {
+            Task { await viewModel.toggleSaved() }
+        } label: {
+            Label(
+                viewModel.isSaved ? "placeDetail.saveButton.remove" : "placeDetail.saveButton.save",
+                systemImage: viewModel.isSaved ? "bookmark.fill" : "bookmark"
+            )
+            .labelStyle(.iconOnly)
+            .font(.system(size: 18, weight: .medium))
+            .foregroundStyle(Color.brandOrange600)
+            .contentTransition(.symbolEffect(.replace))
+            .frame(width: 36, height: 36)
+            .background(Color.brandNeutral50, in: .circle)
+            .contentShape(.circle)
+        }
+        .buttonStyle(.plain)
+        .motion(Motion.suave, value: viewModel.isSaved)
+        .haptic(.selecao, trigger: viewModel.isSaved)
+    }
+
     private func checkInConfirmationMessage(for placeName: String) -> AttributedString {
         var name = AttributedString(placeName)
         name.inlinePresentationIntent = .stronglyEmphasized
@@ -168,16 +193,12 @@ struct PlaceDetailView: View {
 
     private func content(for detail: PlaceDetail) -> some View {
         let header = PlaceDetailHeaderView(
-            name: detail.displayName,
-            distanceText: detail.distanceText,
-            walkingTimeText: detail.walkingTimeText,
-            openingHoursText: detail.openingHoursText,
-            isOpen: detail.isOpen,
-            onBack: { coordinator.pop() }
+            onBack: { coordinator.pop() },
+            shareURL: PlaceLink.url(for: detail.id),
+            shareName: detail.displayName
         )
-        .padding(.top, 8)
-        .padding(.bottom, 12)
-        .background(Color(.systemBackground))
+            .padding(.top, 8)
+            .padding(.bottom, 16)
         let scrollsHeader = dynamicTypeSize.isAccessibilitySize
 
         return VStack(alignment: .leading, spacing: 0) {
@@ -201,13 +222,39 @@ struct PlaceDetailView: View {
     private func detailBody(for detail: PlaceDetail) -> some View {
         VStack(alignment: .leading, spacing: 24) {
             VStack(alignment: .leading, spacing: 16) {
-                PlaceDetailHeroSection(
-                    photos: viewModel.displayedPhotos,
-                    placeName: detail.displayName,
-                    tags: detail.tags,
-                    mediaPolicy: mediaPolicy
+                PlaceDetailTitleRow(
+                    name: detail.displayName,
+                    distanceText: detail.distanceText,
+                    openingHoursText: detail.openingHoursText,
+                    isOpen: detail.isOpen,
+                    latitude: detail.latitude,
+                    longitude: detail.longitude
                 )
                 .entrance(contentShown, order: 0)
+                .popoverTip(directionsTip, arrowEdge: .top)
+
+                PlacePhotoCard(
+                    tags: detail.tags.map(\.label),
+                    showsPhotos: !viewModel.displayedPhotos.isEmpty,
+                    addPhotoHint: detail.hasCheckedIn
+                        ? "placeDetail.addPhotoButton.verifiedHint"
+                        : "placeDetail.addPhotoButton.hint",
+                    onAddPhoto: {
+                        showsPhotoUpload = true
+                        PlaceDetailAddPhotoTip.hasViewedPlaceDetail = true
+                    },
+                    accessory: { bookmarkButton },
+                    photos: {
+                        PlaceDetailPhotoCarousel(
+                            photos: viewModel.displayedPhotos,
+                            placeName: detail.displayName,
+                            mediaPolicy: mediaPolicy,
+                            height: .placePhotoCardHeight
+                        )
+                    }
+                )
+                .entrance(contentShown, order: 1)
+                .popoverTip(addPhotoTip, arrowEdge: .top)
 
                 PlaceDetailCheckInButton(
                     hasCheckedIn: detail.hasCheckedIn,
@@ -218,17 +265,10 @@ struct PlaceDetailView: View {
                 }
                 .entrance(contentShown, order: 1)
                 .popoverTip(checkInTip, arrowEdge: .top)
-
-                PlaceDetailAddPhotoButton(hasCheckedIn: detail.hasCheckedIn) {
-                    showsPhotoUpload = true
-                    PlaceDetailAddPhotoTip.hasViewedPlaceDetail = true
-                }
-                .entrance(contentShown, order: 1)
-                .popoverTip(addPhotoTip, arrowEdge: .top)
-
-                PlaceDetailDescriptionSection(description: detail.description)
-                    .entrance(contentShown, order: 1)
             }
+
+            PlaceDetailDescriptionSection(description: detail.description)
+                .entrance(contentShown, order: 2)
 
             PlaceDetailStatsCard(
                 totalCheckIns: detail.totalCheckIns,
@@ -237,17 +277,6 @@ struct PlaceDetailView: View {
                 isInActiveItinerary: detail.isInActiveItinerary
             )
             .entrance(contentShown, order: 2)
-
-            PlaceDetailReactionsSection(reactions: detail.reactions)
-                .entrance(contentShown, order: 3)
-
-            PlaceDetailDirectionsButton(
-                latitude: detail.latitude,
-                longitude: detail.longitude,
-                placeName: detail.displayName
-            )
-            .entrance(contentShown, order: 3)
-            .popoverTip(directionsTip, arrowEdge: .top)
         }
         .padding(.horizontal, 16)
         .onAppear {

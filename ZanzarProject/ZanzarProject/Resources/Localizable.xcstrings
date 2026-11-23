@@ -3491,13 +3491,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Let's go!"
+            "value" : "Directions"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bora lá!"
+            "value" : "Ver rota"
           }
         }
       }
@@ -3599,7 +3599,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "a %.1fkm"
+            "value" : "a %.1f km"
           }
         }
       }
@@ -3621,6 +3621,23 @@
         }
       }
     },
+    "placeDetail.header.open24Hours" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open 24 hours"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aberto 24 horas"
+          }
+        }
+      }
+    },
     "placeDetail.header.openNow" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3634,6 +3651,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aberto agora"
+          }
+        }
+      }
+    },
+    "placeDetail.header.openUntil" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open until %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aberto até %@"
+          }
+        }
+      }
+    },
+    "placeDetail.header.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place details"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detalhes do lugar"
           }
         }
       }
@@ -4140,6 +4191,57 @@
         }
       }
     },
+    "placeDetail.saveButton.limitReached" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You have saved the maximum number of places. Remove one to save this."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já salvou o máximo de lugares. Remova algum para salvar este."
+          }
+        }
+      }
+    },
+    "placeDetail.saveButton.remove" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove from saved"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remover dos salvos"
+          }
+        }
+      }
+    },
+    "placeDetail.saveButton.save" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save place"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvar lugar"
+          }
+        }
+      }
+    },
     "placeDetail.sealEarnedAlert.acceptButton.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4204,6 +4306,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Eba! Você ganhou um selo!"
+          }
+        }
+      }
+    },
+    "placeDetail.shareButton.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compartilhar"
           }
         }
       }
@@ -4299,13 +4418,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Total Check-ins"
+            "value" : "Total check-ins"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check-ins Totais"
+            "value" : "Check-ins totais"
           }
         }
       }
@@ -11855,6 +11974,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lero"
+          }
+        }
+      }
+    },
+    "placeLink.openError" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not open this place. Try again."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível abrir este lugar. Tente de novo."
           }
         }
       }

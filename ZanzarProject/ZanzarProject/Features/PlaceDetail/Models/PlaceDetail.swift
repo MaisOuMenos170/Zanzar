@@ -127,7 +127,8 @@ nonisolated extension PlaceDetail {
         mapPlace: MapPlace,
         hasCheckedIn: Bool,
         selectedReactionTag: String?,
-        userCoordinate: UserCoordinate? = nil
+        userCoordinate: UserCoordinate? = nil,
+        now: Date = Date()
     ) -> PlaceDetail {
         let location = placeResponse.geometry.location
         let distanceMeters = placeResponse.distanceMeters
@@ -165,7 +166,7 @@ nonisolated extension PlaceDetail {
             ?? placeResponse.formattedAddress
             ?? L10n.string("placeDetail.details.fallbackDescription")
 
-        let openingHours = openingHoursText(from: placeResponse.openingHours)
+        let openingHours = openingHoursText(from: placeResponse.openingHours, now: now)
 
         return PlaceDetail(
             id: placeResponse.placeId,
@@ -192,9 +193,24 @@ nonisolated extension PlaceDetail {
         )
     }
 
-    @MainActor private static func openingHoursText(from openingHours: PlaceDetailOpeningHoursResponse?) -> (text: String, isOpen: Bool?) {
+    @MainActor private static func openingHoursText(
+        from openingHours: PlaceDetailOpeningHoursResponse?,
+        now: Date
+    ) -> (text: String, isOpen: Bool?) {
         guard let openingHours else {
             return (L10n.string("placeDetail.header.hoursUnavailable"), nil)
+        }
+        // The periods say more than the stored `open_now` snapshot: they give the closing time.
+        if let periods = openingHours.periods,
+           let weeklyHours = OpeningHours(response: PlaceOpeningHoursAPIResponse(periods: periods)) {
+            switch weeklyHours.status(at: now) {
+            case .open(let closesAt?):
+                return (L10n.string("placeDetail.header.openUntil", closingTime(closesAt)), true)
+            case .open(nil):
+                return (L10n.string("placeDetail.header.open24Hours"), true)
+            case .closed:
+                return (L10n.string("placeDetail.header.closedNow"), false)
+            }
         }
         if openingHours.openNow == true {
             return (L10n.string("placeDetail.header.openNow"), true)
@@ -203,6 +219,18 @@ nonisolated extension PlaceDetail {
             return (L10n.string("placeDetail.header.closedNow"), false)
         }
         return (L10n.string("placeDetail.header.hoursUnavailable"), nil)
+    }
+
+    /// "18h" or "18h30" in Portuguese, the system's short time ("6 PM") elsewhere.
+    static func closingTime(_ date: Date, in timeZone: TimeZone = OpeningHours.defaultTimeZone) -> String {
+        guard Locale.current.language.languageCode == .portuguese else {
+            return date.formatted(Date.FormatStyle(date: .omitted, time: .shortened, timeZone: timeZone))
+        }
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        let time = calendar.dateComponents([.hour, .minute], from: date)
+        let (hour, minute) = (time.hour ?? 0, time.minute ?? 0)
+        return minute == 0 ? "\(hour)h" : String(format: "%dh%02d", hour, minute)
     }
 
     @MainActor private static func tags(from response: PlaceDetailAPIResponse) -> [PlaceDetailTag] {

@@ -1,52 +1,41 @@
 import SwiftUI
 
+/// The bar above the place detail (Figma "Detalhes do lugar"): back, the screen's title and share.
 struct PlaceDetailHeaderView: View {
-    let name: String
-    let distanceText: String?
-    let walkingTimeText: String?
-    let openingHoursText: String
-    let isOpen: Bool?
     let onBack: () -> Void
-
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    /// What the share sheet sends. The button is left out while there is no link to share.
+    var shareURL: URL?
+    /// The name of the place, as the subject and the message that go with the link.
+    var shareName = ""
 
     var body: some View {
-        HStack(alignment: .top, spacing: 16) {
+        HStack(spacing: 16) {
             BackButton(action: onBack)
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text(name)
-                    .font(.title2)
-                    .bold()
-                    .foregroundStyle(.primary)
-                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+            Text("placeDetail.header.title")
+                .typography(.subtitle1)
+                .foregroundStyle(Color.titleBrown)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .accessibilityAddTraits(.isHeader)
 
-                if let distanceText {
-                    Text(distanceText)
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.primary)
+            if let shareURL {
+                ShareLink(item: shareURL, subject: Text(shareName), message: Text(shareName)) {
+                    Label("placeDetail.shareButton.label", systemImage: "square.and.arrow.up")
                 }
-
-                if let walkingTimeText {
-                    Label(walkingTimeText, systemImage: "figure.walk")
-                        .font(.caption.weight(.medium))
-                        .foregroundStyle(.secondary)
-                }
-
-                Label(openingHoursText, systemImage: "clock")
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(statusColor)
+                .buttonStyle(HeaderCircleButtonStyle())
+            } else {
+                // Keeps the title centered between two buttons.
+                Color.clear
+                    .frame(width: 44, height: 44)
+                    .accessibilityHidden(true)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, 16)
     }
+}
 
-    private var statusColor: Color {
-        switch isOpen {
-        case true: return Color("PlaceDetailOpenStatus")
-        case false: return Color("PlaceDetailClosedStatus")
-        case nil: return Color("PlaceDetailOpenStatus")
-        }
-    }
+#Preview {
+    PlaceDetailHeaderView(onBack: {}, shareURL: URL(string: "https://example.com"))
+        .background(Color.profileBackground)
 }

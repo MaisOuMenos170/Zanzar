@@ -48,6 +48,11 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: AppNotification.sessionExpired)) { _ in
             handleSessionExpired()
         }
+        // A shared place link, as `lero://place/<id>` or as the https link (Universal Link).
+        .onOpenURL(perform: openPlaceLink)
+        .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
+            if let url = activity.webpageURL { openPlaceLink(url) }
+        }
         .overlay {
             ToastOverlay()
         }
@@ -60,6 +65,12 @@ struct ContentView: View {
 }
 
 private extension ContentView {
+    /// The main screen opens the place once it is on screen, which may be after signing in.
+    func openPlaceLink(_ url: URL) {
+        guard let placeID = PlaceLink.placeID(from: url) else { return }
+        ProximityAlertRouter.shared.open(placeID: placeID)
+    }
+
     var showsMainApp: Bool {
         authSession.isAuthenticated && !onboarding.isActive
     }

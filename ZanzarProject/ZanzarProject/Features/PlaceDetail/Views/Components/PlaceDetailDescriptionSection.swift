@@ -6,14 +6,15 @@ struct PlaceDetailDescriptionSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("placeDetail.detailsSection.title")
-                .font(.headline)
+                .typography(.subtitle1)
                 .bold()
-                .foregroundStyle(.primary)
+                .accessibilityAddTraits(.isHeader)
 
             Text(description)
-                .font(.caption)
-                .foregroundStyle(.primary)
+                .typography(.body2)
                 .fixedSize(horizontal: false, vertical: true)
         }
+        .foregroundStyle(Color.brandNeutral950)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

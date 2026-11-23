@@ -1,7 +1,8 @@
 import Foundation
 import Observation
 
-/// Carries "the user tapped the alert for this place" from the notification system to the screen that shows places.
+/// Carries "open this place" from the notification system (a tap on a proximity alert) or from a shared place link
+/// (see `PlaceLink`) to the screen that shows places.
 ///
 /// A tap can start the app, before any screen exists, so it waits here until the main screen picks it up. A tap that
 /// nobody picks up soon is dropped: it must not open a place minutes later, after the user signed in.
