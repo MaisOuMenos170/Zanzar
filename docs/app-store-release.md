@@ -1,6 +1,6 @@
 # Envio para a App Store: o que foi feito e o que falta
 
-Estado em 2026-11-23. App "Lero: Descubra lugares" (Apple ID 6821126406, bundle `dalpra.Zanzar`), versão 1.0, "Prepare for Submission". O ASC ainda usa a build 1 e as três carinhas como ícone.
+Estado em 2026-11-23 (noite). App "Lero: Descubra lugares" (Apple ID 6821126406, bundle `dalpra.Zanzar`), versão 1.0, "Prepare for Submission". O ASC ainda usa a build 1 e as três carinhas como ícone.
 
 ## Feito (branch `chore/app-store-release`)
 
@@ -12,6 +12,19 @@ Estado em 2026-11-23. App "Lero: Descubra lugares" (Apple ID 6821126406, bundle 
 - Site (repo `MaisOuMenos170/LeroSite`, PR 4): `/privacidade` (pt/en), `/suporte` (pt/en), FAQ com e-mail, domínio `lero.social` no canonical/og/sitemap/robots. `/termos` segue placeholder.
 - `docs/politica-de-privacidade.md` igual ao texto publicado. Os "pontos em aberto" viraram a seção abaixo.
 - Testes: 730 testes passam (`xcodebuild test`, iPhone 17 Pro).
+
+## Já preenchido no App Store Connect (2026-11-23)
+
+- Subtítulo "O passaporte de Curitiba"; categoria Viagens e secundária Navegação (Estilo de vida restringe a venda em alguns países).
+- Classificação etária respondida: resultado 18+ (álcool "Frequente" e conteúdo gerado por usuário). Se quiserem 13+, mude álcool para "Infrequente" em App Information > Age Ratings.
+- App Privacy publicado: e-mail, ID do usuário, ID do dispositivo (push), localização precisa, fotos e outro conteúdo do usuário; todos ligados à conta, sem rastreamento. Política: https://lero.social/privacidade.
+- Versão 1.0: Support URL https://lero.social/suporte, Marketing URL https://lero.social, usuário de demonstração teste@teste.com, notas da revisão em inglês.
+- **Não preenchido de propósito:** senha da conta de demonstração, contato da revisão (nome, telefone, e-mail), direitos de conteúdo (declaração legal), anexo do vídeo, seleção da build e envio. "Release" está em "automático após aprovação": troque para manual se quiserem controlar o dia.
+
+## PRs
+
+- MaisOuMenos170/LeroSite#4 (mesclado): privacidade e suporte no site.
+- MaisOuMenos170/Zanzar#112: esta branch para `develop`.
 
 ## URLs para o App Store Connect
 
