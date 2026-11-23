@@ -26,6 +26,13 @@ Estado em 2026-11-23 (noite). App "Lero: Descubra lugares" (Apple ID 6821126406,
 - MaisOuMenos170/LeroSite#4 (mesclado): privacidade e suporte no site.
 - MaisOuMenos170/Zanzar#112: esta branch para `develop`.
 
+## Screenshots da App Store
+
+- Figma: arquivo Macro-Challenge, página "App Store" (https://www.figma.com/design/8hydbYFSjLxZ8DLsNjLRm7/Macro-Challenge?node-id=2679-2032). Cinco quadros de 1320x2868 ("App Store 6.9\" — 01 ... 05"), SF Pro Rounded Heavy, roxo #3931A2, fundo lavanda e selos do app. As telas são capturas reais do app (simulador iPhone 17 Pro Max, build Debug, status bar 9:41).
+- PNGs prontos em `docs/app-store-screenshots/pt-BR/` (1320x2868, RGB, sem alpha). Os originais sem moldura ficam em `docs/app-store-screenshots/fontes/`.
+- No ASC: iPhone 6,9" (obrigatório; os outros tamanhos de iPhone são gerados a partir dele). O app é só iPhone, então iPad não precisa.
+- Para refazer: Debug no simulador com `Config.xcconfig` apontando para o backend do Railway, `xcrun simctl status_bar <udid> override --time 9:41 ...` e `xcrun simctl io <udid> screenshot`. Depois troque a imagem de cada quadro no Figma e exporte em PNG 1x.
+
 ## URLs para o App Store Connect
 
 | Campo | Valor |
