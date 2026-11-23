@@ -60,7 +60,6 @@ struct ItineraryServiceExtraFieldsTests {
         #expect(detail.recentCompleters[0] == Avatar(
             skin: 2, eyes: 3, eyebrow: 1, eyelash: Avatar.none, hair: 4, background: "#FFE0A2"
         ))
-        // An avatar saved before eyelashes existed is drawn with the first one.
         #expect(detail.recentCompleters[1].eyelash == 1)
     }
 

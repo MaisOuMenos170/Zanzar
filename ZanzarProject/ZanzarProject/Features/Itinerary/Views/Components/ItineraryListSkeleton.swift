@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The check-in home while it loads: where "Check-in", the featured roteiros and the nearby places will be.
 struct ItineraryListSkeleton: View {
     var body: some View {
         ScrollView {

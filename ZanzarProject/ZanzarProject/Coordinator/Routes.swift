@@ -23,9 +23,7 @@ enum Route: Hashable {
     case allSeals
     case savedPlaces
     case blockedProfiles
-    /// "Ver mais" of the check-in home's "Roteiros em destaque".
     case allItineraries
-    /// "Ver mais" of the check-in home's "Lugares próximos".
     case allPlaces
 }
 

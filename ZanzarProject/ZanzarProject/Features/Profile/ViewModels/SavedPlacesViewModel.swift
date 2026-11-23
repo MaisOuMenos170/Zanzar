@@ -1,10 +1,8 @@
 import Foundation
 import Observation
 
-/// The places the user bookmarked: the list, searching and filtering it, and taking a place off it.
 @Observable
 final class SavedPlacesViewModel {
-    /// What happened when a place was taken off the list, for the toast that tells the user.
     enum RemoveOutcome: Equatable {
         case removed
         case failed(message: String)
@@ -46,13 +44,10 @@ final class SavedPlacesViewModel {
         } catch is CancellationError {
             return
         } catch {
-            // What is already on screen stays; only an empty screen needs the message.
             errorMessage = APIError.rateLimitedMessage(for: error) ?? L10n.string("savedPlaces.error.message")
         }
     }
 
-    /// The places that match what is typed and the category chip. `category` says what each place is, when the app
-    /// knows: the backend's list has no category, so a place the map has not loaded only shows under "Todos".
     func visiblePlaces(category: (SavedPlace) -> ZanzarPlaceCategory?) -> [SavedPlace] {
         places.filter { place in
             filter.includes(category(place))
@@ -60,7 +55,6 @@ final class SavedPlacesViewModel {
         }
     }
 
-    /// Takes the place off the list at once and puts it back if the backend refuses.
     @discardableResult
     func remove(_ place: SavedPlace) async -> RemoveOutcome? {
         guard let userID = userIDProvider(), let index = places.firstIndex(of: place) else { return nil }

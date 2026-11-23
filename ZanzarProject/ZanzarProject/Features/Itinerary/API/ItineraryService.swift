@@ -16,7 +16,6 @@ struct ItineraryListItemAPIResponse: Decodable, Sendable {
     let placesCount: Int
     let completedCount: Int
     let coverImageUrl: String?
-    /// Older backends do not send it; a theme this app does not know is skipped instead of failing the list.
     let themes: [String]?
 
     func makeItinerary() -> Itinerary {
@@ -46,7 +45,6 @@ struct ItineraryDetailAPIResponse: Decodable, Sendable {
     let completedCount: Int
     let coverImageUrl: String?
     let places: [Place]
-    /// Older backends do not send it.
     let recentCompleters: [AvatarAPIResponse]?
 
     struct Place: Decodable, Sendable {

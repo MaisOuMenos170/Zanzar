@@ -1,16 +1,12 @@
 import Foundation
 
-/// One seal of the ticket in the roteiro sheet: a place the roteiro asks the user to visit, earned or not yet.
 struct ItinerarySealSlot: Identifiable, Hashable {
     let id: Int
-    /// Which seal it is when earned. A free route asks for places of one category.
     let category: ZanzarPlaceCategory
     let isEarned: Bool
 }
 
 extension ItineraryDetail {
-    /// How many places the roteiro asks the user to visit, which is how many seals its ticket has: the places of a
-    /// fixed route, the number of places a free route asks for.
     var requiredStops: Int {
         switch routeType {
         case .free: targetCount ?? placesCount
@@ -18,16 +14,12 @@ extension ItineraryDetail {
         }
     }
 
-    /// The seal of the stop at `index`: the category of the roteiro for a free route, the category of that place
-    /// for a fixed one.
     func sealCategory(forPlaceID placeID: String?, at index: Int) -> ZanzarPlaceCategory {
         if routeType == .free { return targetCategory ?? .unknown }
         if let placeID, let place = places.first(where: { $0.placeID == placeID }) { return place.category }
         return places.indices.contains(index) ? places[index].category : .unknown
     }
 
-    /// The places to suggest under "Lugares próximos do roteiro": the ones the user has not visited yet, nearest
-    /// first. A fixed route takes them from its own stops, a free one from the places of its category.
     func suggestedPlaces(from mapPlaces: [MapPlace], limit: Int = 2) -> [MapPlace] {
         let candidates: [MapPlace]
         switch routeType {
@@ -56,7 +48,6 @@ extension ItineraryDetail {
 }
 
 extension ItineraryDetailViewModel {
-    /// The seals of the ticket: the progress of the roteiro the user follows, or empty seals when it is not theirs yet.
     var sealSlots: [ItinerarySealSlot] {
         guard let detail else { return [] }
         let required = detail.requiredStops
@@ -70,7 +61,6 @@ extension ItineraryDetailViewModel {
                 )
             }
         }
-        // Whatever the roteiro asks for and the progress did not list yet is still a seal to earn.
         let known = slots.count
         for index in known..<max(known, required) {
             let category = detail.sealCategory(forPlaceID: nil, at: index)
@@ -85,13 +75,11 @@ extension ItineraryDetailViewModel {
 }
 
 extension ItineraryDetail {
-    /// The stops "Ver rota" takes to Maps: only a fixed route knows them before the user checks in.
     var routeStops: [ItineraryDetailPlace] {
         routeType == .fixed ? places : []
     }
 }
 
-/// The link "Ver rota" opens: the stops of a roteiro in the user's maps app, on foot.
 enum ItineraryRouteLink {
     static func url(for stops: [ItineraryDetailPlace]) -> URL? {
         guard !stops.isEmpty else { return nil }

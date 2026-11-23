@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// The dashed route of the "Roteiro em andamento" card (Figma "checkin v2", node 2046:13579): one dot per stop along
-/// the path, and the user's avatar standing on the stop they are heading to. On appearing, the avatar walks from the
-/// first stop to the current one and a halo lights up under it when it arrives.
 struct ActiveItineraryRouteView: View {
     let progress: ActiveItineraryProgress
     let avatar: Avatar
@@ -57,7 +54,6 @@ struct ActiveItineraryRouteView: View {
         }
     }
 
-    /// Hops stop by stop, like the prototype (3,2 s loop in Figma), but once: the card is not a screensaver.
     private func walkToCurrentStop() async {
         let target = progress.currentIndex
         guard !reduceMotion else {
@@ -87,7 +83,6 @@ struct ActiveItineraryRouteView: View {
     private static let halo = Color(red: 249 / 255, green: 224 / 255, blue: 177 / 255)
 }
 
-/// A stop of the route: a colored dot with a white ring and a soft shadow.
 private struct StopMarker: View {
     let color: Color
 
@@ -100,7 +95,6 @@ private struct StopMarker: View {
     }
 }
 
-/// The user's face on the current stop.
 private struct AvatarMarker: View {
     let avatar: Avatar
 

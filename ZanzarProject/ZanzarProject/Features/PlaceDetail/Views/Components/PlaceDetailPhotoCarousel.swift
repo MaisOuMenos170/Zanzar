@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// The photos of a place side by side. Each one is as wide as the card, so the tags and buttons the card puts on
-/// top sit on the photo, and the next one starts a little past the card's edge, in the screen margin, so it reads as
-/// scrollable. A single photo (or none) looks like the plain hero image.
 struct PlaceDetailPhotoCarousel: View {
     let photos: [PlacePhoto]
     let placeName: String
@@ -10,7 +7,6 @@ struct PlaceDetailPhotoCarousel: View {
     var height: CGFloat = 191
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    /// The photo opened full screen, and where it zooms out of.
     @State private var photoBeingViewed: PlacePhoto?
     @Namespace private var zoomNamespace
 
@@ -33,7 +29,6 @@ struct PlaceDetailPhotoCarousel: View {
         }
     }
 
-    /// A tap on the photo opens it full screen, zooming out of where it is.
     private func openable(_ image: some View, photo: PlacePhoto) -> some View {
         image
             .matchedTransitionSource(id: photo, in: zoomNamespace)

@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// The filter chips of "Todos os roteiros". They filter by the theme the backend tags each roteiro with, not by
-/// place category, so they have their own type next to `CategoryFilter`.
 enum ItineraryThemeFilter: String, CaseIterable, Identifiable {
     case all
     case parks
@@ -23,7 +21,6 @@ enum ItineraryThemeFilter: String, CaseIterable, Identifiable {
         }
     }
 
-    /// A roteiro the backend has not tagged only shows under "Todos".
     func includes(_ itinerary: Itinerary) -> Bool {
         guard let theme else { return true }
         return itinerary.themes.contains(theme)

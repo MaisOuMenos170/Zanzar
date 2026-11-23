@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// A gray shape standing in for something that is still loading: a card, a photo, a line of text.
 struct SkeletonBlock: View {
     var width: CGFloat?
     var height: CGFloat
@@ -14,7 +13,6 @@ struct SkeletonBlock: View {
     }
 }
 
-/// A few lines of text, the last one shorter.
 struct SkeletonLines: View {
     var count = 3
     var lineHeight: CGFloat = 12

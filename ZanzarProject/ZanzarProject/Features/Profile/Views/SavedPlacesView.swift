@@ -1,15 +1,11 @@
 import SwiftUI
 
-/// "Lugares salvos" (Figma "Perfil", node 2678:2192): the places the user bookmarked, searchable and filterable,
-/// each with a button to take it off the list.
 struct SavedPlacesView: View {
     @State private var viewModel = SavedPlacesViewModel()
     @Environment(NearbyPlacesStore.self) private var nearbyPlacesStore
     @Environment(ToastManager.self) private var toasts
-    /// The place whose trash button was tapped, while the alert asks whether to really take it off.
     @State private var placePendingRemoval: SavedPlace?
 
-    /// What the map already knows about each place; the saved list itself has no category.
     private var categories: [String: ZanzarPlaceCategory] {
         Dictionary(nearbyPlacesStore.places.map { ($0.id, $0.category) }, uniquingKeysWith: { first, _ in first })
     }
@@ -43,7 +39,6 @@ struct SavedPlacesView: View {
         }
         .task { await viewModel.load() }
         .refreshable { await viewModel.load() }
-        // Saved or removed on the place's own screen.
         .onReceive(NotificationCenter.default.publisher(for: AppNotification.savedPlacesDidChange)) { _ in
             Task { await viewModel.load() }
         }

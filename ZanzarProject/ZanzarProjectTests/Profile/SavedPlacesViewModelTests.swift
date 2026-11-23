@@ -76,7 +76,6 @@ struct SavedPlacesViewModelTests {
         model.filter = .all
         #expect(model.visiblePlaces { categories[$0.placeID] }.count == 3)
 
-        // A place whose category the app does not know only shows under Todos.
         model.filter = .parks
         #expect(model.visiblePlaces { _ in nil }.isEmpty)
     }

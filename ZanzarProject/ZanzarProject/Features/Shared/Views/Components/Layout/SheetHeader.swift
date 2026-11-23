@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// The title and subtitle at the top of a sheet. The close button is not here: it is the system's, put on the
-/// sheet with `sheetCloseButton`, and this leaves room for it beside the title.
 struct SheetHeader: View {
     let title: LocalizedStringKey
     let subtitle: LocalizedStringKey
@@ -24,7 +22,6 @@ struct SheetHeader: View {
                 .tracking(0.25)
                 .foregroundStyle(.black)
         }
-        // Room for the close button, which floats over the corner and reaches the line under the title.
         .padding(.trailing, 44)
     }
 }

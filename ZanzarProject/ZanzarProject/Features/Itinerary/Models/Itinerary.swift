@@ -5,8 +5,6 @@ enum ItineraryRouteType: String, Codable, Sendable, Hashable {
     case free
 }
 
-/// What a roteiro is about, as the backend tags it (`itinerary-themes.ts`). They are the filter chips of the
-/// "Todos os roteiros" list, and are not place categories: `food` groups restaurants, bars and cafés.
 enum ItineraryTheme: String, CaseIterable, Sendable, Hashable {
     case parks
     case center
@@ -25,7 +23,6 @@ struct Itinerary: Identifiable, Hashable, Sendable {
     let placesCount: Int
     let completedCount: Int
     let coverImageURL: String?
-    /// Empty for a roteiro the backend has not tagged yet; it then only shows under "Todos".
     var themes: [ItineraryTheme] = []
 }
 
@@ -66,7 +63,6 @@ struct ItineraryDetail: Hashable, Sendable {
     let completedCount: Int
     let coverImageURL: String?
     let places: [ItineraryDetailPlace]
-    /// Avatars of the last people who finished it, most recent first (up to 5). They have no id or name.
     var recentCompleters: [Avatar] = []
 }
 

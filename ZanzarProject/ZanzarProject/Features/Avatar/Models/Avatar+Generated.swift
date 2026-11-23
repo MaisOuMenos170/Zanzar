@@ -1,11 +1,8 @@
 import Foundation
 
 extension Avatar {
-    /// The three backgrounds of the avatars in the roteiro sheet (Figma "checkin v2", nodes 2313:6930 to 2313:6932).
     private static let generatedBackgrounds = ["#FFE0A2", "#463AC8", "#FE2963"]
 
-    /// An avatar made up from `seed`: the same seed always gives the same face, so a stand-in does not change
-    /// every time the screen is drawn. Used where the backend has a person but no avatar to show.
     static func generated(seed: String) -> Avatar {
         var state = fnv1a(seed)
         func next(_ count: Int) -> Int {

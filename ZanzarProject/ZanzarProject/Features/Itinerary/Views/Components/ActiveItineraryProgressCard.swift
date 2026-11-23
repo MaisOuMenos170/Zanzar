@@ -1,10 +1,7 @@
 import SwiftUI
 
-/// "Roteiro em andamento" (Figma "checkin v2", node 2046:13579): the name of the roteiro, how far along the user is,
-/// the route with their avatar on the current stop, the next stop and a button to continue.
 struct ActiveItineraryProgressCard: View {
     let activeItinerary: ActiveItinerary
-    /// How far the next stop is ("600 m"), when the position and the place are known.
     var nextStopDistance: String?
     let onContinue: () -> Void
 
@@ -15,7 +12,6 @@ struct ActiveItineraryProgressCard: View {
         ActiveItineraryProgress(activeItinerary)
     }
 
-    /// The route is a fixed drawing; at accessibility sizes the text takes the room it needs and the route is left out.
     private var showsRoute: Bool {
         !dynamicTypeSize.isAccessibilitySize
     }

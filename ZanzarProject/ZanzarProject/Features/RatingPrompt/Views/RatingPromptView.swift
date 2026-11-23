@@ -64,7 +64,6 @@ struct RatingPromptView: View {
 
                 Spacer(minLength: 8)
             }
-            // Room for the system close button, which floats over the corner.
             .padding(.trailing, 44)
             .padding(.top, 4)
             .padding(.bottom, 8)

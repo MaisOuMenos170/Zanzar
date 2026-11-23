@@ -34,8 +34,6 @@ struct PlacePhotoCard<Photos: View, Accessory: View>: View {
     var body: some View {
         ZStack {
             if showsPhotos {
-                // Not clipped here: the photos round their own corners, and the next one is meant to show beyond the
-                // card's edge.
                 photos
             } else {
                 placeholder

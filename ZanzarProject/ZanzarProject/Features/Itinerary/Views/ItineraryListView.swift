@@ -13,8 +13,6 @@ struct ItineraryListView: View {
     // Tips
     private let createItineraryTip = CheckInCreateItineraryTip()
     private let startItineraryTip = CheckInStartItineraryTip()
-    /// How many roteiros the home highlights, and how many nearby places it shows (four rows of two).
-    /// "Ver mais" opens the rest.
     private static let featuredCount = 2
     private static let nearbyCount = 8
 
@@ -67,7 +65,6 @@ struct ItineraryListView: View {
         }
     }
 
-    /// How far the next stop of the roteiro in progress is, when the map already knows that place.
     private func nextStopDistance(of itinerary: ActiveItinerary) -> String? {
         guard let placeID = ActiveItineraryProgress(itinerary).nextPlaceID else { return nil }
         return nearbyPlacesStore.places.first { $0.id == placeID }?.roundedDistanceText

@@ -1,7 +1,6 @@
 import Foundation
 import Observation
 
-/// "Todos os roteiros": every published roteiro, searchable by name and filterable by theme.
 @Observable
 final class AllItinerariesViewModel {
     private let service: ItineraryServicing
@@ -22,7 +21,6 @@ final class AllItinerariesViewModel {
         searchText.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    /// The roteiros that match the theme and, when something is typed, have it in the name.
     var visibleItineraries: [Itinerary] {
         itineraries.filter { itinerary in
             filter.includes(itinerary)

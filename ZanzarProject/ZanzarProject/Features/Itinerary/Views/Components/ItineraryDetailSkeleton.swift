@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The roteiro sheet while it loads, laid out like the sheet: title, who finished it, the ticket and the places.
 struct ItineraryDetailSkeleton: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {

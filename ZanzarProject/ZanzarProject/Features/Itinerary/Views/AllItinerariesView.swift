@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// "Todos os roteiros" (Figma "checkin v2", nodes 1814:3197 and 1931:3731).
 struct AllItinerariesView: View {
     @State private var viewModel = AllItinerariesViewModel()
     @Environment(\.presentSheet) private var presentSheet

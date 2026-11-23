@@ -1,17 +1,12 @@
 import SwiftUI
 
-/// "40 pessoas completaram esse roteiro", with the faces of the last ones to finish it and how many more there are
-/// (Figma "checkin v2", node 2313:6928).
 struct ItineraryCompletersView: View {
     let avatars: [Avatar]
     let completedCount: Int
-    /// Makes the stand-in faces the same every time this roteiro is shown.
     let seed: String
 
-    /// The faces that fit before the "+N" bubble.
     private static let visibleAvatars = 3
 
-    /// The avatars the backend sent, and made-up ones for the people it has no avatar for.
     private var shown: [Avatar] {
         Self.faces(avatars: avatars, completedCount: completedCount, seed: seed)
     }
@@ -22,7 +17,6 @@ struct ItineraryCompletersView: View {
         return real + (0..<missing).map { Avatar.generated(seed: "\(seed)-\(real.count + $0)") }
     }
 
-    /// The people who finished it and have no face on the row.
     private var others: Int {
         max(0, completedCount - shown.count)
     }

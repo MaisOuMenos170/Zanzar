@@ -1,14 +1,11 @@
 import SwiftUI
 
-/// One saved place of the list (Figma "Perfil", node 2678:2225): its photo, name and the day it was saved, and a
-/// trash button to take it off the list.
 struct SavedPlaceRow: View {
     let place: SavedPlace
     let onRemove: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
-            // The link takes the photo and the texts; the trash button beside it is its own target.
             NavigationLink(value: Route.placeDetail(place.mapPlace(category: nil))) {
                 HStack(spacing: 12) {
                     photo

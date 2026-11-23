@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// A row of a search result while the results load: a round icon and two lines of text.
 struct SkeletonRow: View {
     var body: some View {
         HStack(spacing: 12) {
@@ -14,7 +13,6 @@ struct SkeletonRow: View {
     }
 }
 
-/// A few result rows that shine, for the lists that fill in as the search answers.
 struct SkeletonRows: View {
     var count = 3
 

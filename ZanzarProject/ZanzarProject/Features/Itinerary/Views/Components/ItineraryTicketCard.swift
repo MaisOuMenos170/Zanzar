@@ -1,10 +1,5 @@
 import SwiftUI
 
-/// The seals of a roteiro on a ticket: a card with a notch on each side, a row of seals (earned or still a "?"),
-/// how many were collected and the tags of the roteiro.
-///
-/// A roteiro the user has not started is a dashed outline (Figma "checkin v2", node 2676:1603). Once it is
-/// followed the ticket is filled, and the more stops are done the stronger its color gets.
 struct ItineraryTicketCard: View {
     let slots: [ItinerarySealSlot]
     let collectedCount: Int
@@ -78,13 +73,11 @@ struct ItineraryTicketCard: View {
         }
     }
 
-    /// How far along the roteiro is, from 0 (nothing done) to 1 (everything done).
     static func emphasis(collected: Int, total: Int) -> Double {
         guard total > 0 else { return 0 }
         return min(max(Double(collected) / Double(total), 0), 1)
     }
 
-    /// The lavender of the ticket, moving toward the app's purple as the roteiro gets done.
     private static func tint(emphasis: Double) -> Color {
         lavender.mix(with: Color.brandPurple500, by: emphasis * 0.7)
     }
@@ -104,7 +97,6 @@ struct ItineraryTicketCard: View {
     private static let lavender = Color(red: 161 / 255, green: 162 / 255, blue: 1)
 }
 
-/// A rounded card with a half circle cut out of the middle of each side.
 struct TicketShape: Shape {
     var cornerRadius: CGFloat = 16
     var notchRadius: CGFloat = 10.5
@@ -122,7 +114,6 @@ struct TicketShape: Shape {
     }
 }
 
-/// A small outlined tag ("Histórico", "Museu").
 struct ItineraryTagChip: View {
     let text: String
 

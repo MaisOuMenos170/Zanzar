@@ -43,7 +43,6 @@ struct AvatarView: View {
                 .disabled(viewModel.isLoading)
             }
         } else {
-            // The face is on its way: a round shape that shines where it will be.
             Circle()
                 .fill(Color.brandNeutral200.opacity(0.85))
                 .shimmering()

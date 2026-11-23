@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// The title of a screen in the navigation bar: Subtitle 1 in Neutral/950 (Figma "checkin v2", node 1814:3204), the
-/// same on every screen. It is also the title the system uses for the back button and accessibility.
 private struct ScreenTitleModifier: ViewModifier {
     let title: Text
 

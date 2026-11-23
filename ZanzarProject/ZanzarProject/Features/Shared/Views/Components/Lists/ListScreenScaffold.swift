@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The frame of the "Todos os…" lists: title, search field, filter chips, a count and the list itself.
 struct ListScreenScaffold<Filters: View, Content: View>: View {
     let title: LocalizedStringKey
     let searchPrompt: LocalizedStringKey

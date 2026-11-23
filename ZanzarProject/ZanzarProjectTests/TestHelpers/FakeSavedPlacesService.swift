@@ -8,7 +8,6 @@ final class FakeSavedPlacesService: SavedPlacesServicing {
     private(set) var saveCalls: [String] = []
     private(set) var removeCalls: [String] = []
     private var failure: Error?
-    /// Makes only removing fail, so a list can be loaded first.
     var removeFailure: Error?
 
     init(savedIDs: Set<String> = [], failure: Error? = nil) {
@@ -16,7 +15,6 @@ final class FakeSavedPlacesService: SavedPlacesServicing {
         self.failure = failure
     }
 
-    /// What `fetchSavedPlaces` returns; when empty, one entry is made up for each saved id.
     var listed: [SavedPlace] = []
 
     func fetchSavedPlaces(userID: String) async throws -> [SavedPlace] {

@@ -66,7 +66,6 @@ struct PlaceSuggestionSheetView: View {
             }
             .scrollBounceBehavior(.basedOnSize)
             .scrollDismissesKeyboard(.interactively)
-            // The system close button floats over the corner, on the row of the title, as in the Figma sheet.
             .ignoresSafeArea(.container, edges: .top)
             .scrollEdgeEffectHidden(true, for: .top)
             .containerBackground(.clear, for: .navigation)

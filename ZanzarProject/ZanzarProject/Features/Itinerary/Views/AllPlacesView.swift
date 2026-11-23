@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// "Todos os lugares" (Figma "checkin v2", nodes 1939:6548 and 1939:6910).
 struct AllPlacesView: View {
     @State private var viewModel = AllPlacesViewModel()
     @Environment(NearbyPlacesStore.self) private var nearbyPlacesStore

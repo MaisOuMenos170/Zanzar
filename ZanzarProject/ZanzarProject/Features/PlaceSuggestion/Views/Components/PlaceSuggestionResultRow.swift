@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// One place found for what was shared. Tapping it selects it for the suggestion. A place may come without a
-/// name or without an address, so each line shows only what it has.
 struct PlaceSuggestionResultRow: View {
     let place: SuggestedPlace
     let isSelected: Bool
@@ -11,7 +9,6 @@ struct PlaceSuggestionResultRow: View {
         place.hasName ? place.title : ShortAddress.format(place.title)
     }
 
-    /// The address, which is the title already when the place has no name.
     private var subtitle: String? {
         place.hasName ? place.address.map(ShortAddress.format) : nil
     }

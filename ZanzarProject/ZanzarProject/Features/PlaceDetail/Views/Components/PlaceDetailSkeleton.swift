@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The place detail while it loads: the name, the photo box, the check-in button, the text and the numbers.
 struct PlaceDetailSkeleton: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {

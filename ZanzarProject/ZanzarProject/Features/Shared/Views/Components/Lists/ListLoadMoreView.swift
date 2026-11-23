@@ -19,7 +19,6 @@ struct ListLoadMoreView: View {
                     .foregroundStyle(Color.brandPurple500)
                 }
             } else {
-                // The next card, shining where it will appear.
                 SkeletonBlock(height: 88)
                     .shimmering()
                     .padding(.vertical, 8)

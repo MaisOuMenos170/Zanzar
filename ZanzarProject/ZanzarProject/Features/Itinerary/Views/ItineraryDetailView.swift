@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// The sheet of a roteiro (Figma "checkin v2", nodes 1931:4071, 1937:6463, 2005:11919, 2005:12148 and 2313:6808):
-/// who finished it, what it asks for, the seals the user has, the places to go next and the button to start it
-/// or to leave it.
 struct ItineraryDetailView: View {
     @Bindable var viewModel: ItineraryDetailViewModel
     let onItineraryChanged: () -> Void
@@ -49,8 +46,6 @@ struct ItineraryDetailView: View {
         }
     }
 
-    /// Spacing as in the design: 24 between the blocks, 16 between the text and the ticket, and the title and
-    /// the text inset 8 more than the cards.
     private func detailContent(for detail: ItineraryDetail) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -77,7 +72,6 @@ struct ItineraryDetailView: View {
             }
         }
         .scrollIndicators(.hidden)
-        // The close button floats over the top of the sheet, on the row of the title, as in the design.
         .ignoresSafeArea(edges: .top)
         .scrollEdgeEffectHidden(true, for: .top)
         .contentMargins(.top, 28, for: .scrollContent)
@@ -95,14 +89,12 @@ struct ItineraryDetailView: View {
         }
     }
 
-    /// The name, who finished the roteiro and what it asks for.
     private func intro(for detail: ItineraryDetail) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(detail.name)
                 .font(.system(.title2, design: .rounded, weight: .bold))
                 .foregroundStyle(Color.brandSheetTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                // Leaves room for the close button.
                 .padding(.trailing, 40)
                 .padding(.top, 4)
                 .accessibilityAddTraits(.isHeader)
@@ -147,8 +139,6 @@ struct ItineraryDetailView: View {
         .buttonStyle(.plain)
     }
 
-    /// What the roteiro asks for. A free route says it with the category and how many places; a fixed one has a
-    /// text of its own.
     @ViewBuilder
     private func goal(for detail: ItineraryDetail) -> some View {
         if detail.routeType == .free, let category = detail.targetCategory, let count = detail.targetCount {
@@ -224,7 +214,6 @@ struct ItineraryDetailView: View {
         }
     }
 
-    /// A pill the width of the sheet that shows a spinner in place of its text while the request runs.
     private func actionLabel(_ title: LocalizedStringKey, foreground: Color, background: Color) -> some View {
         Text(title)
             .typography(.subtitle2)

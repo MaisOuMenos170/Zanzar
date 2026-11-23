@@ -38,7 +38,6 @@ struct PlaceDetailView: View {
             }
         }
         .background(Color.profileBackground)
-        // The system bar carries the back button and the share button; the tab bar stays out of the way.
         .screenTitle("placeDetail.header.title")
         .toolbar {
             if let detail = viewModel.detail {
@@ -152,7 +151,6 @@ struct PlaceDetailView: View {
         .haptic(.selecao, trigger: viewModel.isSaved)
     }
 
-    /// Tells the user whether the place was saved, taken off the list, or neither.
     private func showSaveToast(for outcome: PlaceDetailViewModel.SaveOutcome?) {
         switch outcome {
         case .saved:

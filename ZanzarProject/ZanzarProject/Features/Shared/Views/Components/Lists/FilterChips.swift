@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// A row of filter chips: the selected one is filled orange, the others are outlined. The options scroll sideways
-/// when they do not fit.
 struct FilterChips<Option: Hashable & Identifiable>: View {
     let options: [Option]
     @Binding var selection: Option

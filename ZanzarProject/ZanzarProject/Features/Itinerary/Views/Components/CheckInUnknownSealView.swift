@@ -1,12 +1,8 @@
 import SwiftUI
 
-/// The seal of a place not visited yet: a dashed ring with a "?". The ring is drawn for a seal of 83 pt and scales
-/// with `size`.
 struct CheckInUnknownSealView: View {
     enum Style {
-        /// On a colored tile (Figma "checkin v2", "Ellipse 149"): the ring and the "?" are translucent white.
         case onColor
-        /// On the white ticket of a roteiro not started yet (node 2676:1612): a white disc with a gray dashed ring.
         case onTicket
     }
 

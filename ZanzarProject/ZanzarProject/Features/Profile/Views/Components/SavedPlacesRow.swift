@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// "Lugares salvos (10) >": the row under the numbers of the profile that opens the list of bookmarked places
-/// (Figma "Perfil", node 2684:1923).
 struct SavedPlacesRow: View {
-    /// `nil` until the list has loaded, so the row does not show a wrong "(0)".
     let count: Int?
     let onTap: () -> Void
 

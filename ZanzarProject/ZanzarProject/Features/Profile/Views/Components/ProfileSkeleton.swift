@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The profile while it loads: the numbers, the seals and the latest check-ins.
 struct ProfileSkeleton: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {

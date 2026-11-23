@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// What a list shows while it loads: cards that shine, in place of a spinner.
 struct ListLoadingView: View {
     var body: some View {
         VStack(spacing: 16) {

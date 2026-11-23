@@ -4,7 +4,6 @@ struct ListNoResultsView: View {
     enum Kind {
         case empty(title: LocalizedStringKey, message: LocalizedStringKey)
         case notFound(query: String, message: LocalizedStringKey)
-        /// Nothing matched, with a title of the screen's own ("Nenhum roteiro com “…”").
         case custom(title: LocalizedStringKey, message: LocalizedStringKey)
         case filtered
     }

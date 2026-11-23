@@ -1,12 +1,6 @@
 import SwiftUI
 
-/// The system's close button (the round glass "x") in the top corner of a sheet, in place of one drawn by hand.
-///
-/// The button needs a navigation bar to live in, so this wraps the content in a navigation stack and lets the content
-/// run under the bar, as in the Figma sheets: the bar only floats the button over the corner.
 private struct SheetCloseButtonModifier: ViewModifier {
-    /// Whether the sheet is only as tall as its content (a card) or fills what it is given (a full sheet). A
-    /// navigation stack takes all the height it is offered, so a card has to be measured and held to its content.
     let hugsContent: Bool
     let isDisabled: Bool
     let action: () -> Void
@@ -35,7 +29,6 @@ private struct SheetCloseButtonModifier: ViewModifier {
 }
 
 extension View {
-    /// Adds the system close button to a sheet. `hugsContent` is for a card that is only as tall as what is in it.
     func sheetCloseButton(
         hugsContent: Bool = false,
         isDisabled: Bool = false,

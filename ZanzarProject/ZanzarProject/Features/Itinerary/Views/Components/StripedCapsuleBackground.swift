@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// The fill of the check-in buttons: a color with two diagonal bars across it (Figma "checkin v2", "Ver detalhes"
-/// and "Continuar"). It is clipped to a rounded rectangle of 16 pt.
 struct StripedCapsuleBackground: View {
     let color: Color
     let stripeColor: Color

@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// "author · licence", linking to the photo's page at its source. The licence of the photos
 /// (CC BY, CC BY-SA) requires showing it next to the photo. A long author name is cut, the licence never is.
 struct PlacePhotoCreditView: View {
     let credit: PhotoCredit
