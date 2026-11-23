@@ -12736,6 +12736,23 @@
           }
         }
       }
+    },
+    "placeDetail.photo.openAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open photo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir foto"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
