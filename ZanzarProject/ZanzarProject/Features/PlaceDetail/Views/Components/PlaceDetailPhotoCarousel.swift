@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// The photos of a place side by side, with the edge of the next one showing so it reads as scrollable.
-/// A single photo (or none) looks like the plain hero image.
+/// The photos of a place side by side. Each one is as wide as the card, so the tags and buttons the card puts on
+/// top sit on the photo, and the next one starts a little past the card's edge, in the screen margin, so it reads as
+/// scrollable. A single photo (or none) looks like the plain hero image.
 struct PlaceDetailPhotoCarousel: View {
     let photos: [PlacePhoto]
     let placeName: String
@@ -10,7 +11,7 @@ struct PlaceDetailPhotoCarousel: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    private static let photoWidthFraction = 0.85
+    /// Small enough that the next photo shows in the margin beside the card.
     private static let photoSpacing: CGFloat = 8
 
     var body: some View {
@@ -34,14 +35,11 @@ struct PlaceDetailPhotoCarousel: View {
                         accessibilityLabel: accessibilityLabel(forPhotoAt: index),
                         height: height
                     )
-                    .containerRelativeFrame(.horizontal) { width, _ in
-                        width * Self.photoWidthFraction
-                    }
-                    // The photo in view is the one in focus; its neighbours step back.
+                    .containerRelativeFrame(.horizontal)
+                    // The photo in view is the one in focus; its neighbours fade back. They do not shrink, which
+                    // would push them out of the margin where they peek.
                     .scrollTransition(axis: .horizontal) { content, phase in
-                        content
-                            .scaleEffect(phase.isIdentity || !stepsBack ? 1 : 0.94)
-                            .opacity(phase.isIdentity || !stepsBack ? 1 : 0.7)
+                        content.opacity(phase.isIdentity || !stepsBack ? 1 : 0.7)
                     }
                 }
             }
