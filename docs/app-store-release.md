@@ -98,3 +98,7 @@ As três só funcionam depois que o PR 4 do LeroSite for mesclado e o Railway pu
 ## Decisão: versão 1.0 inclui o PR #114 (2026-11-24)
 
 O PR #114 do Tiago (novo visual de roteiros, lugares salvos, esqueletos) entrou na branch de release por merge (`Merge feat/new-itinerary-view`). O CI dele falhava com "unable to type-check this expression in reasonable time" em `PlaceDetailView.swift`; a correção (dividir a cadeia de modificadores do `body` em 3 propriedades) está na branch de release, não na do Tiago. Com o #114 a screenshot 4 (roteiros) passa a bater com o app. Verificado localmente: 800 testes, build de Release e preflight passando.
+
+## Screenshots finais (2026-11-24)
+
+O Lucas montou as telas finais no Figma (frames 1 a 5, nós 2749:10608, 10961, 10962, 10963 e 10964, 1320x2868). **Suba no ASC as de `docs/app-store-screenshots/final-1206x2622/` (1.png a 5.png, 1206x2622, RGB, sem alpha).** Só foram redimensionadas (export 2x do Figma e redução com Lanczos), sem mudar nada do design. As pastas `pt-BR` e `pt-BR-1206x2622` são as versões antigas geradas por mim e não devem ser usadas.
