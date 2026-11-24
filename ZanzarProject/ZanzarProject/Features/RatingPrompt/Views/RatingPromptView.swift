@@ -35,7 +35,7 @@ struct RatingPromptView: View {
                     if let errorMessage {
                         Text(errorMessage)
                             .font(.footnote)
-                            .foregroundStyle(Color("AuthError"))
+                            .foregroundStyle(Color.brandErrorRed)
                             .multilineTextAlignment(.center)
                     }
 

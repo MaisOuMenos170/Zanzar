@@ -38,7 +38,7 @@ struct AuthFormField: View {
             if let errorMessageKey {
                 Text(LocalizedStringKey(errorMessageKey))
                     .font(.caption)
-                    .foregroundStyle(Color("AuthError"))
+                    .foregroundStyle(Color.brandErrorRed)
                     .transition(.opacity.combined(with: .offset(y: -4)))
             }
 
@@ -77,7 +77,7 @@ struct AuthFormField: View {
     }
 
     private var prompt: Text {
-        Text(placeholderKey).foregroundStyle(Color.brandNeutral300)
+        Text(placeholderKey).foregroundStyle(Color.brandSearchPlaceholder)
     }
 
     @ViewBuilder

@@ -14,7 +14,7 @@ struct PlaceSuggestionNoteField: View {
             TextField(
                 "",
                 text: $text,
-                prompt: Text("placeSuggestion.noteField.placeholder").foregroundStyle(Color.brandFieldPlaceholder),
+                prompt: Text("placeSuggestion.noteField.placeholder").foregroundStyle(Color.brandSearchPlaceholder),
                 axis: .vertical
             )
             .scaledFont(size: 14)
