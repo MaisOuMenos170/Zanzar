@@ -94,3 +94,7 @@ As três só funcionam depois que o PR 4 do LeroSite for mesclado e o Railway pu
 2. ASC: subir as 5 screenshots (0 de 10 hoje), (senha e vídeo já colocados pelo Lucas), trocar a build 1 pela nova, (preço já está Grátis em todas as regiões; disponibilidade: só Brasil, "Available on App Release").
 3. Mesclar #112 e #113 (CI ainda rodando) para o Xcode Cloud gerar a build. O workflow do Xcode Cloud não pôde ser conferido pelo navegador embutido.
 4. Opcional: localização em inglês no ASC, descrição mais longa.
+
+## Decisão: versão 1.0 inclui o PR #114 (2026-11-24)
+
+O PR #114 do Tiago (novo visual de roteiros, lugares salvos, esqueletos) entrou na branch de release por merge (`Merge feat/new-itinerary-view`). O CI dele falhava com "unable to type-check this expression in reasonable time" em `PlaceDetailView.swift`; a correção (dividir a cadeia de modificadores do `body` em 3 propriedades) está na branch de release, não na do Tiago. Com o #114 a screenshot 4 (roteiros) passa a bater com o app. Verificado localmente: 800 testes, build de Release e preflight passando.

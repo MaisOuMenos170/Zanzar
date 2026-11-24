@@ -23,7 +23,9 @@ struct PlaceDetailView: View {
         _viewModel = State(initialValue: PlaceDetailViewModel(place: place))
     }
 
-    var body: some View {
+    // The modifiers are split in three properties: one long chain made the type checker give up on CI
+    // ("unable to type-check this expression in reasonable time").
+    private var stateContent: some View {
         Group {
             if let detail = viewModel.detail {
                 content(for: detail)
@@ -37,6 +39,10 @@ struct PlaceDetailView: View {
                 )
             }
         }
+    }
+
+    private var screen: some View {
+        stateContent
         .background(Color.profileBackground)
         .screenTitle("placeDetail.header.title")
         .toolbar {
@@ -70,6 +76,10 @@ struct PlaceDetailView: View {
         .onChange(of: viewModel.displayedPhotos) { _, _ in
             viewModel.updateCellularImagesPromptIfNeeded(using: mediaPolicy)
         }
+    }
+
+    private var screenWithFlows: some View {
+        screen
         .modifier(PlaceDetailUserPhotoFlows(
             showsPhotoUpload: $showsPhotoUpload,
             placeID: place.id,
@@ -93,6 +103,10 @@ struct PlaceDetailView: View {
                 Text(errorMessage)
             }
         }
+    }
+
+    var body: some View {
+        screenWithFlows
         .alert("placeDetail.checkInConfirmation.title", isPresented: $viewModel.showsCheckInConfirmation) {
             Button("placeDetail.checkInConfirmation.cancelButton.title", role: .cancel) {}
             Button("placeDetail.checkInConfirmation.confirmButton.title") {
