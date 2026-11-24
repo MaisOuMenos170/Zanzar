@@ -37,7 +37,7 @@ struct ProfileSegmentedControl: View {
                             .matchedGeometryEffect(id: "selection", in: selectionNamespace)
                     }
                 }
-                .contentShape(.capsule)
+                .contentShape(.minimumTouch)
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(isSelected ? .isSelected : [])

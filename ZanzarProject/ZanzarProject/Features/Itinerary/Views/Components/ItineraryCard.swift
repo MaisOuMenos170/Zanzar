@@ -57,7 +57,7 @@ struct ItineraryCard: View {
                 .background {
                     StripedCapsuleBackground(color: .brandPurple500, stripeColor: Self.stripeColor)
                 }
-                .contentShape(.rect(cornerRadius: 16))
+                .contentShape(.minimumTouch)
         }
         .buttonStyle(PressableButtonStyle())
         .accessibilityHint(Text(itinerary.name))

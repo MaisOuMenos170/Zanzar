@@ -37,7 +37,7 @@ struct FilterChips<Option: Hashable & Identifiable>: View {
                         Capsule().strokeBorder(Color.brandChipBorder, lineWidth: 1)
                     }
                 }
-                .contentShape(.capsule)
+                .contentShape(.minimumTouch)
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(isSelected ? .isSelected : [])

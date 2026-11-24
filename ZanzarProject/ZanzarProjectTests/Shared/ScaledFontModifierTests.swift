@@ -43,3 +43,23 @@ struct ScaledFontModifierTests {
         #expect(ScaledFontModifier.textStyle(for: 22) == .title2)
     }
 }
+
+@Suite("minimumTouch")
+struct MinimumTouchShapeTests {
+    @Test("A small control gets a 44×44 touch area around its center")
+    func growsSmallControls() {
+        let area = MinimumTouchShape.touchRect(for: CGRect(x: 10, y: 20, width: 30, height: 20))
+
+        #expect(area.width == 44)
+        #expect(area.height == 44)
+        #expect(area.midX == 25)
+        #expect(area.midY == 30)
+    }
+
+    @Test("A control that is already big enough keeps its size")
+    func keepsBigControls() {
+        let rect = CGRect(x: 0, y: 0, width: 300, height: 56)
+
+        #expect(MinimumTouchShape.touchRect(for: rect) == rect)
+    }
+}
