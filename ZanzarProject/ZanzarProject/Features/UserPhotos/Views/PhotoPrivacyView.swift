@@ -24,6 +24,7 @@ struct PhotoPrivacyView: View {
                                 Task { await viewModel.unblock(user) }
                             }
                             .buttonStyle(.bordered)
+                            .accessibilityHint(Text(verbatim: user.username ?? L10n.string("userPhotos.privacy.blocked.deletedAccount")))
                         }
                     }
                 }

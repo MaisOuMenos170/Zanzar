@@ -20,6 +20,7 @@ struct PlaceSuggestionNoteField: View {
             .scaledFont(size: 14)
             .foregroundStyle(Color.brandNeutral950)
             .lineLimit(4...10)
+            .accessibilityLabel("placeSuggestion.noteField.label")
             .focused($isFocused)
             // Return adds a line in a multi-line field, so the keyboard needs its own way out.
             .toolbar {

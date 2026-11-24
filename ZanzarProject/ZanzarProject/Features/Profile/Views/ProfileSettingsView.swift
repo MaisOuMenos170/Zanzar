@@ -73,6 +73,7 @@ struct ProfileSettingsView: View {
                 }
             }
             .buttonStyle(.plain)
+            .accessibilityAddTraits(.isLink)
 
             supportRow
         }

@@ -61,6 +61,7 @@ struct PlaceSuggestionTextField: View {
                         .allowsHitTesting(onTap == nil)
                         .accessibilityLabel(labelKey)
                         .accessibilityHint(placeholderKey)
+                        .accessibilityValue(isRequired ? Text("accessibility.required") : Text(verbatim: ""))
                 }
                 // A multi-line field takes Return as a new line; here it ends the typing.
                 .onChange(of: text) { _, newValue in
@@ -94,7 +95,7 @@ struct PlaceSuggestionTextField: View {
         HStack(spacing: 0) {
             Text(labelKey)
             if isRequired {
-                Text("*").foregroundStyle(Color.brandErrorRed)
+                Text("*").foregroundStyle(Color.brandErrorRed).accessibilityHidden(true)
             }
         }
         .scaledFont(size: 14)

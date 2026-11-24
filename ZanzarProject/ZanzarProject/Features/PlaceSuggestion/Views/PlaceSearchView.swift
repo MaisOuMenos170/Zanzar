@@ -43,6 +43,7 @@ struct PlaceSearchView: View {
                 .foregroundStyle(Color.brandErrorRed)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
+                .announced(message)
         } else if viewModel.isSearching && viewModel.results.isEmpty {
             SkeletonRows()
                 .padding(.horizontal, 16)

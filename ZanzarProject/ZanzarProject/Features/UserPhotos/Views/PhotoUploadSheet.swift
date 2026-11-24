@@ -76,6 +76,7 @@ struct PhotoUploadSheet: View {
         switch viewModel.step {
         case .checkingTerms, .preparing, .analyzing:
             ProgressView()
+                .accessibilityLabel("userPhotos.upload.sending")
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         case .editing:
             if let original = viewModel.original {
@@ -228,6 +229,7 @@ struct PhotoUploadSheet: View {
                 .buttonStyle(.borderedProminent)
         }
         .popoverTip(UserPhotosStatusTip(), arrowEdge: .top)
+        .onAppear { AccessibilityNotification.ScreenChanged().post() }
     }
 
     private func failed(_ error: PhotoUploadError) -> some View {
@@ -243,6 +245,7 @@ struct PhotoUploadSheet: View {
             }
             .buttonStyle(.borderedProminent)
         }
+        .onAppear { AccessibilityNotification.ScreenChanged().post() }
     }
 
     private func openCamera() async {

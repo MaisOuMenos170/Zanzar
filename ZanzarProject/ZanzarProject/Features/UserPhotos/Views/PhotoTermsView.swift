@@ -50,12 +50,14 @@ struct PhotoTermsView: View {
                     Label("userPhotos.terms.underage.message", systemImage: "person.badge.clock")
                         .foregroundStyle(.red)
                         .font(.subheadline)
+                        .announced(L10n.string("userPhotos.terms.underage.message"))
                 }
 
                 if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage)
                         .foregroundStyle(.red)
                         .font(.subheadline)
+                        .announced(errorMessage)
                 }
 
                 Button {

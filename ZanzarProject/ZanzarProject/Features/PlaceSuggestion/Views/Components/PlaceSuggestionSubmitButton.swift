@@ -27,6 +27,7 @@ struct PlaceSuggestionSubmitButton: View {
         }
         .buttonStyle(PressableButtonStyle())
         .disabled(isLoading)
+        .accessibilityValue(isLoading ? Text("list.loading.accessibilityLabel") : Text(verbatim: ""))
         .motion(Motion.suave, value: isLoading)
     }
 }
