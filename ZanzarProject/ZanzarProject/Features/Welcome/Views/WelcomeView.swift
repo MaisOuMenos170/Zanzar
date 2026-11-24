@@ -3,7 +3,8 @@ import TipKit
 
 struct WelcomeView: View {
     @Environment(AppCoordinator.self) private var coordinator
-    @State private var hasAppeared = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var introDone = false
 
     private let createAccountTip = WelcomeCreateAccountTip()
     private let signInTip = WelcomeSignInTip()
@@ -17,9 +18,7 @@ struct WelcomeView: View {
                     coordinator.push(.signUp)
                     WelcomeCreateAccountTip.hasSeenWelcome = true
                 }
-                .buttonStyle(AuthPrimaryButtonStyle())
-                .entrance(hasAppeared, order: 0)
-                .popoverTip(createAccountTip, arrowEdge: .bottom)
+                .buttonStyle(AuthPrimaryButtonStyle(background: .brandOrange600))
 
                 AuthSwitchLink(
                     promptKey: "auth.switch.haveAccount.prompt",
@@ -28,15 +27,44 @@ struct WelcomeView: View {
                     coordinator.push(.login)
                     WelcomeSignInTip.hasSeenWelcome = true
                 }
-                .entrance(hasAppeared, order: 1)
-                .popoverTip(signInTip, arrowEdge: .bottom)
             }
+            .opacity(introDone ? 1 : 0)
+            .offset(y: introDone ? 0 : 24)
+            .allowsHitTesting(introDone)
+            .motion(Motion.chegada, value: introDone)
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 16)
-        .background(Color.brandBlue50.ignoresSafeArea())
-        .onAppear {
-            hasAppeared = true
+        .background {
+            ZStack {
+                background
+                WelcomeIllustrationView()
+            }
+            .ignoresSafeArea()
+        }
+        .task {
+            guard !introDone else { return }
+            // Figma: the buttons arrive 3.95 s in, once the character has landed. With Reduce Motion there is
+            // nothing to wait for.
+            if !reduceMotion {
+                try? await Task.sleep(for: .seconds(3.95))
+            }
+            introDone = true
+        }
+    }
+
+    private var background: some View {
+        ZStack {
+            Color(red: 0.947, green: 0.952, blue: 1)
+            LinearGradient(
+                stops: [
+                    .init(color: Color(red: 0.63, green: 0.64, blue: 1), location: 0.05),
+                    .init(color: .white, location: 1)
+                ],
+                startPoint: UnitPoint(x: 0.947, y: -0.134),
+                endPoint: UnitPoint(x: 0.001, y: 1)
+            )
+            .opacity(0.2)
         }
     }
 }
