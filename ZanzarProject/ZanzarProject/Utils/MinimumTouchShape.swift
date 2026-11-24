@@ -3,7 +3,7 @@ import SwiftUI
 /// A hit area that is at least 44×44, centered on the view. The view keeps its look and its layout; only the
 /// area that answers to a touch grows, so a small control is easy to hit without a change of design.
 struct MinimumTouchShape: Shape {
-    static let minimumLength: CGFloat = 44
+    nonisolated static let minimumLength: CGFloat = 44
 
     func path(in rect: CGRect) -> Path {
         Path(Self.touchRect(for: rect))

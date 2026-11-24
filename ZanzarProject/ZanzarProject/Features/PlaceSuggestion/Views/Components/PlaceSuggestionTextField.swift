@@ -17,7 +17,7 @@ struct PlaceSuggestionTextField: View {
     var onTap: (() -> Void)?
     /// The search field of Figma node 2530:6574 starts with a magnifier and has a darker placeholder.
     var leadingSystemImage: String?
-    var placeholderColor: Color = .brandFieldPlaceholder
+    var placeholderColor: Color = .brandSearchPlaceholder
 
     @ScaledMetric(relativeTo: .body) private var lineHeight: CGFloat = 17
 

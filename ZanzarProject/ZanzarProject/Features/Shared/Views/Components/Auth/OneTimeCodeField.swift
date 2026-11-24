@@ -20,7 +20,7 @@ struct OneTimeCodeField: View {
             if let errorMessageKey {
                 Text(LocalizedStringKey(errorMessageKey))
                     .font(.caption)
-                    .foregroundStyle(Color("AuthError"))
+                    .foregroundStyle(Color.brandErrorRed)
             }
 
             HStack(spacing: 8) {
