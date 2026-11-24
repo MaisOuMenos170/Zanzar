@@ -67,6 +67,13 @@ struct ProfileSettingsView: View {
             }
             .buttonStyle(.plain)
 
+            Button { openURL(SupportContact.privacyPolicyURL) } label: {
+                ProfileSettingsRow(title: Text("profile.settings.privacyPolicy.title")) {
+                    icon("arrow.up.right")
+                }
+            }
+            .buttonStyle(.plain)
+
             supportRow
         }
     }

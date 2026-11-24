@@ -7385,6 +7385,23 @@
         }
       }
     },
+    "profile.settings.privacyPolicy.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy policy"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Política de privacidade"
+          }
+        }
+      }
+    },
     "profile.settings.support.title" : {
       "extractionState" : "manual",
       "localizations" : {

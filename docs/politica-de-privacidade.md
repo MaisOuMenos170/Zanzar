@@ -1,6 +1,8 @@
+<!-- Texto publicado em https://lero.social/privacidade (LeroSite: src/pages/legal/privacy.ts). Mude os dois juntos. -->
+
 # Política de privacidade
 
-O **O Lero** é um aplicativo para descobrir lugares em Curitiba, fazer check-in, ganhar selos e seguir roteiros. Ele é mantido por um grupo de cinco estudantes, pessoas físicas, com base em Curitiba/PR ([NOMES DOS RESPONSÁVEIS]). Nós valorizamos a sua privacidade. Esta Política de Privacidade explica quais dados pessoais coletamos, como usamos, com quem compartilhamos e como protegemos esses dados, em conformidade com a Lei Geral de Proteção de Dados (LGPD, Lei nº 13.709/2018).
+O **Lero** é um aplicativo para descobrir lugares em Curitiba, fazer check-in, ganhar selos e seguir roteiros. Ele é mantido pela equipe + ou − 1,70 m, um grupo de cinco estudantes, pessoas físicas, com base em Curitiba/PR. Nós valorizamos a sua privacidade. Esta Política de Privacidade explica quais dados pessoais coletamos, como usamos, com quem compartilhamos e como protegemos esses dados, em conformidade com a Lei Geral de Proteção de Dados (LGPD, Lei nº 13.709/2018).
 
 ## 1. Nosso papel no tratamento de dados
 
@@ -73,7 +75,7 @@ Se passarmos a usar novas ferramentas, elas seguirão esta mesma política de tr
 
 ## 5. Cookies e tecnologias de rastreamento
 
-O O Lero **não usa cookies, ferramentas de analytics nem rastreamento** entre apps ou sites. Usamos apenas um identificador de sessão (token de acesso), guardado no Keychain do seu iPhone, para manter você conectado com segurança.
+O Lero **não usa cookies, ferramentas de analytics nem rastreamento** entre apps ou sites. Usamos apenas um identificador de sessão (token de acesso), guardado no Keychain do seu iPhone, para manter você conectado com segurança.
 
 ## 6. Segurança e retenção de dados
 
@@ -89,7 +91,7 @@ Adotamos medidas técnicas e organizacionais compatíveis com os riscos do trata
 - Dados da conta e de uso: enquanto a sua conta existir.
 - Fotos publicadas: até você apagá-las ou excluir sua conta.
 - Fotos reprovadas: os arquivos são apagados em 30 dias. As impressões digitais da imagem (hashes) continuam guardadas para impedir o reenvio da mesma foto.
-- Registro de auditoria das fotos (envio, análise, denúncias e remoção, sem a imagem): 1 ANO.
+- Registro de auditoria das fotos (envio, análise, denúncias e remoção, sem a imagem): 1 ano.
 - Registros de acesso aos servidores: pelo prazo de retenção do provedor de hospedagem.
 
 Quando você exclui sua conta, apagamos seus dados de conta, check-ins, reações, selos, roteiros, lugares salvos e fotos (inclusive os arquivos). Mantemos apenas o que for necessário para cumprir obrigação legal, para exercício regular de direitos ou o registro de auditoria das fotos descrito acima.
@@ -107,9 +109,10 @@ Em cumprimento à LGPD, você tem o direito de:
 
 Algumas dessas ações você faz direto no app ou no iPhone:
 
+- Apagar sua conta e todos os seus dados: Perfil > Ajustes > Apagar minha conta.
 - Apagar suas fotos: Perfil > Minhas fotos.
 - Desbloquear pessoas e reler o termo de fotos: Perfil > Fotos e privacidade.
-- Remover a permissão de localização, câmera ou notificações: Ajustes do iOS > O Lero.
+- Remover a permissão de localização, câmera ou notificações: Ajustes do iOS > Lero.
 
 O envio de fotos é permitido apenas para pessoas com 18 anos ou mais.
 
@@ -117,19 +120,7 @@ O envio de fotos é permitido apenas para pessoas com 18 anos ou mais.
 
 Para exercer seus direitos, pedir a exclusão da sua conta, exportar seus dados ou tirar dúvidas sobre esta Política de Privacidade, fale com a gente:
 
-E-mail: contato@lero.social
+E-mail: contato@lero.social. Respondemos em até 15 dias.
 
-Última atualização: 12 de novembro de 2026.
+Última atualização: 23 de novembro de 2026.
 
----
-
-## Pontos em aberto (não publicar esta seção)
-
-1. **Responsáveis:** preencher `[NOMES DOS RESPONSÁVEIS]`. A LGPD aceita pessoa física como controladora, mas o titular precisa saber quem é.
-2. **E-mail de contato:** criar a caixa, preencher `[E-MAIL DE CONTATO]` aqui e em `ZANZAR_SUPPORT_EMAIL` (`ZanzarProject/Config.Release.xcconfig`). Definir o `[PRAZO]` de resposta (a LGPD prevê 15 dias para o acesso completo, art. 19, II).
-3. **Exclusão de conta no app:** o backend já tem `DELETE /user/:id`, mas o app não tem tela para isso. A Apple exige exclusão dentro do app (diretriz 5.1.1(v)). Quando existir, acrescentar "Perfil > Excluir conta" na seção 7.
-4. **Prazo da auditoria das fotos (`user_photo_events`):** hoje sem prazo; proposta de 5 anos (mesmo ponto em `fotos-de-usuario-termo.md`).
-5. **Regiões dos servidores:** confirmar a região do cluster do Atlas, do projeto Supabase e do Railway para descrever a transferência internacional com precisão.
-6. **Retenção de logs do Railway:** confirmar o prazo no plano contratado.
-7. **Revisão jurídica:** bases legais da seção 3 e a cláusula de transferência internacional da Cloudflare (art. 33).
-8. **Publicação:** a App Store exige a URL da política. Hospedar o texto (sem esta seção) e linkar no app e no App Store Connect.

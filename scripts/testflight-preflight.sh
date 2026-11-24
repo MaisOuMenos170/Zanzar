@@ -41,14 +41,17 @@ team_count=$(grep -c 'DEVELOPMENT_TEAM = 982D3NRR89;' "$pbx" || true)
 
 grep -q 'INFOPLIST_KEY_CFBundleDisplayName = Lero;' "$pbx" || fail "display name must be Lero"
 
-grep -q '<key>ITSAppUsesNonExemptEncryption</key>' "$plist" || fail "missing ITSAppUsesNonExemptEncryption"
-grep -A1 '<key>ITSAppUsesNonExemptEncryption</key>' "$plist" | grep -q '<false/>' \
-  || fail "ITSAppUsesNonExemptEncryption must be false so TestFlight is not Missing Compliance"
+# The key lives in the build settings (INFOPLIST_KEY_*), not in Info.plist.
+grep -q 'INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;' "$pbx" \
+  || fail "ITSAppUsesNonExemptEncryption must be NO so TestFlight is not Missing Compliance"
 
-grep -q '<key>NSLocationWhenInUseUsageDescription</key>' "$plist" || fail "missing location usage description"
-grep -q '<key>CFBundleDisplayName</key>' "$plist" || fail "missing CFBundleDisplayName"
-grep -A1 '<key>CFBundleDisplayName</key>' "$plist" | grep -q '<string>Lero</string>' \
-  || fail "CFBundleDisplayName must be Lero"
+for manifest in ZanzarProject/ZanzarProject/PrivacyInfo.xcprivacy \
+  ZanzarProject/ZanzarWidget/PrivacyInfo.xcprivacy \
+  ZanzarProject/ZanzarShare/PrivacyInfo.xcprivacy; do
+  [ -f "$manifest" ] || fail "missing privacy manifest $manifest (ITMS-91053 for UserDefaults)"
+done
+
+grep -q 'INFOPLIST_KEY_NSLocationWhenInUseUsageDescription' "$pbx" || fail "missing location usage description"
 
 grep -q 'BlueprintName = "ZanzarProject"' "$scheme" || fail "shared scheme does not build ZanzarProject"
 grep -q '<ArchiveAction' "$scheme" || fail "shared scheme has no archive action"
