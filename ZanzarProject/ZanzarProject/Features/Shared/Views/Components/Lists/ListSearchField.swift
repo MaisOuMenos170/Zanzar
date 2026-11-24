@@ -25,6 +25,7 @@ struct ListSearchField: View {
                     Label("listSearchField.clearButton.accessibilityLabel", systemImage: "xmark")
                         .labelStyle(.iconOnly)
                         .foregroundStyle(Color.brandNeutral700)
+                        .contentShape(.rect.inset(by: -16))
                 }
                 .buttonStyle(.plain)
             }

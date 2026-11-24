@@ -11,12 +11,12 @@ struct PlaceSuggestionLocationOption: View {
         Button(action: action) {
             HStack(spacing: 10) {
                 Image(systemName: isSelected ? "inset.filled.circle" : "circle")
-                    .font(.system(size: 16, weight: .medium))
+                    .scaledFont(size: 16, weight: .medium)
                     .foregroundStyle(isSelected ? Color.brandPurple500 : Color.brandOptionIdleIcon)
                     .accessibilityHidden(true)
 
                 Text(titleKey)
-                    .font(.system(size: 14, weight: .semibold))
+                    .scaledFont(size: 14, weight: .semibold)
                     .tracking(0.1)
                     .foregroundStyle(.black)
                     .frame(maxWidth: .infinity, alignment: .leading)

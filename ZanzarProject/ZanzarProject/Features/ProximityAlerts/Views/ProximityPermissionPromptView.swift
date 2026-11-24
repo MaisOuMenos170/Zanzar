@@ -5,17 +5,30 @@ import SwiftUI
 struct ProximityPermissionPromptView: View {
     let viewModel: ProximityPermissionViewModel
 
+    @AccessibilityFocusState private var isPrimaryFocused: Bool
+
     var body: some View {
         ZStack {
             Color.black.opacity(0.2)
                 .ignoresSafeArea()
                 .contentShape(.rect)
+                .accessibilityHidden(true)
 
             card
         }
+        .accessibilityAddTraits(.isModal)
+        .onAppear { isPrimaryFocused = true }
+        // Each step has its own primary button, so VoiceOver has to be moved again when the step changes.
+        .onChange(of: viewModel.step) { isPrimaryFocused = true }
     }
 
     private var card: some View {
+        AlertOverlayCard {
+            cardContent
+        }
+    }
+
+    private var cardContent: some View {
         VStack(spacing: 20) {
             VStack(alignment: .leading, spacing: 10) {
                 Image(systemName: "bell.badge")
@@ -36,9 +49,6 @@ struct ProximityPermissionPromptView: View {
 
             buttons
         }
-        .padding(14)
-        .frame(width: 300)
-        .glassEffect(.regular, in: .rect(cornerRadius: 34))
     }
 
     private var message: LocalizedStringKey {
@@ -71,10 +81,12 @@ struct ProximityPermissionPromptView: View {
                 }
                 .buttonStyle(.glassProminent)
                 .disabled(viewModel.step == .working)
+                .accessibilityFocused($isPrimaryFocused)
 
             case .enabled:
                 Button("proximityPermission.doneButton.title", action: viewModel.dismiss)
                     .buttonStyle(.glassProminent)
+                    .accessibilityFocused($isPrimaryFocused)
 
             case .needsSettings:
                 Button("proximityPermission.closeButton.title", action: viewModel.dismiss)
@@ -83,6 +95,7 @@ struct ProximityPermissionPromptView: View {
 
                 Button("proximityPermission.settingsButton.title", action: viewModel.openSettings)
                     .buttonStyle(.glassProminent)
+                    .accessibilityFocused($isPrimaryFocused)
             }
         }
         .controlSize(.large)

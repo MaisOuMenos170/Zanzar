@@ -14,7 +14,7 @@ struct PlacePhotoCreditView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .layoutPriority(1)
             }
-            .font(.system(size: 9))
+            .scaledFont(size: 9)
             .foregroundStyle(.white)
             .padding(.horizontal, 5)
             .padding(.vertical, 2)

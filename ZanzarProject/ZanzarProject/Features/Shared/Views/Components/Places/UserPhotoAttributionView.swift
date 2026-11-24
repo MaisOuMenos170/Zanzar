@@ -21,7 +21,7 @@ struct UserPhotoAttributionView: View {
                         .fontWeight(.semibold)
                 }
             }
-            .font(.system(size: 9))
+            .scaledFont(size: 9)
             .foregroundStyle(.white)
             .padding(.horizontal, 5)
             .padding(.vertical, 2)
