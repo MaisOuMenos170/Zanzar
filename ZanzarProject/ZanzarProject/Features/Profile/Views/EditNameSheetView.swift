@@ -38,10 +38,13 @@ struct EditNameSheetView: View {
                     Text("profile.editName.hint")
                         .font(.footnote)
                         .foregroundStyle(viewModel.showsInvalidHint ? Color.brandErrorRed : Color.brandNeutral600)
+                        // The hint turns red without changing words, so say that the name is not valid.
+                        .accessibilityValue(viewModel.showsInvalidHint ? Text("accessibility.invalid") : Text(verbatim: ""))
                     if let message = viewModel.errorMessage {
                         Text(message)
                             .font(.footnote)
                             .foregroundStyle(Color.brandErrorRed)
+                            .announced(message)
                     }
                 }
             }

@@ -51,6 +51,7 @@ struct UserPhotoRow: View {
                     .contentShape(.rect.inset(by: -8))
             }
             .buttonStyle(.plain)
+            .accessibilityHint(Text(verbatim: photo.placeName ?? ""))
         }
         .padding(12)
     }
