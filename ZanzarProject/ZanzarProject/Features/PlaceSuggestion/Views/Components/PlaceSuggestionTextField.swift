@@ -44,7 +44,7 @@ struct PlaceSuggestionTextField: View {
                     // wraps the example address onto two lines.
                     if text.isEmpty {
                         Text(placeholderKey)
-                            .font(.system(size: 14))
+                            .scaledFont(size: 14)
                             .foregroundStyle(placeholderColor)
                             .padding(.trailing, 24)
                             .allowsHitTesting(false)
@@ -52,7 +52,7 @@ struct PlaceSuggestionTextField: View {
                     }
 
                     TextField("", text: $text, axis: .vertical)
-                        .font(.system(size: 14))
+                        .scaledFont(size: 14)
                         .foregroundStyle(Color.brandNeutral950)
                         .lineLimit(1...4)
                         .submitLabel(submitLabel)
@@ -97,7 +97,7 @@ struct PlaceSuggestionTextField: View {
                 Text("*").foregroundStyle(Color.brandErrorRed)
             }
         }
-        .font(.system(size: 14))
+        .scaledFont(size: 14)
         .foregroundStyle(.black)
     }
 }
