@@ -45,8 +45,9 @@ struct PlaceRemoteImage<Placeholder: View>: View {
                                 await retryAfterFailure(error, url: url)
                             }
                     case .empty:
-                        ProgressView()
+                        Color.brandNeutral200.opacity(0.85)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .shimmering()
                     @unknown default:
                         placeholder
                     }

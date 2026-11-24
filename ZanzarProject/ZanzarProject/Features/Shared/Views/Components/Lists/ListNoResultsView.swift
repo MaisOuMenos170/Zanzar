@@ -4,6 +4,7 @@ struct ListNoResultsView: View {
     enum Kind {
         case empty(title: LocalizedStringKey, message: LocalizedStringKey)
         case notFound(query: String, message: LocalizedStringKey)
+        case custom(title: LocalizedStringKey, message: LocalizedStringKey)
         case filtered
     }
 
@@ -52,6 +53,8 @@ struct ListNoResultsView: View {
                     text(title: Text(title), message: Text(message))
                 case .notFound(let query, let message):
                     text(title: Text("list.noResults.title \(query)"), message: Text(message))
+                case .custom(let title, let message):
+                    text(title: Text(title), message: Text(message))
                 case .filtered:
                     text(title: Text("list.noResults.filterTitle"), message: Text("list.noResults.filterMessage"))
                 }

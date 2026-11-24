@@ -19,7 +19,11 @@ struct ListLoadMoreView: View {
                     .foregroundStyle(Color.brandPurple500)
                 }
             } else {
-                ProgressView()
+                SkeletonBlock(height: 88)
+                    .shimmering()
+                    .padding(.vertical, 8)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(Text("list.loading.accessibilityLabel"))
                     .task { await onLoadMore() }
             }
         }

@@ -62,16 +62,7 @@ struct AvatarEditorView: View {
         .padding(.horizontal, 16)
         .padding(.bottom, 16)
         .background(Color.brandBlue50.ignoresSafeArea())
-        .navigationTitle(Text(LocalizedStringKey(viewModel.selectedTab.titleKey)))
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text(LocalizedStringKey(viewModel.selectedTab.titleKey))
-                    .typography(.subtitle1)
-                    .foregroundStyle(Color.titleBrown)
-                    .accessibilityAddTraits(.isHeader)
-            }
-        }
+        .screenTitle(LocalizedStringKey(viewModel.selectedTab.titleKey))
         .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
         // Opened from the profile, the editor takes the whole screen: no tab bar under the save button.
         .toolbar(.hidden, for: .tabBar)

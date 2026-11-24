@@ -7,8 +7,8 @@ struct PlaceDetailView: View {
     @State private var viewModel: PlaceDetailViewModel
     @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(ToastManager.self) private var toasts
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var showsPhotoUpload = false
     /// The content rises in once when it first loads, not again when a nested screen is popped.
     @State private var contentShown = false
@@ -23,13 +23,14 @@ struct PlaceDetailView: View {
         _viewModel = State(initialValue: PlaceDetailViewModel(place: place))
     }
 
-    var body: some View {
+    // The modifiers are split in three properties: one long chain made the type checker give up on CI
+    // ("unable to type-check this expression in reasonable time").
+    private var stateContent: some View {
         Group {
             if let detail = viewModel.detail {
                 content(for: detail)
             } else if viewModel.isLoading {
-                ProgressView("placeDetail.loadingIndicator.title")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                PlaceDetailSkeleton()
             } else {
                 ContentUnavailableView(
                     "placeDetail.errorState.title",
@@ -38,10 +39,27 @@ struct PlaceDetailView: View {
                 )
             }
         }
+    }
+
+    private var screen: some View {
+        stateContent
         .background(Color.profileBackground)
-        .navigationBarBackButtonHidden()
-        // The screen draws its own header and back button, and takes the whole screen: no system bars.
-        .toolbar(.hidden, for: .navigationBar)
+        .screenTitle("placeDetail.header.title")
+        .toolbar {
+            if let detail = viewModel.detail {
+                ToolbarItem(placement: .topBarTrailing) {
+                    ShareLink(
+                        item: PlaceLink.url(for: detail.id),
+                        subject: Text(detail.displayName),
+                        message: Text(detail.displayName)
+                    ) {
+                        Label("placeDetail.shareButton.label", systemImage: "square.and.arrow.up")
+                    }
+                    // Pushed from the check-in tab, the screen inherits that tab's orange tint; this button stays black.
+                    .tint(.black)
+                }
+            }
+        }
         .toolbar(.hidden, for: .tabBar)
         .task {
             // The view reappears when a nested detail is popped; what is already on screen is still current.
@@ -58,6 +76,10 @@ struct PlaceDetailView: View {
         .onChange(of: viewModel.displayedPhotos) { _, _ in
             viewModel.updateCellularImagesPromptIfNeeded(using: mediaPolicy)
         }
+    }
+
+    private var screenWithFlows: some View {
+        screen
         .modifier(PlaceDetailUserPhotoFlows(
             showsPhotoUpload: $showsPhotoUpload,
             placeID: place.id,
@@ -81,6 +103,10 @@ struct PlaceDetailView: View {
                 Text(errorMessage)
             }
         }
+    }
+
+    var body: some View {
+        screenWithFlows
         .alert("placeDetail.checkInConfirmation.title", isPresented: $viewModel.showsCheckInConfirmation) {
             Button("placeDetail.checkInConfirmation.cancelButton.title", role: .cancel) {}
             Button("placeDetail.checkInConfirmation.confirmButton.title") {
@@ -120,7 +146,7 @@ struct PlaceDetailView: View {
     /// The bookmark in the corner of the photo box: white behind it, so it reads over a photo too.
     private var bookmarkButton: some View {
         Button {
-            Task { await viewModel.toggleSaved() }
+            Task { showSaveToast(for: await viewModel.toggleSaved()) }
         } label: {
             Label(
                 viewModel.isSaved ? "placeDetail.saveButton.remove" : "placeDetail.saveButton.save",
@@ -137,6 +163,19 @@ struct PlaceDetailView: View {
         .buttonStyle(.plain)
         .motion(Motion.suave, value: viewModel.isSaved)
         .haptic(.selecao, trigger: viewModel.isSaved)
+    }
+
+    private func showSaveToast(for outcome: PlaceDetailViewModel.SaveOutcome?) {
+        switch outcome {
+        case .saved:
+            toasts.show(L10n.string("placeDetail.saveButton.savedToast"), style: .positive, position: .bottom)
+        case .removed:
+            toasts.show(L10n.string("placeDetail.saveButton.removedToast"), style: .positive, position: .bottom)
+        case .failed(let message):
+            toasts.show(message, style: .negative, position: .bottom)
+        case nil:
+            break
+        }
     }
 
     private func checkInConfirmationMessage(for placeName: String) -> AttributedString {
@@ -192,31 +231,12 @@ struct PlaceDetailView: View {
     }
 
     private func content(for detail: PlaceDetail) -> some View {
-        let header = PlaceDetailHeaderView(
-            onBack: { coordinator.pop() },
-            shareURL: PlaceLink.url(for: detail.id),
-            shareName: detail.displayName
-        )
-            .padding(.top, 8)
-            .padding(.bottom, 16)
-        let scrollsHeader = dynamicTypeSize.isAccessibilitySize
-
-        return VStack(alignment: .leading, spacing: 0) {
-            if !scrollsHeader {
-                header
-            }
-
-            ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    if scrollsHeader {
-                        header
-                    }
-                    detailBody(for: detail)
-                }
+        ScrollView {
+            detailBody(for: detail)
+                .padding(.top, 8)
                 .padding(.bottom, 32)
-            }
-            .scrollIndicators(.hidden)
         }
+        .scrollIndicators(.hidden)
     }
 
     private func detailBody(for detail: PlaceDetail) -> some View {

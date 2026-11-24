@@ -3,7 +3,7 @@ import Foundation
 import Observation
 
 /// The share sheet: works out which place a shared address or map link is, lets the person confirm it and sends
-/// it as a suggestion, the same way "Sugerir um lugar" does.
+/// it as a suggestion, the same way "Sugerir um lugar" does
 @MainActor
 @Observable
 final class PlaceShareViewModel {

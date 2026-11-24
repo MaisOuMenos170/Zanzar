@@ -13,7 +13,7 @@ struct ProfileRecentCheckInsSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            ProfileSectionHeader(title: "profile.recentCheckIns.title", onSeeMore: onSeeMore)
+            SectionHeader(title: "profile.recentCheckIns.title", onSeeMore: onSeeMore)
 
             if checkIns.isEmpty {
                 ListEmptyState(message: "profile.recentCheckIns.empty")

@@ -48,7 +48,7 @@ struct PhotoPrivacyView: View {
                 Text("userPhotos.privacy.contact.footer")
             }
         }
-        .navigationTitle("userPhotos.privacy.title")
+        .screenTitle("userPhotos.privacy.title")
         .task { await viewModel.load() }
         .alert("userPhotos.myPhotos.errorAlert.title", isPresented: errorIsPresented) {
             Button("userPhotos.myPhotos.errorAlert.dismissButton.title", role: .cancel) {}

@@ -68,8 +68,14 @@ final class AppCoordinator {
             AllCheckInsView()
         case .allSeals:
             AllSealsView()
+        case .savedPlaces:
+            SavedPlacesView()
         case .blockedProfiles:
             BlockedProfilesView()
+        case .allItineraries:
+            AllItinerariesView()
+        case .allPlaces:
+            AllPlacesView()
         }
     }
 

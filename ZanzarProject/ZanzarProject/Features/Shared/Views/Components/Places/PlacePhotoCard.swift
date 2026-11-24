@@ -35,7 +35,6 @@ struct PlacePhotoCard<Photos: View, Accessory: View>: View {
         ZStack {
             if showsPhotos {
                 photos
-                    .clipShape(.rect(cornerRadius: Self.cornerRadius))
             } else {
                 placeholder
             }

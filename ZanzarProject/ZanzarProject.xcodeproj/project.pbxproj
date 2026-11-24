@@ -7,13 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5A4E0000000000000000000C /* ZanzarShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5A4E00000000000000000001 /* ZanzarShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B9AE997730A49C31006AFF3E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9AE997630A49C31006AFF3E /* WidgetKit.framework */; };
 		B9AE997930A49C31006AFF3E /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9AE997830A49C31006AFF3E /* SwiftUI.framework */; };
 		B9AE998A30A49C33006AFF3E /* ZanzarWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B9AE997430A49C31006AFF3E /* ZanzarWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		5A4E0000000000000000000C /* ZanzarShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5A4E00000000000000000001 /* ZanzarShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5A4E0000000000000000000A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 000000000000000000000000 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5A4E00000000000000000003;
+			remoteInfo = ZanzarShare;
+		};
 		B9A3FCAB3059BF17003386A8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 000000000000000000000000 /* Project object */;
@@ -27,13 +34,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B9AE997330A49C31006AFF3E;
 			remoteInfo = ZanzarWidgetExtension;
-		};
-		5A4E0000000000000000000A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 000000000000000000000000 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5A4E00000000000000000003;
-			remoteInfo = ZanzarShare;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -53,24 +53,17 @@
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* ZanzarProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZanzarProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		000000000000000000000130 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		5A4E00000000000000000001 /* ZanzarShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ZanzarShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A4E00000000000000000002 /* ZanzarShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ZanzarShare.entitlements; sourceTree = "<group>"; };
 		B9A3FCA73059BF17003386A8 /* ZanzarProjectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZanzarProjectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9AE997430A49C31006AFF3E /* ZanzarWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ZanzarWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9AE997630A49C31006AFF3E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		B9AE997830A49C31006AFF3E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		B9AE999A30A4A39B006AFF3E /* ZanzarWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ZanzarWidgetExtension.entitlements; sourceTree = "<group>"; };
 		C0FFEE000000000000000131 /* Config.Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.Release.xcconfig; sourceTree = "<group>"; };
-		5A4E00000000000000000001 /* ZanzarShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ZanzarShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		5A4E00000000000000000002 /* ZanzarShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ZanzarShare.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B9AE998B30A49C33006AFF3E /* Exceptions for "ZanzarWidget" folder in "ZanzarWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = B9AE997330A49C31006AFF3E /* ZanzarWidgetExtension */;
-		};
 		5A4E00000000000000000011 /* Exceptions for "ZanzarShare" folder in "ZanzarShare" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -78,26 +71,26 @@
 			);
 			target = 5A4E00000000000000000003 /* ZanzarShare */;
 		};
-		5A4E00000000000000000040 /* Exceptions for "ZanzarProject/Utils" in "ZanzarShare" target */ = {
+		5A4E00000000000000000040 /* Exceptions for "ZanzarProject/Utils" folder in "ZanzarShare" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				ScreenInsets.swift,
 			);
 			target = 5A4E00000000000000000003 /* ZanzarShare */;
 		};
-		5A4E00000000000000000046 /* Exceptions for "ZanzarProject/Features/PlaceSuggestion/Views/Components" in "ZanzarShare" target */ = {
+		5A4E00000000000000000046 /* Exceptions for "ZanzarProject/Features/PlaceSuggestion/Views/Components" folder in "ZanzarShare" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				MySuggestionRow.swift,
+				PlaceSuggestionLocationOption.swift,
 				PlaceSuggestionOutcomeAlert.swift,
 				PlaceSuggestionSheetCard.swift,
-				MySuggestionRow.swift,
 				PlaceSuggestionStatusIndicator.swift,
-				PlaceSuggestionLocationOption.swift,
 				PlaceSuggestionTextField.swift,
 			);
 			target = 5A4E00000000000000000003 /* ZanzarShare */;
 		};
-		5A4E00000000000000000048 /* Exceptions for "ZanzarProject/Features/Shared/Utils" in "ZanzarShare" target */ = {
+		5A4E00000000000000000048 /* Exceptions for "ZanzarProject/Features/Shared/Utils" folder in "ZanzarShare" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				AuthErrorMapper.swift,
@@ -112,30 +105,19 @@
 			);
 			target = 5A4E00000000000000000003 /* ZanzarShare */;
 		};
+		B9AE998B30A49C33006AFF3E /* Exceptions for "ZanzarWidget" folder in "ZanzarWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B9AE997330A49C31006AFF3E /* ZanzarWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		000000000000000000000010 /* ZanzarProject */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ZanzarProject;
-			sourceTree = "<group>";
-		};
-		B9A3FCA83059BF17003386A8 /* ZanzarProjectTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ZanzarProjectTests;
-			sourceTree = "<group>";
-		};
-		B9AE997A30A49C31006AFF3E /* ZanzarWidget */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				B9AE998B30A49C33006AFF3E /* Exceptions for "ZanzarWidget" folder in "ZanzarWidgetExtension" target */,
-			);
-			path = ZanzarWidget;
-			sourceTree = "<group>";
-		};
-		B9AE997B30A49C31006AFF3E /* ZanzarProject/Resources */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ZanzarProject/Resources;
 			sourceTree = "<group>";
 		};
 		5A4E00000000000000000010 /* ZanzarShare */ = {
@@ -149,7 +131,7 @@
 		5A4E00000000000000000020 /* ZanzarProject/Utils */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				5A4E00000000000000000040,
+				5A4E00000000000000000040 /* Exceptions for "ZanzarProject/Utils" folder in "ZanzarShare" target */,
 			);
 			path = ZanzarProject/Utils;
 			sourceTree = "<group>";
@@ -182,7 +164,7 @@
 		5A4E00000000000000000026 /* ZanzarProject/Features/PlaceSuggestion/Views/Components */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				5A4E00000000000000000046,
+				5A4E00000000000000000046 /* Exceptions for "ZanzarProject/Features/PlaceSuggestion/Views/Components" folder in "ZanzarShare" target */,
 			);
 			path = ZanzarProject/Features/PlaceSuggestion/Views/Components;
 			sourceTree = "<group>";
@@ -195,7 +177,7 @@
 		5A4E00000000000000000028 /* ZanzarProject/Features/Shared/Utils */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				5A4E00000000000000000048,
+				5A4E00000000000000000048 /* Exceptions for "ZanzarProject/Features/Shared/Utils" folder in "ZanzarShare" target */,
 			);
 			path = ZanzarProject/Features/Shared/Utils;
 			sourceTree = "<group>";
@@ -210,10 +192,33 @@
 			path = ZanzarProject/Features/Shared/Views/Components/Layout;
 			sourceTree = "<group>";
 		};
+		B9A3FCA83059BF17003386A8 /* ZanzarProjectTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ZanzarProjectTests;
+			sourceTree = "<group>";
+		};
+		B9AE997A30A49C31006AFF3E /* ZanzarWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B9AE998B30A49C33006AFF3E /* Exceptions for "ZanzarWidget" folder in "ZanzarWidgetExtension" target */,
+			);
+			path = ZanzarWidget;
+			sourceTree = "<group>";
+		};
+		B9AE997B30A49C31006AFF3E /* ZanzarProject/Resources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ZanzarProject/Resources;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		000000000000000130000000 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		5A4E00000000000000000008 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
 			);
@@ -228,11 +233,6 @@
 			files = (
 				B9AE997930A49C31006AFF3E /* SwiftUI.framework in Frameworks */,
 				B9AE997730A49C31006AFF3E /* WidgetKit.framework in Frameworks */,
-			);
-		};
-		5A4E00000000000000000008 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			files = (
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -320,6 +320,36 @@
 			productReference = 000000000000000000000120 /* ZanzarProject.app */;
 			productType = "com.apple.product-type.application";
 		};
+		5A4E00000000000000000003 /* ZanzarShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5A4E00000000000000000004 /* Build configuration list for PBXNativeTarget "ZanzarShare" */;
+			buildPhases = (
+				5A4E00000000000000000007 /* Sources */,
+				5A4E00000000000000000008 /* Frameworks */,
+				5A4E00000000000000000009 /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				5A4E00000000000000000010 /* ZanzarShare */,
+				5A4E00000000000000000020 /* ZanzarProject/Utils */,
+				5A4E00000000000000000021 /* ZanzarProject/Features/Auth */,
+				5A4E00000000000000000022 /* ZanzarProject/Features/HTTP */,
+				5A4E00000000000000000023 /* ZanzarProject/Features/PlaceSuggestion/API */,
+				5A4E00000000000000000024 /* ZanzarProject/Features/PlaceSuggestion/Models */,
+				5A4E00000000000000000025 /* ZanzarProject/Features/PlaceSuggestion/Utils */,
+				5A4E00000000000000000026 /* ZanzarProject/Features/PlaceSuggestion/Views/Components */,
+				5A4E00000000000000000027 /* ZanzarProject/Features/PlaceShare */,
+				5A4E00000000000000000028 /* ZanzarProject/Features/Shared/Utils */,
+				5A4E00000000000000000029 /* ZanzarProject/Features/Shared/Views/Styles */,
+				5A4E0000000000000000002A /* ZanzarProject/Features/Shared/Views/Components/Layout */,
+				B9AE997B30A49C31006AFF3E /* ZanzarProject/Resources */,
+			);
+			name = ZanzarShare;
+			productName = ZanzarShare;
+			productReference = 5A4E00000000000000000001 /* ZanzarShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		B9A3FCA63059BF17003386A8 /* ZanzarProjectTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B9A3FCAF3059BF17003386A8 /* Build configuration list for PBXNativeTarget "ZanzarProjectTests" */;
@@ -360,38 +390,6 @@
 			productReference = B9AE997430A49C31006AFF3E /* ZanzarWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		5A4E00000000000000000003 /* ZanzarShare */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 5A4E00000000000000000004 /* Build configuration list for PBXNativeTarget "ZanzarShare" */;
-			buildPhases = (
-				5A4E00000000000000000007 /* Sources */,
-				5A4E00000000000000000008 /* Frameworks */,
-				5A4E00000000000000000009 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				5A4E00000000000000000010 /* ZanzarShare */,
-				B9AE997B30A49C31006AFF3E /* ZanzarProject/Resources */,
-				5A4E00000000000000000020 /* ZanzarProject/Utils */,
-				5A4E00000000000000000021 /* ZanzarProject/Features/Auth */,
-				5A4E00000000000000000022 /* ZanzarProject/Features/HTTP */,
-				5A4E00000000000000000023 /* ZanzarProject/Features/PlaceSuggestion/API */,
-				5A4E00000000000000000024 /* ZanzarProject/Features/PlaceSuggestion/Models */,
-				5A4E00000000000000000025 /* ZanzarProject/Features/PlaceSuggestion/Utils */,
-				5A4E00000000000000000026 /* ZanzarProject/Features/PlaceSuggestion/Views/Components */,
-				5A4E00000000000000000027 /* ZanzarProject/Features/PlaceShare */,
-				5A4E00000000000000000028 /* ZanzarProject/Features/Shared/Utils */,
-				5A4E00000000000000000029 /* ZanzarProject/Features/Shared/Views/Styles */,
-				5A4E0000000000000000002A /* ZanzarProject/Features/Shared/Views/Components/Layout */,
-			);
-			name = ZanzarShare;
-			productName = ZanzarShare;
-			productReference = 5A4E00000000000000000001 /* ZanzarShare.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -405,14 +403,14 @@
 					000000000000000100000000 = {
 						CreatedOnToolsVersion = 26.3;
 					};
+					5A4E00000000000000000003 = {
+						CreatedOnToolsVersion = 27.2;
+					};
 					B9A3FCA63059BF17003386A8 = {
 						CreatedOnToolsVersion = 27.0;
 						TestTargetID = 000000000000000100000000;
 					};
 					B9AE997330A49C31006AFF3E = {
-						CreatedOnToolsVersion = 27.2;
-					};
-					5A4E00000000000000000003 = {
 						CreatedOnToolsVersion = 27.2;
 					};
 				};
@@ -446,6 +444,11 @@
 			files = (
 			);
 		};
+		5A4E00000000000000000009 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
 		B9A3FCA53059BF17003386A8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
@@ -456,15 +459,15 @@
 			files = (
 			);
 		};
-		5A4E00000000000000000009 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			files = (
-			);
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		000000000000000120000000 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		5A4E00000000000000000007 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
 			);
@@ -479,14 +482,14 @@
 			files = (
 			);
 		};
-		5A4E00000000000000000007 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			files = (
-			);
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5A4E0000000000000000000B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5A4E00000000000000000003 /* ZanzarShare */;
+			targetProxy = 5A4E0000000000000000000A /* PBXContainerItemProxy */;
+		};
 		B9A3FCAC3059BF17003386A8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 000000000000000100000000 /* ZanzarProject */;
@@ -496,11 +499,6 @@
 			isa = PBXTargetDependency;
 			target = B9AE997330A49C31006AFF3E /* ZanzarWidgetExtension */;
 			targetProxy = B9AE998830A49C33006AFF3E /* PBXContainerItemProxy */;
-		};
-		5A4E0000000000000000000B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5A4E00000000000000000003 /* ZanzarShare */;
-			targetProxy = 5A4E0000000000000000000A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -746,6 +744,73 @@
 			};
 			name = Release;
 		};
+		5A4E00000000000000000005 /* Debug configuration for PBXNativeTarget "ZanzarShare" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 000000000000000000000130 /* Config.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ZanzarShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 7;
+				DEVELOPMENT_TEAM = 982D3NRR89;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ZanzarShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "O Lero";
+				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsLocalNetworking = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dalpra.Zanzar.ZanzarShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		5A4E00000000000000000006 /* Release configuration for PBXNativeTarget "ZanzarShare" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C0FFEE000000000000000131 /* Config.Release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ZanzarShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 7;
+				DEVELOPMENT_TEAM = 982D3NRR89;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ZanzarShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "O Lero";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dalpra.Zanzar.ZanzarShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		B9A3FCAD3059BF17003386A8 /* Debug configuration for PBXNativeTarget "ZanzarProjectTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -864,73 +929,6 @@
 			};
 			name = Release;
 		};
-		5A4E00000000000000000005 /* Debug configuration for PBXNativeTarget "ZanzarShare" */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 000000000000000000000130 /* Config.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = ZanzarShare.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
-				DEVELOPMENT_TEAM = 982D3NRR89;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ZanzarShare/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "O Lero";
-				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsLocalNetworking = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dalpra.Zanzar.ZanzarShare;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Debug;
-		};
-		5A4E00000000000000000006 /* Release configuration for PBXNativeTarget "ZanzarShare" */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = C0FFEE000000000000000131 /* Config.Release.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = ZanzarShare.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
-				DEVELOPMENT_TEAM = 982D3NRR89;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ZanzarShare/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "O Lero";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dalpra.Zanzar.ZanzarShare;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -950,6 +948,14 @@
 			);
 			defaultConfigurationName = Release;
 		};
+		5A4E00000000000000000004 /* Build configuration list for PBXNativeTarget "ZanzarShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5A4E00000000000000000005 /* Debug configuration for PBXNativeTarget "ZanzarShare" */,
+				5A4E00000000000000000006 /* Release configuration for PBXNativeTarget "ZanzarShare" */,
+			);
+			defaultConfigurationName = Release;
+		};
 		B9A3FCAF3059BF17003386A8 /* Build configuration list for PBXNativeTarget "ZanzarProjectTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -964,15 +970,6 @@
 				B9AE998D30A49C33006AFF3E /* Debug configuration for PBXNativeTarget "ZanzarWidgetExtension" */,
 				B9AE998E30A49C33006AFF3E /* Release configuration for PBXNativeTarget "ZanzarWidgetExtension" */,
 			);
-			defaultConfigurationName = Release;
-		};
-		5A4E00000000000000000004 /* Build configuration list for PBXNativeTarget "ZanzarShare" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5A4E00000000000000000005 /* Debug */,
-				5A4E00000000000000000006 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */

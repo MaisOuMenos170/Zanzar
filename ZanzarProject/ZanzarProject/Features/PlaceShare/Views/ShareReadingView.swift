@@ -9,7 +9,7 @@ struct ShareReadingView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            SheetHeader(title: "placeShare.header.title", subtitle: "placeShare.header.subtitle", onClose: onClose)
+            SheetHeader(title: "placeShare.header.title", subtitle: "placeShare.header.subtitle")
 
             VStack(spacing: 8) {
                 Image("CarinhaBocejando")

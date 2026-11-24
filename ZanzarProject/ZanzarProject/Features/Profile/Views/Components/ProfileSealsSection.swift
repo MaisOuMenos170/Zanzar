@@ -6,7 +6,7 @@ struct ProfileSealsSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            ProfileSectionHeader(title: "profile.sealsSection.title", onSeeMore: onSeeMore)
+            SectionHeader(title: "profile.sealsSection.title", onSeeMore: onSeeMore)
 
             if categories.isEmpty {
                 ListEmptyState(message: "profile.sealsSection.empty")
