@@ -179,6 +179,7 @@ struct LocationMapView: View {
                     .buttonStyle(MapPinButtonStyle())
                     .matchedTransitionSource(id: place.id, in: zoomNamespace)
                     .accessibilityLabel(place.displayName)
+                    .accessibilityValue(place.pinStyle.accessibilityValue)
                     .transition(pinTransition)
                 }
                 .annotationTitles(.hidden)

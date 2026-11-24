@@ -58,7 +58,7 @@ struct RatingPromptView: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text("ratingPrompt.title")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .scaledFont(size: 22, weight: .bold, design: .rounded)
                     .foregroundStyle(Color.brandSheetTitle)
                     .accessibilityAddTraits(.isHeader)
 
@@ -69,7 +69,7 @@ struct RatingPromptView: View {
             .padding(.bottom, 8)
 
             Text(message)
-                .font(.system(size: 14))
+                .scaledFont(size: 14)
                 .tracking(0.25)
                 .foregroundStyle(.black)
         }

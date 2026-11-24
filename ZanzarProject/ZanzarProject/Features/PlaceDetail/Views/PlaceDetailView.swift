@@ -158,7 +158,8 @@ struct PlaceDetailView: View {
             .contentTransition(.symbolEffect(.replace))
             .frame(width: 36, height: 36)
             .background(Color.brandNeutral50, in: .circle)
-            .contentShape(.circle)
+            // The circle is 36pt; the touch area is 44.
+            .contentShape(.rect.inset(by: -4))
         }
         .buttonStyle(.plain)
         .motion(Motion.suave, value: viewModel.isSaved)

@@ -45,6 +45,8 @@ struct PlaceSuggestionSheetCard<Content: View>: View {
         .accessibilityElement(children: .contain)
         .accessibilityAddTraits(.isModal)
         .accessibilityAction(.escape, onClose)
+        // The card slides in over the screen without a navigation change, so VoiceOver has to be told to move in.
+        .onAppear { AccessibilityNotification.ScreenChanged().post() }
     }
 
     private var dragToClose: some Gesture {

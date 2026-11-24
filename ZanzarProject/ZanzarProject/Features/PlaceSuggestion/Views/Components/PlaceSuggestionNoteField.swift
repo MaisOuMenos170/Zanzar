@@ -8,7 +8,7 @@ struct PlaceSuggestionNoteField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("placeSuggestion.noteField.label")
-                .font(.system(size: 14))
+                .scaledFont(size: 14)
                 .foregroundStyle(.black)
 
             TextField(
@@ -17,7 +17,7 @@ struct PlaceSuggestionNoteField: View {
                 prompt: Text("placeSuggestion.noteField.placeholder").foregroundStyle(Color.brandFieldPlaceholder),
                 axis: .vertical
             )
-            .font(.system(size: 14))
+            .scaledFont(size: 14)
             .foregroundStyle(Color.brandNeutral950)
             .lineLimit(4...10)
             .focused($isFocused)

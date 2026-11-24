@@ -60,6 +60,7 @@ struct NotificationPermissionView: View {
                 } label: {
                     Text("notificationPermission.laterButton.title")
                         .foregroundStyle(.secondary)
+                        .contentShape(.rect.inset(by: -12))
                 }
                 .frame(maxWidth: .infinity)
 

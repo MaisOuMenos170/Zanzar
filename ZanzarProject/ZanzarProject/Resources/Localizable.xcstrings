@@ -17,7 +17,21 @@
 
     },
     "accessibility.checked" : {
-
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checked"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marcado"
+          }
+        }
+      }
     },
     "accessibility.unchecked" : {
       "extractionState" : "manual",
@@ -2229,6 +2243,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível obter sua localização. Tente novamente."
+          }
+        }
+      }
+    },
+    "locationMap.pin.available.accessibilityValue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not visited"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não visitado"
+          }
+        }
+      }
+    },
+    "locationMap.pin.checkedIn.accessibilityValue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visited"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visitado"
+          }
+        }
+      }
+    },
+    "locationMap.pin.inCurrentItinerary.accessibilityValue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In your current itinerary"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No roteiro atual"
           }
         }
       }
@@ -5684,7 +5749,21 @@
       }
     },
     "placeSuggestion.failureAlert.title" : {
-
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't send suggestion"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível enviar"
+          }
+        }
+      }
     },
     "placeSuggestion.header.subtitle" : {
       "extractionState" : "manual",
@@ -6135,11 +6214,56 @@
         }
       }
     },
+    "placeSuggestion.publishedAlert.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is now on Lero. Thanks for contributing!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ já está no Lero. Obrigado por contribuir!"
+          }
+        }
+      }
+    },
     "placeSuggestion.publishedAlert.title" : {
-
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place added!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lugar adicionado!"
+          }
+        }
+      }
     },
     "placeSuggestion.refusedAlert.title" : {
-
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestion not approved"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sugestão não aprovada"
+          }
+        }
+      }
     },
     "placeSuggestion.search.empty.message" : {
       "extractionState" : "manual",
@@ -6329,10 +6453,38 @@
       }
     },
     "placeSuggestion.successAlert.message" : {
-
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your request is being reviewed by our moderators. Check back later to see if it was accepted."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu pedido está em análise pela moderação, volte mais tarde para conferir se foi aceito."
+          }
+        }
+      }
     },
     "placeSuggestion.successAlert.title" : {
-
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestion sent!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sugestão enviada!"
+          }
+        }
+      }
     },
     "placeSuggestion.toast.published" : {
       "extractionState" : "manual",

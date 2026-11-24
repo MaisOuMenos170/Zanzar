@@ -51,6 +51,11 @@ struct OneTimeCodeField: View {
                     .accessibilityLabel("passwordReset.code.field.accessibilityLabel")
                     .accessibilityValue(Text("passwordReset.code.field.accessibilityValue \(text.count) \(length)"))
             }
+            .onChange(of: errorMessageKey) { _, new in
+                if let new {
+                    AccessibilityNotification.Announcement(L10n.string(new)).post()
+                }
+            }
             .onChange(of: text) {
                 let digits = Self.sanitized(text, length: length)
                 if digits != text {

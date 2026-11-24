@@ -73,6 +73,8 @@ struct CheckInPlaceTile: View {
             .contentShape(.rect(cornerRadius: 16))
         }
         .buttonStyle(PressableButtonStyle())
+        // The seal on the tile says whether the stop was visited; it is hidden from VoiceOver, so say it here.
+        .accessibilityValue(place.pinStyle.accessibilityValue)
     }
 
     @ViewBuilder
