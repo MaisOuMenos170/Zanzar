@@ -3,23 +3,23 @@ import Foundation
 
 final class InMemoryAuthTokenStore: AuthTokenPersisting, @unchecked Sendable {
     private let lock = NSLock()
-    private var token: String?
+    private var tokens: AuthTokens?
 
-    func saveToken(_ token: String) throws {
+    func saveTokens(_ tokens: AuthTokens) throws {
         lock.lock()
         defer { lock.unlock() }
-        self.token = token
+        self.tokens = tokens
     }
 
-    func readToken() -> String? {
+    func readTokens() -> AuthTokens? {
         lock.lock()
         defer { lock.unlock() }
-        return token
+        return tokens
     }
 
-    func deleteToken() throws {
+    func deleteTokens() throws {
         lock.lock()
         defer { lock.unlock() }
-        token = nil
+        tokens = nil
     }
 }

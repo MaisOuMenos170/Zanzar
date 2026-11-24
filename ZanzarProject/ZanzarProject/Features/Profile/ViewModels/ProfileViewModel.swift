@@ -6,7 +6,11 @@ final class ProfileViewModel {
     private let service: ProfileServicing
     private let userIDProvider: @Sendable () -> String?
     private let checkInsLimit: Int
+    private let now: () -> Date
     private var loadGeneration = 0
+    private var lastLoadedAt: Date?
+    /// Set when something outside this screen (a check-in) made the loaded profile outdated.
+    private var isStale = false
 
     var profile: Profile?
     var isLoading = false
@@ -14,19 +18,36 @@ final class ProfileViewModel {
     var errorMessage: String?
     var showsSignOutConfirmation = false
     var signOutFailed = false
+    var showsDeleteAccountConfirmation = false
+    var deleteAccountFailed = false
+    private(set) var isDeletingAccount = false
 
     init(
         service: ProfileServicing = ProfileService(),
         userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.userID },
-        checkInsLimit: Int = 4
+        checkInsLimit: Int = 4,
+        now: @escaping () -> Date = { Date() }
     ) {
         self.service = service
         self.userIDProvider = userIDProvider
         self.checkInsLimit = checkInsLimit
+        self.now = now
+    }
+
+    /// The next `load()` goes to the server even if the loaded profile is still within its freshness window.
+    func markStale() {
+        isStale = true
     }
 
     /// A failed refresh keeps the profile already on screen; only the first load surfaces an error.
-    func load() async {
+    /// Re-entering the screen within `DataFreshness.screenMaxAge` keeps what is shown, unless the profile was
+    /// marked stale or `force` is set (pull-to-refresh, retry).
+    func load(force: Bool = false) async {
+        if !force, !isStale, profile != nil, let lastLoadedAt,
+           now().timeIntervalSince(lastLoadedAt) < DataFreshness.screenMaxAge / .seconds(1) {
+            return
+        }
+
         loadGeneration += 1
         let generation = loadGeneration
 
@@ -45,16 +66,51 @@ final class ProfileViewModel {
             return
         }
 
+        // Cleared before the request so a `markStale()` made while it runs is not lost.
+        isStale = false
         do {
             let loadedProfile = try await service.fetchProfile(userID: userID, limit: checkInsLimit)
             guard generation == loadGeneration else { return }
             profile = loadedProfile
+            lastLoadedAt = now()
+        } catch is CancellationError {
+            isStale = true
+            return
+        } catch {
+            isStale = true
+            // The server's message is never shown: the service already logged the details.
+            guard generation == loadGeneration, profile == nil else { return }
+            errorMessage = APIError.rateLimitedMessage(for: error) ?? String(localized: "profile.errorState.message")
+        }
+    }
+
+    /// How many check-ins the passport asks for, so the seals row and the recent cards come from one request.
+    /// The backend caps `limit` at 20 (`validateGetProfileQuery`); anything above is answered with a 400.
+    static let passportLimit = 20
+
+    /// Deletes the account on the server, then ends the local session like a sign-out. A server failure keeps
+    /// the user signed in so they can try again.
+    func deleteAccount(using authSession: AuthSession, coordinator: AppCoordinator) async {
+        guard !isDeletingAccount, let userID = userIDProvider() else { return }
+        isDeletingAccount = true
+        defer { isDeletingAccount = false }
+        deleteAccountFailed = false
+
+        do {
+            try await service.deleteAccount(userID: userID)
         } catch is CancellationError {
             return
         } catch {
-            // The server's message is never shown: the service already logged the details.
-            guard generation == loadGeneration, profile == nil else { return }
-            errorMessage = String(localized: "profile.errorState.message")
+            deleteAccountFailed = true
+            return
+        }
+
+        do {
+            try authSession.signOut()
+            coordinator.popToRoot()
+        } catch {
+            AppLog.profile.warning("Account deleted but the local sign-out failed")
+            deleteAccountFailed = true
         }
     }
 

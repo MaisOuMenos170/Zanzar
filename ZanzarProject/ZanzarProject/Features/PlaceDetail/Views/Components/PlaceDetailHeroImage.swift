@@ -1,11 +1,28 @@
 import SwiftUI
 
 struct PlaceDetailHeroImage: View {
-    let photoReference: String?
+    let photo: PlacePhoto?
     let mediaPolicy: PlaceMediaAccessPolicy
+    /// What VoiceOver says for the photo. `nil` keeps the photo out of the accessibility tree.
+    var accessibilityLabel: String?
+    var height: CGFloat = 191
 
     var body: some View {
-        PlaceRemoteImage(photoReference: photoReference, mediaPolicy: mediaPolicy) {
+        image
+            .heroAccessibility(label: accessibilityLabel)
+            .overlay(alignment: .bottomLeading) {
+                if let credit = photo?.credit {
+                    PlacePhotoCreditView(credit: credit)
+                        .padding(8)
+                } else if let attribution = photo?.userAttribution {
+                    UserPhotoAttributionView(attribution: attribution)
+                        .padding(8)
+                }
+            }
+    }
+
+    private var image: some View {
+        PlaceRemoteImage(photoURL: photo?.url, mediaPolicy: mediaPolicy) {
             ZStack {
                 LinearGradient(
                     colors: [
@@ -22,9 +39,19 @@ struct PlaceDetailHeroImage: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 191)
+        .frame(height: height)
         .clipShape(.rect(cornerRadius: 16))
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func heroAccessibility(label: String?) -> some View {
+        if let label {
+            accessibilityLabel(label)
+                .accessibilityAddTraits(.isImage)
+        } else {
+            accessibilityHidden(true)
+        }
     }
 }

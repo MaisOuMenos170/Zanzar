@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct PlaceDetailCheckInButton: View {
+    let titleKey: LocalizedStringKey
     let hasCheckedIn: Bool
     let isLoading: Bool
     let action: () -> Void
@@ -13,9 +14,14 @@ struct PlaceDetailCheckInButton: View {
     @State private var isVisible = false
 
     private let stampTravel: CGFloat = 8
-    private let stampDuration: TimeInterval = 0.35
 
-    init(hasCheckedIn: Bool, isLoading: Bool, action: @escaping () -> Void) {
+    init(
+        titleKey: LocalizedStringKey = "placeDetail.checkInButton.title",
+        hasCheckedIn: Bool,
+        isLoading: Bool,
+        action: @escaping () -> Void
+    ) {
+        self.titleKey = titleKey
         self.hasCheckedIn = hasCheckedIn
         self.isLoading = isLoading
         self.action = action
@@ -37,18 +43,23 @@ struct PlaceDetailCheckInButton: View {
                             .strokeBorder(Color("PlaceDetailCheckInDoneBorder"), lineWidth: 1)
                     }
                     .paperStampPress(phase: phase, role: .sheet, travel: stampTravel)
-                    .sensoryFeedback(.impact(flexibility: .rigid, intensity: 0.55), trigger: landingCount)
+                    .haptic(.carimboLeve, trigger: landingCount)
                     .accessibilityAddTraits(.isStaticText)
             } else {
-                Button("placeDetail.checkInButton.title", action: action)
-                    .buttonStyle(AuthPrimaryButtonStyle())
-                    .disabled(isLoading)
-                    .overlay {
-                        if isLoading {
-                            ProgressView()
-                                .tint(.white)
-                        }
+                Button(action: action) {
+                    Text(titleKey)
+                        .opacity(isLoading ? 0 : 1)
+                }
+                .buttonStyle(AuthPrimaryButtonStyle(background: .brandPurple500))
+                .disabled(isLoading)
+                .overlay {
+                    if isLoading {
+                        ProgressView()
+                            .tint(.white)
+                            .transition(.opacity)
                     }
+                }
+                .motion(Motion.suave, value: isLoading)
             }
         }
         .onAppear {
@@ -74,7 +85,7 @@ struct PlaceDetailCheckInButton: View {
         .onChange(of: showsDone) { _, done in
             guard done, phase == .lifted else { return }
             PaperStampPhase.play(
-                duration: stampDuration,
+                size: .small,
                 reduceMotion: reduceMotion,
                 update: { phase = $0 },
                 onContact: { landingCount += 1 }

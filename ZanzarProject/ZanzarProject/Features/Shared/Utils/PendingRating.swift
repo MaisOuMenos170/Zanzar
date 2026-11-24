@@ -10,6 +10,9 @@ struct PendingRating: Codable, Hashable, Sendable {
     let latitude: Double
     let longitude: Double
     let checkedInAt: Date
+    /// Localization key of the place's category, shown as a chip in the rating sheet. `nil` for records saved
+    /// before it was kept.
+    var categoryTitleKey: String?
 
     func isExpired(now: Date, window: TimeInterval) -> Bool {
         now.timeIntervalSince(checkedInAt) > window

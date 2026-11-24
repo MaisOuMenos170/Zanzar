@@ -1,35 +1,49 @@
 import SwiftUI
 
+/// One of the five faces of the rating sheet, with its label under it (Figma "Avaliação", frame 2020:9478).
+/// While one face is chosen the other four fade to half.
 struct RatingPromptEmotionButton: View {
     let tag: ImpressionTag
     let isSelected: Bool
+    let isDimmed: Bool
     let action: () -> Void
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Height of the slot every face sits in, so the labels line up under the tallest one.
+    private static let slotHeight: CGFloat = 66.687
 
     var body: some View {
         Button(action: action) {
-            Image(tag.imageName)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 62, height: 62)
-                .scaleEffect(isSelected ? 1.2 : 1)
-                .shadow(
-                    color: .black.opacity(isSelected ? 0.25 : 0),
-                    radius: isSelected ? 5.7 : 0,
-                    y: isSelected ? 7 : 0
-                )
-                .opacity(isSelected ? 1 : 0.7)
-                .frame(width: 80, height: 80)
-                .contentShape(.rect)
+            VStack(spacing: 4) {
+                Image(tag.imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: faceSize.width, height: faceSize.height)
+                    .frame(height: Self.slotHeight, alignment: .top)
+                    .accessibilityHidden(true)
+
+                Text(label)
+                    .font(.system(size: 12))
+                    .foregroundStyle(Color.brandNeutral600)
+            }
+            .opacity(isDimmed ? 0.5 : 1)
+            .contentShape(.rect)
         }
-        .buttonStyle(.plain)
-        .animation(reduceMotion ? nil : .spring(duration: 0.3, bounce: 0.35), value: isSelected)
-        .accessibilityLabel(accessibilityLabel)
+        .buttonStyle(PressableButtonStyle())
+        .accessibilityLabel(label)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
-    private var accessibilityLabel: LocalizedStringKey {
+    /// Each face is drawn at its own size in the design: "Legal" is the largest.
+    private var faceSize: CGSize {
+        switch tag {
+        case .delighted, .sleepy: CGSize(width: 61.472, height: 58.322)
+        case .happy: CGSize(width: 68.327, height: 66.687)
+        case .sad: CGSize(width: 62.57, height: 59.252)
+        case .nauseated: CGSize(width: 62.696, height: 59.484)
+        }
+    }
+
+    private var label: LocalizedStringKey {
         switch tag {
         case .delighted: "ratingPrompt.emotion.delighted"
         case .happy: "ratingPrompt.emotion.happy"
@@ -40,10 +54,18 @@ struct RatingPromptEmotionButton: View {
     }
 }
 
-#Preview("Unselected") {
-    HStack {
-        RatingPromptEmotionButton(tag: .happy, isSelected: false) {}
-        RatingPromptEmotionButton(tag: .delighted, isSelected: true) {}
+#Preview("Nothing chosen, then one chosen") {
+    VStack(spacing: 24) {
+        HStack(alignment: .top, spacing: 7.623) {
+            ForEach(ImpressionTag.allCases, id: \.self) {
+                RatingPromptEmotionButton(tag: $0, isSelected: false, isDimmed: false) {}
+            }
+        }
+        HStack(alignment: .top, spacing: 7.623) {
+            ForEach(ImpressionTag.allCases, id: \.self) {
+                RatingPromptEmotionButton(tag: $0, isSelected: $0 == .delighted, isDimmed: $0 != .delighted) {}
+            }
+        }
     }
     .padding()
 }

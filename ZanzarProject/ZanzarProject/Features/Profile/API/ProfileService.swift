@@ -3,6 +3,45 @@ import Foundation
 protocol ProfileServicing: Sendable {
     func fetchProfile(userID: String, limit: Int) async throws -> Profile
     func logout() async throws
+    func fetchCheckIns(userID: String, limit: Int, before: String?) async throws -> ProfileCheckInsPage
+    func updateName(userID: String, name: String) async throws
+    func deleteAccount(userID: String) async throws
+}
+
+extension ProfileServicing {
+    func fetchCheckIns(userID: String, limit: Int, before: String?) async throws -> ProfileCheckInsPage {
+        throw APIError.invalidRequest
+    }
+
+    // Defaults so test doubles that never edit the account don't have to implement these.
+    func updateName(userID: String, name: String) async throws {
+        throw APIError.invalidRequest
+    }
+
+    func deleteAccount(userID: String) async throws {
+        throw APIError.invalidRequest
+    }
+}
+
+struct CheckInsPageAPIResponse: Decodable, Sendable {
+    let checkIns: [RecentCheckInAPIResponse]
+    let nextCursor: String?
+
+    func makePage() -> ProfileCheckInsPage {
+        // One malformed entry is dropped (and logged) instead of failing the whole page.
+        let items = checkIns.compactMap { response -> ProfileCheckIn? in
+            guard let checkIn = try? response.makeCheckIn() else {
+                AppLog.profile.warning("Skipping a check-in with an unparseable datetime")
+                return nil
+            }
+            return checkIn
+        }
+        return ProfileCheckInsPage(checkIns: items, nextCursor: nextCursor)
+    }
+}
+
+nonisolated struct UpdateNameRequest: Encodable, Sendable {
+    let username: String
 }
 
 struct ProfileAPIResponse: Decodable, Sendable {
@@ -78,7 +117,7 @@ struct RecentCheckInAPIResponse: Decodable, Sendable {
     let placeId: String
     let placeName: String?
     let datetime: String
-    let photoReference: String?
+    let imageUrl: String?
     let stamp: StampAPIResponse?
     let impressionTag: String?
 
@@ -93,7 +132,7 @@ struct RecentCheckInAPIResponse: Decodable, Sendable {
             placeID: placeId,
             placeName: placeName,
             date: try Self.parseDate(datetime),
-            photoReference: photoReference,
+            photoURL: imageUrl.flatMap(PlaceImageAPIResponse.httpsURL),
             sealCategory: stamp.flatMap { Self.sealCategory(forStampID: $0.stampId) },
             impressionTag: impressionTag.flatMap(ImpressionTag.init(rawValue:))
         )
@@ -148,6 +187,62 @@ final class ProfileService: ProfileServicing {
 
     private static func isSafePathSegment(_ value: String) -> Bool {
         !value.isEmpty && value.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "-" || $0 == "_") }
+    }
+
+    func fetchCheckIns(userID: String, limit: Int, before: String?) async throws -> ProfileCheckInsPage {
+        guard Self.isSafePathSegment(userID) else {
+            AppLog.profile.error("Refusing to fetch check-ins for a malformed user id")
+            throw APIError.invalidRequest
+        }
+        var queryItems = [URLQueryItem(name: "limit", value: String(limit))]
+        if let before {
+            queryItems.append(URLQueryItem(name: "before", value: before))
+        }
+        do {
+            let response: CheckInsPageAPIResponse = try await client.get(
+                path: "user/\(userID)/check-ins",
+                queryItems: queryItems
+            )
+            let page = response.makePage()
+            AppLog.profile.info("Check-ins page fetched (count=\(page.checkIns.count), hasMore=\(page.nextCursor != nil))")
+            return page
+        } catch {
+            AppLog.profile.error("Check-ins request failed", error: error)
+            throw error
+        }
+    }
+
+    func updateName(userID: String, name: String) async throws {
+        guard Self.isSafePathSegment(userID) else {
+            AppLog.profile.error("Refusing to rename a malformed user id")
+            throw APIError.invalidRequest
+        }
+        AppLog.profile.info("Updating the profile name")
+        do {
+            try await client.sendWithoutResponse(
+                path: "user/\(userID)",
+                method: .patch,
+                body: UpdateNameRequest(username: name)
+            )
+        } catch {
+            AppLog.profile.error("Profile name update failed", error: error)
+            throw error
+        }
+    }
+
+    func deleteAccount(userID: String) async throws {
+        guard Self.isSafePathSegment(userID) else {
+            AppLog.profile.error("Refusing to delete a malformed user id")
+            throw APIError.invalidRequest
+        }
+        AppLog.profile.info("Requesting account deletion")
+        do {
+            try await client.sendWithoutResponse(path: "user/\(userID)", method: .delete)
+            AppLog.profile.info("Account deleted")
+        } catch {
+            AppLog.profile.error("Account deletion failed", error: error)
+            throw error
+        }
     }
 
     func logout() async throws {

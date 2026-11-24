@@ -8,17 +8,22 @@ nonisolated struct PlaceDetail: Identifiable, Hashable, Sendable {
     let latitude: Double
     let longitude: Double
     let distanceText: String?
+    let walkingTimeText: String?
     let openingHoursText: String
+    let isOpen: Bool?
     let tags: [PlaceDetailTag]
     let category: ZanzarPlaceCategory
     let description: String
-    let heroPhotoReference: String?
+    /// Photos of the place in the order the backend sends them, at most `maximumPhotoCount`.
+    let photos: [PlacePhoto]
     var totalCheckIns: Int
     var reactions: [PlaceDetailReaction]
-    let nearbyPlaces: [PlaceDetailNearbyPlace]
     var hasCheckedIn: Bool
     var isInActiveItinerary: Bool
     var selectedReactionTag: String?
+
+    /// The detail shows only the first few photos; each one is a request when it scrolls into view.
+    static let maximumPhotoCount = 5
 
     var displayName: String {
         PlaceDisplayNameResolver.displayName(nickname: nickname, name: name)
@@ -68,7 +73,7 @@ nonisolated struct PlaceDetailNearbyPlace: Identifiable, Hashable, Sendable {
     let category: ZanzarPlaceCategory
     let distanceMeters: Double
     let checkInCount: Int
-    let photoReference: String?
+    let photoURL: URL?
     let reactionImageNames: [String]
     let hasCheckedIn: Bool
 
@@ -100,7 +105,7 @@ nonisolated extension PlaceDetailNearbyPlace {
             category: mapPlace.category,
             distanceMeters: mapPlace.distanceMeters ?? 0,
             checkInCount: mapPlace.checkInCount,
-            photoReference: mapPlace.photoReference,
+            photoURL: mapPlace.photoURL,
             reactionImageNames: ImpressionTag.topReactionImageNames(from: mapPlace.impressionCounts),
             hasCheckedIn: mapPlace.pinStyle == .checkedIn
         )
@@ -114,13 +119,16 @@ nonisolated struct PlaceDetailLoadContext: Sendable {
 }
 
 nonisolated extension PlaceDetail {
-    static func make(
+    /// Average walking speed in meters per second (5 km/h ≈ 1.39 m/s)
+    private static let walkingSpeedMetersPerSecond: Double = 1.39
+
+    @MainActor static func make(
         placeResponse: PlaceDetailAPIResponse,
-        nearbyResponses: [PlaceDetailAPIResponse],
         mapPlace: MapPlace,
         hasCheckedIn: Bool,
         selectedReactionTag: String?,
-        userCoordinate: UserCoordinate? = nil
+        userCoordinate: UserCoordinate? = nil,
+        now: Date = Date()
     ) -> PlaceDetail {
         let location = placeResponse.geometry.location
         let distanceMeters = placeResponse.distanceMeters
@@ -130,16 +138,35 @@ nonisolated extension PlaceDetail {
                     .distance(from: CLLocation(latitude: location.lat, longitude: location.lng))
             }
         let distanceText = distanceMeters.map {
-            String(
-                format: String(localized: "placeDetail.header.distanceFormat"),
-                locale: Locale.current,
-                $0 / 1000
-            )
+            L10n.string("placeDetail.header.distanceFormat", $0 / 1000)
+        }
+        let walkingTimeText = distanceMeters.map { meters in
+            let walkingTimeSeconds = meters / walkingSpeedMetersPerSecond
+            let minutes = Int(walkingTimeSeconds / 60)
+            if minutes < 1 {
+                return L10n.string("placeDetail.header.walkingTimeLessThanMinute")
+            } else if minutes == 1 {
+                return L10n.string("placeDetail.header.walkingTimeOneMinute")
+            } else if minutes < 60 {
+                return L10n.string("placeDetail.header.walkingTimeMinutes", minutes)
+            } else {
+                let hours = minutes / 60
+                let remainingMinutes = minutes % 60
+                if remainingMinutes == 0 {
+                    return hours == 1
+                        ? L10n.string("placeDetail.header.walkingTimeOneHour")
+                        : L10n.string("placeDetail.header.walkingTimeHours", hours)
+                } else {
+                    return L10n.string("placeDetail.header.walkingTimeHoursMinutes", hours, remainingMinutes)
+                }
+            }
         }
 
         let description = placeResponse.editorialSummary?.overview
             ?? placeResponse.formattedAddress
-            ?? String(localized: "placeDetail.details.fallbackDescription")
+            ?? L10n.string("placeDetail.details.fallbackDescription")
+
+        let openingHours = openingHoursText(from: placeResponse.openingHours, now: now)
 
         return PlaceDetail(
             id: placeResponse.placeId,
@@ -148,56 +175,65 @@ nonisolated extension PlaceDetail {
             latitude: placeResponse.geometry.location.lat,
             longitude: placeResponse.geometry.location.lng,
             distanceText: distanceText,
-            openingHoursText: openingHoursText(from: placeResponse.openingHours),
+            walkingTimeText: walkingTimeText,
+            openingHoursText: openingHours.text,
+            isOpen: openingHours.isOpen,
             tags: tags(from: placeResponse),
             category: ZanzarPlaceCategory(rawCategory: placeResponse.zanzar.category),
             description: description,
-            heroPhotoReference: placeResponse.photos.first?.photoReference,
+            photos: Array(placeResponse.photos.prefix(PlaceDetail.maximumPhotoCount)),
             totalCheckIns: placeResponse.zanzar.checkInCount,
             reactions: ImpressionTag.reactions(
                 from: placeResponse.zanzar.impressionCounts,
                 selectedTag: selectedReactionTag
             ),
-            nearbyPlaces: nearbyResponses
-                .filter { $0.placeId != placeResponse.placeId }
-                .prefix(6)
-                .map(nearbyPlace(from:)),
             hasCheckedIn: hasCheckedIn,
             isInActiveItinerary: placeResponse.userContext?.isInActiveItinerary ?? false,
             selectedReactionTag: selectedReactionTag
         )
     }
 
-    private static func nearbyPlace(from nearby: PlaceDetailAPIResponse) -> PlaceDetailNearbyPlace {
-        PlaceDetailNearbyPlace(
-            id: nearby.placeId,
-            name: nearby.name,
-            nickname: nearby.nickname,
-            latitude: nearby.geometry.location.lat,
-            longitude: nearby.geometry.location.lng,
-            category: ZanzarPlaceCategory(rawCategory: nearby.zanzar.category),
-            distanceMeters: nearby.distanceMeters ?? 0,
-            checkInCount: nearby.zanzar.checkInCount,
-            photoReference: nearby.photos.first?.photoReference,
-            reactionImageNames: ImpressionTag.topReactionImageNames(from: nearby.zanzar.impressionCounts),
-            hasCheckedIn: nearby.userContext?.hasCheckedIn ?? false
-        )
-    }
-
-    private static func openingHoursText(from openingHours: PlaceDetailOpeningHoursResponse?) -> String {
+    @MainActor private static func openingHoursText(
+        from openingHours: PlaceDetailOpeningHoursResponse?,
+        now: Date
+    ) -> (text: String, isOpen: Bool?) {
         guard let openingHours else {
-            return String(localized: "placeDetail.header.hoursUnavailable")
+            return (L10n.string("placeDetail.header.hoursUnavailable"), nil)
+        }
+        // The periods say more than the stored `open_now` snapshot: they give the closing time.
+        if let periods = openingHours.periods,
+           let weeklyHours = OpeningHours(response: PlaceOpeningHoursAPIResponse(periods: periods)) {
+            switch weeklyHours.status(at: now) {
+            case .open(let closesAt?):
+                return (L10n.string("placeDetail.header.openUntil", closingTime(closesAt)), true)
+            case .open(nil):
+                return (L10n.string("placeDetail.header.open24Hours"), true)
+            case .closed:
+                return (L10n.string("placeDetail.header.closedNow"), false)
+            }
         }
         if openingHours.openNow == true {
-            return String(localized: "placeDetail.header.openNow")
+            return (L10n.string("placeDetail.header.openNow"), true)
         }
         if openingHours.openNow == false {
-            return String(localized: "placeDetail.header.closedNow")
+            return (L10n.string("placeDetail.header.closedNow"), false)
         }
-        return String(localized: "placeDetail.header.hoursUnavailable")
+        return (L10n.string("placeDetail.header.hoursUnavailable"), nil)
     }
 
-    private static func tags(from response: PlaceDetailAPIResponse) -> [PlaceDetailTag] {
+    /// "18h" or "18h30" in Portuguese, the system's short time ("6 PM") elsewhere.
+    static func closingTime(_ date: Date, in timeZone: TimeZone = OpeningHours.defaultTimeZone) -> String {
+        guard Locale.current.language.languageCode == .portuguese else {
+            return date.formatted(Date.FormatStyle(date: .omitted, time: .shortened, timeZone: timeZone))
+        }
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        let time = calendar.dateComponents([.hour, .minute], from: date)
+        let (hour, minute) = (time.hour ?? 0, time.minute ?? 0)
+        return minute == 0 ? "\(hour)h" : String(format: "%dh%02d", hour, minute)
+    }
+
+    @MainActor private static func tags(from response: PlaceDetailAPIResponse) -> [PlaceDetailTag] {
         var tags: [PlaceDetailTag] = []
 
         if let categoryTag = categoryTag(for: response.zanzar.category) {
@@ -226,26 +262,28 @@ nonisolated extension PlaceDetail {
         value.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
     }
 
-    private static func categoryTag(for category: String) -> PlaceDetailTag? {
+    @MainActor private static func categoryTag(for category: String) -> PlaceDetailTag? {
         switch ZanzarPlaceCategory(rawCategory: category) {
         case .park:
-            categoryTag("park", label: String(localized: "placeDetail.tag.park"), style: .park)
+            categoryTag("park", label: L10n.string("placeDetail.tag.park"), style: .park)
         case .tourist:
-            categoryTag("tourist", label: String(localized: "placeDetail.tag.touristSpot"), style: .touristSpot)
+            categoryTag("tourist", label: L10n.string("placeDetail.tag.touristSpot"), style: .touristSpot)
         case .restaurant:
-            categoryTag("restaurant", label: String(localized: "placeDetail.tag.restaurant"), style: .category)
+            categoryTag("restaurant", label: L10n.string("placeDetail.tag.restaurant"), style: .category)
         case .bar:
-            categoryTag("bar", label: String(localized: "placeDetail.tag.bar"), style: .category)
+            categoryTag("bar", label: L10n.string("placeDetail.tag.bar"), style: .category)
         case .cafe:
-            categoryTag("cafe", label: String(localized: "placeDetail.tag.cafe"), style: .category)
+            categoryTag("cafe", label: L10n.string("placeDetail.tag.cafe"), style: .category)
         case .museum:
-            categoryTag("museum", label: String(localized: "placeDetail.tag.museum"), style: .category)
+            categoryTag("museum", label: L10n.string("placeDetail.tag.museum"), style: .category)
         case .historic:
-            categoryTag("historic", label: String(localized: "placeDetail.tag.historic"), style: .touristSpot)
+            categoryTag("historic", label: L10n.string("placeDetail.tag.historic"), style: .touristSpot)
         case .curiosity:
-            categoryTag("curiosity", label: String(localized: "placeDetail.tag.curiosity"), style: .category)
+            categoryTag("curiosity", label: L10n.string("placeDetail.tag.curiosity"), style: .category)
         case .party:
-            categoryTag("party", label: String(localized: "placeDetail.tag.party"), style: .category)
+            categoryTag("party", label: L10n.string("placeDetail.tag.party"), style: .category)
+        case .center:
+            categoryTag("center", label: L10n.string("placeDetail.tag.center"), style: .category)
         case .unknown:
             nil
         }

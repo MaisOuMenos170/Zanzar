@@ -124,3 +124,4 @@ O script escreve `ZANZAR_API_BASE_URL` em `ZanzarProject/Config.xcconfig` (arqui
 - **Local** — o valor fica no `Config.xcconfig` (não versionado) e vale para Debug e Release; defina a URL de produção separadamente antes de um build Release.
 - **Dois repositórios** — `ZanzarBackend` e `Zanzar` devem estar no mesmo diretório pai (ex.: `~/projetos/ZanzarBackend` e `~/projetos/Zanzar`), pois o `dev-tunnel.sh` resolve o caminho relativo entre eles.
 - **Simulador sem túnel** — se `ZANZAR_API_BASE_URL` estiver vazia em Debug, o app usa fallback `http://127.0.0.1:3000` (ver `APIConfiguration.swift`).
+- 

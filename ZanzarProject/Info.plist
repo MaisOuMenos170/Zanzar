@@ -2,12 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleDisplayName</key>
-	<string>Lero</string>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>O Lero usa sua localização para centralizar o mapa e confirmar que você está perto do lugar no check-in.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>dalpra.Zanzar</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>lero</string>
+			</array>
+		</dict>
+	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>maps</string>
@@ -16,5 +21,9 @@
 	</array>
 	<key>ZanzarAPIBaseURL</key>
 	<string>$(ZANZAR_API_BASE_URL)</string>
+	<key>ZanzarKeychainGroup</key>
+	<string>$(AppIdentifierPrefix)dalpra.Zanzar</string>
+	<key>ZanzarSupportEmail</key>
+	<string>$(ZANZAR_SUPPORT_EMAIL)</string>
 </dict>
 </plist>

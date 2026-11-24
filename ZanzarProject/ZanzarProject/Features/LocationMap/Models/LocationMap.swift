@@ -22,7 +22,7 @@ enum DevLocation {
 }
 #endif
 
-nonisolated enum ZanzarPlaceCategory: String, Sendable {
+nonisolated enum ZanzarPlaceCategory: String, CaseIterable, Sendable {
     case restaurant
     case bar
     case cafe
@@ -32,10 +32,44 @@ nonisolated enum ZanzarPlaceCategory: String, Sendable {
     case historic
     case curiosity
     case party
+    case center
     case unknown
 
     init(rawCategory: String) {
         self = Self(rawValue: rawCategory) ?? .unknown
+    }
+
+    /// The categories a user can pick in the discover filter; `.unknown` only exists for places the app cannot name.
+    static var filterOptions: [ZanzarPlaceCategory] {
+        allCases.filter { $0 != .unknown }
+    }
+
+    /// Localized name of the category, shared with the place detail tags.
+    var titleKey: String {
+        switch self {
+        case .restaurant:
+            "placeDetail.tag.restaurant"
+        case .bar:
+            "placeDetail.tag.bar"
+        case .cafe:
+            "placeDetail.tag.cafe"
+        case .museum:
+            "placeDetail.tag.museum"
+        case .park:
+            "placeDetail.tag.park"
+        case .tourist:
+            "placeDetail.tag.touristSpot"
+        case .historic:
+            "placeDetail.tag.historic"
+        case .curiosity:
+            "placeDetail.tag.curiosity"
+        case .party:
+            "placeDetail.tag.party"
+        case .center:
+            "placeDetail.tag.center"
+        case .unknown:
+            "placeDetail.tag.touristSpot"
+        }
     }
 
     /// SF Symbol aligned with Figma node 860:4084 (pins e selos).
@@ -59,6 +93,8 @@ nonisolated enum ZanzarPlaceCategory: String, Sendable {
             "eyes.inverse"
         case .party:
             "party.popper"
+        case .center:
+            "building.2.fill"
         case .unknown:
             "mappin"
         }
@@ -85,6 +121,8 @@ nonisolated enum ZanzarPlaceCategory: String, Sendable {
             "PlaceCategorySealCuriosity"
         case .party:
             "PlaceCategorySealParty"
+        case .center:
+            "PlaceCategorySealCenter"
         case .unknown:
             "PlaceCategorySealRestaurant"
         }
@@ -101,10 +139,15 @@ nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
     /// `nil` when the place was reached without a known user position (e.g. from the profile).
     let distanceMeters: Double?
     let pinStyle: LocationPinStyle
+    /// The place is a stop of the roteiro the user is following, whether or not it was already visited.
+    /// `pinStyle` cannot tell: a visited stop shows as `.checkedIn`.
+    let isInActiveItinerary: Bool
     /// Total check-ins at the place. The list endpoint includes this; callers that only have a pin default to 0.
     let checkInCount: Int
-    let photoReference: String?
+    let photoURL: URL?
     let impressionCounts: [String: Int]
+    /// `nil` when the backend has no hours for the place; callers must not read that as "closed".
+    let openingHours: OpeningHours?
 
     var displayName: String {
         PlaceDisplayNameResolver.displayName(nickname: nickname, name: name)
@@ -127,9 +170,11 @@ nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
         category: ZanzarPlaceCategory,
         distanceMeters: Double?,
         pinStyle: LocationPinStyle = .available,
+        isInActiveItinerary: Bool? = nil,
         checkInCount: Int = 0,
-        photoReference: String? = nil,
-        impressionCounts: [String: Int] = [:]
+        photoURL: URL? = nil,
+        impressionCounts: [String: Int] = [:],
+        openingHours: OpeningHours? = nil
     ) {
         self.id = id
         self.name = name
@@ -139,17 +184,11 @@ nonisolated struct MapPlace: Identifiable, Hashable, Sendable {
         self.category = category
         self.distanceMeters = distanceMeters
         self.pinStyle = pinStyle
+        self.isInActiveItinerary = isInActiveItinerary ?? (pinStyle == .inCurrentItinerary)
         self.checkInCount = checkInCount
-        self.photoReference = photoReference
+        self.photoURL = photoURL
         self.impressionCounts = impressionCounts
-    }
-}
-
-struct NearbyPlacePhoto: Decodable, Sendable {
-    let photoReference: String
-
-    enum CodingKeys: String, CodingKey {
-        case photoReference = "photo_reference"
+        self.openingHours = openingHours
     }
 }
 
@@ -182,20 +221,22 @@ nonisolated struct PlaceAPIResponse: Decodable, Sendable {
     let name: String
     let nickname: String?
     let geometry: Geometry
-    let photos: [NearbyPlacePhoto]
+    let photos: [PlacePhoto]
     let zanzar: NearbyPlaceZanzar
     let distanceMeters: Double
     let userContext: PlaceUserContext?
+    let openingHours: PlaceOpeningHoursAPIResponse?
 
     enum CodingKeys: String, CodingKey {
         case placeId = "place_id"
         case name
         case nickname
         case geometry
-        case photos
+        case images
         case zanzar
         case distanceMeters
         case userContext
+        case openingHours = "opening_hours"
     }
 
     nonisolated struct Geometry: Decodable, Sendable {
@@ -213,10 +254,14 @@ nonisolated struct PlaceAPIResponse: Decodable, Sendable {
         name = try container.decode(String.self, forKey: .name)
         nickname = try container.decodeIfPresent(String.self, forKey: .nickname)
         geometry = try container.decode(Geometry.self, forKey: .geometry)
-        photos = try container.decodeIfPresent([NearbyPlacePhoto].self, forKey: .photos) ?? []
+        photos = PlaceImageAPIResponse.photos(
+            from: try container.decodeIfPresent([FailableDecodable<PlaceImageAPIResponse>].self, forKey: .images)
+        )
         zanzar = try container.decode(NearbyPlaceZanzar.self, forKey: .zanzar)
         distanceMeters = try container.decode(Double.self, forKey: .distanceMeters)
         userContext = try container.decodeIfPresent(PlaceUserContext.self, forKey: .userContext)
+        // Hours are a bonus: a malformed block must not take the whole nearby list down.
+        openingHours = try? container.decodeIfPresent(PlaceOpeningHoursAPIResponse.self, forKey: .openingHours)
     }
 }
 
@@ -230,9 +275,11 @@ extension MapPlace {
         category = ZanzarPlaceCategory(rawCategory: response.zanzar.category)
         distanceMeters = response.distanceMeters
         pinStyle = Self.pinStyle(from: response.userContext)
+        isInActiveItinerary = response.userContext?.isInActiveItinerary ?? false
         checkInCount = response.zanzar.checkInCount
-        photoReference = response.photos.first?.photoReference
+        photoURL = response.photos.first?.url
         impressionCounts = response.zanzar.impressionCounts
+        openingHours = response.openingHours.flatMap(OpeningHours.init(response:))
     }
 
     static func pinStyle(from context: PlaceUserContext?) -> LocationPinStyle {

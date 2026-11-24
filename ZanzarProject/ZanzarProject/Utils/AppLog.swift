@@ -6,16 +6,21 @@ import os
 ///
 /// doesn't print emails, passwords or tokens in a message
 /// log ids, counts and status codes
-enum AppLog: String {
+nonisolated enum AppLog: String {
     case network
     case auth
     case login
     case signUp
+    case passwordReset
     case map
     case placeDetail
     case ratingPrompt
     case profile
+    case avatar
     case itinerary
+    case suggestion
+    case userPhotos
+    case proximity
 
     private static let subsystem = Bundle.main.bundleIdentifier ?? "ZanzarProject"
 

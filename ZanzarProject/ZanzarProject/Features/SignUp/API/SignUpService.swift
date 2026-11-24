@@ -12,9 +12,11 @@ struct SignUpRequest: Encodable, Sendable {
 
 struct SignUpResponse: Decodable, Sendable {
     let id: String
+    let username: String?
 
     private enum CodingKeys: String, CodingKey {
         case id = "_id"
+        case username
     }
 }
 

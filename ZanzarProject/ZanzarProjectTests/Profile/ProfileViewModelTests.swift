@@ -14,7 +14,7 @@ struct ProfileViewModelTests {
                 placeID: "p1",
                 placeName: "Parque",
                 date: .now,
-                photoReference: nil,
+                photoURL: nil,
                 sealCategory: .park,
                 impressionTag: nil
             )
@@ -57,7 +57,7 @@ struct ProfileViewModelTests {
         await viewModel.load()
 
         #expect(viewModel.profile == nil)
-        #expect(viewModel.errorMessage == String(localized: "profile.errorState.message"))
+        #expect(viewModel.errorMessage == L10n.string("profile.errorState.message"))
         #expect(!viewModel.isLoading)
     }
 
@@ -68,7 +68,7 @@ struct ProfileViewModelTests {
         await viewModel.load()
 
         service.fetchResult = .failure(APIError.httpStatus(500, message: "boom"))
-        await viewModel.load()
+        await viewModel.load(force: true)
 
         #expect(viewModel.profile == Self.profile)
         #expect(viewModel.errorMessage == nil)
@@ -82,11 +82,71 @@ struct ProfileViewModelTests {
         await viewModel.load()
 
         userID.withLock { $0 = nil }
-        await viewModel.load()
+        await viewModel.load(force: true)
 
         #expect(viewModel.profile == nil)
-        #expect(viewModel.errorMessage == String(localized: "profile.loadError.notAuthenticated"))
+        #expect(viewModel.errorMessage == L10n.string("profile.loadError.notAuthenticated"))
         #expect(service.fetchCount == 1)
+    }
+
+    @Test("re-entering inside the freshness window keeps the profile; the window's end refetches")
+    func loadRespectsFreshnessWindow() async {
+        let service = MockProfileService(fetchResult: .success(Self.profile))
+        let clock = TestClock()
+        let viewModel = ProfileViewModel(service: service, userIDProvider: { "user-1" }, now: { clock.date })
+
+        await viewModel.load()
+        clock.advance(by: 89)
+        await viewModel.load()
+        #expect(service.fetchCount == 1)
+
+        clock.advance(by: 2)
+        await viewModel.load()
+        #expect(service.fetchCount == 2)
+    }
+
+    @Test("force and a stale mark skip the freshness window")
+    func forceAndStaleSkipTheWindow() async {
+        let service = MockProfileService(fetchResult: .success(Self.profile))
+        let viewModel = ProfileViewModel(service: service, userIDProvider: { "user-1" })
+        await viewModel.load()
+
+        await viewModel.load(force: true)
+        #expect(service.fetchCount == 2)
+
+        viewModel.markStale()
+        await viewModel.load()
+        #expect(service.fetchCount == 3)
+
+        await viewModel.load()
+        #expect(service.fetchCount == 3)
+    }
+
+    @Test("a refresh that fails keeps the profile marked stale so the next entry retries")
+    func failedRefreshStaysStale() async {
+        let service = MockProfileService(fetchResult: .success(Self.profile))
+        let viewModel = ProfileViewModel(service: service, userIDProvider: { "user-1" })
+        await viewModel.load()
+
+        viewModel.markStale()
+        service.fetchResult = .failure(URLError(.notConnectedToInternet))
+        await viewModel.load()
+        service.fetchResult = .success(Self.profile)
+        await viewModel.load()
+
+        #expect(service.fetchCount == 3)
+    }
+
+    @Test("a rate limited first load explains the wait instead of the generic message")
+    func rateLimitedFirstLoad() async {
+        let error = APIError.rateLimited(retryAfter: 300)
+        let service = MockProfileService(fetchResult: .failure(error))
+        let viewModel = ProfileViewModel(service: service, userIDProvider: { "user-1" })
+
+        await viewModel.load()
+
+        #expect(viewModel.errorMessage == error.errorDescription)
+        #expect(viewModel.errorMessage != String(localized: "profile.errorState.message"))
     }
 
     // MARK: - signOut
@@ -94,7 +154,7 @@ struct ProfileViewModelTests {
     @Test("signOut revokes the token on the server before ending the local session")
     func signOutCallsServerFirst() async throws {
         let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
-        try authSession.signIn(token: "token")
+        try authSession.signIn(accessToken: "token", refreshToken: "refresh")
         let service = MockProfileService()
         var wasAuthenticatedDuringLogout: Bool?
         service.onLogout = { wasAuthenticatedDuringLogout = authSession.isAuthenticated }
@@ -115,7 +175,7 @@ struct ProfileViewModelTests {
     @Test("signOut still ends the local session when the server logout fails")
     func signOutContinuesAfterServerFailure() async throws {
         let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
-        try authSession.signIn(token: "token")
+        try authSession.signIn(accessToken: "token", refreshToken: "refresh")
         let service = MockProfileService(logoutResult: .failure(URLError(.notConnectedToInternet)))
         let coordinator = AppCoordinator()
         coordinator.push(.login)
@@ -131,7 +191,7 @@ struct ProfileViewModelTests {
     @Test("a Keychain failure keeps the session and the navigation path")
     func keychainFailureKeepsState() async throws {
         let authSession = AuthSession(keychain: FailingDeleteTokenStore())
-        try authSession.signIn(token: "token")
+        try authSession.signIn(accessToken: "token", refreshToken: "refresh")
         let coordinator = AppCoordinator()
         coordinator.push(.login)
         let viewModel = ProfileViewModel(service: MockProfileService())
@@ -147,7 +207,7 @@ struct ProfileViewModelTests {
     func newAttemptClearsPreviousFailure() async throws {
         let store = FailingDeleteTokenStore()
         let authSession = AuthSession(keychain: store)
-        try authSession.signIn(token: "token")
+        try authSession.signIn(accessToken: "token", refreshToken: "refresh")
         let viewModel = ProfileViewModel(service: MockProfileService())
 
         await viewModel.signOut(using: authSession, coordinator: AppCoordinator())
@@ -163,7 +223,7 @@ struct ProfileViewModelTests {
     @Test("overlapping signOut calls send a single logout request")
     func overlappingSignOutCallsRunOnce() async throws {
         let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
-        try authSession.signIn(token: "token")
+        try authSession.signIn(accessToken: "token", refreshToken: "refresh")
         let service = MockProfileService()
         service.suspendsDuringLogout = true
         let coordinator = AppCoordinator()
@@ -219,9 +279,9 @@ private final class FailingDeleteTokenStore: AuthTokenPersisting, @unchecked Sen
 
     var shouldFail = true
 
-    func saveToken(_ token: String) throws {}
-    func readToken() -> String? { nil }
-    func deleteToken() throws {
+    func saveTokens(_ tokens: AuthTokens) throws {}
+    func readTokens() -> AuthTokens? { nil }
+    func deleteTokens() throws {
         if shouldFail { throw DeleteFailure() }
     }
 }

@@ -16,33 +16,33 @@ struct ItineraryCompletedAlertView: View {
                 .contentShape(.rect)
                 .accessibilityHidden(true)
 
-            VStack(spacing: 24) {
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("placeDetail.itineraryCompletedAlert.title")
-                        .font(.headline)
+            AlertOverlayCard {
+                VStack(spacing: 24) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("placeDetail.itineraryCompletedAlert.title")
+                            .font(.headline)
 
-                    Text("placeDetail.itineraryCompletedAlert.message")
-                        .font(.body)
-                        .fixedSize(horizontal: false, vertical: true)
+                        Text("placeDetail.itineraryCompletedAlert.message")
+                            .font(.body)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    ItineraryStampView(state: .earned, size: 120)
+                        .paperStampPress(phase: phase, role: .mark)
+
+                    Button("placeDetail.sealEarnedAlert.acceptButton.title", action: onAccept)
+                        .buttonStyle(.glassProminent)
+                        .tint(Color("RatingPromptPrimary"))
+                        .controlSize(.large)
+                        .buttonBorderShape(.capsule)
+                        .frame(maxWidth: .infinity)
+                        .accessibilityFocused($isAcceptFocused)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                ItineraryStampView(state: .earned, size: 120)
-                    .paperStampPress(phase: phase, role: .mark)
-
-                Button("placeDetail.sealEarnedAlert.acceptButton.title", action: onAccept)
-                    .buttonStyle(.glassProminent)
-                    .tint(Color("RatingPromptPrimary"))
-                    .controlSize(.large)
-                    .buttonBorderShape(.capsule)
-                    .frame(maxWidth: .infinity)
-                    .accessibilityFocused($isAcceptFocused)
+                .frame(maxWidth: .infinity)
             }
-            .padding(14)
-            .frame(width: 300)
-            .glassEffect(.regular, in: .rect(cornerRadius: 34))
             .paperStampPress(phase: phase, role: .sheet)
-            .sensoryFeedback(.impact(flexibility: .rigid, intensity: 0.7), trigger: landingCount)
+            .haptic(.carimbo, trigger: landingCount)
         }
         .accessibilityAddTraits(.isModal)
         .onAppear {
@@ -50,7 +50,7 @@ struct ItineraryCompletedAlertView: View {
             guard !didPlayStamp else { return }
             didPlayStamp = true
             PaperStampPhase.play(
-                duration: 0.62,
+                size: .large,
                 reduceMotion: reduceMotion,
                 update: { phase = $0 },
                 onContact: { landingCount += 1 }

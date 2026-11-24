@@ -1,25 +1,37 @@
 import MapKit
 import SwiftUI
+import TipKit
 
 struct LocationMapView: View {
-    @State private var viewModel = LocationMapViewModel()
-    @State private var ratingPrompt = RatingPromptViewModel()
+    let store: NearbyPlacesStore
+    /// Pins are the source of the zoom into the place detail.
+    let zoomNamespace: Namespace.ID
+
+    @State private var pinTaps = 0
+    @State private var viewModel: LocationMapViewModel
+    @State private var searchViewModel: DiscoverSearchViewModel
+    @FocusState private var isSearchFocused: Bool
     @Environment(AppCoordinator.self) private var coordinator
-    @Environment(ToastPresenter.self) private var toasts
+    @Environment(ToastManager.self) private var toasts
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    
+    // Tips
+    private let mapPinsTip = DiscoverMapPinsTip()
+    private let filterTip = DiscoverFilterTip()
+    private let searchTip = DiscoverSearchTip()
+    private let userLocationTip = DiscoverUserLocationTip()
 
-    var body: some View {
-        MapReader { proxy in
-            map
-                .onTapGesture { point in
-                    guard let coordinate = proxy.convert(point, from: .local) else { return }
-                    selectItem(nearestTo: coordinate)
-                }
-        }
+    init(store: NearbyPlacesStore, zoomNamespace: Namespace.ID) {
+        self.store = store
+        self.zoomNamespace = zoomNamespace
+        _viewModel = State(initialValue: LocationMapViewModel(store: store))
+        _searchViewModel = State(
+            initialValue: DiscoverSearchViewModel(coordinateProvider: { store.userCoordinate })
+        )
     }
 
-    private var map: some View {
+    var body: some View {
         Map(position: $viewModel.cameraPosition) {
             userLocationContent
             placeAnnotations
@@ -29,6 +41,7 @@ struct LocationMapView: View {
         .mapControls {
             #if !(DEBUG && targetEnvironment(simulator))
             MapUserLocationButton()
+                .popoverTip(userLocationTip, arrowEdge: .trailing)
             #endif
             MapCompass()
         }
@@ -40,7 +53,7 @@ struct LocationMapView: View {
         // The error is handed to the app-level toast and consumed, so a repeated failure shows it again.
         .onChange(of: viewModel.errorMessage) { _, message in
             guard let message else { return }
-            toasts.show(message)
+            toasts.show(message, style: .negative)
             viewModel.errorMessage = nil
         }
         .overlay {
@@ -50,38 +63,42 @@ struct LocationMapView: View {
                     .background(.regularMaterial, in: .rect(cornerRadius: 12))
             }
         }
-        .overlay {
-            if ratingPrompt.isPresented, let pendingRating = ratingPrompt.pendingRating {
-                RatingPromptView(
-                    placeName: pendingRating.placeName,
-                    selectedTag: ratingPrompt.selectedTag,
-                    isSubmitting: ratingPrompt.isSubmitting,
-                    errorMessage: ratingPrompt.errorMessage,
-                    onSelect: { ratingPrompt.select($0) },
-                    onSubmit: { Task { await ratingPrompt.submit() } },
-                    onDismiss: { ratingPrompt.dismiss() }
-                )
-                .transition(.opacity)
-            }
+        .overlay(alignment: .top) {
+            discoverControls
         }
-        .animation(reduceMotion ? nil : .default, value: ratingPrompt.isPresented)
+        .overlay(alignment: .bottom) {
+            TipView(mapPinsTip, arrowEdge: .top)
+                .padding(.bottom, 100)
+        }
+        .haptic(.toqueSuave, trigger: pinTaps)
+        // Kept for the back button of the screens pushed from here; the bar itself is hidden because the
+        // search bar and the suggestion button float over the map.
         .navigationTitle("mainTab.discoverTab.title")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .navigationBar)
+        .onChange(of: searchViewModel.filter) { _, newFilter in
+            viewModel.setFilter(newFilter)
+        }
         .task {
             await viewModel.load()
         }
         // The map stays mounted underneath pushed screens, so neither `.task` nor `scenePhase` fires when the
-        // user pops back from a check-in. Keying on visibility restarts the monitor on pop and on foreground.
-        .task(id: isMonitoringRating) {
-            guard isMonitoringRating else { return }
-            await ratingPrompt.monitorLeaving()
-            // `monitorLeaving` swallows cancellation and returns. A reload started after that
-            // is the request URLSession then cancels, which used to toast "couldn't load places".
-            guard !Task.isCancelled, isMonitoringRating else { return }
+        // user pops back from a check-in. Keying on visibility reloads the pins on pop and on foreground.
+        .task(id: isMapVisible) {
+            guard isMapVisible else { return }
             await viewModel.reloadPlaces()
         }
+        // Another screen (or the tab bar) may have refreshed the shared places while the map was out of sight.
+        .onChange(of: store.lastFetchedAt) {
+            viewModel.syncPlaces()
+        }
+        // The pins carry the check-in and itinerary state, so they are refetched the next time the map is
+        // visible (`reloadPlaces` above), not while it is hidden underneath another screen.
         .onReceive(NotificationCenter.default.publisher(for: AppNotification.activeItineraryDidChange)) { _ in
-            Task { await viewModel.reloadPlaces() }
+            store.markDirty()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: AppNotification.checkInDidSucceed)) { _ in
+            store.markDirty()
         }
     }
 
@@ -89,24 +106,62 @@ struct LocationMapView: View {
         reduceMotion ? .opacity : .opacity.combined(with: .scale(scale: 0.7))
     }
 
-    private func selectItem(nearestTo coordinate: CLLocationCoordinate2D) {
-        guard let item = MapPinClustering.nearestItem(to: coordinate, in: viewModel.displayItems) else { return }
-        switch item {
-        case .place(let place):
-            coordinator.push(.placeDetail(place))
-        case .cluster(let cluster):
-            let region = viewModel.focusRegion(on: cluster)
-            if reduceMotion {
+    private func open(_ place: MapPlace) {
+        coordinator.push(.placeDetail(place))
+    }
+
+    /// Opens a place from its pin: the detail zooms out of the pin and the tap is felt.
+    private func openPin(_ place: MapPlace) {
+        pinTaps += 1
+        coordinator.push(.placeDetail(place, zoomsFromPin: true))
+    }
+
+    /// Opens a search result: the camera goes to the place and its detail is pushed, as when tapping its pin.
+    private func openSearchResult(_ place: MapPlace) {
+        isSearchFocused = false
+        searchViewModel.reset()
+        viewModel.applyCameraRegion(
+            MKCoordinateRegion(center: place.coordinate, latitudinalMeters: 600, longitudinalMeters: 600)
+        )
+        open(place)
+    }
+
+    private var discoverControls: some View {
+        @Bindable var searchViewModel = searchViewModel
+        return VStack(alignment: .trailing, spacing: 8) {
+            DiscoverSearchBar(
+                text: $searchViewModel.query,
+                filter: $searchViewModel.filter,
+                isFocused: $isSearchFocused,
+                onSubmit: { searchViewModel.submit() }
+            )
+
+            if searchViewModel.showsResultsPanel {
+                DiscoverSearchResultsPanel(
+                    phase: searchViewModel.phase,
+                    results: searchViewModel.results,
+                    onSelect: openSearchResult
+                )
+                .transition(.opacity.combined(with: .scale(scale: 0.96, anchor: .top)))
+            }
+        }
+        .motion(Motion.suave, value: searchViewModel.showsResultsPanel)
+        .padding(.horizontal, 16)
+    }
+
+    private func expand(_ cluster: MapPinCluster) {
+        pinTaps += 1
+        let region = viewModel.focusRegion(on: cluster)
+        if reduceMotion {
+            viewModel.applyCameraRegion(region)
+        } else {
+            withAnimation(.smooth(duration: 0.45)) {
                 viewModel.applyCameraRegion(region)
-            } else {
-                withAnimation(.smooth(duration: 0.45)) {
-                    viewModel.applyCameraRegion(region)
-                }
             }
         }
     }
 
-    private var isMonitoringRating: Bool {
+    private var isMapVisible: Bool {
         coordinator.path.isEmpty && scenePhase == .active
     }
 
@@ -115,27 +170,32 @@ struct LocationMapView: View {
         ForEach(viewModel.displayItems) { item in
             switch item {
             case .place(let place):
-                // The pin does not hit-test itself. Overlapping sprites were opening the neighbor.
-                // The map gesture resolves the tap to the nearest coordinate instead.
                 Annotation("", coordinate: place.coordinate, anchor: .bottom) {
-                    LocationPinView(category: place.category, style: place.pinStyle)
-                        .accessibilityLabel(place.displayName)
-                        .accessibilityAddTraits(.isButton)
-                        .allowsHitTesting(false)
-                        .transition(pinTransition)
+                    Button {
+                        openPin(place)
+                    } label: {
+                        LocationPinView(category: place.category, style: place.pinStyle)
+                    }
+                    .buttonStyle(MapPinButtonStyle())
+                    .matchedTransitionSource(id: place.id, in: zoomNamespace)
+                    .accessibilityLabel(place.displayName)
+                    .transition(pinTransition)
                 }
                 .annotationTitles(.hidden)
             case .cluster(let cluster):
-                Annotation("", coordinate: cluster.coordinate, anchor: .center) {
-                    LocationClusterPinView(count: cluster.count)
-                        .accessibilityLabel(
-                            String(
-                                localized: "locationMap.clusterPin.accessibilityLabel \(cluster.count)"
-                            )
+                Annotation("", coordinate: cluster.coordinate, anchor: .bottom) {
+                    Button {
+                        expand(cluster)
+                    } label: {
+                        LocationClusterPinView(count: cluster.count)
+                    }
+                    .buttonStyle(MapPinButtonStyle())
+                    .accessibilityLabel(
+                        String(
+                            localized: "locationMap.clusterPin.accessibilityLabel \(cluster.count)"
                         )
-                        .accessibilityAddTraits(.isButton)
-                        .allowsHitTesting(false)
-                        .transition(pinTransition)
+                    )
+                    .transition(pinTransition)
                 }
             }
         }
@@ -157,7 +217,8 @@ struct LocationMapView: View {
 }
 
 #Preview {
-    LocationMapView()
+    @Previewable @Namespace var placeZoom
+    LocationMapView(store: NearbyPlacesStore(), zoomNamespace: placeZoom)
         .environment(AppCoordinator())
-        .environment(ToastPresenter())
+        .environment(ToastManager())
 }

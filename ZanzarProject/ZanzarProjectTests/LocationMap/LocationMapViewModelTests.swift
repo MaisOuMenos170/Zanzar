@@ -36,6 +36,44 @@ struct LocationMapViewModelTests {
         #expect(region.center.longitude == coordinate.longitude)
     }
 
+    @Test("Loading again keeps the camera where the user left it")
+    func reloadKeepsCamera() async throws {
+        let coordinate = UserCoordinate(latitude: -25.4098994, longitude: -49.2670599)
+        let service = MockLocationMapService()
+        service.locationResult = .success(coordinate)
+        service.placesResult = .success([])
+        let viewModel = LocationMapViewModel(service: service)
+        await viewModel.load()
+
+        let farAway = MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: -23.55, longitude: -46.63),
+            span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+        )
+        viewModel.applyCameraRegion(farAway)
+        await viewModel.load()
+
+        let region = try #require(viewModel.cameraPosition.region)
+        #expect(region.center.latitude == farAway.center.latitude)
+        #expect(region.center.longitude == farAway.center.longitude)
+        #expect(viewModel.userCoordinate == coordinate)
+    }
+
+    @Test("A failed first load still centers on the user once a later load succeeds")
+    func centersAfterInitialFailure() async throws {
+        let coordinate = UserCoordinate(latitude: -25.4098994, longitude: -49.2670599)
+        let service = MockLocationMapService()
+        service.locationResult = .failure(LocationMapError.authorizationDenied)
+        let viewModel = LocationMapViewModel(service: service)
+        await viewModel.load()
+
+        service.locationResult = .success(coordinate)
+        service.placesResult = .success([])
+        await viewModel.load()
+
+        let region = try #require(viewModel.cameraPosition.region)
+        #expect(region.center.latitude == coordinate.latitude)
+    }
+
     @Test("Failed location fetch sets an error message and clears places")
     func failedLocationLoad() async {
         let service = MockLocationMapService()
@@ -47,7 +85,7 @@ struct LocationMapViewModelTests {
         #expect(viewModel.userCoordinate == nil)
         #expect(viewModel.places.isEmpty)
         #expect(viewModel.isLoading == false)
-        #expect(viewModel.errorMessage == String(localized: "locationMap.locationAccessDenied"))
+        #expect(viewModel.errorMessage == L10n.string("locationMap.locationAccessDenied"))
     }
 
     @Test("Cancelled load does not surface an error message")
@@ -236,7 +274,7 @@ struct LocationMapViewModelTests {
 
         await viewModel.load()
         service.placesResult = .success(refreshedPlaces)
-        await viewModel.reloadPlaces()
+        await viewModel.reloadPlaces(force: true)
 
         #expect(viewModel.places == refreshedPlaces)
     }
@@ -267,7 +305,7 @@ struct LocationMapViewModelTests {
         #expect(viewModel.userCoordinate == coordinate)
         #expect(viewModel.places.isEmpty)
         #expect(viewModel.isLoading == false)
-        #expect(viewModel.errorMessage == String(localized: "locationMap.placesLoadError"))
+        #expect(viewModel.errorMessage == L10n.string("locationMap.placesLoadError"))
     }
 
     @Test("A cancelled places fetch during the initial load does not toast")
@@ -324,7 +362,7 @@ struct LocationMapViewModelTests {
 
         await viewModel.load()
         service.placesResult = .failure(URLError(.cancelled))
-        await viewModel.reloadPlaces()
+        await viewModel.reloadPlaces(force: true)
 
         #expect(viewModel.places == initialPlaces)
         #expect(viewModel.errorMessage == nil)
@@ -335,17 +373,14 @@ struct LocationMapViewModelTests {
 final class MockLocationMapService: LocationMapServicing {
     var locationResult: Result<UserCoordinate, Error> = .failure(URLError(.notConnectedToInternet))
     var placesResult: Result<[MapPlace], Error> = .success([])
-
-    /// Stub for tests that trigger nearby fetch but do not care about location data.
-    static func nearbyUnavailable() -> MockLocationMapService {
-        MockLocationMapService()
-    }
+    private(set) var fetchCount = 0
 
     func currentUserLocation() async throws -> UserCoordinate {
         try locationResult.get()
     }
 
     func fetchNearbyPlaces(from coordinate: UserCoordinate) async throws -> [MapPlace] {
-        try placesResult.get()
+        fetchCount += 1
+        return try placesResult.get()
     }
 }

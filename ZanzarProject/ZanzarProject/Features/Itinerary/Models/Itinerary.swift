@@ -5,6 +5,14 @@ enum ItineraryRouteType: String, Codable, Sendable, Hashable {
     case free
 }
 
+enum ItineraryTheme: String, CaseIterable, Sendable, Hashable {
+    case parks
+    case center
+    case food
+    case museums
+    case walking
+}
+
 struct Itinerary: Identifiable, Hashable, Sendable {
     var id: String { slug }
 
@@ -15,6 +23,7 @@ struct Itinerary: Identifiable, Hashable, Sendable {
     let placesCount: Int
     let completedCount: Int
     let coverImageURL: String?
+    var themes: [ItineraryTheme] = []
 }
 
 struct ItineraryDetailPlace: Hashable, Sendable, Identifiable {
@@ -54,6 +63,27 @@ struct ItineraryDetail: Hashable, Sendable {
     let completedCount: Int
     let coverImageURL: String?
     let places: [ItineraryDetailPlace]
+    var recentCompleters: [Avatar] = []
+}
+
+extension ItineraryDetail {
+    /// Cards for the places of this itinerary. A place the map already loaded brings its photo, check-ins and
+    /// reactions; one it does not know is still shown, from what the itinerary itself says about it.
+    func placeCards(from mapPlaces: [MapPlace]) -> [PlaceDetailNearbyPlace] {
+        let mapPlacesByID = Dictionary(mapPlaces.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return places.map { place in
+            PlaceDetailNearbyPlace(
+                mapPlace: mapPlacesByID[place.placeID] ?? MapPlace(
+                    id: place.placeID,
+                    name: place.name,
+                    latitude: place.latitude,
+                    longitude: place.longitude,
+                    category: place.category,
+                    distanceMeters: nil
+                )
+            )
+        }
+    }
 }
 
 struct ItinerarySlot: Hashable, Sendable, Identifiable {
@@ -77,4 +107,30 @@ struct ActiveItinerary: Hashable, Sendable {
     let targetCount: Int?
     let startedAt: Date
     let places: [ItinerarySlot]
+}
+
+extension ActiveItinerary {
+    /// Cards for the places of this itinerary, in route order, built from the places the map already loaded.
+    /// Slots without a place yet (free routes) and places the map does not know are left out.
+    func placeCards(from mapPlaces: [MapPlace]) -> [PlaceDetailNearbyPlace] {
+        let mapPlacesByID = Dictionary(mapPlaces.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return places.compactMap { slot in
+            slot.placeID
+                .flatMap { mapPlacesByID[$0] }
+                .map(PlaceDetailNearbyPlace.init(mapPlace:))
+        }
+    }
+}
+
+extension ActiveItinerary {
+    /// Tells one run of a roteiro from the next, so abandoning and starting it again alerts its stops again.
+    var runID: String {
+        "\(templateID)@\(Int(startedAt.timeIntervalSince1970))"
+    }
+
+    /// The stop the user should go to next: the first slot that has a place and is not completed yet.
+    /// Free routes have no place per slot until the user checks in, so they have none.
+    var nextPendingPlaceID: String? {
+        places.first { $0.placeID != nil && !$0.isCompleted }?.placeID
+    }
 }

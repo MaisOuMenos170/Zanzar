@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 
 struct PlaceDetailView: View {
     let place: MapPlace
@@ -6,19 +7,30 @@ struct PlaceDetailView: View {
     @State private var viewModel: PlaceDetailViewModel
     @State private var mediaPolicy = PlaceMediaAccessPolicy.shared
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(ToastManager.self) private var toasts
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var showsPhotoUpload = false
+    /// The content rises in once when it first loads, not again when a nested screen is popped.
+    @State private var contentShown = false
+
+    // Tips
+    private let checkInTip = PlaceDetailCheckInTip()
+    private let addPhotoTip = PlaceDetailAddPhotoTip()
+    private let directionsTip = PlaceDetailDirectionsTip()
+
     init(place: MapPlace) {
         self.place = place
         _viewModel = State(initialValue: PlaceDetailViewModel(place: place))
     }
 
-    var body: some View {
+    // The modifiers are split in three properties: one long chain made the type checker give up on CI
+    // ("unable to type-check this expression in reasonable time").
+    private var stateContent: some View {
         Group {
             if let detail = viewModel.detail {
                 content(for: detail)
             } else if viewModel.isLoading {
-                ProgressView("placeDetail.loadingIndicator.title")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                PlaceDetailSkeleton()
             } else {
                 ContentUnavailableView(
                     "placeDetail.errorState.title",
@@ -27,18 +39,53 @@ struct PlaceDetailView: View {
                 )
             }
         }
-        .background(.background)
-        .navigationBarBackButtonHidden()
+    }
+
+    private var screen: some View {
+        stateContent
+        .background(Color.profileBackground)
+        .screenTitle("placeDetail.header.title")
+        .toolbar {
+            if let detail = viewModel.detail {
+                ToolbarItem(placement: .topBarTrailing) {
+                    ShareLink(
+                        item: PlaceLink.url(for: detail.id),
+                        subject: Text(detail.displayName),
+                        message: Text(detail.displayName)
+                    ) {
+                        Label("placeDetail.shareButton.label", systemImage: "square.and.arrow.up")
+                    }
+                    // Pushed from the check-in tab, the screen inherits that tab's orange tint; this button stays black.
+                    .tint(.black)
+                }
+            }
+        }
+        .toolbar(.hidden, for: .tabBar)
         .task {
+            // The view reappears when a nested detail is popped; what is already on screen is still current.
+            guard viewModel.detail == nil else { return }
             await viewModel.load()
             viewModel.updateCellularImagesPromptIfNeeded(using: mediaPolicy)
+        }
+        .task {
+            await viewModel.loadSavedState()
         }
         .onChange(of: mediaPolicy.usesCellular) { _, _ in
             viewModel.updateCellularImagesPromptIfNeeded(using: mediaPolicy)
         }
-        .onChange(of: viewModel.detail?.heroPhotoReference) { _, _ in
+        .onChange(of: viewModel.displayedPhotos) { _, _ in
             viewModel.updateCellularImagesPromptIfNeeded(using: mediaPolicy)
         }
+    }
+
+    private var screenWithFlows: some View {
+        screen
+        .modifier(PlaceDetailUserPhotoFlows(
+            showsPhotoUpload: $showsPhotoUpload,
+            placeID: place.id,
+            detail: viewModel.detail,
+            reloadUserPhotos: viewModel.loadUserPhotos
+        ))
         .alert("placeDetail.cellularPrompt.title", isPresented: $viewModel.showsCellularImagesPrompt) {
             Button("placeDetail.cellularPrompt.allowButton.title") {
                 viewModel.allowCellularImages()
@@ -56,6 +103,10 @@ struct PlaceDetailView: View {
                 Text(errorMessage)
             }
         }
+    }
+
+    var body: some View {
+        screenWithFlows
         .alert("placeDetail.checkInConfirmation.title", isPresented: $viewModel.showsCheckInConfirmation) {
             Button("placeDetail.checkInConfirmation.cancelButton.title", role: .cancel) {}
             Button("placeDetail.checkInConfirmation.confirmButton.title") {
@@ -88,6 +139,43 @@ struct PlaceDetailView: View {
         }
         .animation(reduceMotion ? nil : .default, value: viewModel.earnedSealPresentation != nil)
         .animation(reduceMotion ? nil : .default, value: viewModel.showsCompletedItineraryAlert)
+        .haptic(.alerta, trigger: viewModel.checkInWarning, when: { _, warning in warning != nil })
+        .haptic(.alerta, trigger: viewModel.errorMessage, when: { _, message in message != nil })
+    }
+
+    /// The bookmark in the corner of the photo box: white behind it, so it reads over a photo too.
+    private var bookmarkButton: some View {
+        Button {
+            Task { showSaveToast(for: await viewModel.toggleSaved()) }
+        } label: {
+            Label(
+                viewModel.isSaved ? "placeDetail.saveButton.remove" : "placeDetail.saveButton.save",
+                systemImage: viewModel.isSaved ? "bookmark.fill" : "bookmark"
+            )
+            .labelStyle(.iconOnly)
+            .font(.system(size: 18, weight: .medium))
+            .foregroundStyle(Color.brandOrange600)
+            .contentTransition(.symbolEffect(.replace))
+            .frame(width: 36, height: 36)
+            .background(Color.brandNeutral50, in: .circle)
+            .contentShape(.circle)
+        }
+        .buttonStyle(.plain)
+        .motion(Motion.suave, value: viewModel.isSaved)
+        .haptic(.selecao, trigger: viewModel.isSaved)
+    }
+
+    private func showSaveToast(for outcome: PlaceDetailViewModel.SaveOutcome?) {
+        switch outcome {
+        case .saved:
+            toasts.show(L10n.string("placeDetail.saveButton.savedToast"), style: .positive, position: .bottom)
+        case .removed:
+            toasts.show(L10n.string("placeDetail.saveButton.removedToast"), style: .positive, position: .bottom)
+        case .failed(let message):
+            toasts.show(message, style: .negative, position: .bottom)
+        case nil:
+            break
+        }
     }
 
     private func checkInConfirmationMessage(for placeName: String) -> AttributedString {
@@ -143,43 +231,64 @@ struct PlaceDetailView: View {
     }
 
     private func content(for detail: PlaceDetail) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            PlaceDetailHeaderView(
-                name: detail.displayName,
-                distanceText: detail.distanceText,
-                openingHoursText: detail.openingHoursText,
-                onBack: { coordinator.pop() }
-            )
-            .padding(.top, 8)
-            .padding(.bottom, 12)
-            .background(Color(.systemBackground))
-
-            ScrollView {
-                detailBody(for: detail)
-                    .padding(.bottom, 32)
-            }
-            .scrollIndicators(.hidden)
+        ScrollView {
+            detailBody(for: detail)
+                .padding(.top, 8)
+                .padding(.bottom, 32)
         }
+        .scrollIndicators(.hidden)
     }
 
     private func detailBody(for detail: PlaceDetail) -> some View {
         VStack(alignment: .leading, spacing: 24) {
             VStack(alignment: .leading, spacing: 16) {
-                PlaceDetailHeroSection(
-                    photoReference: detail.heroPhotoReference,
-                    tags: detail.tags,
-                    mediaPolicy: mediaPolicy
+                PlaceDetailTitleRow(
+                    name: detail.displayName,
+                    distanceText: detail.distanceText,
+                    openingHoursText: detail.openingHoursText,
+                    isOpen: detail.isOpen,
+                    latitude: detail.latitude,
+                    longitude: detail.longitude
                 )
+                .entrance(contentShown, order: 0)
+                .popoverTip(directionsTip, arrowEdge: .top)
+
+                PlacePhotoCard(
+                    tags: detail.tags.map(\.label),
+                    showsPhotos: !viewModel.displayedPhotos.isEmpty,
+                    addPhotoHint: detail.hasCheckedIn
+                        ? "placeDetail.addPhotoButton.verifiedHint"
+                        : "placeDetail.addPhotoButton.hint",
+                    onAddPhoto: {
+                        showsPhotoUpload = true
+                        PlaceDetailAddPhotoTip.hasViewedPlaceDetail = true
+                    },
+                    accessory: { bookmarkButton },
+                    photos: {
+                        PlaceDetailPhotoCarousel(
+                            photos: viewModel.displayedPhotos,
+                            placeName: detail.displayName,
+                            mediaPolicy: mediaPolicy,
+                            height: .placePhotoCardHeight
+                        )
+                    }
+                )
+                .entrance(contentShown, order: 1)
+                .popoverTip(addPhotoTip, arrowEdge: .top)
 
                 PlaceDetailCheckInButton(
                     hasCheckedIn: detail.hasCheckedIn,
                     isLoading: viewModel.isCheckingIn
                 ) {
                     viewModel.requestCheckIn()
+                    PlaceDetailCheckInTip.hasViewedPlaceDetail = true
                 }
-
-                PlaceDetailDescriptionSection(description: detail.description)
+                .entrance(contentShown, order: 1)
+                .popoverTip(checkInTip, arrowEdge: .top)
             }
+
+            PlaceDetailDescriptionSection(description: detail.description)
+                .entrance(contentShown, order: 2)
 
             PlaceDetailStatsCard(
                 totalCheckIns: detail.totalCheckIns,
@@ -187,25 +296,12 @@ struct PlaceDetailView: View {
                 hasCheckedIn: detail.hasCheckedIn,
                 isInActiveItinerary: detail.isInActiveItinerary
             )
-
-            PlaceDetailReactionsSection(reactions: detail.reactions)
-
-            if !detail.nearbyPlaces.isEmpty {
-                PlaceDetailNearbySection(
-                    places: detail.nearbyPlaces,
-                    mediaPolicy: mediaPolicy
-                ) { place in
-                    coordinator.push(.placeDetail(place))
-                }
-            }
-
-            PlaceDetailDirectionsButton(
-                latitude: detail.latitude,
-                longitude: detail.longitude,
-                placeName: detail.displayName
-            )
+            .entrance(contentShown, order: 2)
         }
         .padding(.horizontal, 16)
+        .onAppear {
+            contentShown = true
+        }
     }
 }
 
@@ -223,4 +319,5 @@ struct PlaceDetailView: View {
         )
     }
     .environment(AppCoordinator())
+    .environment(ToastManager())
 }

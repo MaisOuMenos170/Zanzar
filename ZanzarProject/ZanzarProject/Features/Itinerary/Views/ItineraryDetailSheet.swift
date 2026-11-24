@@ -2,25 +2,34 @@ import SwiftUI
 
 struct ItineraryDetailSheet: View {
     let slug: String
+    let onSelectPlace: (MapPlace) -> Void
     @State private var viewModel: ItineraryDetailViewModel
 
-    init(slug: String) {
+    init(slug: String, onSelectPlace: @escaping (MapPlace) -> Void) {
         self.slug = slug
+        self.onSelectPlace = onSelectPlace
         _viewModel = State(initialValue: ItineraryDetailViewModel(slug: slug))
     }
 
     var body: some View {
         NavigationStack {
-            ItineraryDetailView(viewModel: viewModel) {
-                // The list tab reloads active progress when this sheet dismisses.
-            }
-            .toolbar(.hidden, for: .navigationBar)
+            ItineraryDetailView(
+                viewModel: viewModel,
+                onItineraryChanged: {
+                    // The list tab reloads active progress when this sheet dismisses via notification,
+                    // but we also call the callback for any immediate UI updates the presenter may need.
+                },
+                onSelectPlace: onSelectPlace
+            )
+            .navigationBarTitleDisplayMode(.inline)
         }
         .presentationDragIndicator(.visible)
+        .presentationCornerRadius(38)
     }
 }
 
 #Preview {
-    ItineraryDetailSheet(slug: "centro-historico")
+    ItineraryDetailSheet(slug: "centro-historico", onSelectPlace: { _ in })
         .environment(AppCoordinator())
+        .environment(NearbyPlacesStore())
 }

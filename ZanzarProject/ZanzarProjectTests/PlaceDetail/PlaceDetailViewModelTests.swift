@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import ZanzarProject
 
@@ -182,6 +183,30 @@ struct PlaceDetailViewModelTests {
         #expect(queued.placeID == viewModel.detail?.id)
     }
 
+    @Test("a retry after a lost answer sends the same mutation id, so the backend can replay it")
+    func retriedCheckInKeepsTheMutationID() async throws {
+        let service = MockPlaceDetailService(
+            fetchResult: .success(PlaceDetailFixture.detail()),
+            checkInResult: .failure(URLError(.networkConnectionLost))
+        )
+        let viewModel = PlaceDetailViewModel(
+            place: PlaceDetailFixture.place,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: { PlaceDetailFixture.nearbyUserCoordinate },
+            service: service,
+            pendingRatingStore: InMemoryPendingRatingStore()
+        )
+        await viewModel.load()
+
+        await viewModel.confirmCheckIn()
+        service.checkInResult = Result<CheckInResult, Error>.success(PlaceDetailFixture.checkInResult)
+        await viewModel.confirmCheckIn()
+
+        #expect(service.checkInCalls.count == 2)
+        #expect(service.checkInCalls[0].mutationID == service.checkInCalls[1].mutationID)
+        #expect(viewModel.detail?.hasCheckedIn == true)
+    }
+
     @Test("load omits nearby places when user location is unavailable")
     func loadOmitsNearbyPlacesWithoutUserLocation() async {
         let service = MockPlaceDetailService(fetchResult: .success(PlaceDetailFixture.detail()))
@@ -203,7 +228,7 @@ final class MockPlaceDetailService: PlaceDetailServicing, @unchecked Sendable {
     var fetchResult: Result<PlaceDetail, Error>
     var checkInResult: Result<CheckInResult, Error>?
     private(set) var lastLoadContext: PlaceDetailLoadContext?
-    private(set) var checkInCalls: [(placeID: String, coordinate: UserCoordinate)] = []
+    private(set) var checkInCalls: [(placeID: String, coordinate: UserCoordinate, mutationID: String)] = []
 
     init(
         fetchResult: Result<PlaceDetail, Error>,
@@ -218,8 +243,8 @@ final class MockPlaceDetailService: PlaceDetailServicing, @unchecked Sendable {
         return try fetchResult.get()
     }
 
-    func checkIn(placeID: String, coordinate: UserCoordinate) async throws -> CheckInResult {
-        checkInCalls.append((placeID, coordinate))
+    func checkIn(placeID: String, coordinate: UserCoordinate, mutationID: String) async throws -> CheckInResult {
+        checkInCalls.append((placeID, coordinate, mutationID))
         guard let checkInResult else {
             fatalError("MockPlaceDetailService.checkInResult not configured")
         }

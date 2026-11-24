@@ -2,7 +2,15 @@ import Foundation
 
 protocol PlaceDetailServicing: Sendable {
     func fetchPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail
-    func checkIn(placeID: String, coordinate: UserCoordinate) async throws -> CheckInResult
+    /// `mutationID` stays the same across retries of one check-in: the backend replays the full answer for an id
+    /// it already accepted, instead of answering 409 and hiding the earned seal.
+    func checkIn(placeID: String, coordinate: UserCoordinate, mutationID: String) async throws -> CheckInResult
+    /// Photos users sent of the place: approved ones, plus the signed-in user's own under review.
+    func fetchUserPhotos(placeID: String) async throws -> [PlacePhoto]
+}
+
+extension PlaceDetailServicing {
+    func fetchUserPhotos(placeID: String) async throws -> [PlacePhoto] { [] }
 }
 
 nonisolated struct PlaceDetailAPIResponse: Decodable, Sendable {
@@ -13,7 +21,7 @@ nonisolated struct PlaceDetailAPIResponse: Decodable, Sendable {
     let geometry: Geometry
     let editorialSummary: EditorialSummary?
     let openingHours: PlaceDetailOpeningHoursResponse?
-    let photos: [PlaceDetailPhotoResponse]
+    let photos: [PlacePhoto]
     let zanzar: PlaceDetailZanzarResponse
     let distanceMeters: Double?
     let userContext: PlaceUserContext?
@@ -26,7 +34,7 @@ nonisolated struct PlaceDetailAPIResponse: Decodable, Sendable {
         case geometry
         case editorialSummary = "editorial_summary"
         case openingHours = "opening_hours"
-        case photos
+        case images
         case zanzar
         case distanceMeters
         case userContext
@@ -54,7 +62,9 @@ nonisolated struct PlaceDetailAPIResponse: Decodable, Sendable {
         geometry = try container.decode(Geometry.self, forKey: .geometry)
         editorialSummary = try container.decodeIfPresent(EditorialSummary.self, forKey: .editorialSummary)
         openingHours = try container.decodeIfPresent(PlaceDetailOpeningHoursResponse.self, forKey: .openingHours)
-        photos = try container.decodeIfPresent([PlaceDetailPhotoResponse].self, forKey: .photos) ?? []
+        photos = PlaceImageAPIResponse.photos(
+            from: try container.decodeIfPresent([FailableDecodable<PlaceImageAPIResponse>].self, forKey: .images)
+        )
         zanzar = try container.decode(PlaceDetailZanzarResponse.self, forKey: .zanzar)
         distanceMeters = try container.decodeIfPresent(Double.self, forKey: .distanceMeters)
         userContext = try container.decodeIfPresent(PlaceUserContext.self, forKey: .userContext)
@@ -63,21 +73,18 @@ nonisolated struct PlaceDetailAPIResponse: Decodable, Sendable {
 
 nonisolated struct PlaceDetailOpeningHoursResponse: Decodable, Sendable {
     let openNow: Bool?
+    /// The weekly periods, from which "open until 18h" is worked out. Malformed periods are not fatal here.
+    let periods: [PlaceOpeningHoursAPIResponse.PeriodResponse]?
 
     enum CodingKeys: String, CodingKey {
         case openNow = "open_now"
+        case periods
     }
-}
 
-nonisolated struct PlaceDetailPhotoResponse: Decodable, Sendable {
-    let photoReference: String
-    let height: Int
-    let width: Int
-
-    enum CodingKeys: String, CodingKey {
-        case photoReference = "photo_reference"
-        case height
-        case width
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        openNow = try container.decodeIfPresent(Bool.self, forKey: .openNow)
+        periods = try? container.decodeIfPresent([PlaceOpeningHoursAPIResponse.PeriodResponse].self, forKey: .periods)
     }
 }
 
@@ -156,10 +163,10 @@ final class PlaceDetailService: PlaceDetailServicing {
         }
     }
 
-    func checkIn(placeID: String, coordinate: UserCoordinate) async throws -> CheckInResult {
+    func checkIn(placeID: String, coordinate: UserCoordinate, mutationID: String) async throws -> CheckInResult {
         AppLog.placeDetail.info("Checking in placeId=\(placeID)...")
         do {
-            let result = try await sendCheckIn(placeID: placeID, coordinate: coordinate)
+            let result = try await sendCheckIn(placeID: placeID, coordinate: coordinate, mutationID: mutationID)
             AppLog.placeDetail.info("Checked in placeId=\(placeID) successfully (isNewStamp=\(result.isNewStamp))")
             return result
         } catch APIError.httpStatus(409, let message) {
@@ -169,6 +176,13 @@ final class PlaceDetailService: PlaceDetailServicing {
             AppLog.placeDetail.error("Failed to check in placeId=\(placeID)", error: error)
             throw error
         }
+    }
+
+    func fetchUserPhotos(placeID: String) async throws -> [PlacePhoto] {
+        let response: PlaceUserPhotoListAPIResponse = try await client.get(path: "places/\(placeID)/photos")
+        let photos = response.placePhotos
+        AppLog.placeDetail.info("Fetched \(photos.count) user photos placeId=\(placeID)")
+        return photos
     }
 
     private func loadPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail {
@@ -184,17 +198,12 @@ final class PlaceDetailService: PlaceDetailServicing {
             placeID: context.place.id,
             userID: context.userID
         )
-        async let nearbyResponses = fetchNearbyPlaces(
-            userCoordinate: context.userCoordinate,
-            excludingPlaceID: context.place.id
-        )
 
         let endpointCheckedIn = try await checkInFromEndpoint
         let hasCheckedIn = placeResponse.userContext?.hasCheckedIn == true || endpointCheckedIn
 
         return PlaceDetail.make(
             placeResponse: placeResponse,
-            nearbyResponses: await nearbyResponses,
             mapPlace: context.place,
             hasCheckedIn: hasCheckedIn,
             selectedReactionTag: try await selectedReactionTag,
@@ -202,36 +211,18 @@ final class PlaceDetailService: PlaceDetailServicing {
         )
     }
 
-    private func fetchNearbyPlaces(
-        userCoordinate: UserCoordinate?,
-        excludingPlaceID: String
-    ) async -> [PlaceDetailAPIResponse] {
-        guard let userCoordinate else { return [] }
-
-        do {
-            return try await client.get(
-                path: "places",
-                queryItems: [
-                    URLQueryItem(name: "lat", value: String(userCoordinate.latitude)),
-                    URLQueryItem(name: "lng", value: String(userCoordinate.longitude)),
-                    URLQueryItem(name: "limit", value: "6"),
-                    URLQueryItem(name: "excludePlaceId", value: excludingPlaceID)
-                ]
-            )
-        } catch {
-            AppLog.placeDetail.warning("Failed to fetch nearby places for placeId=\(excludingPlaceID); showing none")
-            return []
-        }
-    }
-
-    private func sendCheckIn(placeID: String, coordinate: UserCoordinate) async throws -> CheckInResult {
+    private func sendCheckIn(
+        placeID: String,
+        coordinate: UserCoordinate,
+        mutationID: String
+    ) async throws -> CheckInResult {
         let response: CheckInAPIResponse = try await client.send(
             path: "checkIn",
             method: .post,
             body: CheckInCreateRequest(
                 placeId: placeID,
                 datetime: Date().formatted(.iso8601),
-                clientMutationId: UUID().uuidString,
+                clientMutationId: mutationID,
                 coordinates: CheckInCoordinates(
                     lat: coordinate.latitude,
                     lng: coordinate.longitude,
@@ -255,6 +246,12 @@ final class PlaceDetailService: PlaceDetailServicing {
             return false
         } catch APIError.httpStatus(401, _), APIError.httpStatus(403, _) {
             return false
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch {
+            // A side call must not hide the place. A wrong "not checked in" is safe: check-in answers 409.
+            AppLog.placeDetail.warning("Check-in status unavailable placeId=\(placeID)")
+            return false
         }
     }
 
@@ -270,6 +267,11 @@ final class PlaceDetailService: PlaceDetailServicing {
         } catch APIError.httpStatus(404, _) {
             return nil
         } catch APIError.httpStatus(401, _), APIError.httpStatus(403, _) {
+            return nil
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch {
+            AppLog.placeDetail.warning("Reaction unavailable placeId=\(placeID)")
             return nil
         }
     }

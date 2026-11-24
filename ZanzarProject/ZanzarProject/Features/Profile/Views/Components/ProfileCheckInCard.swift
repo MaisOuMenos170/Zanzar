@@ -1,50 +1,64 @@
 import SwiftUI
 
 struct ProfileCheckInCard: View {
+    enum Layout {
+        case compact
+        case wide
+    }
+
     let checkIn: ProfileCheckIn
-    let mediaPolicy: PlaceMediaAccessPolicy
+    let tone: ProfileCheckInTone
+    var layout: Layout = .compact
+
+    @ScaledMetric(relativeTo: .body) private var minHeight: CGFloat = 124
 
     var body: some View {
-        VStack(spacing: 10) {
-            Color("ProfileReactionPlaceholder")
-                .frame(height: 78)
-                .overlay {
-                    PlaceRemoteImage(photoReference: checkIn.photoReference, mediaPolicy: mediaPolicy) {
-                        Color("ProfileReactionPlaceholder")
-                    }
-                }
-                .overlay(alignment: .bottomLeading) {
-                    if let impressionTag = checkIn.impressionTag {
-                        Image(impressionTag.imageName)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 36, height: 36)
-                            .padding(8)
-                            .accessibilityLabel(Text("profile.checkInCard.reactionAccessibilityLabel"))
-                    }
-                }
-                .clipped()
-
-            HStack(spacing: 8) {
+        HStack(alignment: .top, spacing: 16) {
+            VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 4) {
                     placeNameText
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.primary)
-                    Text("profile.checkInCard.dateLabel \(checkIn.date.formatted(date: .numeric, time: .omitted))")
-                        .font(.caption2)
-                        .foregroundStyle(Color("PlaceDetailNearbySubtitle"))
+                        .typography(.subtitle3)
+                        .foregroundStyle(Color.brandNeutral950)
+                        .lineLimit(1)
+                    Text(checkIn.date.formatted(date: .numeric, time: .omitted))
+                        .typography(.caption1)
+                        .foregroundStyle(Color.brandNeutral950)
+                        .lineLimit(1)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
 
-                sealBadge
+                Image(systemName: "chevron.right")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(tone.accent)
+                    .frame(width: 58, height: 39)
+                    .background(Color.brandNeutral50, in: .capsule)
+                    .accessibilityHidden(true)
             }
-            .padding(.horizontal, 12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            if layout == .wide {
+                wideDecoration
+                    // The seal sits 11pt from the top and 16pt from the side, closer than the card's padding.
+                    .padding(.top, -5)
+            }
         }
-        .padding(.bottom, 8)
-        .frame(maxWidth: .infinity)
-        .background(Color("ProfileCheckInCardBackground"))
-        .clipShape(.rect(cornerRadius: 8))
+        .padding(16)
+        .frame(maxWidth: .infinity, minHeight: minHeight, alignment: .leading)
+        .background {
+            tone.background
+                .overlay { stripes }
+        }
+        .overlay(alignment: .bottomTrailing) {
+            if layout == .compact {
+                seal(size: 83)
+                    .offset(x: 9, y: 14)
+            }
+        }
+        .clipShape(.rect(cornerRadius: 16))
         .accessibilityElement(children: .combine)
+    }
+
+    private var stripes: DiagonalStripes {
+        tone.isWarm ? .warmCard : .coolCard
     }
 
     private var placeNameText: Text {
@@ -55,24 +69,39 @@ struct ProfileCheckInCard: View {
         }
     }
 
+    private var wideDecoration: some View {
+        HStack(spacing: 16) {
+            if let impressionTag = checkIn.impressionTag {
+                Image(impressionTag.imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 66)
+                    .accessibilityLabel(Text("profile.checkInCard.reactionAccessibilityLabel"))
+            }
+            seal(size: 101)
+        }
+    }
+
     @ViewBuilder
-    private var sealBadge: some View {
-        if let sealCategory = checkIn.sealCategory {
-            PlaceCategorySealView(category: sealCategory, size: 47)
+    private func seal(size: CGFloat) -> some View {
+        if let category = checkIn.sealCategory {
+            PlaceCategorySealView(category: category, size: size)
         } else {
             Circle()
-                .fill(Color("ProfileReactionPlaceholder"))
-                .frame(width: 47, height: 47)
+                .fill(Color.brandNeutral50.opacity(0.4))
+                .frame(width: size, height: size)
+                .accessibilityHidden(true)
         }
     }
 }
 
 #if DEBUG
 #Preview {
-    HStack {
-        ProfileCheckInCard(checkIn: Profile.preview.recentCheckIns[0], mediaPolicy: .shared)
-        ProfileCheckInCard(checkIn: Profile.preview.recentCheckIns[2], mediaPolicy: .shared)
+    VStack {
+        ProfileCheckInCard(checkIn: Profile.preview.recentCheckIns[0], tone: .sand)
+        ProfileCheckInCard(checkIn: Profile.preview.recentCheckIns[1], tone: .periwinkle, layout: .wide)
     }
     .padding()
+    .background(Color.profileBackground)
 }
 #endif

@@ -16,13 +16,16 @@ final class RatingPromptViewModel {
     private(set) var isSubmitting = false
     private(set) var selectedTag: ImpressionTag?
     var errorMessage: String?
+    /// True after a rating was saved, until the user dismisses the "Muito bem!" alert. Not set when the place
+    /// turned out to be rated already.
+    var showsSuccess = false
 
     init(
         service: RatingPromptServicing = RatingPromptService(),
         store: PendingRatingStoring? = nil,
         userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.userID },
         userCoordinateProvider: @escaping @Sendable () async throws -> UserCoordinate = {
-            try await LocationMapService().currentUserLocation()
+            try await LocationMapService.shared.currentUserLocation()
         },
         now: @escaping @Sendable () -> Date = { Date() },
         sleep: @escaping @Sendable (Duration) async throws -> Void = { try await Task.sleep(for: $0) }
@@ -111,6 +114,7 @@ final class RatingPromptViewModel {
         do {
             _ = try await service.submitRating(placeID: pendingRating.placeID, impressionTag: selectedTag)
             finish()
+            showsSuccess = true
         } catch is CancellationError {
             return
         } catch APIError.httpStatus(409, _) {

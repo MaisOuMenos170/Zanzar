@@ -9,7 +9,7 @@ enum PaperStampPhase: Equatable, Sendable {
     /// Drops the mark, then lets the paper spring back a hair. With Reduce Motion, it just settles.
     @MainActor
     static func play(
-        duration: TimeInterval,
+        size: Motion.StampSize,
         reduceMotion: Bool,
         update: @escaping (PaperStampPhase) -> Void,
         onContact: @escaping () -> Void = {},
@@ -27,11 +27,11 @@ enum PaperStampPhase: Equatable, Sendable {
             update(.lifted)
         }
 
-        withAnimation(.easeOut(duration: duration)) {
+        withAnimation(Motion.carimbo(duration: size.duration)) {
             update(.contact)
         } completion: {
             onContact()
-            withAnimation(.easeOut(duration: duration * 0.28)) {
+            withAnimation(Motion.carimbo(duration: size.duration * 0.28)) {
                 update(.settled)
             } completion: {
                 onSettled()

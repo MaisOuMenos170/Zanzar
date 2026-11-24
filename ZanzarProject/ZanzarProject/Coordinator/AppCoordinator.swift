@@ -9,6 +9,17 @@ final class AppCoordinator {
         popToRoot()
     }
 
+    func startOnboarding() {
+        popToRoot()
+        push(.avatarEditor)
+    }
+
+    /// After a new password is saved: back to the login screen, so the user signs in with it.
+    func returnToLogin() {
+        popToRoot()
+        push(.login)
+    }
+
     func push(_ route: Route) {
         path.append(route)
     }
@@ -33,20 +44,88 @@ final class AppCoordinator {
     @ViewBuilder
     func view(for route: Route) -> some View {
         switch route {
+        case .signUp, .login, .forgotPassword, .resetCode, .codeVerified, .newPassword, .passwordResetSuccess:
+            authView(for: route)
+        case .placeDetail(let place, _):
+            PlaceDetailView(place: place)
+        case .avatar:
+            AvatarView()
+        case .avatarEditor:
+            AvatarEditorView()
+        case .avatarEdit:
+            AvatarEditorView(finishesByPopping: true)
+        case .passportIntro(let avatar, let username):
+            PassportIntroView(avatar: avatar, username: username)
+        case .notificationPermission:
+            NotificationPermissionView()
+        case .myPhotos:
+            MyPhotosView()
+        case .mySuggestions:
+            MySuggestionsView()
+        case .photoPrivacy:
+            PhotoPrivacyView()
+        case .allCheckIns:
+            AllCheckInsView()
+        case .allSeals:
+            AllSealsView()
+        case .savedPlaces:
+            SavedPlacesView()
+        case .blockedProfiles:
+            BlockedProfilesView()
+        case .allItineraries:
+            AllItinerariesView()
+        case .allPlaces:
+            AllPlacesView()
+        }
+    }
+
+    /// Screens of the signed-out stack: sign up, login and password reset.
+    @ViewBuilder
+    private func authView(for route: Route) -> some View {
+        switch route {
         case .signUp:
             SignUpView()
+        case .forgotPassword:
+            ForgotPasswordView()
+        case .resetCode(let email):
+            ResetCodeView(email: email)
+        case .codeVerified(let resetToken):
+            CodeVerifiedView(resetToken: resetToken)
+        case .newPassword(let resetToken):
+            NewPasswordView(resetToken: resetToken) { [weak self] in
+                self?.push(.passwordResetSuccess)
+            }
+        case .passwordResetSuccess:
+            PasswordResetSuccessView()
         case .login:
             LoginView()
-        case .placeDetail(let place):
-            PlaceDetailView(place: place)
+        default:
+            // Only the routes listed in `view(for:)` reach here.
+            EmptyView()
         }
     }
 
     @ViewBuilder
-    func view(for sheet: Sheet) -> some View {
+    func view(
+        for sheet: Sheet,
+        onSelectPlace: @escaping (MapPlace) -> Void,
+        onPlaceSuggestionFinished: @escaping (PlaceSuggestionOutcome) -> Void
+    ) -> some View {
         switch sheet {
         case .itineraryDetail(let slug):
-            ItineraryDetailSheet(slug: slug)
+            ItineraryDetailSheet(slug: slug, onSelectPlace: onSelectPlace)
+        case .editName:
+            EmptyView()
+        case .suggestPlace:
+            PlaceSuggestionSheetCard(
+                onClose: { [weak self] in self?.dismissSheet() },
+                content: {
+                    PlaceSuggestionSheetView(
+                        onFinished: onPlaceSuggestionFinished,
+                        onClose: { [weak self] in self?.dismissSheet() }
+                    )
+                }
+            )
         }
     }
 }

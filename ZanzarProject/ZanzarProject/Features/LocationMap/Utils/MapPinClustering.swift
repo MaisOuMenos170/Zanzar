@@ -147,25 +147,6 @@ nonisolated enum MapPinClustering {
         return places.filter { seenIDs.insert($0.id).inserted }
     }
 
-    /// The marker whose coordinate is closest to a tap, when it is close enough to be the thing the user hit.
-    /// View hit testing on the map can land on a neighboring pin's sprite; the coordinate does not.
-    static func nearestItem(
-        to coordinate: CLLocationCoordinate2D,
-        in items: [MapPinDisplayItem],
-        within meters: CLLocationDistance = 80
-    ) -> MapPinDisplayItem? {
-        let origin = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-        let nearest = items.min { lhs, rhs in
-            origin.distance(from: location(lhs.coordinate)) < origin.distance(from: location(rhs.coordinate))
-        }
-        guard let nearest, origin.distance(from: location(nearest.coordinate)) <= meters else { return nil }
-        return nearest
-    }
-
-    private static func location(_ coordinate: CLLocationCoordinate2D) -> CLLocation {
-        CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-    }
-
     private static func coordinateDistance(
         from origin: CLLocationCoordinate2D,
         to destination: CLLocationCoordinate2D

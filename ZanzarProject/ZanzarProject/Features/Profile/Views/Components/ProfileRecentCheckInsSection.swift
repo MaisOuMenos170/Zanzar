@@ -2,45 +2,32 @@ import SwiftUI
 
 struct ProfileRecentCheckInsSection: View {
     let checkIns: [ProfileCheckIn]
-    let mediaPolicy: PlaceMediaAccessPolicy
+    let onSeeMore: () -> Void
 
-    private let columns = [
-        GridItem(.flexible(), spacing: 8),
-        GridItem(.flexible(), spacing: 8)
-    ]
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var columns: [GridItem] {
+        let count = dynamicTypeSize.isAccessibilitySize ? 1 : 2
+        return Array(repeating: GridItem(.flexible(), spacing: 8), count: count)
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("profile.recentCheckIns.title")
-                .font(.headline)
+        VStack(alignment: .leading, spacing: 8) {
+            SectionHeader(title: "profile.recentCheckIns.title", onSeeMore: onSeeMore)
 
             if checkIns.isEmpty {
-                ProfileEmptyCheckInsSheet()
+                ListEmptyState(message: "profile.recentCheckIns.empty")
             } else {
                 LazyVGrid(columns: columns, spacing: 8) {
-                    ForEach(checkIns) { checkIn in
+                    ForEach(Array(checkIns.enumerated()), id: \.element.id) { index, checkIn in
                         NavigationLink(value: Route.placeDetail(checkIn.mapPlace)) {
-                            ProfileCheckInCard(checkIn: checkIn, mediaPolicy: mediaPolicy)
+                            ProfileCheckInCard(checkIn: checkIn, tone: .tone(at: index))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(PressableButtonStyle())
                         .accessibilityHint("profile.checkInCard.openDetailsHint")
                     }
                 }
             }
         }
     }
-}
-
-#if DEBUG
-#Preview {
-    NavigationStack {
-        ProfileRecentCheckInsSection(checkIns: Profile.preview.recentCheckIns, mediaPolicy: .shared)
-            .padding()
-    }
-}
-#endif
-
-#Preview("Empty") {
-    ProfileRecentCheckInsSection(checkIns: [], mediaPolicy: .shared)
-        .padding()
 }

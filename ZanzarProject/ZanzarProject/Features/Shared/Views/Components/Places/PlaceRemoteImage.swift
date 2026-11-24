@@ -1,55 +1,108 @@
 import SwiftUI
 
+/// A remote image view for place photos with proper error handling, retry logic, and caching.
 struct PlaceRemoteImage<Placeholder: View>: View {
-    let photoReference: String?
+    let photoURL: URL?
     let mediaPolicy: PlaceMediaAccessPolicy
     let placeholder: Placeholder
 
+    @State private var loadAttempts = 0
+    @State private var currentURL: URL?
+    @State private var shouldReload = false
+    @State private var lastError: Error?
+    /// Failed loads so far. It is the `AsyncImage` identity: `AsyncImage` only fetches again when its URL
+    /// or its identity changes, and a retry uses the same URL.
+    @State private var failedAttempts = 0
+
     init(
-        photoReference: String?,
+        photoURL: URL?,
         mediaPolicy: PlaceMediaAccessPolicy? = nil,
         @ViewBuilder placeholder: () -> Placeholder
     ) {
-        self.photoReference = photoReference
+        self.photoURL = photoURL
         self.mediaPolicy = mediaPolicy ?? .shared
         self.placeholder = placeholder()
     }
 
     var body: some View {
         Group {
-            if let photoReference,
-               mediaPolicy.canLoadRemoteImages,
-               let url = GooglePlacesConfiguration.photoURL(reference: photoReference) {
-                AsyncImage(url: url) { phase in
+            if let url = photoURL, mediaPolicy.canLoadRemoteImages {
+                AsyncImage(url: url, transaction: Transaction(animation: .easeInOut(duration: 0.2))) { phase in
                     switch phase {
                     case .success(let image):
-                        // A fill image reports a size larger than the space it is given. As an overlay it no
-                        // longer takes part in layout, so the frame stays exactly the proposed size and the
-                        // overflow is only clipped.
-                        Color.clear
-                            .overlay {
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                            }
-                            .clipped()
-                    case .failure:
-                        placeholder
+                        image
+                            .resizable()
+                            .scaledToFill()
                             .onAppear {
                                 #if DEBUG
-                                AppLog.placeDetail.warning("Place photo failed to load ref=\(photoReference)")
+                                AppLog.placeDetail.info("Place photo loaded successfully url=\(url.lastPathComponent)")
                                 #endif
                             }
+                    case .failure(let error):
+                        placeholder
+                            // Cancelled with the view, so leaving the screen ends the wait.
+                            .task {
+                                await retryAfterFailure(error, url: url)
+                            }
                     case .empty:
-                        ProgressView()
+                        Color.brandNeutral200.opacity(0.85)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .shimmering()
                     @unknown default:
                         placeholder
                     }
                 }
+                .id(failedAttempts)
+                .onChange(of: photoURL) {
+                    failedAttempts = 0
+                }
             } else {
                 placeholder
+                    .onAppear {
+                        logSkipReason()
+                    }
             }
         }
+    }
+
+    private func retryAfterFailure(_ error: Error, url: URL) async {
+        let failed = failedAttempts + 1
+
+        #if DEBUG
+        AppLog.placeDetail.warning("Place photo failed to load (attempt \(failed)) url=\(url.lastPathComponent) error=\(error.localizedDescription)")
+        #endif
+
+        guard let delay = PhotoRetryPolicy.delay(afterFailedAttempts: failed) else { return }
+        do {
+            try await Task.sleep(for: delay)
+        } catch {
+            return
+        }
+        failedAttempts = failed
+    }
+
+    private func logSkipReason() {
+        #if DEBUG
+        if photoURL == nil {
+            AppLog.placeDetail.info("Place photo skipped: no photo URL")
+        } else {
+            AppLog.placeDetail.info("Place photo skipped: remote images are not allowed on this network")
+        }
+        #endif
+    }
+}
+
+extension PlaceRemoteImage where Placeholder == Color {
+    /// Convenience initializer with a simple color placeholder
+    init(
+        photoURL: URL?,
+        mediaPolicy: PlaceMediaAccessPolicy? = nil,
+        placeholderColor: Color = .gray.opacity(0.2)
+    ) {
+        self.init(
+            photoURL: photoURL,
+            mediaPolicy: mediaPolicy,
+            placeholder: { placeholderColor }
+        )
     }
 }
