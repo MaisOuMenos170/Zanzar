@@ -23,8 +23,7 @@ struct EditNameSheetView: View {
             VStack(alignment: .leading, spacing: 16) {
                 SheetHeader(
                     title: "profile.editName.title",
-                    subtitle: "profile.editName.subtitle",
-                    onClose: onClose
+                    subtitle: "profile.editName.subtitle"
                 )
 
                 VStack(alignment: .leading, spacing: 8) {
@@ -63,6 +62,7 @@ struct EditNameSheetView: View {
         .padding(.top, 8)
         // The Figma sheet ends 40pt below the button, counting the home indicator area.
         .padding(.bottom, max(8, 40 - ScreenInsets.bottom))
+        .sheetCloseButton(hugsContent: true, isDisabled: viewModel.isSaving, action: onClose)
         .onChange(of: viewModel.name) { _, newValue in
             // Never more than the backend takes, and never a line break.
             let cleaned = String(newValue.replacing("\n", with: "").prefix(EditNameViewModel.lengthRange.upperBound))

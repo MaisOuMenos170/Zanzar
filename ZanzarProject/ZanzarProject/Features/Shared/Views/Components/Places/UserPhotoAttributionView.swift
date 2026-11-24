@@ -21,10 +21,10 @@ struct UserPhotoAttributionView: View {
                         .fontWeight(.semibold)
                 }
             }
-            .font(.caption)
+            .font(.system(size: 9))
             .foregroundStyle(.white)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .padding(.horizontal, 5)
+            .padding(.vertical, 2)
             .background(.black.opacity(0.55), in: .capsule)
 
             if !attribution.isOwn, let actionHandler {

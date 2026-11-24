@@ -13,8 +13,7 @@ struct ShareReadyView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     SheetHeader(
                         title: "placeShare.header.title",
-                        subtitle: "placeShare.header.subtitle",
-                        onClose: onClose
+                        subtitle: "placeShare.header.subtitle"
                     )
                     if let coordinate = mapCoordinate {
                         SharePlaceMap(coordinate: coordinate)

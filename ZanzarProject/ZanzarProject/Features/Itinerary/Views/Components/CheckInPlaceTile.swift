@@ -97,15 +97,7 @@ struct CheckInPlaceTile: View {
         if place.pinStyle == .checkedIn {
             PlaceCategorySealView(category: place.category, state: .earned, size: 83)
         } else {
-            ZStack {
-                Image(.checkInSealUnknownRing)
-                    .resizable()
-                    .frame(width: 88.3916, height: 88.3916)
-                Image(systemName: "questionmark.circle.fill")
-                    .font(.system(size: 52))
-                    .foregroundStyle(.white.opacity(0.5))
-            }
-            .frame(width: 83, height: 83)
+            CheckInUnknownSealView()
         }
     }
 }

@@ -14,6 +14,7 @@ struct ShareRootView: View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.brandNeutral50.ignoresSafeArea())
+            .sheetCloseButton(action: onClose)
             .motion(Motion.suave, value: model.phase)
             .task { await model.load() }
     }

@@ -66,7 +66,15 @@ struct PlaceSuggestionSheetView: View {
             }
             .scrollBounceBehavior(.basedOnSize)
             .scrollDismissesKeyboard(.interactively)
-            .toolbar(.hidden, for: .navigationBar)
+            .ignoresSafeArea(.container, edges: .top)
+            .scrollEdgeEffectHidden(true, for: .top)
+            .containerBackground(.clear, for: .navigation)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(role: .close, action: onClose)
+                }
+            }
         }
         // On the stack, not on the scroll view: a navigation stack takes all the height it is offered.
         .frame(maxHeight: contentHeight ?? .infinity)
@@ -92,8 +100,7 @@ struct PlaceSuggestionSheetView: View {
     private var header: some View {
         SheetHeader(
             title: "placeSuggestion.header.title",
-            subtitle: "placeSuggestion.header.subtitle",
-            onClose: onClose
+            subtitle: "placeSuggestion.header.subtitle"
         )
     }
 

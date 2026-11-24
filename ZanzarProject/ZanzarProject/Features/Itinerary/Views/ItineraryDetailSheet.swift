@@ -21,9 +21,10 @@ struct ItineraryDetailSheet: View {
                 },
                 onSelectPlace: onSelectPlace
             )
-            .toolbar(.hidden, for: .navigationBar)
+            .navigationBarTitleDisplayMode(.inline)
         }
         .presentationDragIndicator(.visible)
+        .presentationCornerRadius(38)
     }
 }
 

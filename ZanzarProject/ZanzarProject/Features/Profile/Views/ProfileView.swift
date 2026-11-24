@@ -6,6 +6,7 @@ struct ProfileView: View {
     @State private var blockedProfiles = BlockedProfilesViewModel()
     @State private var photos = MyPhotosViewModel()
     @State private var suggestions = MySuggestionsViewModel()
+    @State private var savedPlaces = SavedPlacesViewModel()
     @State private var section = ProfileSection.passport
     /// The profile rises in once when it first loads, not again after a check-in refreshes it.
     @State private var contentShown = false
@@ -31,7 +32,7 @@ struct ProfileView: View {
                 ToolbarItem(placement: .principal) {
                     Text(viewModel.profile?.summary.name ?? L10n.string("mainTab.profileTab.title"))
                         .typography(.headline5)
-                        .foregroundStyle(Color.black)
+                        .foregroundStyle(Color.brandNeutral950)
                         .lineLimit(1)
                         .accessibilityAddTraits(.isHeader)
                 }
@@ -86,11 +87,15 @@ struct ProfileView: View {
                 async let blocked: Void = blockedProfiles.load()
                 async let photosLoad: Void = photos.load()
                 async let suggestionsLoad: Void = suggestions.load()
-                _ = await (blocked, photosLoad, suggestionsLoad)
+                async let savedLoad: Void = savedPlaces.load()
+                _ = await (blocked, photosLoad, suggestionsLoad, savedLoad)
             }
             // A check-in makes the loaded profile outdated; the load above then skips its freshness window.
             .onReceive(NotificationCenter.default.publisher(for: AppNotification.checkInDidSucceed)) { _ in
                 viewModel.markStale()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: AppNotification.savedPlacesDidChange)) { _ in
+                Task { await savedPlaces.load() }
             }
             .onReceive(NotificationCenter.default.publisher(for: AppNotification.profileNameDidChange)) { _ in
                 Task { await viewModel.load(force: true) }
@@ -164,14 +169,19 @@ struct ProfileView: View {
                 .disabled(viewModel.isLoading)
             }
         } else {
-            ProgressView("profile.loadingIndicator.title")
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            ProfileSkeleton()
         }
     }
 
     private func passport(_ profile: Profile) -> some View {
         VStack(alignment: .leading, spacing: 32) {
-            ProfileStatsView(summary: profile.summary)
+            VStack(spacing: 8) {
+                ProfileStatsView(summary: profile.summary)
+                SavedPlacesRow(
+                    count: savedPlaces.hasLoaded ? savedPlaces.places.count : nil,
+                    onTap: { coordinator.push(.savedPlaces) }
+                )
+            }
             ProfileSealsSection(
                 categories: earnedSealCategories(in: profile),
                 onSeeMore: { coordinator.push(.allSeals) }

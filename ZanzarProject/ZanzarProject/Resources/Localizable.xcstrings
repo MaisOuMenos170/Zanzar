@@ -4,7 +4,16 @@
     "" : {
 
     },
+    "“%@”" : {
+
+    },
     "*" : {
+
+    },
+    "+%lld" : {
+
+    },
+    "99+" : {
 
     },
     "accessibility.checked" : {
@@ -945,6 +954,23 @@
         }
       }
     },
+    "itinerary.activeCard.continue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar"
+          }
+        }
+      }
+    },
     "itinerary.activeCard.empty" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -958,6 +984,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nenhum roteiro selecionado."
+          }
+        }
+      }
+    },
+    "itinerary.activeCard.next %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next: %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próxima: %@"
+          }
+        }
+      }
+    },
+    "itinerary.activeCard.progress %lld %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop %lld of %lld"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld de %lld paradas"
           }
         }
       }
@@ -996,6 +1056,23 @@
         }
       }
     },
+    "itinerary.activeCard.status" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route in progress"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Roteiro em andamento"
+          }
+        }
+      }
+    },
     "itinerary.activeCard.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1026,6 +1103,149 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ver detalhes"
+          }
+        }
+      }
+    },
+    "itinerary.all.count %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld route"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld routes"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld roteiro"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld roteiros"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "itinerary.all.empty.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New routes will show up here."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os roteiros novos aparecem aqui."
+          }
+        }
+      }
+    },
+    "itinerary.all.empty.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No routes yet"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum roteiro por aqui"
+          }
+        }
+      }
+    },
+    "itinerary.all.noResults.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try another term or use the search filters to find routes"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tente outro termo ou use os filtros de busca para encontrar roteiros"
+          }
+        }
+      }
+    },
+    "itinerary.all.noResults.title %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No route with “%@”"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum roteiro com “%@”"
+          }
+        }
+      }
+    },
+    "itinerary.all.search.prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search route or place"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar roteiro ou lugar"
+          }
+        }
+      }
+    },
+    "itinerary.all.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All routes"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos os roteiros"
           }
         }
       }
@@ -1149,6 +1369,64 @@
         }
       }
     },
+    "itinerary.detail.completedBy %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld person completed this route"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld people completed this route"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld pessoa completou esse roteiro"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld pessoas completaram esse roteiro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "itinerary.detail.completedByNobody" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No one has completed this route yet"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguém completou esse roteiro ainda"
+          }
+        }
+      }
+    },
     "itinerary.detail.completedCount %lld" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1234,6 +1512,23 @@
         }
       }
     },
+    "itinerary.detail.goal %lld %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check in at %lld places in the category %@ and complete the route!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faça check-in em %lld locais da categoria %@ e complete o roteiro!"
+          }
+        }
+      }
+    },
     "itinerary.detail.loadingIndicator.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1247,6 +1542,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Carregando roteiro…"
+          }
+        }
+      }
+    },
+    "itinerary.detail.nearbyPlaces" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Places near the route"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lugares próximos do roteiro"
           }
         }
       }
@@ -1285,6 +1597,23 @@
         }
       }
     },
+    "itinerary.detail.stampsCollected %lld %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld of %2$lld stamps collected"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld de %2$lld selos coletados"
+          }
+        }
+      }
+    },
     "itinerary.detail.startButton" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1315,6 +1644,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rota sugerida"
+          }
+        }
+      }
+    },
+    "itinerary.detail.viewRoute" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View route"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver rota"
           }
         }
       }
@@ -1366,23 +1712,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Algo deu errado"
-          }
-        }
-      }
-    },
-    "itinerary.list.header.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Routes"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Roteiros"
           }
         }
       }
@@ -1445,6 +1774,23 @@
         }
       }
     },
+    "itinerary.list.header.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Routes"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Roteiros"
+          }
+        }
+      }
+    },
     "itinerary.list.sections.featured" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1458,23 +1804,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Roteiros em destaque"
-          }
-        }
-      }
-    },
-    "itinerary.tile.distance %@" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ away"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ de distância"
           }
         }
       }
@@ -1543,6 +1872,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld de %lld carimbos"
+          }
+        }
+      }
+    },
+    "itinerary.tile.distance %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ away"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ de distância"
           }
         }
       }
@@ -3980,23 +4326,6 @@
         }
       }
     },
-    "placeDetail.photo.credit" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Photo: %@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Foto: %@"
-          }
-        }
-      }
-    },
     "placeDetail.photoBlock.confirmation.cancelButton.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4599,6 +4928,149 @@
         }
       }
     },
+    "placeLink.openError" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not open this place. Try again."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível abrir este lugar. Tente de novo."
+          }
+        }
+      }
+    },
+    "places.all.count %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld place"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld places"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lugar"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lugares"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "places.all.empty.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow your location or pull to refresh to see places around you."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permita sua localização ou arraste para atualizar e ver lugares ao seu redor."
+          }
+        }
+      }
+    },
+    "places.all.empty.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No places nearby"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum lugar por perto"
+          }
+        }
+      }
+    },
+    "places.all.nearest" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nearest"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mais próximos"
+          }
+        }
+      }
+    },
+    "places.all.search.prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search place"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar lugar"
+          }
+        }
+      }
+    },
+    "places.all.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All places"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos os lugares"
+          }
+        }
+      }
+    },
     "placeShare.address.label" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4888,6 +5360,57 @@
         }
       }
     },
+    "placeSuggestion.addressField.hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't find an address for this place. Type it so we can put it on the map."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não achamos o endereço desse lugar. Digite para a gente localizar no mapa."
+          }
+        }
+      }
+    },
+    "placeSuggestion.addressField.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Address"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Endereço"
+          }
+        }
+      }
+    },
+    "placeSuggestion.addressField.placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E.g. R. Engo. Ostoja Roguski, 350, Curitiba"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ex: R. Engo. Ostoja Roguski, 350, Curitiba"
+          }
+        }
+      }
+    },
     "placeSuggestion.alert.confirm" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4901,23 +5424,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ok"
-          }
-        }
-      }
-    },
-    "placeSuggestion.closeButton.label" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Close"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fechar"
           }
         }
       }
@@ -5058,57 +5564,6 @@
         }
       }
     },
-    "placeSuggestion.addressField.hint" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "We couldn't find an address for this place. Type it so we can put it on the map."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não achamos o endereço desse lugar. Digite para a gente localizar no mapa."
-          }
-        }
-      }
-    },
-    "placeSuggestion.addressField.label" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Address"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Endereço"
-          }
-        }
-      }
-    },
-    "placeSuggestion.addressField.placeholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "E.g. R. Engo. Ostoja Roguski, 350, Curitiba"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ex: R. Engo. Ostoja Roguski, 350, Curitiba"
-          }
-        }
-      }
-    },
     "placeSuggestion.error.generic" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5227,6 +5682,9 @@
           }
         }
       }
+    },
+    "placeSuggestion.failureAlert.title" : {
+
     },
     "placeSuggestion.header.subtitle" : {
       "extractionState" : "manual",
@@ -5490,57 +5948,6 @@
         }
       }
     },
-    "placeSuggestion.nearMe.locating" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finding your position..."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Encontrando sua posição..."
-          }
-        }
-      }
-    },
-    "placeSuggestion.nearMe.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Shows the places closest to you first"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostra primeiro os lugares mais perto de você"
-          }
-        }
-      }
-    },
-    "placeSuggestion.nearMe.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search near me"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Procurar perto de mim"
-          }
-        }
-      }
-    },
     "placeSuggestion.nameField.hint" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5588,6 +5995,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ex: Jardim Botânico"
+          }
+        }
+      }
+    },
+    "placeSuggestion.nearMe.locating" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finding your position..."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encontrando sua posição..."
+          }
+        }
+      }
+    },
+    "placeSuggestion.nearMe.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows the places closest to you first"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra primeiro os lugares mais perto de você"
+          }
+        }
+      }
+    },
+    "placeSuggestion.nearMe.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search near me"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Procurar perto de mim"
           }
         }
       }
@@ -5677,73 +6135,11 @@
         }
       }
     },
-    "placeSuggestion.searchButton.label" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscar"
-          }
-        }
-      }
+    "placeSuggestion.publishedAlert.title" : {
+
     },
-    "placeSuggestion.status.added" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Added"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adicionado"
-          }
-        }
-      }
-    },
-    "placeSuggestion.status.notApproved" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not approved"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não aprovado"
-          }
-        }
-      }
-    },
-    "placeSuggestion.status.underReview" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In review"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Em análise"
-          }
-        }
-      }
+    "placeSuggestion.refusedAlert.title" : {
+
     },
     "placeSuggestion.search.empty.message" : {
       "extractionState" : "manual",
@@ -5813,6 +6209,23 @@
         }
       }
     },
+    "placeSuggestion.searchButton.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar"
+          }
+        }
+      }
+    },
     "placeSuggestion.searchField.label" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5847,6 +6260,57 @@
         }
       }
     },
+    "placeSuggestion.status.added" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicionado"
+          }
+        }
+      }
+    },
+    "placeSuggestion.status.notApproved" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not approved"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não aprovado"
+          }
+        }
+      }
+    },
+    "placeSuggestion.status.underReview" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In review"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Em análise"
+          }
+        }
+      }
+    },
     "placeSuggestion.submitButton.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5863,6 +6327,12 @@
           }
         }
       }
+    },
+    "placeSuggestion.successAlert.message" : {
+
+    },
+    "placeSuggestion.successAlert.title" : {
+
     },
     "placeSuggestion.toast.published" : {
       "extractionState" : "manual",
@@ -7612,74 +8082,6 @@
         }
       }
     },
-    "ratingPrompt.closeButton.label" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Close"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fechar"
-          }
-        }
-      }
-    },
-    "ratingPrompt.success.confirm" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ok"
-          }
-        }
-      }
-    },
-    "ratingPrompt.success.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your rating was saved for this place. Thanks for telling us how it went!"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua avaliação foi registrada no local. Valeu por contar como foi!"
-          }
-        }
-      }
-    },
-    "ratingPrompt.success.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Well done!"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Muito bem!"
-          }
-        }
-      }
-    },
     "ratingPrompt.emotion.delighted" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7829,6 +8231,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enviar"
+          }
+        }
+      }
+    },
+    "ratingPrompt.success.confirm" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ok"
+          }
+        }
+      }
+    },
+    "ratingPrompt.success.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your rating was saved for this place. Thanks for telling us how it went!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua avaliação foi registrada no local. Valeu por contar como foi!"
+          }
+        }
+      }
+    },
+    "ratingPrompt.success.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Well done!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muito bem!"
           }
         }
       }
@@ -10465,23 +10918,6 @@
         }
       }
     },
-    "userPhotos.report.cancelButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancelar"
-          }
-        }
-      }
-    },
     "userPhotos.report.error.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11226,23 +11662,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Envie uma foto de %@: a fachada, o ambiente, um prato ou uma bebida."
-          }
-        }
-      }
-    },
-    "userPhotos.upload.closeButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Close"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fechar"
           }
         }
       }
@@ -11995,19 +12414,291 @@
         }
       }
     },
-    "placeLink.openError" : {
+    "list.loading.accessibilityLabel" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Could not open this place. Try again."
+            "value" : "Loading"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível abrir este lugar. Tente de novo."
+            "value" : "Carregando"
+          }
+        }
+      }
+    },
+    "placeDetail.saveButton.savedToast" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place saved"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lugar salvo"
+          }
+        }
+      }
+    },
+    "placeDetail.saveButton.removedToast" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removed from saved places"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lugar removido dos salvos"
+          }
+        }
+      }
+    },
+    "placeDetail.saveButton.failedToast" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not update your saved places. Try again."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível atualizar seus lugares salvos. Tente de novo."
+          }
+        }
+      }
+    },
+    "savedPlaces.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved places"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lugares salvos"
+          }
+        }
+      }
+    },
+    "savedPlaces.empty.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No saved places yet"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum lugar salvo ainda"
+          }
+        }
+      }
+    },
+    "savedPlaces.empty.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap the bookmark on a place to find it here later."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toque no marcador de um lugar para encontrá-lo aqui depois."
+          }
+        }
+      }
+    },
+    "savedPlaces.noResults.title %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No saved place with “%@”"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum lugar salvo com “%@”"
+          }
+        }
+      }
+    },
+    "savedPlaces.noResults.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try another term or use the filters to find your places"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tente outro termo ou use os filtros para encontrar seus lugares"
+          }
+        }
+      }
+    },
+    "savedPlaces.remove.accessibilityLabel %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove %@ from saved places"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remover %@ dos lugares salvos"
+          }
+        }
+      }
+    },
+    "savedPlaces.row.count %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(%lld)"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(%lld)"
+          }
+        }
+      }
+    },
+    "savedPlaces.error.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not load your saved places. Try again."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível carregar seus lugares salvos. Tente de novo."
+          }
+        }
+      }
+    },
+    "savedPlaces.remove.confirmation.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove from saved places?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remover dos lugares salvos?"
+          }
+        }
+      }
+    },
+    "savedPlaces.remove.confirmation.message %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” will leave your saved places."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” vai sair dos seus lugares salvos."
+          }
+        }
+      }
+    },
+    "savedPlaces.remove.confirmation.confirmButton" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remover"
+          }
+        }
+      }
+    },
+    "savedPlaces.remove.confirmation.cancelButton" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar"
+          }
+        }
+      }
+    },
+    "placeDetail.photo.openAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open photo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir foto"
           }
         }
       }

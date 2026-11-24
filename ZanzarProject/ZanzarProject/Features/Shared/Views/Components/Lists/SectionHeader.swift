@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ProfileSectionHeader: View {
+struct SectionHeader: View {
     let title: LocalizedStringKey
     let onSeeMore: () -> Void
 

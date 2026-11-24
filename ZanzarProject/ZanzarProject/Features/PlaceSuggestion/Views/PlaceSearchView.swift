@@ -19,8 +19,7 @@ struct PlaceSearchView: View {
             .scrollBounceBehavior(.basedOnSize)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.brandNeutral50)
-            .navigationTitle("placeSuggestion.search.title")
-            .navigationBarTitleDisplayMode(.inline)
+            .screenTitle("placeSuggestion.search.title")
             .searchable(
                 text: $viewModel.query,
                 isPresented: $isSearchActive,
@@ -45,9 +44,9 @@ struct PlaceSearchView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
         } else if viewModel.isSearching && viewModel.results.isEmpty {
-            ProgressView()
-                .frame(maxWidth: .infinity)
-                .padding(.top, 32)
+            SkeletonRows()
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
         } else if viewModel.hasSearched {
             if viewModel.results.isEmpty {
                 emptyState

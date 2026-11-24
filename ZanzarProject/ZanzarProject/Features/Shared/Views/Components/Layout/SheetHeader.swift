@@ -3,7 +3,6 @@ import SwiftUI
 struct SheetHeader: View {
     let title: LocalizedStringKey
     let subtitle: LocalizedStringKey
-    let onClose: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -14,15 +13,6 @@ struct SheetHeader: View {
                     .accessibilityAddTraits(.isHeader)
 
                 Spacer(minLength: 8)
-
-                Button(action: onClose) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(Color.brandCloseIcon)
-                        .padding(8)
-                        .contentShape(.rect)
-                }
-                .accessibilityLabel("placeSuggestion.closeButton.label")
             }
             .padding(.top, 4)
             .padding(.bottom, 4)
@@ -32,10 +22,11 @@ struct SheetHeader: View {
                 .tracking(0.25)
                 .foregroundStyle(.black)
         }
+        .padding(.trailing, 44)
     }
 }
 
 #Preview {
-    SheetHeader(title: "Sugerir um lugar", subtitle: "Conheça um lugar e conte pra gente!", onClose: {})
+    SheetHeader(title: "Sugerir um lugar", subtitle: "Conheça um lugar e conte pra gente!")
         .padding()
 }

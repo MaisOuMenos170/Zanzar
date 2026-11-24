@@ -21,7 +21,10 @@ enum Route: Hashable {
     case photoPrivacy
     case allCheckIns
     case allSeals
+    case savedPlaces
     case blockedProfiles
+    case allItineraries
+    case allPlaces
 }
 
 enum Sheet: Identifiable, Hashable {

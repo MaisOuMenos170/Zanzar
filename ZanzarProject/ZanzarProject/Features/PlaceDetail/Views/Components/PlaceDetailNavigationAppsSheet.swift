@@ -21,8 +21,7 @@ struct PlaceDetailNavigationAppsSheet: View {
             }
             .scrollBounceBehavior(.basedOnSize)
             .frame(maxHeight: .infinity, alignment: .top)
-            .navigationTitle("placeDetail.navigationSheet.title")
-                .navigationBarTitleDisplayMode(.inline)
+            .screenTitle("placeDetail.navigationSheet.title")
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(role: .close) {

@@ -23,13 +23,12 @@ struct PhotoUploadSheet: View {
     var body: some View {
         NavigationStack {
             content
-                .navigationTitle(viewModel.step == .editing
+                .screenTitle(viewModel.step == .editing
                     ? LocalizedStringKey("userPhotos.editor.title")
                     : LocalizedStringKey("userPhotos.upload.title"))
-                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("userPhotos.upload.closeButton.title") { dismiss() }
+                        Button(role: .close) { dismiss() }
                             .disabled(viewModel.step == .uploading)
                     }
                 }

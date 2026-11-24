@@ -5,6 +5,14 @@ enum ItineraryRouteType: String, Codable, Sendable, Hashable {
     case free
 }
 
+enum ItineraryTheme: String, CaseIterable, Sendable, Hashable {
+    case parks
+    case center
+    case food
+    case museums
+    case walking
+}
+
 struct Itinerary: Identifiable, Hashable, Sendable {
     var id: String { slug }
 
@@ -15,6 +23,7 @@ struct Itinerary: Identifiable, Hashable, Sendable {
     let placesCount: Int
     let completedCount: Int
     let coverImageURL: String?
+    var themes: [ItineraryTheme] = []
 }
 
 struct ItineraryDetailPlace: Hashable, Sendable, Identifiable {
@@ -54,6 +63,7 @@ struct ItineraryDetail: Hashable, Sendable {
     let completedCount: Int
     let coverImageURL: String?
     let places: [ItineraryDetailPlace]
+    var recentCompleters: [Avatar] = []
 }
 
 extension ItineraryDetail {

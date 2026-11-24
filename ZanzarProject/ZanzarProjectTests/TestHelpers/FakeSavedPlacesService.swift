@@ -8,10 +8,19 @@ final class FakeSavedPlacesService: SavedPlacesServicing {
     private(set) var saveCalls: [String] = []
     private(set) var removeCalls: [String] = []
     private var failure: Error?
+    var removeFailure: Error?
 
     init(savedIDs: Set<String> = [], failure: Error? = nil) {
         self.savedIDs = savedIDs
         self.failure = failure
+    }
+
+    var listed: [SavedPlace] = []
+
+    func fetchSavedPlaces(userID: String) async throws -> [SavedPlace] {
+        if let failure { throw failure }
+        if !listed.isEmpty { return listed.filter { savedIDs.contains($0.placeID) } }
+        return savedIDs.sorted().map { SavedPlace(placeID: $0, name: nil, imageURL: nil, savedAt: .distantPast) }
     }
 
     func savedPlaceIDs(userID: String) async throws -> Set<String> {
@@ -28,6 +37,7 @@ final class FakeSavedPlacesService: SavedPlacesServicing {
     func remove(placeID: String, userID: String) async throws {
         removeCalls.append(placeID)
         if let failure { throw failure }
+        if let removeFailure { throw removeFailure }
         savedIDs.remove(placeID)
     }
 }

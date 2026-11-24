@@ -6,8 +6,7 @@ struct AvatarView: View {
     var body: some View {
         content
             .background(Color(.systemBackground))
-            .navigationTitle("avatar.navigationTitle.title")
-            .navigationBarTitleDisplayMode(.inline)
+            .screenTitle("avatar.navigationTitle.title")
             .task { await viewModel.load() }
             .alert("avatar.createErrorAlert.title", isPresented: $viewModel.createFailed) {
                 Button("avatar.createErrorAlert.dismissButton.title", role: .cancel) {}
@@ -44,8 +43,13 @@ struct AvatarView: View {
                 .disabled(viewModel.isLoading)
             }
         } else {
-            ProgressView("avatar.loadingIndicator.title")
+            Circle()
+                .fill(Color.brandNeutral200.opacity(0.85))
+                .shimmering()
+                .padding(32)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(Text("avatar.loadingIndicator.title"))
         }
     }
 }

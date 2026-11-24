@@ -307,9 +307,11 @@ struct MainTabView: View {
             NavigationStack(path: Bindable(checkInCoordinator).path) {
                 ItineraryListView(sheetCoordinator: coordinator)
                     .environment(checkInCoordinator)
+                    .environment(\.presentSheet) { coordinator.present(sheet: $0) }
                     .navigationDestination(for: Route.self) { route in
                         checkInCoordinator.view(for: route)
                             .environment(checkInCoordinator)
+                            .environment(\.presentSheet) { coordinator.present(sheet: $0) }
                             .tint(Color("TabBarSelected"))
                     }
             }
