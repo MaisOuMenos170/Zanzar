@@ -62,6 +62,7 @@ Valores fechados que precisam ficar iguais nos dois lados:
 - Categorias: `restaurant, bar, cafe, museum, park, tourist, historic, curiosity, party` (`ZanzarPlaceCategory` no app, `ZANZAR_CATEGORIES` no backend).
 - Impression tags: `delighted, happy, nauseated, sad, sleepy` (`ImpressionTag` e `IMPRESSION_TAGS`).
 - Ids de selo: `stamp_<categoria>`. O app mapeia para assets locais.
+- Recursos de acessibilidade (`accessibility.features`): `elevator, ramp, accessible_restroom, accessible_paths, accessible_parking, wheelchair_loan, tactile_floor, braille, tactile_miniatures, audio_description, inclusive_playground, sensory_room, guide_dogs` (`PlaceAccessibilityFeature` no app, `PLACE_ACCESSIBILITY_FEATURES` no backend). O app ignora um recurso que ainda não conhece. Sem o campo o lugar está "ainda não verificado", nunca "não acessível".
 - Raio de check-in: 150 m, fixo no app (`CheckInPolicy`) e configurável no backend (`CHECKIN_RADIUS_METERS`). Se alguém mudar a variável, o app não acompanha.
 
 ## Ao mexer num lado

@@ -3539,6 +3539,278 @@
         }
       }
     },
+    "placeDetail.accessibility.disclaimer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From a public source. Confirm with the place before you go."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informação de fonte pública. Confirme com o local antes de ir."
+          }
+        }
+      }
+    },
+    "placeDetail.accessibility.feature.accessibleParking" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reserved parking"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vagas reservadas"
+          }
+        }
+      }
+    },
+    "placeDetail.accessibility.feature.accessiblePaths" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessible paths"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caminhos acessíveis"
+          }
+        }
+      }
+    },
+    "placeDetail.accessibility.feature.accessibleRestroom" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessible restroom"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Banheiro adaptado"
+          }
+        }
+      }
+    },
+    "placeDetail.accessibility.feature.audioDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio description"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audiodescrição"
+          }
+        }
+      }
+    },
+    "placeDetail.accessibility.feature.braille" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Braille"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Braille"
+          }
+        }
+      }
+    },
+    "placeDetail.accessibility.feature.elevator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elevator"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elevador"
+          }
+        }
+      }
+    },
+    "placeDetail.accessibility.feature.guideDogs" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guide dogs welcome"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cães-guia permitidos"
+          }
+        }
+      }
+    },
+    "placeDetail.accessibility.feature.inclusivePlayground" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inclusive playground"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parquinho inclusivo"
+          }
+        }
+      }
+    },
+    "placeDetail.accessibility.feature.ramp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Access ramp"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rampa de acesso"
+          }
+        }
+      }
+    },
+    "placeDetail.accessibility.feature.sensoryRoom" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensory room"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sala sensorial"
+          }
+        }
+      }
+    },
+    "placeDetail.accessibility.feature.tactileFloor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tactile paving"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Piso tátil"
+          }
+        }
+      }
+    },
+    "placeDetail.accessibility.feature.tactileMiniatures" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tactile miniatures"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Miniaturas táteis"
+          }
+        }
+      }
+    },
+    "placeDetail.accessibility.feature.wheelchairLoan" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wheelchair loan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empréstimo de cadeira de rodas"
+          }
+        }
+      }
+    },
+    "placeDetail.accessibility.source %@ %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source: %@, checked on %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fonte: %@, conferido em %@"
+          }
+        }
+      }
+    },
+    "placeDetail.accessibility.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibility"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acessibilidade"
+          }
+        }
+      }
+    },
     "placeDetail.addPhotoButton.hint" : {
       "extractionState" : "manual",
       "localizations" : {

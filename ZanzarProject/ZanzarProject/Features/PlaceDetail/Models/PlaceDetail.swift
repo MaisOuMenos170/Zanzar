@@ -21,6 +21,8 @@ nonisolated struct PlaceDetail: Identifiable, Hashable, Sendable {
     var hasCheckedIn: Bool
     var isInActiveItinerary: Bool
     var selectedReactionTag: String?
+    /// What a source confirms about the place's accessibility. Nil means "not checked yet", not "not accessible".
+    var accessibility: PlaceAccessibility?
 
     /// The detail shows only the first few photos; each one is a request when it scrolls into view.
     static let maximumPhotoCount = 5
@@ -189,7 +191,8 @@ nonisolated extension PlaceDetail {
             ),
             hasCheckedIn: hasCheckedIn,
             isInActiveItinerary: placeResponse.userContext?.isInActiveItinerary ?? false,
-            selectedReactionTag: selectedReactionTag
+            selectedReactionTag: selectedReactionTag,
+            accessibility: placeResponse.accessibility
         )
     }
 
