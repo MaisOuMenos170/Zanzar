@@ -172,7 +172,7 @@ struct ItineraryDetailView: View {
                         ) {
                             onSelectPlace(place)
                         }
-                        .frame(height: 124)
+                        .frame(minHeight: 124)
                     }
                     if places.count == 1 {
                         Color.clear.frame(maxWidth: .infinity)
