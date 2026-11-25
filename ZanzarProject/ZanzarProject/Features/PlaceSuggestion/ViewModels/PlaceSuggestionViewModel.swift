@@ -282,9 +282,7 @@ final class PlaceSuggestionViewModel {
                 addressErrorMessage = L10n.string("placeSuggestion.error.addressNotFound")
                 return false
             }
-            try await service.submit(suggestion)
-            // The backend takes this shape of request for a person to review, so there is no instant verdict.
-            outcome = .success
+            outcome = try await service.submit(suggestion)
             return true
         } catch {
             guard !PlaceSuggestionErrorMapper.isCancellation(error) else { return false }

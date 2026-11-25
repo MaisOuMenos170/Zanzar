@@ -52,6 +52,18 @@ struct PlaceSuggestionViewModelSubmitTests {
         #expect(service.submitted == [expected])
     }
 
+    @Test("the verdict of the backend becomes the outcome")
+    func submitShowsTheVerdict() async {
+        let service = MockPlaceSuggestionService()
+        service.submitResult = .success(.published(placeName: "Jardim Botânico"))
+        let viewModel = await makeViewModel(searching: [Self.garden], service: service)
+        viewModel.select(Self.garden)
+
+        await viewModel.submit()
+
+        #expect(viewModel.outcome == .published(placeName: "Jardim Botânico"))
+    }
+
     @Test("the description can be left empty")
     func submitWithoutNote() async {
         let service = MockPlaceSuggestionService()
