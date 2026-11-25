@@ -6,23 +6,27 @@ nonisolated struct PlaceSuggestion: Hashable, Sendable {
     /// Optional: an empty note is left out of the request.
     let note: String
 
-    /// The backend has no field for the name yet, so it travels in front of the address ("Jardim Botânico — Rua
-    /// Engenheiro Ostoja Roguski, 350"), which is what the team reads when it reviews the suggestion.
+    /// The address as the backend takes it, cut to its limit. The name travels in its own field; it only stands in
+    /// for an address that is empty.
     var addressText: String {
-        let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         let address = location.address.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !name.isEmpty else { return String(address.prefix(PlaceSuggestionLimits.addressMaxLength)) }
+        let text = address.isEmpty ? trimmedName : address
+        return String(text.prefix(PlaceSuggestionLimits.addressMaxLength))
+    }
 
-        let cutName = String(name.prefix(PlaceSuggestionLimits.nameMaxLength))
-        guard !address.isEmpty else { return cutName }
-        return String("\(cutName) — \(address)".prefix(PlaceSuggestionLimits.addressMaxLength))
+    /// `nil` for a suggestion without a name, so the request leaves the field out.
+    var requestName: String? {
+        trimmedName.isEmpty ? nil : String(trimmedName.prefix(PlaceSuggestionLimits.nameMaxLength))
+    }
+
+    private var trimmedName: String {
+        name.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 
 /// Mirrors the backend limits so the form can block a submit that would get a 400.
 nonisolated enum PlaceSuggestionLimits {
     static let addressMaxLength = 300
-    /// The name shares the backend's address field, so it has to leave room for the address.
     static let nameMaxLength = 100
     static let noteMaxLength = 1000
     static let queryMinLength = 2

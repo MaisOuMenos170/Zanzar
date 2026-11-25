@@ -30,7 +30,7 @@ final class MockPlaceSuggestionService: PlaceSuggestionServicing, @unchecked Sen
     var currentLocationResult: Result<SuggestedLocation, Error> = .success(
         SuggestedLocation(latitude: -25.43, longitude: -49.27, address: "Rua XV de Novembro, 1200")
     )
-    var submitResult: Result<Void, Error> = .success(())
+    var submitResult: Result<PlaceSuggestionOutcome, Error> = .success(.success)
     var searchResult: Result<[SuggestedPlace], Error> = .success([])
     var resolveResult: Result<SuggestedPlace?, Error> = .success(nil)
     var fetchMineResult: Result<[MySuggestion], Error> = .success([])
@@ -46,9 +46,10 @@ final class MockPlaceSuggestionService: PlaceSuggestionServicing, @unchecked Sen
         return try currentLocationResult.get()
     }
 
-    func submit(_ suggestion: PlaceSuggestion) async throws {
-        try submitResult.get()
+    func submit(_ suggestion: PlaceSuggestion) async throws -> PlaceSuggestionOutcome {
+        let outcome = try submitResult.get()
         submitted.append(suggestion)
+        return outcome
     }
 
     func searchPlaces(query: String, near: SuggestedLocation?) async throws -> [SuggestedPlace] {
