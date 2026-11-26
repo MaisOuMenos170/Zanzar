@@ -98,6 +98,17 @@ struct UserPhotosListsViewModelTests {
         #expect(await viewModel.checkForChanges() == expected)
     }
 
+    @Test("without a signed-in user the list stops loading and says it could not load")
+    func myPhotosWithoutUser() async {
+        let viewModel = MyPhotosViewModel(service: MockUserPhotosService(), userIDProvider: { nil })
+
+        await viewModel.load()
+
+        #expect(viewModel.hasLoaded)
+        #expect(viewModel.isLoading == false)
+        #expect(viewModel.errorMessage == L10n.string("error.generic.message"))
+    }
+
     @Test("a list that repeats an id does not crash the status check")
     func noticeSurvivesRepeatedIds() async {
         let service = MockUserPhotosService()

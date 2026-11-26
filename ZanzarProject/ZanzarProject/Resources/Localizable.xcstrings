@@ -4884,6 +4884,23 @@
         }
       }
     },
+    "placeDetail.photoCredit.accessibilityLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo by %1$@, license %2$@. Opens the source."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto de %1$@, licença %2$@. Abre a fonte."
+          }
+        }
+      }
+    },
     "placeDetail.photoReport.sentToast" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -9005,13 +9022,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Invalid email. Use a format like example@email.com"
+            "value" : "Invalid email. Check the @ and the domain."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Email inválido. Use um formato como exemplo@email.com"
+            "value" : "Email inválido. Confira o @ e o domínio."
           }
         }
       }

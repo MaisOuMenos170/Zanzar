@@ -286,7 +286,7 @@ struct PlaceDetailView: View {
                     hasCheckedIn: detail.hasCheckedIn,
                     isLoading: viewModel.isCheckingIn
                 ) {
-                    viewModel.requestCheckIn()
+                    Task { await viewModel.requestCheckIn() }
                     PlaceDetailCheckInTip.hasViewedPlaceDetail = true
                 }
                 .entrance(contentShown, order: 1)

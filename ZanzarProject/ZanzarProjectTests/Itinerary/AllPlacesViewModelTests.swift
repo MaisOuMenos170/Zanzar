@@ -67,6 +67,37 @@ struct AllPlacesViewModelTests {
         model.searchText = "passeio público"
         #expect(model.visiblePlaces(from: places).map(\.id) == ["1"])
     }
+
+    @Test("a failed load is an error to show, not an empty list, and a retry clears it")
+    func failedLoadIsReported() async {
+        let service = MockLocationMapService()
+        service.locationResult = .success(UserCoordinate(latitude: -25.43, longitude: -49.27))
+        service.placesResult = .failure(URLError(.notConnectedToInternet))
+        let store = NearbyPlacesStore(service: service)
+        let model = AllPlacesViewModel()
+
+        await model.load(using: store)
+
+        #expect(model.loadErrorMessage == L10n.string("locationMap.placesLoadError"))
+
+        service.placesResult = .success([Self.places[0]])
+        await model.load(using: store, force: true)
+
+        #expect(model.loadErrorMessage == nil)
+        #expect(store.places.count == 1)
+    }
+
+    @Test("a position that cannot be read says so")
+    func missingLocationIsReported() async {
+        let service = MockLocationMapService()
+        service.locationResult = .failure(LocationMapError.authorizationDenied)
+        let store = NearbyPlacesStore(service: service)
+        let model = AllPlacesViewModel()
+
+        await model.load(using: store)
+
+        #expect(model.loadErrorMessage == LocationMapError.authorizationDenied.errorDescription)
+    }
 }
 
 @Suite("ItineraryThemeFilter")
@@ -93,3 +124,4 @@ struct ItineraryThemeFilterTests {
         #expect(!ItineraryThemeFilter.center.includes(food))
     }
 }
+

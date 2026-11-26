@@ -3,10 +3,13 @@ import SwiftUI
 /// The dashed box under "Check-in" while no roteiro is active (Figma "checkin v2", node 1899:3740): three clouds
 /// and a hint to pick one.
 struct CheckInEmptySlot: View {
+    /// Grows with the hint text, so a larger text size gets a taller box instead of a clipped hint.
+    @ScaledMetric(relativeTo: .caption2) private var slotHeight: CGFloat = 135
+
     var body: some View {
         RoundedRectangle(cornerRadius: 16)
             .strokeBorder(Color.checkInDashedBorder, style: StrokeStyle(lineWidth: 1, dash: [6, 4]))
-            .frame(height: 135)
+            .frame(height: slotHeight)
             .overlay(alignment: .topLeading) {
                 ZStack(alignment: .topLeading) {
                     cloud(.checkInCloud1, size: CGSize(width: 56.9054, height: 30.1274), centerX: 77.5, centerY: 44.5)
@@ -17,7 +20,7 @@ struct CheckInEmptySlot: View {
             }
             .overlay(alignment: .trailing) {
                 Text("itinerary.list.empty.hint")
-                    .font(.system(size: 11))
+                    .scaledFont(size: 11)
                     .foregroundStyle(Color.checkInHint)
                     .frame(width: 128, alignment: .leading)
                     .padding(.trailing, 23)

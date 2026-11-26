@@ -97,4 +97,40 @@ struct PlaceDetailCheckInLocationTests {
         #expect(viewModel.checkInWarning == .locationUncertain)
         #expect(viewModel.detail?.hasCheckedIn == false)
     }
+
+    @Test("requestCheckIn tells a far user right away, without opening the confirmation")
+    func requestCheckInWarnsBeforeConfirming() async {
+        let service = MockPlaceDetailService(fetchResult: .success(PlaceDetailFixture.detail()))
+        let viewModel = PlaceDetailViewModel(
+            place: PlaceDetailFixture.place,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: { PlaceDetailFixture.userCoordinate },
+            service: service
+        )
+        await viewModel.load()
+
+        await viewModel.requestCheckIn()
+
+        #expect(viewModel.checkInWarning == .tooFar)
+        #expect(viewModel.showsCheckInConfirmation == false)
+        #expect(viewModel.isCheckingIn == false)
+        #expect(service.checkInCalls.isEmpty)
+    }
+
+    @Test("requestCheckIn asks for location access before confirming when there is no position")
+    func requestCheckInWithoutLocation() async {
+        let service = MockPlaceDetailService(fetchResult: .success(PlaceDetailFixture.detail()))
+        let viewModel = PlaceDetailViewModel(
+            place: PlaceDetailFixture.place,
+            userIDProvider: { "user-1" },
+            userCoordinateProvider: { throw LocationMapError.authorizationDenied },
+            service: service
+        )
+        await viewModel.load()
+
+        await viewModel.requestCheckIn()
+
+        #expect(viewModel.checkInWarning == .locationRequired)
+        #expect(viewModel.showsCheckInConfirmation == false)
+    }
 }

@@ -179,8 +179,15 @@ final class PlaceDetailViewModel {
         }
     }
 
-    func requestCheckIn() {
+    /// Asks to check in. The position is checked first, so someone who is too far (or whose position is unknown
+    /// or too coarse) hears it right away instead of confirming and only then being told.
+    func requestCheckIn() async {
         guard let detail, !detail.hasCheckedIn, !isCheckingIn else { return }
+        isCheckingIn = true
+        errorMessage = nil
+        checkInWarning = nil
+        defer { isCheckingIn = false }
+        guard await verifiedCheckInCoordinate(for: detail) != nil else { return }
         showsCheckInConfirmation = true
     }
 
