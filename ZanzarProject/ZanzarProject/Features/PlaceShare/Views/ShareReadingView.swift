@@ -18,10 +18,10 @@ struct ShareReadingView: View {
                     .frame(width: 88, height: 88)
                     .accessibilityHidden(true)
                 Text("placeShare.reading.title")
-                    .font(.system(size: 17, weight: .semibold, design: .rounded))
+                    .scaledFont(size: 17, weight: .semibold, design: .rounded)
                     .foregroundStyle(Color.brandSheetTitle)
                 Text("placeShare.reading.subtitle")
-                    .font(.system(size: 14))
+                    .scaledFont(size: 14)
                     .foregroundStyle(Color.brandNeutral600)
                     .multilineTextAlignment(.center)
             }

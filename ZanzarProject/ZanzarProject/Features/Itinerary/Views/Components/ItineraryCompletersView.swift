@@ -46,7 +46,7 @@ struct ItineraryCompletersView: View {
             }
             if others > 0 {
                 Text(others < 100 ? "+\(others)" : "99+")
-                    .font(.system(size: 9, weight: .bold))
+                    .scaledFont(size: 9, weight: .bold)
                     .foregroundStyle(.white)
                     .padding(.horizontal, 7)
                     .frame(minWidth: 25, minHeight: 24)

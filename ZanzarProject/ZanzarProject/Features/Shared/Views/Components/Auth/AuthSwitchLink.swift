@@ -14,6 +14,8 @@ struct AuthSwitchLink: View {
                 Text(actionKey)
                     .typography(.subtitle2)
                     .multilineTextAlignment(.center)
+                    // A line of text is far under 44pt tall; the touch area is not.
+                    .contentShape(.rect.inset(by: -14))
             }
             .buttonStyle(.plain)
         }

@@ -8,7 +8,7 @@ struct SheetHeader: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text(title)
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .scaledFont(size: 22, weight: .bold, design: .rounded)
                     .foregroundStyle(Color.brandSheetTitle)
                     .accessibilityAddTraits(.isHeader)
 
@@ -18,7 +18,7 @@ struct SheetHeader: View {
             .padding(.bottom, 4)
 
             Text(subtitle)
-                .font(.system(size: 14))
+                .scaledFont(size: 14)
                 .tracking(0.25)
                 .foregroundStyle(.black)
         }

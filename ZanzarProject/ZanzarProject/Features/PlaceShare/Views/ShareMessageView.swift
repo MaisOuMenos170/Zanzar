@@ -24,14 +24,14 @@ struct ShareMessageView: View {
                     .popIn(isShown)
 
                 title
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .scaledFont(size: 22, weight: .bold, design: .rounded)
                     .foregroundStyle(Color.brandSheetTitle)
                     .multilineTextAlignment(.center)
                     .accessibilityAddTraits(.isHeader)
                     .entrance(isShown, order: 1)
 
                 message
-                    .font(.system(size: 14))
+                    .scaledFont(size: 14)
                     .tracking(0.25)
                     .foregroundStyle(.black)
                     .multilineTextAlignment(.center)
@@ -46,7 +46,10 @@ struct ShareMessageView: View {
                 .padding(.bottom, 24)
         }
         .haptic(celebrates ? .sucesso : .alerta, trigger: isShown)
-        .onAppear { isShown = true }
+        .onAppear {
+            isShown = true
+            AccessibilityNotification.ScreenChanged().post()
+        }
     }
 }
 

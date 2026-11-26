@@ -71,7 +71,7 @@ struct PlacePhotoCard<Photos: View, Accessory: View>: View {
 
     private func chip(_ title: String) -> some View {
         Text(title)
-            .font(.system(size: 12))
+            .scaledFont(size: 12)
             .foregroundStyle(Color.brandNeutral600)
             .lineLimit(1)
             .padding(.horizontal, 12)
@@ -87,7 +87,7 @@ struct PlacePhotoCard<Photos: View, Accessory: View>: View {
     private var addPhotoButton: some View {
         Button(action: onAddPhoto) {
             Label("placeDetail.addPhotoButton.title", systemImage: "camera")
-                .font(.system(size: 12, weight: .bold))
+                .scaledFont(size: 12, weight: .bold)
                 .foregroundStyle(.white)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)

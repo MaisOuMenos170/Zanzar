@@ -49,7 +49,7 @@ struct DiscoverSearchBar: View {
                         .font(.system(size: textSize))
                         .foregroundStyle(Color.brandSearchPlaceholder)
                         .padding(8)
-                        .contentShape(.rect)
+                        .contentShape(.minimumTouch)
                         .padding(-8)
                 }
                 .accessibilityLabel("discover.search.clear")

@@ -29,7 +29,7 @@ struct SavedPlaceRow: View {
 
             Button(action: onRemove) {
                 Image(systemName: "trash")
-                    .font(.system(size: 18))
+                    .scaledFont(size: 18)
                     .foregroundStyle(Color.brandErrorRed)
                     .padding(4)
                     .contentShape(.rect.inset(by: -8))

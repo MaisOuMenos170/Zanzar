@@ -34,6 +34,7 @@ struct PlaceDetailPhotoCarousel: View {
             .matchedTransitionSource(id: photo, in: zoomNamespace)
             .contentShape(.rect(cornerRadius: 16))
             .onTapGesture { photoBeingViewed = photo }
+            .accessibilityAddTraits(.isButton)
             .accessibilityAction(named: Text("placeDetail.photo.openAction")) { photoBeingViewed = photo }
     }
 
