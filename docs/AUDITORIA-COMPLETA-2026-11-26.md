@@ -60,10 +60,27 @@ Precisa de decisão de design/produto ou é maior que um conserto:
 | Voltar do passaporte lido como "Tom de pele" | Botão próprio com o rótulo "Voltar". Só compilado; não conferido ao vivo |
 | "Parque Barigui" duplicado | São dois place_ids do Google: o do endereço (32 check-ins, 77 mil avaliações) e um `natural_feature` a 455 m (0 check-ins, nenhuma referência em checkins, rating ou itinerários). Removido de `lugares.json`, `apple-place-ids`, `place-images` e `place-accessibility` no backend (branch `fix/parque-barigui-duplicado`, 427 testes passam). **Falta tirar do Atlas e do CacheGoogleMaps**, senão o `sync:lugares` o traz de volta |
 
+## Terceira rodada: arestas que sobraram
+
+| Item | O que foi feito |
+|---|---|
+| Check-in "longe demais" | `requestCheckIn()` confere a posição antes da confirmação. Longe, sem localização ou impreciso: o aviso sai direto. Conferido ao vivo (Barigui, 3,5 km) e com a localização negada |
+| `AllPlacesView` com falha | Mostra "Não foi possível carregar" com "Tentar novamente" (`AllPlacesViewModel.loadErrorMessage`); 2 testes |
+| `OnboardingGate` | Continua sem trancar o usuário, mas agora deixa registro no log quando a busca do avatar falha |
+| `MyPhotosViewModel` sem id | Para o spinner e mostra o erro; teste |
+| Dynamic Type | "Aberto 24 horas" quebra em duas linhas; o slot vazio de Roteiros cresce, perde as nuvens e alarga o texto em tamanhos de acessibilidade. Conferido ao vivo em XXXL |
+| Idioma | Sempre pt-BR, de propósito. Os avisos de permissão do sistema seguem o aparelho; documentado no `CLAUDE.md` e em `AppLanguage.swift` |
+| Cadastro | O botão apagado é a regra de **todos** os formulários (login, esqueci a senha, código; há teste), então ficou. O erro de e-mail não traz mais um e-mail de exemplo (virava link) |
+| VoiceOver das fotos | O crédito é lido como uma frase ("Foto de X, licença Y. Abre a fonte."); teste |
+| Dicas | Todas em linha (`tipAbove`/`TipView`); a do mapa e a do "Crie seu primeiro roteiro" (que apontava para um botão "+" que não existe) saíram ou foram reescritas. Conferido ao vivo com `-com.apple.TipKit.ShowAllTips YES` |
+| Faxina | Removidos: `AvatarView` e a rota `.avatar`, a busca no Apple Maps (`ApplePlaceLookupService`, `ApplePlaceMatcher`, membros do `PlaceDetailViewModel`), 7 views sem uso, 6 dicas nunca exibidas, 58 textos sem uso, `%d` virou `%lld`, `CFBundleName` = Lero. `docs/APP-BACKEND.md` e `CLAUDE.md` atualizados |
+| Teste de localização negada | Novo argumento de lançamento só de Debug, `-ZANZAR_REAL_LOCATION`, desliga a posição fixa do simulador. Com ele: banner "Acesso à localização negado…" no mapa e "Precisa da localização" no check-in, conferidos ao vivo |
+
+O que ficou para testar à mão está em `docs/TESTES-PENDENTES.md`.
+
 ## Não verificado
 
 - **Redefinir senha completo**: o backend local não tem `RESEND_API_KEY`, então o passo 1 responde 503; os passos seguintes só pelos testes.
-- **Localização negada / sem sinal**: em Debug no simulador a posição é fixa (`DevLocation`), então não há como exercitar; só pelos testes.
 - Extensão de compartilhar, widget, notificação de proximidade, alertas de roteiro concluído, avaliação, upload de foto
   (só até a escolha da fonte), iPad e iPhone pequeno.
 - Backend: `npm test` e `typecheck` passam; não foi auditado além do contrato usado pelo app.
