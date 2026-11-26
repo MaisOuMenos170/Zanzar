@@ -45,6 +45,14 @@ extension APIError: LocalizedError {
         return (error as? LocalizedError)?.errorDescription
     }
 
+    /// The text to show for `error`. An `APIError` with no text (a 500 with an empty body, an unreadable answer)
+    /// has no `errorDescription`, and `localizedDescription` would then be "The operation couldn't be completed.
+    /// (ZanzarProject.APIError error 1.)", so those fall back to `fallback`.
+    static func displayMessage(for error: Error, fallback: String) -> String {
+        if let apiError = error as? APIError { return apiError.errorDescription ?? fallback }
+        return error.localizedDescription
+    }
+
     private static func rateLimitedDescription(retryAfter: TimeInterval) -> String {
         guard retryAfter > 30 else {
             return L10n.string("error.rateLimited.soon")

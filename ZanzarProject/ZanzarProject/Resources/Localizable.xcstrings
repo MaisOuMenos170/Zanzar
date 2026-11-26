@@ -124,13 +124,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Checked"
+            "value" : "OK"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Marcado"
+            "value" : "OK"
           }
         }
       }
@@ -964,6 +964,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Buscando…"
+          }
+        }
+      }
+    },
+    "error.generic.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong. Please try again."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algo deu errado. Tente novamente."
           }
         }
       }
@@ -4300,6 +4317,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tente novamente mais tarde."
+          }
+        }
+      }
+    },
+    "placeDetail.errorState.retryButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentar novamente"
           }
         }
       }
@@ -9634,13 +9668,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your Zanzar passport"
+            "value" : "Your Lero passport"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu passaporte Zanzar"
+            "value" : "Seu passaporte Lero"
           }
         }
       }

@@ -159,7 +159,7 @@ final class PlaceDetailViewModel {
             return
         } catch {
             guard generation == loadGeneration else { return }
-            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            errorMessage = APIError.displayMessage(for: error, fallback: L10n.string("error.generic.message"))
         }
     }
 
@@ -239,7 +239,7 @@ final class PlaceDetailViewModel {
         } catch APIError.httpStatus(422, _) {
             checkInWarning = .tooFar
         } catch {
-            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            errorMessage = APIError.displayMessage(for: error, fallback: L10n.string("error.generic.message"))
         }
     }
 

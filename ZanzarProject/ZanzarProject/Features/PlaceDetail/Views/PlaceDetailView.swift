@@ -29,14 +29,19 @@ struct PlaceDetailView: View {
         Group {
             if let detail = viewModel.detail {
                 content(for: detail)
-            } else if viewModel.isLoading {
+            } else if viewModel.isLoading || viewModel.errorMessage == nil {
+                // Also before the first `.task` runs, so the error state never flashes up front.
                 PlaceDetailSkeleton()
             } else {
-                ContentUnavailableView(
-                    "placeDetail.errorState.title",
-                    systemImage: "exclamationmark.triangle",
-                    description: Text(viewModel.errorMessage ?? "placeDetail.errorState.message")
-                )
+                ContentUnavailableView {
+                    Label("placeDetail.errorState.title", systemImage: "exclamationmark.triangle")
+                } description: {
+                    Text(verbatim: viewModel.errorMessage ?? L10n.string("placeDetail.errorState.message"))
+                } actions: {
+                    Button("placeDetail.errorState.retryButton.title") {
+                        Task { await viewModel.load() }
+                    }
+                }
             }
         }
     }
