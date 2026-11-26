@@ -20,7 +20,7 @@ struct PlaceDetailDirectionsButton: View {
             .typography(.subtitle2)
             .foregroundStyle(Color.brandCoral500)
             .padding(.vertical, 8)
-            .contentShape(.rect)
+            .contentShape(.minimumTouch)
         }
         .buttonStyle(.plain)
         .sheet(item: $navigationAppOptions, onDismiss: openPendingNavigationApp) { options in

@@ -71,6 +71,7 @@ struct BlockedProfilesView: View {
                     .contentShape(.rect(cornerRadius: 16))
             }
             .buttonStyle(.plain)
+            .accessibilityHint(Text(verbatim: user.username ?? L10n.string("userPhotos.privacy.blocked.deletedAccount")))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 6)

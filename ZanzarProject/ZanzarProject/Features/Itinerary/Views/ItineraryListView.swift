@@ -89,7 +89,7 @@ struct ItineraryListView: View {
 
     private func sectionTitle(_ key: LocalizedStringKey) -> some View {
         Text(key)
-            .font(.system(size: 20, weight: .bold, design: .rounded))
+            .scaledFont(size: 20, weight: .bold, design: .rounded)
             .tracking(0.15)
             .foregroundStyle(.black)
             .accessibilityAddTraits(.isHeader)

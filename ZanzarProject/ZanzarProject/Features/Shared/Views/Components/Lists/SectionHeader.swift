@@ -25,6 +25,8 @@ struct SectionHeader: View {
                 .contentShape(.rect.inset(by: -10))
             }
             .buttonStyle(.plain)
+            // Every section says "Ver mais"; the hint tells which one.
+            .accessibilityHint(Text(title))
         }
     }
 }

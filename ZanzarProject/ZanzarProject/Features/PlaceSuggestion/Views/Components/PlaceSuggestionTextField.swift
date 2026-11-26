@@ -17,7 +17,7 @@ struct PlaceSuggestionTextField: View {
     var onTap: (() -> Void)?
     /// The search field of Figma node 2530:6574 starts with a magnifier and has a darker placeholder.
     var leadingSystemImage: String?
-    var placeholderColor: Color = .brandFieldPlaceholder
+    var placeholderColor: Color = .brandSearchPlaceholder
 
     @ScaledMetric(relativeTo: .body) private var lineHeight: CGFloat = 17
 
@@ -44,7 +44,7 @@ struct PlaceSuggestionTextField: View {
                     // wraps the example address onto two lines.
                     if text.isEmpty {
                         Text(placeholderKey)
-                            .font(.system(size: 14))
+                            .scaledFont(size: 14)
                             .foregroundStyle(placeholderColor)
                             .padding(.trailing, 24)
                             .allowsHitTesting(false)
@@ -52,7 +52,7 @@ struct PlaceSuggestionTextField: View {
                     }
 
                     TextField("", text: $text, axis: .vertical)
-                        .font(.system(size: 14))
+                        .scaledFont(size: 14)
                         .foregroundStyle(Color.brandNeutral950)
                         .lineLimit(1...4)
                         .submitLabel(submitLabel)
@@ -61,6 +61,7 @@ struct PlaceSuggestionTextField: View {
                         .allowsHitTesting(onTap == nil)
                         .accessibilityLabel(labelKey)
                         .accessibilityHint(placeholderKey)
+                        .accessibilityValue(isRequired ? Text("accessibility.required") : Text(verbatim: ""))
                 }
                 // A multi-line field takes Return as a new line; here it ends the typing.
                 .onChange(of: text) { _, newValue in
@@ -94,10 +95,10 @@ struct PlaceSuggestionTextField: View {
         HStack(spacing: 0) {
             Text(labelKey)
             if isRequired {
-                Text("*").foregroundStyle(Color.brandErrorRed)
+                Text("*").foregroundStyle(Color.brandErrorRed).accessibilityHidden(true)
             }
         }
-        .font(.system(size: 14))
+        .scaledFont(size: 14)
         .foregroundStyle(.black)
     }
 }

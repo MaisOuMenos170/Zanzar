@@ -20,7 +20,7 @@ struct OneTimeCodeField: View {
             if let errorMessageKey {
                 Text(LocalizedStringKey(errorMessageKey))
                     .font(.caption)
-                    .foregroundStyle(Color("AuthError"))
+                    .foregroundStyle(Color.brandErrorRed)
             }
 
             HStack(spacing: 8) {
@@ -50,6 +50,11 @@ struct OneTimeCodeField: View {
                     .contentShape(.rect)
                     .accessibilityLabel("passwordReset.code.field.accessibilityLabel")
                     .accessibilityValue(Text("passwordReset.code.field.accessibilityValue \(text.count) \(length)"))
+            }
+            .onChange(of: errorMessageKey) { _, new in
+                if let new {
+                    AccessibilityNotification.Announcement(L10n.string(new)).post()
+                }
             }
             .onChange(of: text) {
                 let digits = Self.sanitized(text, length: length)

@@ -38,7 +38,7 @@ struct AuthFormField: View {
             if let errorMessageKey {
                 Text(LocalizedStringKey(errorMessageKey))
                     .font(.caption)
-                    .foregroundStyle(Color("AuthError"))
+                    .foregroundStyle(Color.brandErrorRed)
                     .transition(.opacity.combined(with: .offset(y: -4)))
             }
 
@@ -68,12 +68,16 @@ struct AuthFormField: View {
             if Self.isNewError(from: old, to: new) {
                 errorCount += 1
             }
+            // VoiceOver does not read an error that appears on its own, so say it when it shows up.
+            if let new {
+                AccessibilityNotification.Announcement(L10n.string(new)).post()
+            }
         }
         .haptic(.alerta, trigger: errorCount)
     }
 
     private var prompt: Text {
-        Text(placeholderKey).foregroundStyle(Color.brandNeutral300)
+        Text(placeholderKey).foregroundStyle(Color.brandSearchPlaceholder)
     }
 
     @ViewBuilder
@@ -106,7 +110,8 @@ struct AuthFormField: View {
                         .motion(Motion.toque, value: isPasswordVisible)
                         .foregroundStyle(.secondary)
                         .frame(minWidth: 25, minHeight: 25)
-                        .contentShape(.rect)
+                        // Same look, 45pt to touch.
+                        .contentShape(.rect.inset(by: -10))
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(isPasswordVisible ? "authFormField.hidePassword" : "authFormField.showPassword")

@@ -42,6 +42,15 @@ struct ShareReadyView: View {
         }
         .haptic(.selecao, trigger: model.selectedPlace)
         .motion(Motion.suave, value: model.isManualChosen)
+        // An error that shows up on its own is not read by VoiceOver unless it is announced.
+        .onChange(of: model.searchErrorMessage) { _, message in announce(message) }
+        .onChange(of: model.submitErrorMessage) { _, message in announce(message) }
+        .onAppear { AccessibilityNotification.ScreenChanged().post() }
+    }
+
+    private func announce(_ message: String?) {
+        guard let message else { return }
+        AccessibilityNotification.Announcement(message).post()
     }
 
     /// Where the pin goes: the chosen place, else the position the link carried.
@@ -59,7 +68,7 @@ struct ShareReadyView: View {
         } else {
             VStack(alignment: .leading, spacing: 8) {
                 Text("placeShare.candidates.title")
-                    .font(.system(size: 14))
+                    .scaledFont(size: 14)
                     .foregroundStyle(.black)
                 ForEach(model.candidates) { place in
                     PlaceShareCandidateRow(place: place, isSelected: model.selectedPlace == place) {
@@ -75,10 +84,10 @@ struct ShareReadyView: View {
     private var notFound: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("placeShare.manual.title")
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
+                .scaledFont(size: 17, weight: .semibold, design: .rounded)
                 .foregroundStyle(Color.brandSheetTitle)
             Text("placeShare.manual.message")
-                .font(.system(size: 14))
+                .scaledFont(size: 14)
                 .foregroundStyle(Color.brandNeutral600)
             if let address = model.manualLocation?.address {
                 VStack(alignment: .leading, spacing: 2) {

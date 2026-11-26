@@ -117,7 +117,7 @@ struct ActiveItineraryProgressCard: View {
                 .background {
                     StripedCapsuleBackground(color: .brandOrange600, stripeColor: .black.opacity(0.02))
                 }
-                .contentShape(.rect(cornerRadius: 16))
+                .contentShape(.minimumTouch)
         }
         .buttonStyle(PressableButtonStyle())
         .accessibilityHint(Text(activeItinerary.name))

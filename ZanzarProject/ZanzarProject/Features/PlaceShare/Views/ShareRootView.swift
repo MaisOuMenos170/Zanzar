@@ -3,6 +3,7 @@ import SwiftUI
 /// The share sheet: reading, confirming, or the one thing there is to say when the place cannot be sent.
 struct ShareRootView: View {
     @State private var model: PlaceShareViewModel
+    @Environment(\.accessibilityVoiceOverEnabled) private var isVoiceOverOn
     let onClose: () -> Void
 
     init(model: PlaceShareViewModel, onClose: @escaping () -> Void) {
@@ -77,9 +78,10 @@ struct ShareRootView: View {
             celebrates: outcome.isGoodNews,
             onClose: onClose
         )
-        // Good news closes by itself once it has been read; the rest waits for the person.
+        // Good news closes by itself once it has been read; the rest waits for the person. With VoiceOver on it
+        // waits too: the sheet could close in the middle of the reading.
         .task {
-            guard outcome.isGoodNews else { return }
+            guard outcome.isGoodNews, !isVoiceOverOn else { return }
             try? await Task.sleep(for: .seconds(2.4))
             onClose()
         }

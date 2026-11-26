@@ -20,15 +20,16 @@ struct ItineraryCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 3) {
                         Image(systemName: "mappin")
-                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .scaledFont(size: 10, weight: .bold, design: .rounded)
                             .accessibilityHidden(true)
                         Text("itinerary.featuredCard.places \(itinerary.placesCount)")
-                            .font(.system(size: 12, design: .rounded))
+                            .scaledFont(size: 12, design: .rounded)
                     }
 
                     Text(itinerary.name)
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .scaledFont(size: 18, weight: .bold, design: .rounded)
                         .frame(width: 200, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .tracking(0.15)
                 .foregroundStyle(Color.brandSheetTitle)
@@ -39,7 +40,7 @@ struct ItineraryCard: View {
             .padding(.top, 28)
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 149)
+        .frame(minHeight: 149)
         .background {
             Image(.checkInFeaturedBackground)
                 .resizable()
@@ -50,14 +51,14 @@ struct ItineraryCard: View {
     private var detailsButton: some View {
         Button(action: onViewDetails) {
             Text("itinerary.card.viewDetails")
-                .font(.system(size: 12, weight: .bold))
+                .scaledFont(size: 12, weight: .bold)
                 .foregroundStyle(.white)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background {
                     StripedCapsuleBackground(color: .brandPurple500, stripeColor: Self.stripeColor)
                 }
-                .contentShape(.rect(cornerRadius: 16))
+                .contentShape(.minimumTouch)
         }
         .buttonStyle(PressableButtonStyle())
         .accessibilityHint(Text(itinerary.name))

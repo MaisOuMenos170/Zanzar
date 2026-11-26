@@ -99,6 +99,60 @@ struct PlaceDetailServiceTests {
         #expect(detail.category == .bar)
     }
 
+    private static func placeJSON(accessibility: String) -> String {
+        """
+        {
+          "place_id": "ChIJ1",
+          "name": "Museu",
+          "geometry": { "location": { "lat": -25.43, "lng": -49.27 } },
+          "accessibility": \(accessibility),
+          "zanzar": { "category": "museum", "checkInCount": 0, "impressionCounts": {} },
+          "distanceMeters": 50,
+          "userContext": { "hasCheckedIn": false, "isInActiveItinerary": false }
+        }
+        """
+    }
+
+    @Test("fetchPlaceDetail reads the accessibility a source confirms, with the source and the date")
+    func readsAccessibility() async throws {
+        let json = Self.placeJSON(accessibility: #"{ "features": ["ramp", "braille"], "source": { "label": "Prefeitura", "url": "https://curitiba.example/a" }, "checkedAt": "2026-11-25" }"#)
+        let detail = try await fetchDetail(placeJSON: json)
+
+        let accessibility = try #require(detail.accessibility)
+        #expect(accessibility.features == [.ramp, .braille])
+        #expect(accessibility.sourceLabel == "Prefeitura")
+        #expect(accessibility.sourceURL == URL(string: "https://curitiba.example/a")!)
+    }
+
+    @Test("A feature this app does not know yet is skipped, and an entry with none is hidden")
+    func skipsUnknownFeatures() async throws {
+        let mixed = Self.placeJSON(accessibility: #"{ "features": ["ramp", "teleporter"], "source": { "label": "P", "url": "https://curitiba.example/a" }, "checkedAt": "2026-11-25" }"#)
+        let onlyUnknown = Self.placeJSON(accessibility: #"{ "features": ["teleporter"], "source": { "label": "P", "url": "https://curitiba.example/a" }, "checkedAt": "2026-11-25" }"#)
+
+        #expect(try await fetchDetail(placeJSON: mixed).accessibility?.features == [.ramp])
+        #expect(try await fetchDetail(placeJSON: onlyUnknown).accessibility == nil)
+    }
+
+    @Test("A malformed accessibility entry does not break the place: it is just not shown")
+    func malformedAccessibilityIsHidden() async throws {
+        let notHTTPS = Self.placeJSON(accessibility: #"{ "features": ["ramp"], "source": { "label": "P", "url": "http://curitiba.example/a" }, "checkedAt": "2026-11-25" }"#)
+        let notAnObject = Self.placeJSON(accessibility: #""sim""#)
+
+        let first = try await fetchDetail(placeJSON: notHTTPS)
+        let second = try await fetchDetail(placeJSON: notAnObject)
+
+        #expect(first.accessibility == nil)
+        #expect(second.accessibility == nil)
+        #expect(first.id == "ChIJ1")
+    }
+
+    @Test("A place without the field is simply not checked yet")
+    func absentAccessibility() async throws {
+        let detail = try await fetchDetail(placeJSON: Self.placeJSON(images: []))
+
+        #expect(detail.accessibility == nil)
+    }
+
     @Test("fetchPlaceDetail keeps the first five photos in the order the backend sends them")
     func photosAreCappedAtFive() async throws {
         let images = (1...8).map { Self.imageJSON(url: "https://img.example/\($0).jpg") }
