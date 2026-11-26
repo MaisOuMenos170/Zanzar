@@ -125,6 +125,7 @@ struct PhotoEditorView: View {
             .contentShape(.rect)
         }
         .foregroundStyle(.primary)
+        .accessibilityValue(geometry.aspect.title)
         .disabled(!geometry.canCrop)
     }
 }

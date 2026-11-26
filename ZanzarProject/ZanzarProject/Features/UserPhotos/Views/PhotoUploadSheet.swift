@@ -76,6 +76,7 @@ struct PhotoUploadSheet: View {
         switch viewModel.step {
         case .checkingTerms, .preparing, .analyzing:
             ProgressView()
+                .accessibilityLabel("userPhotos.upload.sending")
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         case .editing:
             if let original = viewModel.original {
@@ -122,13 +123,15 @@ struct PhotoUploadSheet: View {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
+            // Inline, not popovers: a popover sat on top of the button it explained and ate the first tap.
+            TipView(uploadTip, arrowEdge: nil)
             PhotosPicker(selection: $pickerItem, matching: .images, photoLibrary: .shared()) {
                 Label("userPhotos.upload.libraryButton.title", systemImage: "photo.on.rectangle")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
-            .popoverTip(takePhotoTip, arrowEdge: .top)
+            TipView(takePhotoTip, arrowEdge: nil)
             Button {
                 Task { await openCamera() }
                 UserPhotosTakePhotoTip.hasOpenedMyPhotos = true
@@ -138,7 +141,6 @@ struct PhotoUploadSheet: View {
             }
             .buttonStyle(.bordered)
             .controlSize(.large)
-            .popoverTip(uploadTip, arrowEdge: .top)
             Text("userPhotos.upload.reviewNotice")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -219,15 +221,19 @@ struct PhotoUploadSheet: View {
     }
 
     private var sent: some View {
-        ContentUnavailableView {
-            Label("userPhotos.upload.sent.title", systemImage: "hourglass")
-        } description: {
-            Text("userPhotos.upload.sent.message")
-        } actions: {
-            Button("userPhotos.upload.sent.doneButton.title") { dismiss() }
-                .buttonStyle(.borderedProminent)
+        VStack {
+            ContentUnavailableView {
+                Label("userPhotos.upload.sent.title", systemImage: "hourglass")
+            } description: {
+                Text("userPhotos.upload.sent.message")
+            } actions: {
+                Button("userPhotos.upload.sent.doneButton.title") { dismiss() }
+                    .buttonStyle(.borderedProminent)
+            }
+            TipView(UserPhotosStatusTip(), arrowEdge: nil)
+                .padding(.horizontal, 24)
         }
-        .popoverTip(UserPhotosStatusTip(), arrowEdge: .top)
+        .onAppear { AccessibilityNotification.ScreenChanged().post() }
     }
 
     private func failed(_ error: PhotoUploadError) -> some View {
@@ -243,6 +249,7 @@ struct PhotoUploadSheet: View {
             }
             .buttonStyle(.borderedProminent)
         }
+        .onAppear { AccessibilityNotification.ScreenChanged().post() }
     }
 
     private func openCamera() async {

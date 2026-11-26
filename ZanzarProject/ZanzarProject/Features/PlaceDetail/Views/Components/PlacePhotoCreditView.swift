@@ -4,6 +4,11 @@ import SwiftUI
 struct PlacePhotoCreditView: View {
     let credit: PhotoCredit
 
+    /// One sentence for VoiceOver. Read as two separate texts it came out as "Author,  · CC BY-SA 3.0".
+    static func accessibilityLabel(for credit: PhotoCredit) -> String {
+        L10n.string("placeDetail.photoCredit.accessibilityLabel", credit.author, credit.license)
+    }
+
     var body: some View {
         Link(destination: credit.sourceURL) {
             HStack(spacing: 0) {
@@ -14,11 +19,14 @@ struct PlacePhotoCreditView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .layoutPriority(1)
             }
-            .font(.system(size: 9))
+            .scaledFont(size: 9)
             .foregroundStyle(.white)
             .padding(.horizontal, 5)
             .padding(.vertical, 2)
             .background(.black.opacity(0.55), in: .capsule)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Self.accessibilityLabel(for: credit))
+        .accessibilityAddTraits(.isLink)
     }
 }

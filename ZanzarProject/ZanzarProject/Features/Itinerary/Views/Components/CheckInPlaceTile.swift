@@ -37,13 +37,13 @@ struct CheckInPlaceTile: View {
             VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(place.displayName)
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .scaledFont(size: 16, weight: .semibold, design: .rounded)
                         .tracking(0.1)
                         .lineLimit(1)
 
                     if let distance = place.roundedDistanceText {
                         Text("itinerary.tile.distance \(distance)")
-                            .font(.system(size: 12))
+                            .scaledFont(size: 12)
                             .lineLimit(1)
                     }
                 }
@@ -73,6 +73,8 @@ struct CheckInPlaceTile: View {
             .contentShape(.rect(cornerRadius: 16))
         }
         .buttonStyle(PressableButtonStyle())
+        // The seal on the tile says whether the stop was visited; it is hidden from VoiceOver, so say it here.
+        .accessibilityValue(place.pinStyle.accessibilityValue)
     }
 
     @ViewBuilder

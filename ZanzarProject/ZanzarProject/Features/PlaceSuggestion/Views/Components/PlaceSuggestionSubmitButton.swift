@@ -17,7 +17,7 @@ struct PlaceSuggestionSubmitButton: View {
                         .transition(.opacity)
                 }
             }
-            .font(.system(size: 14, weight: .semibold))
+            .scaledFont(size: 14, weight: .semibold)
             .tracking(0.1)
             .foregroundStyle(Color.brandNeutral50)
             .frame(maxWidth: .infinity)
@@ -27,6 +27,7 @@ struct PlaceSuggestionSubmitButton: View {
         }
         .buttonStyle(PressableButtonStyle())
         .disabled(isLoading)
+        .accessibilityValue(isLoading ? Text("list.loading.accessibilityLabel") : Text(verbatim: ""))
         .motion(Motion.suave, value: isLoading)
     }
 }

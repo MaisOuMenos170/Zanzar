@@ -10,7 +10,6 @@ enum Route: Hashable {
     case passwordResetSuccess
     /// `zoomsFromPin` is true when the push starts from a map pin, so the detail opens as a zoom out of it.
     case placeDetail(MapPlace, zoomsFromPin: Bool = false)
-    case avatar
     case avatarEditor
     /// The avatar editor opened from the profile: saving goes back instead of continuing the onboarding.
     case avatarEdit

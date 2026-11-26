@@ -22,12 +22,12 @@ final class PhotoStatusNoticeViewModel {
     }
 
     /// The message to show, or `nil` when nothing changed. The first run only records what is there.
-    func checkForChanges() async -> String? {
+    func checkForChanges() async -> StatusNotice? {
         guard let userID = userIDProvider(),
               let photos = try? await service.fetchMyPhotos(userID: userID) else { return nil }
         let previous = store.lastSeenStatuses()
         let lastCheck = store.lastCheckedAt()
-        let current = Dictionary(uniqueKeysWithValues: photos.map { ($0.id, $0.status.rawValue) })
+        let current = Dictionary(photos.map { ($0.id, $0.status.rawValue) }, uniquingKeysWith: { _, last in last })
         store.save(current, checkedAt: now())
         // The very first check only records what is there.
         guard let lastCheck else { return nil }
@@ -44,9 +44,9 @@ final class PhotoStatusNoticeViewModel {
         let refused = changed.count - published
         switch (published, refused) {
         case (0, 0): return nil
-        case (_, 0): return L10n.string("userPhotos.notice.published", published)
-        case (0, _): return L10n.string("userPhotos.notice.notApproved", refused)
-        default: return L10n.string("userPhotos.notice.mixed", published, refused)
+        case (_, 0): return .positive(L10n.string("userPhotos.notice.published", published))
+        case (0, _): return .negative(L10n.string("userPhotos.notice.notApproved", refused))
+        default: return .positive(L10n.string("userPhotos.notice.mixed", published, refused))
         }
     }
 }

@@ -29,14 +29,19 @@ struct PlaceDetailView: View {
         Group {
             if let detail = viewModel.detail {
                 content(for: detail)
-            } else if viewModel.isLoading {
+            } else if viewModel.isLoading || viewModel.errorMessage == nil {
+                // Also before the first `.task` runs, so the error state never flashes up front.
                 PlaceDetailSkeleton()
             } else {
-                ContentUnavailableView(
-                    "placeDetail.errorState.title",
-                    systemImage: "exclamationmark.triangle",
-                    description: Text(viewModel.errorMessage ?? "placeDetail.errorState.message")
-                )
+                ContentUnavailableView {
+                    Label("placeDetail.errorState.title", systemImage: "exclamationmark.triangle")
+                } description: {
+                    Text(verbatim: viewModel.errorMessage ?? L10n.string("placeDetail.errorState.message"))
+                } actions: {
+                    Button("placeDetail.errorState.retryButton.title") {
+                        Task { await viewModel.load() }
+                    }
+                }
             }
         }
     }
@@ -55,7 +60,7 @@ struct PlaceDetailView: View {
                     ) {
                         Label("placeDetail.shareButton.label", systemImage: "square.and.arrow.up")
                     }
-                    // Pushed from the check-in tab, the screen inherits that tab's orange tint; this button stays black.
+                    // Pushed from the check-in tab, the screen inherits that tab's blue tint; this button stays black.
                     .tint(.black)
                 }
             }
@@ -158,7 +163,8 @@ struct PlaceDetailView: View {
             .contentTransition(.symbolEffect(.replace))
             .frame(width: 36, height: 36)
             .background(Color.brandNeutral50, in: .circle)
-            .contentShape(.circle)
+            // The circle is 36pt; the touch area is 44.
+            .contentShape(.rect.inset(by: -4))
         }
         .buttonStyle(.plain)
         .motion(Motion.suave, value: viewModel.isSaved)
@@ -251,7 +257,7 @@ struct PlaceDetailView: View {
                     longitude: detail.longitude
                 )
                 .entrance(contentShown, order: 0)
-                .popoverTip(directionsTip, arrowEdge: .top)
+                .tipAbove(directionsTip)
 
                 PlacePhotoCard(
                     tags: detail.tags.map(\.label),
@@ -274,21 +280,26 @@ struct PlaceDetailView: View {
                     }
                 )
                 .entrance(contentShown, order: 1)
-                .popoverTip(addPhotoTip, arrowEdge: .top)
+                .tipAbove(addPhotoTip)
 
                 PlaceDetailCheckInButton(
                     hasCheckedIn: detail.hasCheckedIn,
                     isLoading: viewModel.isCheckingIn
                 ) {
-                    viewModel.requestCheckIn()
+                    Task { await viewModel.requestCheckIn() }
                     PlaceDetailCheckInTip.hasViewedPlaceDetail = true
                 }
                 .entrance(contentShown, order: 1)
-                .popoverTip(checkInTip, arrowEdge: .top)
+                .tipAbove(checkInTip)
             }
 
             PlaceDetailDescriptionSection(description: detail.description)
                 .entrance(contentShown, order: 2)
+
+            if let accessibility = detail.accessibility {
+                PlaceDetailAccessibilitySection(accessibility: accessibility)
+                    .entrance(contentShown, order: 2)
+            }
 
             PlaceDetailStatsCard(
                 totalCheckIns: detail.totalCheckIns,

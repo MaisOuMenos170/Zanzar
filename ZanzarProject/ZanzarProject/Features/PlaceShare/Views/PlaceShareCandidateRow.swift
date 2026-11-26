@@ -19,6 +19,7 @@ struct PlaceShareCandidateRow: View {
                 Image(systemName: isSelected ? "inset.filled.circle" : "circle")
                     .font(.body.weight(.medium))
                     .foregroundStyle(isSelected ? Color.brandPurple500 : Color.brandOptionIdleIcon)
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 1) {
                     Text(place.title)

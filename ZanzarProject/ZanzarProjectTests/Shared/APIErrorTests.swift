@@ -35,3 +35,35 @@ struct APIErrorTests {
         #expect(APIError.rateLimitedMessage(for: URLError(.notConnectedToInternet)) == nil)
     }
 }
+
+@Suite("APIError display message")
+struct APIErrorDisplayMessageTests {
+    private let fallback = "fallback"
+
+    @Test("an answer without text, or one that cannot be read, shows the fallback, never the system text")
+    func fallbackWhenThereIsNoText() {
+        let errors: [Error] = [
+            APIError.httpStatus(500, message: nil),
+            APIError.decodingFailed,
+            APIError.invalidResponse,
+            APIError.invalidRequest
+        ]
+        for error in errors {
+            #expect(APIError.displayMessage(for: error, fallback: fallback) == fallback)
+        }
+    }
+
+    @Test("the server's text and the rate limit text come through")
+    func keepsTheTextWhenThereIsOne() {
+        let refused = APIError.httpStatus(400, message: "Bad name")
+        #expect(APIError.displayMessage(for: refused, fallback: fallback) == "Bad name")
+        let limited = APIError.rateLimited(retryAfter: 600)
+        #expect(APIError.displayMessage(for: limited, fallback: fallback) == limited.errorDescription)
+    }
+
+    @Test("an error that is not an APIError keeps the system's own (localized) text")
+    func otherErrorsKeepTheirDescription() {
+        let error = URLError(.notConnectedToInternet)
+        #expect(APIError.displayMessage(for: error, fallback: fallback) == error.localizedDescription)
+    }
+}

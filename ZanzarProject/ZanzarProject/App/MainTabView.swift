@@ -123,11 +123,11 @@ struct MainTabView: View {
         // Tells the user when a review of one of their photos finished, each time the app comes to the front.
         .task(id: scenePhase) {
             guard scenePhase == .active else { return }
-            if let message = await photoStatusNotice.checkForChanges() {
-                toastManager.show(message, style: .positive)
+            if let notice = await photoStatusNotice.checkForChanges() {
+                toastManager.show(notice.message, style: notice.style)
             }
-            if let message = await suggestionStatusNotice.checkForChanges() {
-                toastManager.show(message, style: .positive)
+            if let notice = await suggestionStatusNotice.checkForChanges() {
+                toastManager.show(notice.message, style: notice.style)
             }
         }
         // The regions watched for proximity alerts follow the places around the user.
@@ -312,7 +312,8 @@ struct MainTabView: View {
                         checkInCoordinator.view(for: route)
                             .environment(checkInCoordinator)
                             .environment(\.presentSheet) { coordinator.present(sheet: $0) }
-                            .tint(Color("TabBarSelected"))
+                            // The brand blue, so the system alerts match the Figma (it was the old orange tab color).
+                            .tint(.brandBlue600)
                     }
             }
             .tint(.primary)

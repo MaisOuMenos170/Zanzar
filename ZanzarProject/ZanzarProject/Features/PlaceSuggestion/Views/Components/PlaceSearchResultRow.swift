@@ -22,7 +22,7 @@ struct PlaceSearchResultRow: View {
         Button(action: onTap) {
             HStack(spacing: 12) {
                 Image(systemName: "mappin")
-                    .font(.system(size: 16))
+                    .scaledFont(size: 16)
                     .foregroundStyle(Color.brandPurple600)
                     .frame(width: iconDiameter, height: iconDiameter)
                     .background(Color.brandPurple50, in: .circle)

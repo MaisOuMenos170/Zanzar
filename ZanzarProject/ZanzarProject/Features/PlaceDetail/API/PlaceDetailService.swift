@@ -25,6 +25,7 @@ nonisolated struct PlaceDetailAPIResponse: Decodable, Sendable {
     let zanzar: PlaceDetailZanzarResponse
     let distanceMeters: Double?
     let userContext: PlaceUserContext?
+    let accessibility: PlaceAccessibility?
 
     enum CodingKeys: String, CodingKey {
         case placeId = "place_id"
@@ -38,6 +39,7 @@ nonisolated struct PlaceDetailAPIResponse: Decodable, Sendable {
         case zanzar
         case distanceMeters
         case userContext
+        case accessibility
     }
 
     nonisolated struct Geometry: Decodable, Sendable {
@@ -68,6 +70,11 @@ nonisolated struct PlaceDetailAPIResponse: Decodable, Sendable {
         zanzar = try container.decode(PlaceDetailZanzarResponse.self, forKey: .zanzar)
         distanceMeters = try container.decodeIfPresent(Double.self, forKey: .distanceMeters)
         userContext = try container.decodeIfPresent(PlaceUserContext.self, forKey: .userContext)
+        // A malformed `accessibility` hides the section instead of failing the whole place.
+        accessibility = try container.decodeIfPresent(
+            FailableDecodable<PlaceAccessibilityAPIResponse>.self,
+            forKey: .accessibility
+        )?.value?.accessibility
     }
 }
 

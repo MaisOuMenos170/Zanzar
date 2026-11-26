@@ -9,7 +9,11 @@ struct PlaceSuggestionServiceTests {
     private static let createdJSON = """
     {
       "_id": "665f1c2e8a1b2c3d4e5f6a7b",
-      "userId": "665f1c2e8a1b2c3d4e5f0000",
+      "status": "needs_review",
+      "name": "Padaria Central",
+      "decisionReason": "not_confirmed",
+      "placeId": null,
+      "decidedAt": null,
       "coordinates": { "latitude": -25.43, "longitude": -49.27 },
       "address": "Rua XV de Novembro, 1200",
       "note": "Vale a pena",
@@ -24,6 +28,8 @@ struct PlaceSuggestionServiceTests {
         address: "Rua XV de Novembro, 1200"
     )
 
+    private static let padaria = PlaceSuggestion(name: "Padaria Central", location: curitiba, note: "")
+
     private func makeService(
         client: PlaceSuggestionStubNetworkClient? = nil,
         locationService: PlaceSuggestionStubLocationService = PlaceSuggestionStubLocationService(),
@@ -36,18 +42,19 @@ struct PlaceSuggestionServiceTests {
         )
     }
 
-    @Test("submit posts the coordinates, the name with the address, and the note to place-suggestions")
+    @Test("submit posts the name, address, coordinates and note to place-suggestions")
     func submitSendsExpectedRequest() async throws {
         let client = PlaceSuggestionStubNetworkClient(responseJSON: Self.createdJSON)
         let service = makeService(client: client)
 
-        try await service.submit(PlaceSuggestion(name: "Padaria Central", location: Self.curitiba, note: "Vale a pena"))
+        let suggestion = PlaceSuggestion(name: "Padaria Central", location: Self.curitiba, note: "Vale a pena")
+        _ = try await service.submit(suggestion)
 
         #expect(client.lastSendPath == "place-suggestions")
         #expect(client.lastSendMethod == .post)
         let body = try #require(client.lastBodyJSON)
-        #expect(body["address"] as? String == "Padaria Central — Rua XV de Novembro, 1200")
-        #expect(body["name"] == nil)
+        #expect(body["address"] as? String == "Rua XV de Novembro, 1200")
+        #expect(body["name"] as? String == "Padaria Central")
         #expect(body["note"] as? String == "Vale a pena")
         let coordinates = try #require(body["coordinates"] as? [String: Double])
         #expect(coordinates["latitude"] == -25.43)
@@ -60,7 +67,7 @@ struct PlaceSuggestionServiceTests {
         let client = PlaceSuggestionStubNetworkClient(responseJSON: Self.createdJSON)
         let service = makeService(client: client)
 
-        try await service.submit(PlaceSuggestion(name: "Padaria", location: Self.curitiba, note: "   \n "))
+        _ = try await service.submit(PlaceSuggestion(name: "Padaria", location: Self.curitiba, note: "   \n "))
 
         let body = try #require(client.lastBodyJSON)
         #expect(body["note"] == nil)
@@ -73,12 +80,53 @@ struct PlaceSuggestionServiceTests {
         let longAddress = String(repeating: "a", count: PlaceSuggestionLimits.addressMaxLength + 40)
         let location = SuggestedLocation(latitude: 1, longitude: 2, address: longAddress)
 
-        try await service.submit(PlaceSuggestion(name: "Padaria", location: location, note: "ok"))
+        _ = try await service.submit(PlaceSuggestion(name: "Padaria", location: location, note: "ok"))
 
         let body = try #require(client.lastBodyJSON)
         let sent = try #require(body["address"] as? String)
         #expect(sent.count == PlaceSuggestionLimits.addressMaxLength)
-        #expect(sent.hasPrefix("Padaria — "))
+    }
+
+    @Test("submit leaves the name out when there is none")
+    func submitOmitsBlankName() async throws {
+        let client = PlaceSuggestionStubNetworkClient(responseJSON: Self.createdJSON)
+        let service = makeService(client: client)
+
+        _ = try await service.submit(PlaceSuggestion(name: "  ", location: Self.curitiba, note: ""))
+
+        let body = try #require(client.lastBodyJSON)
+        #expect(body["name"] == nil)
+    }
+
+    @Test("submit says the suggestion waits for a person when the place is not confirmed")
+    func submitWaitingForReview() async throws {
+        let service = makeService()
+
+        let outcome = try await service.submit(Self.padaria)
+
+        #expect(outcome == .success)
+    }
+
+    @Test("submit says the place is in the app when the backend approved it")
+    func submitApproved() async throws {
+        let json = Self.createdJSON.replacingOccurrences(of: "needs_review", with: "approved")
+        let service = makeService(client: PlaceSuggestionStubNetworkClient(responseJSON: json))
+
+        let outcome = try await service.submit(Self.padaria)
+
+        #expect(outcome == .published(placeName: "Padaria Central"))
+    }
+
+    @Test("submit says why when the backend refused the suggestion")
+    func submitRefused() async throws {
+        let json = Self.createdJSON
+            .replacingOccurrences(of: "needs_review", with: "rejected")
+            .replacingOccurrences(of: "not_confirmed", with: "duplicate")
+        let service = makeService(client: PlaceSuggestionStubNetworkClient(responseJSON: json))
+
+        let outcome = try await service.submit(Self.padaria)
+
+        #expect(outcome == .refused(.duplicate))
     }
 
     @Test("submit rethrows the server error")
@@ -88,7 +136,7 @@ struct PlaceSuggestionServiceTests {
         let service = makeService(client: client)
 
         await #expect(throws: APIError.self) {
-            try await service.submit(PlaceSuggestion(name: "Padaria", location: Self.curitiba, note: "ok"))
+            _ = try await service.submit(PlaceSuggestion(name: "Padaria", location: Self.curitiba, note: "ok"))
         }
     }
 
@@ -200,7 +248,7 @@ struct PlaceSuggestionServiceTests {
 
     @Test("the response decodes the Mongo _id")
     func responseDecodesMongoID() throws {
-        let response = try JSONDecoder().decode(PlaceSuggestionResponse.self, from: Data(Self.createdJSON.utf8))
+        let response = try JSONDecoder().decode(MySuggestionAPIResponse.self, from: Data(Self.createdJSON.utf8))
 
         #expect(response.id == "665f1c2e8a1b2c3d4e5f6a7b")
     }

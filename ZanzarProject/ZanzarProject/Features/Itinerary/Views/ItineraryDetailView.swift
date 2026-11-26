@@ -22,7 +22,7 @@ struct ItineraryDetailView: View {
                 ContentUnavailableView {
                     Label("itinerary.detail.errorState.title", systemImage: "exclamationmark.triangle")
                 } description: {
-                    Text(viewModel.errorMessage ?? "itinerary.detail.errorState.message")
+                    Text(verbatim: viewModel.errorMessage ?? L10n.string("itinerary.detail.errorState.message"))
                 } actions: {
                     Button("itinerary.detail.errorState.retryButton.title") {
                         Task { await viewModel.load() }
@@ -172,7 +172,7 @@ struct ItineraryDetailView: View {
                         ) {
                             onSelectPlace(place)
                         }
-                        .frame(height: 124)
+                        .frame(minHeight: 124)
                     }
                     if places.count == 1 {
                         Color.clear.frame(maxWidth: .infinity)

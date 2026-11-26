@@ -129,9 +129,7 @@ final class PlaceShareViewModel {
         let text = String(trimmedNote.prefix(PlaceSuggestionLimits.noteMaxLength))
         do {
             if let suggestion = suggestion(note: text) {
-                try await service.submit(suggestion)
-                // The backend takes this shape of request for a person to review, so there is no instant verdict.
-                phase = .done(.success)
+                phase = .done(try await service.submit(suggestion))
             }
         } catch {
             if case .httpStatus(401, _)? = error as? APIError {

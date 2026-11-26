@@ -132,7 +132,7 @@ struct PlaceSuggestionModerationTests {
         clock.advance(by: 1_000)
         service.fetchMineResult = .success([suggestion("a", .approved, created: created, decided: clock.date)])
 
-        #expect(await notice.checkForChanges() == L10n.string("placeSuggestion.notice.added", 1))
+        #expect(await notice.checkForChanges() == StatusNotice.positive(L10n.string("placeSuggestion.notice.added", 1)))
         #expect(await notice.checkForChanges() == nil)
     }
 
@@ -154,7 +154,8 @@ struct PlaceSuggestionModerationTests {
             suggestion("b", .rejected, created: created, decided: clock.date)
         ])
 
-        #expect(await notice.checkForChanges() == L10n.string("placeSuggestion.notice.mixed", 1, 1))
+        let expected = StatusNotice.positive(L10n.string("placeSuggestion.notice.mixed", 1, 1))
+        #expect(await notice.checkForChanges() == expected)
     }
 
     @Test("a decision made while the request was answered is not told again")
@@ -185,7 +186,8 @@ struct PlaceSuggestionModerationTests {
         clock.advance(by: 1_000)
         service.fetchMineResult = .success([suggestion("a", .rejected, created: created, decided: clock.date)])
 
-        #expect(await notice.checkForChanges() == L10n.string("placeSuggestion.notice.notApproved", 1))
+        let expected = StatusNotice.negative(L10n.string("placeSuggestion.notice.notApproved", 1))
+        #expect(await notice.checkForChanges() == expected)
     }
 
     @Test("a failed fetch tells nothing and keeps what was recorded")

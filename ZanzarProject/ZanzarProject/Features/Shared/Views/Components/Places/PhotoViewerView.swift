@@ -15,6 +15,7 @@ struct PhotoViewerView: View {
                         .resizable()
                         .scaledToFit()
                         .accessibilityLabel(title)
+                        .accessibilityAddTraits(.isImage)
                 case .failure:
                     unavailable
                 case .empty:

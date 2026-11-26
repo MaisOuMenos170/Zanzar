@@ -2,8 +2,8 @@
 
 Dois repositórios git independentes, lado a lado em `~/`:
 
-- `Zanzar/` é o app iOS (SwiftUI). Branch de trabalho atual: `fix/photos-and-strings`.
-- `ZanzarBackend/` é a API (Express + MongoDB Atlas). Branch de trabalho: `develop`.
+- `Zanzar/` é o app iOS (SwiftUI). O fluxo é feature → `develop` (a `main` só recebe lançamento).
+- `ZanzarBackend/` é a API (Express + MongoDB Atlas). Mesmo fluxo: `develop`.
 
 O app é o único cliente. O backend não serve telas, só JSON (e um proxy de foto do Google Places).
 
@@ -18,17 +18,21 @@ O app é o único cliente. O backend não serve telas, só JSON (e um proxy de f
 | App (arquivo) | Chamada | Backend |
 |---|---|---|
 | `SignUpService` | `POST /register` | `auth.routes` |
-| `LoginService` | `POST /login` | `auth.routes` |
+| `LoginService` | `POST /login`, `POST /login/apple` (Sign in with Apple; o backend cria a conta se não existir) | `auth.routes` |
 | `PasswordResetService` | `POST /password/forgot`, `POST /password/verify` (`{email, code}`), `POST /password/reset` | `auth.routes` (ver abaixo) |
-| `SessionRefresher` | `POST /refresh` | só em `origin/develop` (ver abaixo) |
+| `SessionRefresher` | `POST /refresh` | `auth.routes` |
 | `ProfileService` | `POST /logout`, `GET /user/:id/profile` (`limit` de 1 a 20), `GET /user/:id/check-ins` (`limit` de 1 a 50, cursor `before`/`nextCursor`), `PATCH /user/:id` (troca o `username`: 3 a 30, letras/números/`_`, 409 se em uso), `DELETE /user/:id` | `auth`, `users` |
 | `LocationMapService` | `GET /places` | `place.routes` |
-| `PlaceSearchService` | `GET /places/search?q=&lat=&lng=&categories=&limit=` (busca por nome, apelido ou endereço em todos os lugares, mais perto primeiro; `q` de 2 a 80 caracteres, `categories` separadas por vírgula, `limit` padrão 20) | `place.routes` (só em `feat/place-search` até o merge) |
+| `PlaceLinkService` | `GET /places/:id` (abre `lero://place/<id>` e o link https de um lugar) | `place.routes`, `place-links` |
+| `PlaceSearchService` | `GET /places/search?q=&lat=&lng=&categories=&limit=` (busca por nome, apelido ou endereço em todos os lugares, mais perto primeiro; `q` de 2 a 80 caracteres, `categories` separadas por vírgula, `limit` padrão 20) | `place.routes` |
 | `PlaceDetailService` | `GET /places/:id`, `POST` e `GET /checkIn`, `GET /rating`, `GET /places/:id/photos` | `place`, `checkin`, `rating`, `user-photo-community` |
 | `RatingPromptService` | `GET` e `POST /rating` | `rating.routes` |
 | `UserPhotosService` | `POST /places/:id/photos` (corpo = JPEG; `?fromCheckIn=&showAuthorName=`), `DELETE /places/:id/photos/:photoId`, `POST /places/:id/photos/:photoId/reports`, `GET` e `POST /user/:id/photo-terms`, `GET /user/:id/photos`, `GET`, `POST` e `DELETE /user/:id/blocks` | `user-photos` (ver `docs/fotos-de-usuario-decisao.md`) |
 | `ItineraryService` | `GET /itineraries`, `GET /itineraries/:slug`, `POST /itineraries/:slug/activate`, `POST /itineraries/active/abandon`, `GET /user/:id/itinerary` | `itinerary.routes`, `user.routes` |
-| `PlaceSuggestionService` | `POST /place-suggestions` (`{coordinates, address, note?}`, sempre para revisão humana; o nome vai na frente do endereço, "Nome — endereço"), `GET /place-suggestions`. A busca é do Apple Maps (MapKit) no app; `GET /place-suggestions/search` e o formato `{osmType, osmId, note?}` não são mais usados | `place-suggestions` (ver abaixo) |
+| `SavedPlacesService` | `GET` e `POST /user/:id/saved-places`, `DELETE /user/:id/saved-places/:placeId` | `user.routes` |
+| `AvatarService` | `GET`, `POST` e `PATCH /user/:id/avatar` (404 = sem avatar; criar em quem já tem dá 409) | `user.routes` |
+| `PushTokenManager` | `POST /user/:id/device-token` (token do APNs; o app registra quando a tela principal aparece) | `user.routes` |
+| `PlaceSuggestionService` | `POST /place-suggestions` (`{name, coordinates, address, note?}`; responde com o veredito: `approved`, `rejected` ou `needs_review`), `GET /place-suggestions`. A busca é do Apple Maps (MapKit) no app; `GET /place-suggestions/search` e o formato `{osmType, osmId, note?}` não são usados | `place-suggestions` (ver abaixo) |
 
 Sem uso no app hoje: `GET /user/:id`, `GET /stamps/:stampId`, `GET /places/photo` (proxy do Google, aposentado), `GET /health` (só o Railway). A collection `sync_mutations` e `modules/sync` não têm rota. A revisão de fotos (`/admin`, `/admin/api/photos`) é usada só pela página da equipe, não pelo app.
 
@@ -40,14 +44,11 @@ Erros das rotas de foto trazem `code` (ex.: `duplicate_photo`, `terms_required`)
 
 ## Sugestão de lugar e moderação
 
-O usuário busca o lugar por nome ou endereço no Apple Maps (MapKit, limitado a Curitiba e região, no próprio app) e escolhe um resultado. O que o resultado não tem é pedido na hora: endereço sem nome (por exemplo "Jardim Botânico", que o Apple devolve como endereço) pede o nome; lugar com nome e sem endereço, ou busca sem resultado, pede o endereço (e o nome, na busca sem resultado), que o app resolve no Apple Maps para obter as coordenadas. Toda sugestão sai com coordenadas e vai no formato antigo `{coordinates, address, note?}`, com o nome na frente do endereço (o backend ainda não tem campo de nome). Por isso ela cai sempre em `needs_review`, decidida por uma pessoa na aba "Lugares sugeridos" do `/admin`: sem `osmType`/`osmId` não há aprovação automática. A descrição (`note`) é opcional.
+O usuário busca o lugar por nome ou endereço no Apple Maps (MapKit, limitado a Curitiba e região, no próprio app) e escolhe um resultado. O que o resultado não tem é pedido na hora: endereço sem nome (por exemplo "Jardim Botânico", que o Apple devolve como endereço) pede o nome; lugar com nome e sem endereço, ou busca sem resultado, pede o endereço (e o nome, na busca sem resultado), que o app resolve no Apple Maps para obter as coordenadas. Toda sugestão sai com coordenadas e vai como `{name, coordinates, address, note?}`. A descrição (`note`) é opcional.
 
-O app mostra o resultado na hora (alerta), em Perfil > Minhas sugestões, e avisa quando uma revisão termina (mesmo mecanismo das fotos, sem push). `decisionReason` chega como código (`duplicate`, `outside_area`, `type_not_accepted`, `not_a_real_place`, `inappropriate`, `accepted_manual`) e o app traduz; códigos que só explicam por que algo ficou em análise (`low_trust`, `possible_duplicate`, `manual_entry`) não são mostrados. Erros trazem `code` (`place_not_found` 404, `osm_unavailable` 503). Limite de 5 sugestões por dia por usuário.
-| `PlaceDetailService` | `GET /places/:id`, `POST` e `GET /checkIn`, `GET /rating` | `place`, `checkin`, `rating` |
-| `RatingPromptService` | `GET` e `POST /rating` | `rating.routes` |
-| `ItineraryService` | `GET /itineraries`, `GET /itineraries/:slug`, `POST /itineraries/:slug/activate`, `POST /itineraries/active/abandon`, `GET /user/:id/itinerary` | `itinerary.routes`, `user.routes` |
+O Apple só indica qual lugar o usuário quer. O backend confere a área (fora de Curitiba e região: recusa na hora), procura o lugar no OpenStreetMap pelo nome, num raio de 500 m da coordenada, e roda as camadas de moderação (`area`, `type`, `duplicate`, `context`) sobre o que o OSM devolveu. Tudo certo: o lugar entra no app sozinho (`approved`, `place_id` `osm:<tipo>/<id>`, com nome, endereço e coordenadas do OSM, não os do Apple). Recusa clara (`duplicate`, `outside_area`, `type_not_accepted`) é `rejected`. Qualquer dúvida cai em `needs_review` e é decidida por uma pessoa na aba "Lugares sugeridos" do `/admin`: o OSM não achou o lugar (`not_confirmed`), o OSM não respondeu (`layer_unavailable`), conta com menos de 7 dias ou autor com 2 sugestões recusadas (`low_trust`), lugar parecido por perto (`possible_duplicate`). O formato antigo `{coordinates, address, note?}` (versões antigas do app, ou nome em branco) continua aceito e sempre vai para revisão.
 
-Sem uso no app hoje: `GET /user/:id`, `GET /stamps/:stampId`, `GET /places/photo` (proxy do Google, aposentado), `GET /health` (só o Railway). A collection `sync_mutations` e `modules/sync` não têm rota.
+O app mostra o veredito na hora (alerta ou toast: adicionado, não aprovado ou em análise), em Perfil > Minhas sugestões, e avisa quando uma revisão termina (mesmo mecanismo das fotos, sem push). `decisionReason` chega como código (`duplicate`, `outside_area`, `type_not_accepted`, `not_a_real_place`, `inappropriate`, `accepted_manual`) e o app traduz; códigos que só explicam por que algo ficou em análise (`low_trust`, `possible_duplicate`, `manual_entry`, `not_confirmed`, `layer_unavailable`) não são mostrados. Erros trazem `code` (`place_not_found` 404, `osm_unavailable` 503). Limite de 5 sugestões por dia por usuário.
 
 ## Fonte da verdade do formato
 
@@ -60,6 +61,7 @@ Valores fechados que precisam ficar iguais nos dois lados:
 - Categorias: `restaurant, bar, cafe, museum, park, tourist, historic, curiosity, party` (`ZanzarPlaceCategory` no app, `ZANZAR_CATEGORIES` no backend).
 - Impression tags: `delighted, happy, nauseated, sad, sleepy` (`ImpressionTag` e `IMPRESSION_TAGS`).
 - Ids de selo: `stamp_<categoria>`. O app mapeia para assets locais.
+- Recursos de acessibilidade (`accessibility.features`): `elevator, ramp, accessible_restroom, accessible_paths, accessible_parking, wheelchair_loan, tactile_floor, braille, tactile_miniatures, audio_description, inclusive_playground, sensory_room, guide_dogs` (`PlaceAccessibilityFeature` no app, `PLACE_ACCESSIBILITY_FEATURES` no backend). O app ignora um recurso que ainda não conhece. Sem o campo o lugar está "ainda não verificado", nunca "não acessível".
 - Raio de check-in: 150 m, fixo no app (`CheckInPolicy`) e configurável no backend (`CHECKIN_RADIUS_METERS`). Se alguém mudar a variável, o app não acompanha.
 
 ## Ao mexer num lado
@@ -67,4 +69,4 @@ Valores fechados que precisam ficar iguais nos dois lados:
 1. Mudou schema, rota ou enum no backend: atualize o DTO correspondente no app e `swift-clients.json`.
 2. Mudou DTO no app: confirme que o backend envia o campo (não confie só no teste do app, os testes usam fixtures).
 3. Antes de testar fluxo logado no simulador, suba o backend com `npm run dev` e `PORT=3000`.
-4. Mantenha as duas branches alinhadas. Em 2026-10-29 o `develop` local do backend estava 2 commits atrás de `origin/develop`, e o `/refresh` que o app usa só existe lá.
+4. Mantenha as duas `develop` alinhadas com o remoto antes de testar: um backend atrasado pode não ter rotas que o app já usa (aconteceu com `/refresh` e, em 2026-11, com a acessibilidade dos lugares).

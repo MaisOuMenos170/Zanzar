@@ -9,6 +9,18 @@ nonisolated enum PlaceSuggestionOutcome: Hashable, Sendable {
     case refused(PlaceSuggestionDecisionReason)
     case failure(message: String)
 
+    /// What the backend decided: the place is in the app, it was refused, or a person still has to look at it.
+    init(_ suggestion: MySuggestion) {
+        switch suggestion.status {
+        case .approved:
+            self = .published(placeName: suggestion.name ?? suggestion.displayName)
+        case .rejected:
+            self = .refused(suggestion.decisionReason ?? .other(""))
+        case .pending, .needsReview:
+            self = .success
+        }
+    }
+
     /// Whether the person gets good news (sent or published) rather than a refusal or a failure.
     var isGoodNews: Bool {
         switch self {

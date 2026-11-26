@@ -42,7 +42,7 @@ struct ReportPhotoSheet: View {
                     Text("userPhotos.report.footer")
                 }
                 if let errorMessage = viewModel.errorMessage {
-                    Text(errorMessage).foregroundStyle(.red)
+                    Text(errorMessage).foregroundStyle(.red).announced(errorMessage)
                 }
             }
             .screenTitle("userPhotos.report.title")

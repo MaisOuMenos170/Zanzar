@@ -22,7 +22,12 @@ final class MyPhotosViewModel {
     }
 
     func load() async {
-        guard let userID = userIDProvider() else { return }
+        guard let userID = userIDProvider() else {
+            // Without a signed-in user there is nothing to ask for; saying so beats a spinner that never ends.
+            errorMessage = L10n.string("error.generic.message")
+            hasLoaded = true
+            return
+        }
         isLoading = true
         defer {
             isLoading = false

@@ -10,10 +10,6 @@ struct DiscoverSearchBar: View {
     let onSubmit: () -> Void
 
     @ScaledMetric(relativeTo: .body) private var textSize: CGFloat = 16
-    
-    // Tips
-    private let searchTip = DiscoverSearchTip()
-    private let filterTip = DiscoverFilterTip()
 
     var body: some View {
         HStack(spacing: 10) {
@@ -21,7 +17,6 @@ struct DiscoverSearchBar: View {
                 .font(.system(size: textSize))
                 .foregroundStyle(.primary)
                 .accessibilityHidden(true)
-                .popoverTip(searchTip, arrowEdge: .top)
 
             TextField(
                 "",
@@ -49,14 +44,13 @@ struct DiscoverSearchBar: View {
                         .font(.system(size: textSize))
                         .foregroundStyle(Color.brandSearchPlaceholder)
                         .padding(8)
-                        .contentShape(.rect)
+                        .contentShape(.minimumTouch)
                         .padding(-8)
                 }
                 .accessibilityLabel("discover.search.clear")
             }
 
             DiscoverFilterMenu(filter: $filter)
-                .popoverTip(filterTip, arrowEdge: .top)
         }
         .padding(.horizontal, 14)
         // 10.5 because a text field is about 3pt taller than its 19pt line, which makes the bar 43pt like Figma's.

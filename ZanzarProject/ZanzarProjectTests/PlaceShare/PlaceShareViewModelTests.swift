@@ -273,9 +273,10 @@ final class FakeShareService: PlaceSuggestionServicing, @unchecked Sendable {
 
     func resolveAddress(_ text: String, near: SuggestedLocation?) async throws -> SuggestedPlace? { nil }
 
-    func submit(_ suggestion: PlaceSuggestion) async throws {
+    func submit(_ suggestion: PlaceSuggestion) async throws -> PlaceSuggestionOutcome {
         if let submitError { throw submitError }
         submitted.append(suggestion)
+        return .success
     }
 }
 

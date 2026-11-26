@@ -31,7 +31,7 @@ final class SignUpService: SignUpServicing {
         AppLog.signUp.info("Submitting sign up...")
         do {
             let response: SignUpResponse = try await client.send(path: "register", method: .post, body: request)
-            AppLog.signUp.info("Sign up succeeded userId=\(response.id)")
+            AppLog.signUp.info("Sign up succeeded")
             return response
         } catch {
             AppLog.signUp.error("Sign up request failed", error: error)

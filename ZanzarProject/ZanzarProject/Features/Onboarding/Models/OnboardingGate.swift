@@ -34,6 +34,9 @@ final class OnboardingGate {
         do {
             hasNoAvatar = try await avatarService.fetchAvatar(userID: userID) == nil
         } catch {
+            // Never trap the user in onboarding over a lookup that failed; but leave a trace of why the avatar
+            // step was skipped.
+            AppLog.auth.warning("Avatar lookup failed after sign-in; skipping the avatar step")
             hasNoAvatar = false
         }
         if !hasNoAvatar {

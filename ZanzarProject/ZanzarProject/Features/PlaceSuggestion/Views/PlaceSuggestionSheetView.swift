@@ -125,6 +125,7 @@ struct PlaceSuggestionSheetView: View {
                     .font(.footnote)
                     .foregroundStyle(status.isError ? Color.brandErrorRed : Color.brandNeutral600)
                     .padding(.horizontal, 8)
+                    .announced(status.text)
             }
         }
     }
@@ -165,6 +166,7 @@ struct PlaceSuggestionSheetView: View {
                 Text(message)
                     .font(.footnote)
                     .foregroundStyle(Color.brandErrorRed)
+                    .announced(message)
             }
         }
     }
@@ -218,6 +220,7 @@ struct PlaceSuggestionSheetView: View {
                             Text(message)
                                 .font(.footnote)
                                 .foregroundStyle(Color.brandErrorRed)
+                                .announced(message)
                         }
                     }
                 }
@@ -241,7 +244,7 @@ struct PlaceSuggestionSheetView: View {
         }
         .disabled(!viewModel.canSubmit)
         .opacity(viewModel.canSubmit || viewModel.isSubmitting ? 1 : 0.4)
-        .popoverTip(suggestTip, arrowEdge: .top)
+        .tipAbove(suggestTip)
     }
 }
 

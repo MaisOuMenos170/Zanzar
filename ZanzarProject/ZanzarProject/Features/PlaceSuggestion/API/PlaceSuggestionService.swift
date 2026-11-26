@@ -3,9 +3,9 @@ import Foundation
 
 protocol PlaceSuggestionServicing: Sendable {
     func currentLocation() async throws -> SuggestedLocation
-    /// Always has a position: the backend takes the older shape of the request (coordinates, address and note),
-    /// which a person reviews.
-    func submit(_ suggestion: PlaceSuggestion) async throws
+    /// Always has a position. The backend checks the place itself and answers at once: added, refused, or waiting
+    /// for a person.
+    func submit(_ suggestion: PlaceSuggestion) async throws -> PlaceSuggestionOutcome
     /// Places Apple Maps finds for a name or an address, near `near` when the user allows it.
     func searchPlaces(query: String, near: SuggestedLocation?) async throws -> [SuggestedPlace]
     /// The position and the written form of an address the user typed; `nil` when Apple Maps cannot place it.
@@ -14,6 +14,8 @@ protocol PlaceSuggestionServicing: Sendable {
 }
 
 struct PlaceSuggestionRequest: Encodable, Sendable {
+    /// Left out when the user gave none; the backend then sends the suggestion to a person.
+    let name: String?
     let coordinates: Coordinates
     let address: String
     let note: String?
@@ -21,14 +23,6 @@ struct PlaceSuggestionRequest: Encodable, Sendable {
     struct Coordinates: Encodable, Sendable {
         let latitude: Double
         let longitude: Double
-    }
-}
-
-struct PlaceSuggestionResponse: Decodable, Sendable {
-    let id: String
-
-    private enum CodingKeys: String, CodingKey {
-        case id = "_id"
     }
 }
 
@@ -67,21 +61,24 @@ final class PlaceSuggestionService: PlaceSuggestionServicing {
         )
     }
 
-    func submit(_ suggestion: PlaceSuggestion) async throws {
+    func submit(_ suggestion: PlaceSuggestion) async throws -> PlaceSuggestionOutcome {
         AppLog.suggestion.info("Submitting place suggestion")
         let note = suggestion.note.trimmingCharacters(in: .whitespacesAndNewlines)
         let request = PlaceSuggestionRequest(
+            name: suggestion.requestName,
             coordinates: .init(latitude: suggestion.location.latitude, longitude: suggestion.location.longitude),
             address: suggestion.addressText,
             note: note.isEmpty ? nil : note
         )
         do {
-            let _: PlaceSuggestionResponse = try await client.send(
+            let response: MySuggestionAPIResponse = try await client.send(
                 path: "place-suggestions",
                 method: .post,
                 body: request
             )
+            let outcome = PlaceSuggestionOutcome(response.mySuggestion)
             AppLog.suggestion.info("Place suggestion submitted successfully")
+            return outcome
         } catch {
             AppLog.suggestion.error("Place suggestion request failed", error: error)
             throw error
