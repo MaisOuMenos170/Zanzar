@@ -7,6 +7,8 @@ final class AvatarEditorViewModel {
     private let service: AvatarServicing
     private let userIDProvider: @Sendable () -> String?
     private var hasStoredAvatar = false
+    /// The stored avatar could not be read, so the face on screen may not be the user's: saving would replace it.
+    private var loadFailed = false
 
     var avatar: Avatar
     var selectedTab: AvatarEditorTab = .skin
@@ -65,8 +67,10 @@ final class AvatarEditorViewModel {
                 avatar = stored
                 hasStoredAvatar = true
             }
+            loadFailed = false
         } catch {
-            // The editor still works from the default face; saving will report a real failure.
+            // The editor still opens on the default face, but `save()` will not overwrite the real avatar with it.
+            loadFailed = true
             AppLog.avatar.error("Could not load the avatar to edit", error: error)
         }
     }
@@ -81,6 +85,14 @@ final class AvatarEditorViewModel {
         isSaving = true
         saveError = nil
         defer { isSaving = false }
+
+        if loadFailed {
+            await load()
+            // This save is dropped either way: the edits were made on the default face, not on the user's avatar.
+            // If the retry worked, the real avatar is now on screen to edit again.
+            saveError = loadFailed ? L10n.string("avatarEditor.loadError.message") : nil
+            return false
+        }
 
         do {
             if hasStoredAvatar {

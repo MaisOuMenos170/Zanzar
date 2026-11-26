@@ -104,6 +104,38 @@ struct AvatarEditorViewModelTests {
         #expect(viewModel.avatar == .placeholder)
     }
 
+    @Test("save does not replace a stored avatar with the default face when it could not be read")
+    func saveAfterFailedLoadKeepsStoredAvatar() async {
+        let service = MockAvatarService(fetchResult: .failure(APIError.httpStatus(500, message: nil)))
+        service.createResult = .failure(APIError.httpStatus(409, message: nil))
+        service.updateResult = .success(.placeholder)
+        let viewModel = makeViewModel(service: service)
+        await viewModel.load()
+
+        let saved = await viewModel.save()
+
+        #expect(!saved)
+        #expect(service.lastCreated == nil)
+        #expect(service.lastUpdated == nil)
+        #expect(viewModel.saveError == L10n.string("avatarEditor.loadError.message"))
+    }
+
+    @Test("after a failed load, a save that finds the avatar drops the edits instead of saving them")
+    func saveAfterRecoveredLoad() async {
+        let service = MockAvatarService(fetchResult: .failure(APIError.httpStatus(500, message: nil)))
+        let viewModel = makeViewModel(service: service)
+        await viewModel.load()
+        service.fetchResult = .success(Self.stored)
+
+        let saved = await viewModel.save()
+
+        #expect(!saved)
+        #expect(viewModel.avatar == Self.stored)
+        #expect(viewModel.saveError == nil)
+        #expect(service.lastUpdated == nil)
+        #expect(service.lastCreated == nil)
+    }
+
     @Test("save creates the avatar of a new user")
     func saveCreates() async {
         let service = MockAvatarService(fetchResult: .success(nil))

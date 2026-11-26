@@ -30,7 +30,9 @@ struct BlockedProfilesView: View {
 
     @ViewBuilder
     private var content: some View {
-        if viewModel.blockedUsers.isEmpty && !viewModel.hasLoaded {
+        if let message = viewModel.errorMessage, viewModel.blockedUsers.isEmpty {
+            ListLoadFailedView(message: message) { await viewModel.load() }
+        } else if viewModel.blockedUsers.isEmpty && !viewModel.hasLoaded {
             ListLoadingView()
         } else if visibleUsers.isEmpty {
             ListNoResultsView(
@@ -76,7 +78,7 @@ struct BlockedProfilesView: View {
 
     private var errorIsPresented: Binding<Bool> {
         Binding(
-            get: { viewModel.errorMessage != nil && viewModel.hasLoaded },
+            get: { viewModel.errorMessage != nil && viewModel.hasLoaded && !viewModel.blockedUsers.isEmpty },
             set: { if !$0 { viewModel.errorMessage = nil } }
         )
     }

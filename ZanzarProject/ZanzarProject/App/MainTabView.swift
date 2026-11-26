@@ -312,7 +312,8 @@ struct MainTabView: View {
                         checkInCoordinator.view(for: route)
                             .environment(checkInCoordinator)
                             .environment(\.presentSheet) { coordinator.present(sheet: $0) }
-                            .tint(Color("TabBarSelected"))
+                            // The brand blue, so the system alerts match the Figma (it was the old orange tab color).
+                            .tint(.brandBlue600)
                     }
             }
             .tint(.primary)

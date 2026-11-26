@@ -28,7 +28,9 @@ struct MyPhotosView: View {
 
     @ViewBuilder
     private var content: some View {
-        if viewModel.photos.isEmpty && !viewModel.hasLoaded {
+        if let message = viewModel.errorMessage, viewModel.photos.isEmpty {
+            ListLoadFailedView(message: message) { await viewModel.load() }
+        } else if viewModel.photos.isEmpty && !viewModel.hasLoaded {
             ListLoadingView()
         } else if visiblePhotos.isEmpty {
             ListNoResultsView(
