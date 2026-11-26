@@ -15,15 +15,16 @@ editor de avatar, toast de erro ("Email ou senha incorretos."), alertas de sair,
 1. **Lista com falha mostrava estado vazio.** Minhas sugestões, Perfis bloqueados e Minhas fotos mostravam "Nenhuma sugestão
    ainda" / "Você não bloqueou ninguém." depois de um erro de rede. Agora mostram o mesmo estado de erro com "Tentar novamente"
    que Salvos, Check-ins e Roteiros já usavam (`ListLoadFailedView`, novo).
-   Não consegui ver essa mudança em execução: o Atlas ficou fora do ar e o Ajustes depende do perfil carregar. Compila, o padrão
-   é o das outras listas, mas falta olhar.
+   Validado ao vivo derrubando o backend: as três telas mostram "Não foi possível carregar" + "Tentar novamente", e a
+   recuperação carrega a lista (Minhas sugestões voltou com as 2 sugestões). O título genérico é `list.loadFailed.title`
+   (o primeiro título reaproveitado dizia "seu perfil"); a mensagem de Minhas fotos não manda mais "puxar para baixo".
 2. **Editor de avatar podia sobrescrever o avatar real.** Se a carga falhasse (não 404), o editor abria com o rosto padrão; ao
    salvar, `createAvatar` → 409 → `updateAvatar` gravava o padrão por cima. Agora `save()` tenta carregar de novo e recusa salvar
    se não conseguir. Dois testes novos.
 3. **Título do alerta de check-in**: "Fazer Check-in" → "Fazer check-in" (igual ao botão).
 4. **Cor dos alertas (item d da tabela abaixo).** As telas abertas pela aba Roteiros agora herdam `.brandBlue600` em vez do
-   laranja antigo (`MainTabView.swift`). Compila; não vi o alerta rodando porque o Atlas segue fora do ar. Efeito colateral
-   possível: controles sem cor explícita nessas telas deixam de ser laranja.
+   laranja antigo (`MainTabView.swift`). Validado ao vivo: o alerta de check-in sai com botões azuis e o título "Fazer check-in".
+   Efeito colateral possível: controles sem cor explícita nessas telas deixam de ser laranja.
 
 Testes: 819 passando, 0 falhas. `swiftlint` limpo nos arquivos tocados.
 
@@ -71,7 +72,7 @@ criar lugar no banco.
 
 ## Ambiente
 
-O Atlas (`:27017`) ficou inacessível a partir de ~15:04 (IP público 200.192.117.11), depois de funcionar; o backend passou a
-responder 500. Provável entrada temporária expirada em Network Access.
+O Atlas (`:27017`) ficou inacessível a partir de ~15:04 (IP público 200.192.117.11) e o backend passou a responder 500. Voltou
+sozinho depois, quando o IP público mudou (104.28.207.239); nenhuma lista de acesso foi alterada.
 Efeito colateral nos dados: 1 check-in em "Al Beek" na conta de teste (8 → 9). Backend local parado e `Config.xcconfig`
 restaurado ao valor original (que aponta para um túnel Cloudflare que não responde).

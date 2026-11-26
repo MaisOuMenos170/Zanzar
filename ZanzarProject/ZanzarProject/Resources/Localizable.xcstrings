@@ -1995,6 +1995,23 @@
         }
       }
     },
+    "list.loadFailed.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not load"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível carregar"
+          }
+        }
+      }
+    },
     "list.loadMore.errorMessage" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -10475,13 +10492,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Couldn't load your photos. Pull down to try again."
+            "value" : "Couldn't load your photos. Try again."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível carregar suas fotos. Puxe para baixo para tentar de novo."
+            "value" : "Não foi possível carregar suas fotos. Tente de novo."
           }
         }
       }
