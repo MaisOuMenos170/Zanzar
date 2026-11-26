@@ -12,7 +12,6 @@ struct LocationMapView: View {
     @State private var searchViewModel: DiscoverSearchViewModel
     @FocusState private var isSearchFocused: Bool
     @Environment(AppCoordinator.self) private var coordinator
-    @Environment(ToastManager.self) private var toasts
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     
@@ -50,12 +49,6 @@ struct LocationMapView: View {
         }
         // Pins fade and scale in and out when the grouping changes instead of popping.
         .animation(reduceMotion ? nil : .smooth(duration: 0.3), value: viewModel.displayItems)
-        // The error is handed to the app-level toast and consumed, so a repeated failure shows it again.
-        .onChange(of: viewModel.errorMessage) { _, message in
-            guard let message else { return }
-            toasts.show(message, style: .negative)
-            viewModel.errorMessage = nil
-        }
         .overlay {
             if viewModel.isLoading && viewModel.userCoordinate == nil {
                 ProgressView("locationMap.loadingIndicator.title")
@@ -135,6 +128,13 @@ struct LocationMapView: View {
                 isFocused: $isSearchFocused,
                 onSubmit: { searchViewModel.submit() }
             )
+
+            if let message = viewModel.errorMessage, !searchViewModel.showsResultsPanel {
+                MapLoadFailureBanner(message: message, isRetrying: viewModel.isLoading) {
+                    Task { await viewModel.load() }
+                }
+                .transition(.opacity)
+            }
 
             if searchViewModel.showsResultsPanel {
                 DiscoverSearchResultsPanel(

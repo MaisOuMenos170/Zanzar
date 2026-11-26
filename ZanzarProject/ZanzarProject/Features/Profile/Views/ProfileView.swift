@@ -167,6 +167,10 @@ struct ProfileView: View {
                     Task { await viewModel.load(force: true) }
                 }
                 .disabled(viewModel.isLoading)
+                // Settings is not reachable without a profile; a user who cannot load it must still be able to leave.
+                Button("profile.settings.signOut.title", role: .destructive) {
+                    viewModel.showsSignOutConfirmation = true
+                }
             }
         } else {
             ProfileSkeleton()

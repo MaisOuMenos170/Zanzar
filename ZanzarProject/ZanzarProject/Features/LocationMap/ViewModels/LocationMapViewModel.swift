@@ -138,6 +138,7 @@ final class LocationMapViewModel {
             }
             guard generation == loadGeneration else { return }
             setPlaces(store.places)
+            errorMessage = nil
         } catch {
             guard generation == loadGeneration, !Self.isCancellation(error) else { return }
             errorMessage = APIError.rateLimitedMessage(for: error) ?? String(localized: "locationMap.placesLoadError")

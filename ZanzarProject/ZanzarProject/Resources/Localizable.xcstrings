@@ -2400,6 +2400,23 @@
         }
       }
     },
+    "locationMap.retryButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentar de novo"
+          }
+        }
+      }
+    },
     "locationMap.userLocation.accessibilityLabel" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -9573,108 +9590,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Centralize o mapa na sua localização"
-          }
-        }
-      }
-    },
-    "tipkit.onboarding.avatarEditor.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose hair, eyes, skin tone and more to represent you"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escolha cabelo, olhos, tom de pele e mais para te representar"
-          }
-        }
-      }
-    },
-    "tipkit.onboarding.avatarEditor.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create your avatar"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crie seu avatar"
-          }
-        }
-      }
-    },
-    "tipkit.onboarding.notification.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Get alerts when you're near route stops and for photo reviews"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Receba alertas quando estiver perto de paradas do roteiro e para revisões de fotos"
-          }
-        }
-      }
-    },
-    "tipkit.onboarding.notification.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enable notifications"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ative notificações"
-          }
-        }
-      }
-    },
-    "tipkit.onboarding.passportIntro.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This passport tracks your stamps from check-ins around the city"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este passaporte registra seus selos dos check-ins pela cidade"
-          }
-        }
-      }
-    },
-    "tipkit.onboarding.passportIntro.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your Lero passport"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu passaporte Lero"
           }
         }
       }

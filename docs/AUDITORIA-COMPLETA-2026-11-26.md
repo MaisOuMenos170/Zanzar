@@ -40,21 +40,25 @@ Suspeitas do levantamento estático que **não se confirmaram**: chaves `placeSu
 
 Precisa de decisão de design/produto ou é maior que um conserto:
 
-- **Perfil com falha de carga: sem Ajustes nem "Sair da conta"** (o usuário fica preso sem backend). Confirmado ao vivo.
-- **Descobrir sem rede**: só um toast passageiro, sem estado persistente nem "Tentar novamente" (Figma D3). Mapa vazio.
 - **Check-in "longe demais"**: a confirmação aparece antes e só depois vem o aviso, mesmo com a distância ("a 3,5 km") já na tela.
-- **Dicas (TipKit) em popover**: cobrem o botão "Tirar foto", o botão Voltar do passaporte e repetem o texto da tela de
-  notificações; o primeiro toque em Começar/Salvar/Ativar alertas só fecha a dica (observado 3 vezes).
-- **Botão Voltar do passaporte** é lido como "Tom de pele" (título da tela anterior) no VoiceOver.
 - **Idioma**: o app é sempre pt-BR; os avisos do sistema (permissões) seguem o idioma do aparelho. Em aparelho em inglês mistura os dois.
 - **Dynamic Type XXXL**: "Aberto 24 h…" cortado no detalhe; o texto do slot vazio de Roteiros (`CheckInEmptySlot`, `.system(size: 11)`) não cresce.
 - **`try?` que escondem falha**: `AllPlacesView` (falha ou localização negada vira "nenhum lugar"), `OnboardingGate` (erro ao buscar avatar = "tem avatar"),
   `MyPhotosViewModel.load` (spinner eterno se não houver id de usuário).
 - Cadastro: botão "Criar conta" fica apagado sem dizer por quê com o formulário vazio; o erro de e-mail traz "exemplo@email.com" como link.
-- Dois lugares chamados "Parque Barigui" na busca (3,5 km e 3,9 km): possível duplicado no banco.
 - Legenda de foto lida como "Fer14041978,  · CC BY-SA 3.0" (vírgula e espaço duplo quando não há título).
 - Divergências de design a–k e os casos do catálogo "Fluxo e erros" que não existem (E4, E5, E6, D2, G3): ver a auditoria anterior.
 - Fotos de usuário: estado dos avisos continua sem chave por usuário (só é apagado ao sair da conta).
+
+## Segunda rodada: itens que precisavam de decisão
+
+| Item | O que foi feito |
+|---|---|
+| Perfil com falha de carga sem "Sair da conta" | O estado de erro ganhou o botão "Sair da conta" (mesmo alerta de confirmação). Conferido ao vivo com o backend desligado: sai e volta ao Welcome |
+| Descobrir sem rede | Banner fixo sob a busca com a mensagem e "Tentar de novo" (`MapLoadFailureBanner`); substitui o toast. Conferido ao vivo: fica na tela, e o retry recarrega os pins |
+| Dicas (TipKit) | Removidas as 3 do onboarding (repetiam o texto da tela e cobriam o Voltar); as da folha de foto viraram `TipView` em linha (e a de "Tire uma foto" estava presa ao botão errado); a de "Adicionar foto" do detalhe passa a abrir acima, sem cobrir o check-in. Conferido ao vivo: o Salvar do avatar responde ao primeiro toque. **As outras dicas continuam em popover** (descrevem o botão onde estão) e o primeiro toque fora delas só as fecha: é o comportamento do sistema |
+| Voltar do passaporte lido como "Tom de pele" | Botão próprio com o rótulo "Voltar". Só compilado; não conferido ao vivo |
+| "Parque Barigui" duplicado | São dois place_ids do Google: o do endereço (32 check-ins, 77 mil avaliações) e um `natural_feature` a 455 m (0 check-ins, nenhuma referência em checkins, rating ou itinerários). Removido de `lugares.json`, `apple-place-ids`, `place-images` e `place-accessibility` no backend (branch `fix/parque-barigui-duplicado`, 427 testes passam). **Falta tirar do Atlas e do CacheGoogleMaps**, senão o `sync:lugares` o traz de volta |
 
 ## Não verificado
 

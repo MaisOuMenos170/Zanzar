@@ -123,13 +123,15 @@ struct PhotoUploadSheet: View {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
+            // Inline, not popovers: a popover sat on top of the button it explained and ate the first tap.
+            TipView(uploadTip, arrowEdge: nil)
             PhotosPicker(selection: $pickerItem, matching: .images, photoLibrary: .shared()) {
                 Label("userPhotos.upload.libraryButton.title", systemImage: "photo.on.rectangle")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
-            .popoverTip(takePhotoTip, arrowEdge: .top)
+            TipView(takePhotoTip, arrowEdge: nil)
             Button {
                 Task { await openCamera() }
                 UserPhotosTakePhotoTip.hasOpenedMyPhotos = true
@@ -139,7 +141,6 @@ struct PhotoUploadSheet: View {
             }
             .buttonStyle(.bordered)
             .controlSize(.large)
-            .popoverTip(uploadTip, arrowEdge: .top)
             Text("userPhotos.upload.reviewNotice")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -220,15 +221,18 @@ struct PhotoUploadSheet: View {
     }
 
     private var sent: some View {
-        ContentUnavailableView {
-            Label("userPhotos.upload.sent.title", systemImage: "hourglass")
-        } description: {
-            Text("userPhotos.upload.sent.message")
-        } actions: {
-            Button("userPhotos.upload.sent.doneButton.title") { dismiss() }
-                .buttonStyle(.borderedProminent)
+        VStack {
+            ContentUnavailableView {
+                Label("userPhotos.upload.sent.title", systemImage: "hourglass")
+            } description: {
+                Text("userPhotos.upload.sent.message")
+            } actions: {
+                Button("userPhotos.upload.sent.doneButton.title") { dismiss() }
+                    .buttonStyle(.borderedProminent)
+            }
+            TipView(UserPhotosStatusTip(), arrowEdge: nil)
+                .padding(.horizontal, 24)
         }
-        .popoverTip(UserPhotosStatusTip(), arrowEdge: .top)
         .onAppear { AccessibilityNotification.ScreenChanged().post() }
     }
 

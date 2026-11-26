@@ -251,40 +251,6 @@ struct PlaceDetailDirectionsTip: Tip {
     @Parameter static var hasViewedPlaceDetail: Bool = false
 }
 
-// Onboarding Tips
-struct OnboardingAvatarEditorTip: Tip {
-    var title: Text { Text("tipkit.onboarding.avatarEditor.title") }
-    var message: Text? { Text("tipkit.onboarding.avatarEditor.message") }
-    var image: Image? { Image(systemName: "paintbrush") }
-    var identifier: String { "onboarding.avatarEditor" }
-    var rules: [Rule] {
-        #Rule(Self.$isOnboarding) { $0 == true }
-    }
-    @Parameter static var isOnboarding: Bool = true
-}
-
-struct OnboardingPassportIntroTip: Tip {
-    var title: Text { Text("tipkit.onboarding.passportIntro.title") }
-    var message: Text? { Text("tipkit.onboarding.passportIntro.message") }
-    var image: Image? { Image(systemName: "ticket") }
-    var identifier: String { "onboarding.passportIntro" }
-    var rules: [Rule] {
-        #Rule(Self.$isOnboarding) { $0 == true }
-    }
-    @Parameter static var isOnboarding: Bool = true
-}
-
-struct OnboardingNotificationTip: Tip {
-    var title: Text { Text("tipkit.onboarding.notification.title") }
-    var message: Text? { Text("tipkit.onboarding.notification.message") }
-    var image: Image? { Image(systemName: "bell") }
-    var identifier: String { "onboarding.notificationPermission" }
-    var rules: [Rule] {
-        #Rule(Self.$isOnboarding) { $0 == true }
-    }
-    @Parameter static var isOnboarding: Bool = true
-}
-
 // User Photos Tips
 struct UserPhotosTakePhotoTip: Tip {
     var title: Text { Text("tipkit.userPhotos.takePhoto.title") }

@@ -280,7 +280,7 @@ struct PlaceDetailView: View {
                     }
                 )
                 .entrance(contentShown, order: 1)
-                .popoverTip(addPhotoTip, arrowEdge: .top)
+                .popoverTip(addPhotoTip, arrowEdge: .bottom)
 
                 PlaceDetailCheckInButton(
                     hasCheckedIn: detail.hasCheckedIn,
