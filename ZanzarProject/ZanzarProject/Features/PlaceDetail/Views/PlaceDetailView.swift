@@ -291,6 +291,11 @@ struct PlaceDetailView: View {
             PlaceDetailDescriptionSection(description: detail.description)
                 .entrance(contentShown, order: 2)
 
+            if let accessibility = detail.accessibility {
+                PlaceDetailAccessibilitySection(accessibility: accessibility)
+                    .entrance(contentShown, order: 2)
+            }
+
             PlaceDetailStatsCard(
                 totalCheckIns: detail.totalCheckIns,
                 category: detail.category,
