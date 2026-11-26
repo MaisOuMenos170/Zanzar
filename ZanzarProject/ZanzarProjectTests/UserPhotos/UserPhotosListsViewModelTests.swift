@@ -68,8 +68,8 @@ struct UserPhotosListsViewModelTests {
         #expect(await viewModel.checkForChanges() == nil)
 
         service.myPhotos = .success([.fixture(id: "a", status: .approved), .fixture(id: "b", status: .needsReview)])
-        let message = await viewModel.checkForChanges()
-        #expect(message == L10n.string("userPhotos.notice.published", 1))
+        let notice = await viewModel.checkForChanges()
+        #expect(notice == StatusNotice.positive(L10n.string("userPhotos.notice.published", 1)))
 
         #expect(await viewModel.checkForChanges() == nil)
     }
@@ -93,7 +93,20 @@ struct UserPhotosListsViewModelTests {
             decidedAt: clock.addingTimeInterval(-60)
         )
         service.myPhotos = .success([rejected])
-        #expect(await viewModel.checkForChanges() == L10n.string("userPhotos.notice.notApproved", 1))
+        // Bad news does not get the green check.
+        let expected = StatusNotice.negative(L10n.string("userPhotos.notice.notApproved", 1))
+        #expect(await viewModel.checkForChanges() == expected)
+    }
+
+    @Test("a list that repeats an id does not crash the status check")
+    func noticeSurvivesRepeatedIds() async {
+        let service = MockUserPhotosService()
+        let store = MemoryStatusStore()
+        let viewModel = PhotoStatusNoticeViewModel(service: service, store: store, userIDProvider: { "user-1" })
+
+        service.myPhotos = .success([.fixture(id: "a", status: .pending), .fixture(id: "a", status: .approved)])
+
+        #expect(await viewModel.checkForChanges() == nil)
     }
 }
 
