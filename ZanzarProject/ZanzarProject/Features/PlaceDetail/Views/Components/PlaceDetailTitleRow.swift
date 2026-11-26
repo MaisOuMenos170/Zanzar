@@ -47,6 +47,8 @@ struct PlaceDetailTitleRow: View {
             Text(openingHoursText)
                 .typography(.caption1)
                 .foregroundStyle(Color.brandNeutral900)
+                // At large text sizes it wraps to a second line; it never ends in "…".
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 

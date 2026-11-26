@@ -244,7 +244,7 @@ struct PlaceSuggestionSheetView: View {
         }
         .disabled(!viewModel.canSubmit)
         .opacity(viewModel.canSubmit || viewModel.isSubmitting ? 1 : 0.4)
-        .popoverTip(suggestTip, arrowEdge: .top)
+        .tipAbove(suggestTip)
     }
 }
 

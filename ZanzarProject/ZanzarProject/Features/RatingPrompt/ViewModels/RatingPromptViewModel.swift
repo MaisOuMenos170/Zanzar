@@ -120,7 +120,7 @@ final class RatingPromptViewModel {
         } catch APIError.httpStatus(409, _) {
             finish()
         } catch {
-            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            errorMessage = APIError.displayMessage(for: error, fallback: L10n.string("error.generic.message"))
         }
     }
 

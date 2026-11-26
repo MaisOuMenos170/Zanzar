@@ -1,5 +1,7 @@
 import Foundation
 
+/// The app is always pt-BR unless a preference is saved, on purpose (there is no language picker). The system's own
+/// prompts (camera and location permissions) follow the device language and cannot be changed from here.
 enum AppLanguage: String, CaseIterable {
     case portuguese = "pt-BR"
     case english = "en"

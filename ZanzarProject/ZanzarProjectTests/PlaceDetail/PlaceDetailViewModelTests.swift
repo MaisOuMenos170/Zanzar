@@ -31,14 +31,16 @@ struct PlaceDetailViewModelTests {
         let viewModel = PlaceDetailViewModel(
             place: PlaceDetailFixture.place,
             userIDProvider: { "user-1" },
-            userCoordinateProvider: { PlaceDetailFixture.userCoordinate },
+            userCoordinateProvider: { PlaceDetailFixture.nearbyUserCoordinate },
             service: service
         )
         await viewModel.load()
 
-        viewModel.requestCheckIn()
+        await viewModel.requestCheckIn()
 
         #expect(viewModel.showsCheckInConfirmation)
+        #expect(viewModel.checkInWarning == nil)
+        #expect(viewModel.isCheckingIn == false)
     }
 
     @Test("confirmCheckIn marks the place as checked in and shows a new seal")

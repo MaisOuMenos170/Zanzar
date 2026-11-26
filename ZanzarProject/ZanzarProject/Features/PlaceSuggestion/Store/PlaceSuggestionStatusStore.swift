@@ -30,4 +30,11 @@ final class UserDefaultsPlaceSuggestionStatusStore: PlaceSuggestionStatusStoring
         defaults.set(statuses, forKey: Self.statusesKey)
         defaults.set(checkedAt, forKey: Self.checkedAtKey)
     }
+
+    /// Forgets what was seen. Called on sign-out: these are the account's own statuses, and the next account on
+    /// this device must not be compared against them.
+    func clear() {
+        defaults.removeObject(forKey: Self.statusesKey)
+        defaults.removeObject(forKey: Self.checkedAtKey)
+    }
 }

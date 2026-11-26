@@ -33,7 +33,9 @@ struct MySuggestionsView: View {
 
     @ViewBuilder
     private var content: some View {
-        if viewModel.suggestions.isEmpty && !viewModel.hasLoaded {
+        if let message = viewModel.errorMessage, viewModel.suggestions.isEmpty {
+            ListLoadFailedView(message: message) { await viewModel.load() }
+        } else if viewModel.suggestions.isEmpty && !viewModel.hasLoaded {
             ListLoadingView()
         } else if visibleSuggestions.isEmpty {
             ListNoResultsView(
@@ -55,7 +57,8 @@ struct MySuggestionsView: View {
 
     private var errorIsPresented: Binding<Bool> {
         Binding(
-            get: { viewModel.errorMessage != nil && viewModel.hasLoaded },
+            // With nothing to show the error takes the screen; the alert is for a refresh that failed over a list.
+            get: { viewModel.errorMessage != nil && viewModel.hasLoaded && !viewModel.suggestions.isEmpty },
             set: { if !$0 { viewModel.errorMessage = nil } }
         )
     }

@@ -19,8 +19,8 @@ struct AllPlacesView: View {
         ) {
             content(for: places)
         }
-        .task { try? await nearbyPlacesStore.refreshIfNeeded() }
-        .refreshable { try? await nearbyPlacesStore.refresh() }
+        .task { await viewModel.load(using: nearbyPlacesStore) }
+        .refreshable { await viewModel.load(using: nearbyPlacesStore, force: true) }
     }
 
     @ViewBuilder
@@ -28,6 +28,10 @@ struct AllPlacesView: View {
         if nearbyPlacesStore.places.isEmpty {
             if nearbyPlacesStore.isLoading {
                 ListLoadingView()
+            } else if let message = viewModel.loadErrorMessage {
+                ListLoadFailedView(message: message) {
+                    await viewModel.load(using: nearbyPlacesStore, force: true)
+                }
             } else {
                 ListNoResultsView(
                     kind: .empty(title: "places.all.empty.title", message: "places.all.empty.message")

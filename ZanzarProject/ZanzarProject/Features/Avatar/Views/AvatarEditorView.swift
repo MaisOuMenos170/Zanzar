@@ -1,5 +1,4 @@
 import SwiftUI
-import TipKit
 
 struct AvatarEditorView: View {
     var finishesByPopping = false
@@ -8,8 +7,6 @@ struct AvatarEditorView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(OnboardingGate.self) private var onboarding
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    
-    private let avatarEditorTip = OnboardingAvatarEditorTip()
 
     private var previewSize: CGFloat {
         dynamicTypeSize.isAccessibilitySize ? 120 : 210
@@ -18,7 +15,6 @@ struct AvatarEditorView: View {
     var body: some View {
         VStack(spacing: 16) {
             preview
-                .popoverTip(avatarEditorTip, arrowEdge: .top)
 
             AvatarCategoryTabBar(selection: $viewModel.selectedTab)
 
@@ -64,6 +60,9 @@ struct AvatarEditorView: View {
         .background(Color.brandBlue50.ignoresSafeArea())
         .screenTitle(LocalizedStringKey(viewModel.selectedTab.titleKey))
         .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
+        // In onboarding the account already exists and the user is signed in: "back" would land on Welcome with a
+        // live session, and a relaunch would then skip the avatar, the passport and the notification step.
+        .navigationBarBackButtonHidden(!finishesByPopping)
         // Opened from the profile, the editor takes the whole screen: no tab bar under the save button.
         .toolbar(.hidden, for: .tabBar)
         .toast(for: viewModel.saveError)

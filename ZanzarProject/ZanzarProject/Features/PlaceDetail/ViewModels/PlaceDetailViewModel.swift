@@ -14,7 +14,6 @@ final class PlaceDetailViewModel {
     private let userIDProvider: @Sendable () -> String?
     private let userCoordinateProvider: @Sendable () async throws -> UserCoordinate
     private let pendingRatingStore: PendingRatingStoring
-    private let applePlaceLookup: ApplePlaceLookingUp
     private let savedPlaces: SavedPlacesServicing
     private var loadGeneration = 0
     /// One id per place for every try of the check-in, so a retry after a lost answer is a replay, not a 409.
@@ -35,11 +34,6 @@ final class PlaceDetailViewModel {
     private(set) var isSaved = false
     private var isUpdatingSaved = false
     private var pendingCompletedItineraryAlert = false
-    /// The place in Apple Maps, for Apple's place card (its photos and reviews). `nil` until found.
-    var applePlaceItem: MKMapItem?
-    var isLookingUpApplePlace = false
-    /// Apple Maps has no safe match for this place, so the card should not be offered.
-    var applePlaceUnavailable = false
 
     init(
         place: MapPlace,
@@ -49,7 +43,6 @@ final class PlaceDetailViewModel {
         },
         service: PlaceDetailServicing = PlaceDetailService(),
         pendingRatingStore: PendingRatingStoring? = nil,
-        applePlaceLookup: ApplePlaceLookingUp? = nil,
         savedPlaces: SavedPlacesServicing = SavedPlacesService()
     ) {
         self.place = place
@@ -57,7 +50,6 @@ final class PlaceDetailViewModel {
         self.userCoordinateProvider = userCoordinateProvider
         self.service = service
         self.pendingRatingStore = pendingRatingStore ?? UserDefaultsPendingRatingStore()
-        self.applePlaceLookup = applePlaceLookup ?? ApplePlaceLookupService.shared
         self.savedPlaces = savedPlaces
     }
 
@@ -109,27 +101,6 @@ final class PlaceDetailViewModel {
         }
     }
 
-    /// Finds the place in Apple Maps so its card can show Apple's photos. Safe to call again: it does nothing
-    /// once the place was found or ruled out, or while a search is running.
-    func loadApplePlace() async {
-        guard applePlaceItem == nil, !applePlaceUnavailable, !isLookingUpApplePlace else { return }
-        isLookingUpApplePlace = true
-        defer { isLookingUpApplePlace = false }
-
-        do {
-            if let item = try await applePlaceLookup.mapItem(for: place) {
-                applePlaceItem = item
-            } else {
-                applePlaceUnavailable = true
-            }
-        } catch is CancellationError {
-            return
-        } catch {
-            // A network failure is not "unavailable": a later call may still find the place.
-            AppLog.placeDetail.error("Apple Maps place lookup failed", error: error)
-        }
-    }
-
     func load() async {
         loadGeneration += 1
         let generation = loadGeneration
@@ -159,7 +130,7 @@ final class PlaceDetailViewModel {
             return
         } catch {
             guard generation == loadGeneration else { return }
-            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            errorMessage = APIError.displayMessage(for: error, fallback: L10n.string("error.generic.message"))
         }
     }
 
@@ -179,8 +150,15 @@ final class PlaceDetailViewModel {
         }
     }
 
-    func requestCheckIn() {
+    /// Asks to check in. The position is checked first, so someone who is too far (or whose position is unknown
+    /// or too coarse) hears it right away instead of confirming and only then being told.
+    func requestCheckIn() async {
         guard let detail, !detail.hasCheckedIn, !isCheckingIn else { return }
+        isCheckingIn = true
+        errorMessage = nil
+        checkInWarning = nil
+        defer { isCheckingIn = false }
+        guard await verifiedCheckInCoordinate(for: detail) != nil else { return }
         showsCheckInConfirmation = true
     }
 
@@ -239,7 +217,7 @@ final class PlaceDetailViewModel {
         } catch APIError.httpStatus(422, _) {
             checkInWarning = .tooFar
         } catch {
-            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            errorMessage = APIError.displayMessage(for: error, fallback: L10n.string("error.generic.message"))
         }
     }
 

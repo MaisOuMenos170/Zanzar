@@ -24,8 +24,8 @@ final class LocationMapService: LocationMapServicing {
 
     func currentUserLocation() async throws -> UserCoordinate {
         #if DEBUG && targetEnvironment(simulator)
-        return DevLocation.historicCenter
-        #else
+        if DevLocation.isFixed { return DevLocation.historicCenter }
+        #endif
         if manager.authorizationStatus == .notDetermined {
             manager.requestWhenInUseAuthorization()
         }
@@ -33,7 +33,6 @@ final class LocationMapService: LocationMapServicing {
         return try await withTimeout(Self.locationTimeout, throwing: LocationMapError.locationUnavailable) {
             try await self.firstLocationUpdate()
         }
-        #endif
     }
 
     private func firstLocationUpdate() async throws -> UserCoordinate {

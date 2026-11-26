@@ -1,13 +1,9 @@
 import SwiftUI
-import TipKit
 
 struct WelcomeView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var introDone = false
-
-    private let createAccountTip = WelcomeCreateAccountTip()
-    private let signInTip = WelcomeSignInTip()
 
     var body: some View {
         VStack(spacing: 16) {
@@ -16,7 +12,6 @@ struct WelcomeView: View {
             VStack(spacing: 16) {
                 Button("welcome.createPassportButton.title") {
                     coordinator.push(.signUp)
-                    WelcomeCreateAccountTip.hasSeenWelcome = true
                 }
                 .buttonStyle(AuthPrimaryButtonStyle(background: .brandOrange600))
 
@@ -25,7 +20,6 @@ struct WelcomeView: View {
                     actionKey: "auth.switch.haveAccount.action"
                 ) {
                     coordinator.push(.login)
-                    WelcomeSignInTip.hasSeenWelcome = true
                 }
             }
             .opacity(introDone ? 1 : 0)

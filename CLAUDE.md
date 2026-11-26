@@ -1,6 +1,6 @@
 # Zanzar (app iOS)
 
-App iOS em SwiftUI para descobrir lugares em Curitiba, fazer check-in, ganhar selos e seguir roteiros. O nome que aparece para o usuário nas permissões é "O Lero". O backend fica em `../ZanzarBackend` (repositório git separado). Veja [docs/APP-BACKEND.md](docs/APP-BACKEND.md) para a ligação entre os dois.
+App iOS em SwiftUI para descobrir lugares em Curitiba, fazer check-in, ganhar selos e seguir roteiros. O nome que aparece para o usuário nas permissões é "O Lero". O backend fica em `../ZanzarBackend` (repositório git separado). Veja [docs/APP-BACKEND.md](docs/APP-BACKEND.md) para a ligação entre os dois. Auditorias: [docs/AUDITORIA-COMPLETA-2026-11-26.md](docs/AUDITORIA-COMPLETA-2026-11-26.md).
 
 ## Stack
 
@@ -19,8 +19,10 @@ ZanzarProject/ZanzarProject/
   App/            MyApp (@main), ContentView, MainTabView
   Coordinator/    AppCoordinator, Routes
   Features/<X>/   API/ (Service + DTOs), Models/, ViewModels/, Views/(Components/)
-                  X = Auth, HTTP, Itinerary, LocationMap, Login, PlaceDetail, Profile,
-                      PlaceShare, RatingPrompt, Shared, SignUp, Welcome
+                  X = Auth, Avatar, HTTP, Itinerary, LocationMap, Login, Onboarding, PasswordReset,
+                      PlaceDetail, PlaceLink, PlaceShare, PlaceSuggestion, Profile, ProximityAlerts,
+                      RatingPrompt, Shared, SignUp, TipKit, UserPhotos, Welcome
+ZanzarProject/ZanzarWidget/  widget do próximo lugar do roteiro (lê o app group; ZanzarWidgetControl e ZanzarWidgetLiveActivity são só esqueletos)
 ZanzarProject/ZanzarShare/   extensão de compartilhamento ("O Lero" na folha de compartilhar): só o ShareViewController;
                              o resto vem de Features/PlaceShare e de pastas do app compartilhadas por grupos
                              sincronizados no alvo ZanzarShare (ver project.pbxproj)
@@ -44,7 +46,7 @@ xcodebuild test -project ZanzarProject/ZanzarProject.xcodeproj -scheme ZanzarPro
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 ```
 
-- Estado em 2026-11-12: build OK, 541 testes passando, 0 falhas.
+- Estado em 2026-11-26: build OK, 830 testes passando, 0 falhas.
 - API local: copie `ZanzarProject/Config.xcconfig.example` para `Config.xcconfig` (ignorado pelo git) e preencha `ZANZAR_API_BASE_URL`. Vazio no Debug = `http://127.0.0.1:3000`. Release usa `Config.Release.xcconfig`.
 - iPhone físico: `scripts/update-api-tunnel-url.sh <url>` com o túnel do backend (README).
 - Lint: `swiftlint lint` (CI roda com a config padrão, não há `.swiftlint.yml`). Não há SwiftFormat.
@@ -76,7 +78,9 @@ xcodebuild test -project ZanzarProject/ZanzarProject.xcodeproj -scheme ZanzarPro
 
 ## Pontos de atenção conhecidos
 
+- O app é sempre pt-BR (`AppLanguage`), de propósito. Os avisos de permissão (câmera, localização) são do sistema e saem no idioma do aparelho; o app não controla isso.
+- Dicas (TipKit) são sempre em linha (`tipAbove` / `TipView`), nunca `popoverTip`: o popover cobre o botão ao lado e engole o primeiro toque.
+- Em Debug no simulador a posição é fixa (`DevLocation`). Para usar a localização real (ou testar "negada"), abra o app com `-ZANZAR_REAL_LOCATION`. Passo a passo em [docs/TESTES-PENDENTES.md](docs/TESTES-PENDENTES.md).
 - Warnings `ActorIsolatedCall` por causa do `L10n` (herda MainActor) chamado de código `nonisolated`; viram erro se migrar para Swift 6.
-- `NSLocationAlwaysAndWhenInUseUsageDescription` está vazio no projeto (aviso do Xcode).
 - `IPHONEOS_DEPLOYMENT_TARGET`: 27.0 no projeto, 26.0 nos targets. O alvo vence, mas está inconsistente.
 - README descreve uma pasta `Extensions/` que não existe.

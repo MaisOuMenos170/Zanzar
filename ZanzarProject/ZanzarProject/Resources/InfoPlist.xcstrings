@@ -21,12 +21,18 @@
     },
     "CFBundleName" : {
       "comment" : "Bundle name",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lero"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "ZanzarProject"
+            "state" : "translated",
+            "value" : "Lero"
           }
         }
       }
@@ -44,18 +50,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O Lero usa a câmera só quando você escolhe tirar uma foto de um lugar para enviar. A foto passa por análise antes de aparecer no app."
-          }
-        }
-      }
-    },
-    "NSHumanReadableCopyright" : {
-      "comment" : "Copyright (human-readable)",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : ""
           }
         }
       }
