@@ -28,20 +28,20 @@ struct ProximityAlertSettingsSection: View {
                 Toggle(isOn: nearbyBinding) {
                     label("proximitySettings.nearby.title", "proximitySettings.nearby.subtitle")
                 }
-                .popoverTip(enableTip, arrowEdge: .trailing)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
 
                 Toggle(isOn: itineraryBinding) {
                     label("proximitySettings.itinerary.title", "proximitySettings.itinerary.subtitle")
                 }
-                .popoverTip(customizeTip, arrowEdge: .trailing)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
 
                 permissionRow
             }
             .tint(Color.brandPurple600)
+            .tipAbove(customizeTip)
+            .tipAbove(enableTip)
         }
         .task { await viewModel.load() }
         // The user may have changed the permissions in the Settings app.

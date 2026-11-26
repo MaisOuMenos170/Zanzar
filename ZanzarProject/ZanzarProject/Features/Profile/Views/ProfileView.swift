@@ -117,7 +117,6 @@ struct ProfileView: View {
         } label: {
             Label("profile.menu.accessibilityLabel", systemImage: "pencil")
         }
-        .popoverTip(editAvatarTip, arrowEdge: .top)
     }
 
     @ViewBuilder
@@ -125,11 +124,14 @@ struct ProfileView: View {
         if let profile = viewModel.profile {
             ScrollView {
                 VStack(spacing: 24) {
+                    // Inline: the edit button is in the toolbar, which cannot hold a tip.
+                    TipView(editAvatarTip, arrowEdge: nil)
+
                     ProfileHeaderView()
                         .entrance(contentShown, order: 0)
 
                     ProfileSegmentedControl(selection: $section)
-                        .popoverTip(settingsTip, arrowEdge: .top)
+                        .tipAbove(settingsTip)
                         .entrance(contentShown, order: 1)
 
                     switch section {

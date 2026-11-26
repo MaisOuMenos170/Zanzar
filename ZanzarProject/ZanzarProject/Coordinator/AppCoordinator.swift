@@ -48,8 +48,6 @@ final class AppCoordinator {
             authView(for: route)
         case .placeDetail(let place, _):
             PlaceDetailView(place: place)
-        case .avatar:
-            AvatarView()
         case .avatarEditor:
             AvatarEditorView()
         case .avatarEdit:

@@ -271,91 +271,6 @@
         }
       }
     },
-    "avatar.createErrorAlert.dismissButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        }
-      }
-    },
-    "avatar.createErrorAlert.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn't create your avatar. Please try again."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível criar seu avatar. Tente novamente."
-          }
-        }
-      }
-    },
-    "avatar.emptyState.createButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create sample avatar"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criar avatar de exemplo"
-          }
-        }
-      }
-    },
-    "avatar.emptyState.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your avatar will show up here once you create it."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu avatar aparecerá aqui quando você criá-lo."
-          }
-        }
-      }
-    },
-    "avatar.emptyState.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No avatar yet"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você ainda não tem um avatar"
-          }
-        }
-      }
-    },
     "avatar.errorState.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -369,40 +284,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Algo deu errado. Tente novamente."
-          }
-        }
-      }
-    },
-    "avatar.errorState.retryButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Try again"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tentar novamente"
-          }
-        }
-      }
-    },
-    "avatar.errorState.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn't load your avatar"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível carregar seu avatar"
           }
         }
       }
@@ -437,40 +318,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você precisa entrar para ver seu avatar."
-          }
-        }
-      }
-    },
-    "avatar.loadingIndicator.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading avatar…"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Carregando avatar…"
-          }
-        }
-      }
-    },
-    "avatar.navigationTitle.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avatar"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avatar"
           }
         }
       }
@@ -1019,23 +866,6 @@
         }
       }
     },
-    "itinerary.activeCard.abandon" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Leave route"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abandonar roteiro"
-          }
-        }
-      }
-    },
     "itinerary.activeCard.continue" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1049,23 +879,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Continuar"
-          }
-        }
-      }
-    },
-    "itinerary.activeCard.empty" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No route selected."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhum roteiro selecionado."
           }
         }
       }
@@ -1104,40 +917,6 @@
         }
       }
     },
-    "itinerary.activeCard.slot.completed" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completed stop"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parada concluída"
-          }
-        }
-      }
-    },
-    "itinerary.activeCard.slot.pending" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pending stop"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parada pendente"
-          }
-        }
-      }
-    },
     "itinerary.activeCard.status" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1151,40 +930,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Roteiro em andamento"
-          }
-        }
-      }
-    },
-    "itinerary.activeCard.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Current route"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Roteiro atual"
-          }
-        }
-      }
-    },
-    "itinerary.activeCard.viewDetails" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "View details"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver detalhes"
           }
         }
       }
@@ -1434,23 +1179,6 @@
         }
       }
     },
-    "itinerary.detail.close" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Close"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fechar"
-          }
-        }
-      }
-    },
     "itinerary.detail.completedBy %lld" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1522,23 +1250,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld pessoas completaram"
-          }
-        }
-      }
-    },
-    "itinerary.detail.eligiblePlaces.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Places in this selection"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lugares desta seleção"
           }
         }
       }
@@ -1662,23 +1373,6 @@
         }
       }
     },
-    "itinerary.detail.sections.places" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Itinerary places"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lugares do roteiro"
-          }
-        }
-      }
-    },
     "itinerary.detail.stampsCollected %lld %lld" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1709,23 +1403,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Começar roteiro"
-          }
-        }
-      }
-    },
-    "itinerary.detail.suggestedRoute.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suggested route"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rota sugerida"
           }
         }
       }
@@ -1903,23 +1580,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lugares próximos"
-          }
-        }
-      }
-    },
-    "itinerary.list.sections.places" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Itinerary places"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lugares do roteiro"
           }
         }
       }
@@ -4497,13 +4157,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d hours walk"
+            "value" : "%lld hours walk"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%dh a pé"
+            "value" : "%lldh a pé"
           }
         }
       }
@@ -4514,13 +4174,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d h %d min walk"
+            "value" : "%lld h %lld min walk"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%dh %d min a pé"
+            "value" : "%lldh %lld min a pé"
           }
         }
       }
@@ -4548,13 +4208,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d minutes walk"
+            "value" : "%lld minutes walk"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d min a pé"
+            "value" : "%lld min a pé"
           }
         }
       }
@@ -4678,23 +4338,6 @@
         }
       }
     },
-    "placeDetail.nearbyPlace.accessibilityLabel %@ %@" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@, %2$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@, %2$@"
-          }
-        }
-      }
-    },
     "placeDetail.nearbyPlace.checkInsCount" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4744,23 +4387,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "placeDetail.nearbySection.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nearby places"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lugares próximos"
           }
         }
       }
@@ -4914,81 +4540,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Obrigado. A equipe do Lero vai analisar esta foto."
-          }
-        }
-      }
-    },
-    "placeDetail.reactionItem.accessibilityLabel %lld" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld reaction"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld reactions"
-                }
-              }
-            }
-          }
-        },
-        "pt-BR" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld reação"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld reações"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "placeDetail.reactionsSection.emptyMessage" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Place with reactions. Check in to leave a reaction."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Local ainda sem reações. Faça check-in para deixar sua reação."
-          }
-        }
-      }
-    },
-    "placeDetail.reactionsSection.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reactions"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reações"
           }
         }
       }
@@ -6384,23 +5935,6 @@
         }
       }
     },
-    "placeSuggestion.mySuggestions.footer" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Approved places already show on the map. The ones in review are looked at by the team."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lugares aprovados já aparecem no mapa. Os que estão em análise passam pela equipe."
-          }
-        }
-      }
-    },
     "placeSuggestion.mySuggestions.search.prompt" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6503,40 +6037,6 @@
         }
       }
     },
-    "placeSuggestion.nearMe.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Shows the places closest to you first"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostra primeiro os lugares mais perto de você"
-          }
-        }
-      }
-    },
-    "placeSuggestion.nearMe.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search near me"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Procurar perto de mim"
-          }
-        }
-      }
-    },
     "placeSuggestion.noteField.label" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6577,13 +6077,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d place you suggested was added."
+            "value" : "%lld place you suggested was added."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d lugar que você sugeriu foi adicionado."
+            "value" : "%lld lugar que você sugeriu foi adicionado."
           }
         }
       }
@@ -6594,13 +6094,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d places added and %d suggestions not approved. See them in Profile > My suggestions."
+            "value" : "%lld places added and %lld suggestions not approved. See them in Profile > My suggestions."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d lugares adicionados e %d sugestões não aprovadas. Veja em Perfil > Minhas sugestões."
+            "value" : "%lld lugares adicionados e %lld sugestões não aprovadas. Veja em Perfil > Minhas sugestões."
           }
         }
       }
@@ -6611,13 +6111,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d of your suggestions was not approved. See it in Profile > My suggestions."
+            "value" : "%lld of your suggestions was not approved. See it in Profile > My suggestions."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d sugestão sua não foi aprovada. Veja em Perfil > Minhas sugestões."
+            "value" : "%lld sugestão sua não foi aprovada. Veja em Perfil > Minhas sugestões."
           }
         }
       }
@@ -6737,23 +6237,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Buscar lugar"
-          }
-        }
-      }
-    },
-    "placeSuggestion.searchButton.label" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscar"
           }
         }
       }
@@ -7112,23 +6595,6 @@
         }
       }
     },
-    "profile.checkInCard.dateLabel %@" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Date: %@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Data: %@"
-          }
-        }
-      }
-    },
     "profile.checkInCard.openDetailsHint" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7452,40 +6918,6 @@
         }
       }
     },
-    "profile.header.resetTips.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Show tutorial again"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver tutorial novamente"
-          }
-        }
-      }
-    },
-    "profile.header.signOutAccessibilityLabel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sign out"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sair"
-          }
-        }
-      }
-    },
     "profile.loadError.notAuthenticated" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7567,57 +6999,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Editar nome"
-          }
-        }
-      }
-    },
-    "profile.photosSection.myPhotos.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "My photos"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minhas fotos"
-          }
-        }
-      }
-    },
-    "profile.photosSection.privacy.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Photos and privacy"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fotos e privacidade"
-          }
-        }
-      }
-    },
-    "profile.photosSection.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Photos"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fotos"
           }
         }
       }
@@ -8115,23 +7496,6 @@
         }
       }
     },
-    "profile.stats.itinerariesLabel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "itineraries"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "roteiros"
-          }
-        }
-      }
-    },
     "profile.stats.itinerariesSubtitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8166,23 +7530,6 @@
         }
       }
     },
-    "profile.stats.sealsLabel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "seals"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "selos"
-          }
-        }
-      }
-    },
     "profile.stats.sealsTitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8196,40 +7543,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Selos"
-          }
-        }
-      }
-    },
-    "profile.suggestionsSection.mySuggestions.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "My suggestions"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minhas sugestões"
-          }
-        }
-      }
-    },
-    "profile.suggestionsSection.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suggestions"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sugestões"
           }
         }
       }
@@ -8489,23 +7802,6 @@
         }
       }
     },
-    "proximitySettings.complete.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Also working with the app closed."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Funcionando também com o app fechado."
-          }
-        }
-      }
-    },
     "proximitySettings.itinerary.subtitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8621,23 +7917,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Para receber notificações a qualquer momento, é necessário ativar as notificações do app e a localização como “Sempre”."
-          }
-        }
-      }
-    },
-    "proximitySettings.turnOnButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Turn on alerts"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ativar avisos"
           }
         }
       }
@@ -9339,108 +8618,6 @@
         }
       }
     },
-    "tipkit.checkIn.checkInPlace.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "When you're at a place on your route, tap Check In to mark your visit"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quando estiver em um lugar do seu roteiro, toque em Check In para marcar sua visita"
-          }
-        }
-      }
-    },
-    "tipkit.checkIn.checkInPlace.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check in at places"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Faça check-in nos lugares"
-          }
-        }
-      }
-    },
-    "tipkit.checkIn.createItinerary.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tap the + button to start a new route with places you want to visit"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque no botão + para começar um novo roteiro com lugares que quer visitar"
-          }
-        }
-      }
-    },
-    "tipkit.checkIn.createItinerary.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create your first route"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crie seu primeiro roteiro"
-          }
-        }
-      }
-    },
-    "tipkit.checkIn.proximityAlerts.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enable alerts to get notified when you're near a place on your active route"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ative os alertas para ser avisado quando estiver perto de um lugar do seu roteiro ativo"
-          }
-        }
-      }
-    },
-    "tipkit.checkIn.proximityAlerts.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Get notified near route stops"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Receba avisos perto das paradas do roteiro"
-          }
-        }
-      }
-    },
     "tipkit.checkIn.startItinerary.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -9713,74 +8890,6 @@
         }
       }
     },
-    "tipkit.placeDetail.save.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bookmark places to find them easily later"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Marque lugares como favoritos para encontrá-los facilmente depois"
-          }
-        }
-      }
-    },
-    "tipkit.placeDetail.save.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save this place"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salve este lugar"
-          }
-        }
-      }
-    },
-    "tipkit.placeDetail.share.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Send this place to friends or save it elsewhere"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Envie este lugar para amigos ou salve em outro lugar"
-          }
-        }
-      }
-    },
-    "tipkit.placeDetail.share.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Share this place"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Compartilhe este lugar"
-          }
-        }
-      }
-    },
     "tipkit.placeSuggestion.suggest.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -9923,13 +9032,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Access settings like notifications, privacy, and reset tutorial"
+            "value" : "Access settings like notifications, privacy, and your photos"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acesse configurações como notificações, privacidade e reiniciar tutorial"
+            "value" : "Acesse configurações como notificações, privacidade e suas fotos"
           }
         }
       }
@@ -10117,74 +9226,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Envie sua foto"
-          }
-        }
-      }
-    },
-    "tipkit.welcome.createAccount.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tap here to sign up and start exploring"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque aqui para se cadastrar e começar a explorar"
-          }
-        }
-      }
-    },
-    "tipkit.welcome.createAccount.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create your account"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crie sua conta"
-          }
-        }
-      }
-    },
-    "tipkit.welcome.signIn.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tap to sign in with your existing account"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque para entrar com sua conta existente"
-          }
-        }
-      }
-    },
-    "tipkit.welcome.signIn.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Already have an account?"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Já tem uma conta?"
           }
         }
       }
@@ -10961,23 +10002,6 @@
         }
       }
     },
-    "userPhotos.myPhotos.footer" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Swipe left to delete a photo. It disappears from the app and from our servers."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deslize para a esquerda para apagar. A foto some do app e dos nossos servidores."
-          }
-        }
-      }
-    },
     "userPhotos.myPhotos.openHint" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11029,23 +10053,6 @@
         }
       }
     },
-    "userPhotos.myPhotos.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "My photos"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minhas fotos"
-          }
-        }
-      }
-    },
     "userPhotos.myPhotos.unknownPlace" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11069,13 +10076,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d photos published and %d not approved. See them in Profile > My photos."
+            "value" : "%lld photos published and %lld not approved. See them in Profile > My photos."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d fotos publicadas e %d não aprovadas. Veja em Perfil > Minhas fotos."
+            "value" : "%lld fotos publicadas e %lld não aprovadas. Veja em Perfil > Minhas fotos."
           }
         }
       }
@@ -11086,13 +10093,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d of your photos was not approved. See why in Profile > My photos."
+            "value" : "%lld of your photos was not approved. See why in Profile > My photos."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d foto sua não foi aprovada. Veja o motivo em Perfil > Minhas fotos."
+            "value" : "%lld foto sua não foi aprovada. Veja o motivo em Perfil > Minhas fotos."
           }
         }
       }
@@ -11103,13 +10110,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d of your photos was published."
+            "value" : "%lld of your photos was published."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d foto sua foi publicada."
+            "value" : "%lld foto sua foi publicada."
           }
         }
       }
@@ -12698,23 +11705,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esse arquivo não é uma foto aceita."
-          }
-        }
-      }
-    },
-    "userPhotos.viewer.closeButton.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Close"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fechar"
           }
         }
       }

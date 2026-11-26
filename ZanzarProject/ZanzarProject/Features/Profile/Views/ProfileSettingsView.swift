@@ -39,7 +39,7 @@ struct ProfileSettingsView: View {
                 }
             }
             .buttonStyle(.plain)
-            .popoverTip(myPhotosTip, arrowEdge: .bottom)
+            .tipAbove(myPhotosTip)
 
             NavigationLink(value: Route.mySuggestions) {
                 ProfileSettingsRow(title: Text("profile.settings.suggestions.title")) {
@@ -47,7 +47,7 @@ struct ProfileSettingsView: View {
                 }
             }
             .buttonStyle(.plain)
-            .popoverTip(mySuggestionsTip, arrowEdge: .bottom)
+            .tipAbove(mySuggestionsTip)
         }
     }
 

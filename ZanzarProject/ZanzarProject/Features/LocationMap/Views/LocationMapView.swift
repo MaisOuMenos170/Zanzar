@@ -17,8 +17,11 @@ struct LocationMapView: View {
     
     // Tips
     private let mapPinsTip = DiscoverMapPinsTip()
-    private let filterTip = DiscoverFilterTip()
-    private let searchTip = DiscoverSearchTip()
+    /// The search and filter tips, one after the other, under the search bar (not popovers over it).
+    @State private var searchTips = TipGroup(.ordered) {
+        DiscoverSearchTip()
+        DiscoverFilterTip()
+    }
     private let userLocationTip = DiscoverUserLocationTip()
 
     init(store: NearbyPlacesStore, zoomNamespace: Namespace.ID) {
@@ -38,9 +41,12 @@ struct LocationMapView: View {
         .tint(.blue)
         .mapStyle(.standard(elevation: .realistic))
         .mapControls {
-            #if !(DEBUG && targetEnvironment(simulator))
+            #if DEBUG && targetEnvironment(simulator)
+            if !DevLocation.isFixed {
+                MapUserLocationButton()
+            }
+            #else
             MapUserLocationButton()
-                .popoverTip(userLocationTip, arrowEdge: .trailing)
             #endif
             MapCompass()
         }
@@ -60,8 +66,17 @@ struct LocationMapView: View {
             discoverControls
         }
         .overlay(alignment: .bottom) {
-            TipView(mapPinsTip, arrowEdge: .top)
-                .padding(.bottom, 100)
+            VStack(spacing: 8) {
+                TipView(mapPinsTip, arrowEdge: .top)
+                #if DEBUG && targetEnvironment(simulator)
+                if !DevLocation.isFixed {
+                    TipView(userLocationTip, arrowEdge: nil)
+                }
+                #else
+                TipView(userLocationTip, arrowEdge: nil)
+                #endif
+            }
+            .padding(.bottom, 100)
         }
         .haptic(.toqueSuave, trigger: pinTaps)
         // Kept for the back button of the screens pushed from here; the bar itself is hidden because the
@@ -128,6 +143,8 @@ struct LocationMapView: View {
                 isFocused: $isSearchFocused,
                 onSubmit: { searchViewModel.submit() }
             )
+
+            TipView(searchTips.currentTip, arrowEdge: nil)
 
             if let message = viewModel.errorMessage, !searchViewModel.showsResultsPanel {
                 MapLoadFailureBanner(message: message, isRetrying: viewModel.isLoading) {
@@ -205,11 +222,15 @@ struct LocationMapView: View {
     @MapContentBuilder
     private var userLocationContent: some MapContent {
         #if DEBUG && targetEnvironment(simulator)
-        if let coordinate = viewModel.userCoordinate {
-            Annotation("", coordinate: coordinate.clLocationCoordinate2D) {
-                SimulatorUserLocationMarker()
-                    .accessibilityLabel("locationMap.userLocation.accessibilityLabel")
+        if DevLocation.isFixed {
+            if let coordinate = viewModel.userCoordinate {
+                Annotation("", coordinate: coordinate.clLocationCoordinate2D) {
+                    SimulatorUserLocationMarker()
+                        .accessibilityLabel("locationMap.userLocation.accessibilityLabel")
+                }
             }
+        } else {
+            UserAnnotation()
         }
         #else
         UserAnnotation()

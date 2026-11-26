@@ -19,6 +19,15 @@ enum DevLocation {
     /// Same longitude, about 40 m south, inside the 150 m check-in radius.
     /// Other centro histórico seeds, such as Matias and Cavalo Babão, stay outside that radius.
     static let historicCenter = UserCoordinate(latitude: -25.428951, longitude: -49.2728171)
+
+    /// Launch argument that turns the fixed position off, so the real permission and signal cases (denied, no
+    /// fix) can be tried in the Simulator. Debug only: it does not exist in a Release build.
+    static let realLocationArgument = "-ZANZAR_REAL_LOCATION"
+
+    /// Whether the Simulator should answer with `historicCenter` instead of asking Core Location.
+    static var isFixed: Bool {
+        !ProcessInfo.processInfo.arguments.contains(realLocationArgument)
+    }
 }
 #endif
 

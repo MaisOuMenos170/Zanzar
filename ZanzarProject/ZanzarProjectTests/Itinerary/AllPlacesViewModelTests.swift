@@ -124,4 +124,3 @@ struct ItineraryThemeFilterTests {
         #expect(!ItineraryThemeFilter.center.includes(food))
     }
 }
-

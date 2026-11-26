@@ -11,7 +11,6 @@ struct ItineraryListView: View {
     @Environment(NearbyPlacesStore.self) private var nearbyPlacesStore
 
     // Tips
-    private let createItineraryTip = CheckInCreateItineraryTip()
     private let startItineraryTip = CheckInStartItineraryTip()
     private static let featuredCount = 2
     private static let nearbyCount = 8
@@ -147,7 +146,7 @@ struct ItineraryListView: View {
         VStack(alignment: .leading, spacing: 16) {
             if let activeItinerary = viewModel.activeItinerary {
                 sectionTitle("itinerary.list.header.title")
-                    .popoverTip(startItineraryTip, arrowEdge: .top)
+                    .tipAbove(startItineraryTip)
 
                 ActiveItineraryProgressCard(
                     activeItinerary: activeItinerary,
@@ -159,7 +158,6 @@ struct ItineraryListView: View {
                 .transition(.opacity.combined(with: .scale(scale: 0.96, anchor: .top)))
             } else {
                 sectionTitle("itinerary.list.header.title")
-                    .popoverTip(createItineraryTip, arrowEdge: .top)
 
                 CheckInEmptySlot()
             }

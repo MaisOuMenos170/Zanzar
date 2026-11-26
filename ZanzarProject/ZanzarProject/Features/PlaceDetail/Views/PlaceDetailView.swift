@@ -257,7 +257,7 @@ struct PlaceDetailView: View {
                     longitude: detail.longitude
                 )
                 .entrance(contentShown, order: 0)
-                .popoverTip(directionsTip, arrowEdge: .top)
+                .tipAbove(directionsTip)
 
                 PlacePhotoCard(
                     tags: detail.tags.map(\.label),
@@ -280,7 +280,7 @@ struct PlaceDetailView: View {
                     }
                 )
                 .entrance(contentShown, order: 1)
-                .popoverTip(addPhotoTip, arrowEdge: .bottom)
+                .tipAbove(addPhotoTip)
 
                 PlaceDetailCheckInButton(
                     hasCheckedIn: detail.hasCheckedIn,
@@ -290,7 +290,7 @@ struct PlaceDetailView: View {
                     PlaceDetailCheckInTip.hasViewedPlaceDetail = true
                 }
                 .entrance(contentShown, order: 1)
-                .popoverTip(checkInTip, arrowEdge: .top)
+                .tipAbove(checkInTip)
             }
 
             PlaceDetailDescriptionSection(description: detail.description)

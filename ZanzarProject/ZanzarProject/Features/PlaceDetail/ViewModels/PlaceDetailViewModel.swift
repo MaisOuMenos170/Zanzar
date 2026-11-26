@@ -14,7 +14,6 @@ final class PlaceDetailViewModel {
     private let userIDProvider: @Sendable () -> String?
     private let userCoordinateProvider: @Sendable () async throws -> UserCoordinate
     private let pendingRatingStore: PendingRatingStoring
-    private let applePlaceLookup: ApplePlaceLookingUp
     private let savedPlaces: SavedPlacesServicing
     private var loadGeneration = 0
     /// One id per place for every try of the check-in, so a retry after a lost answer is a replay, not a 409.
@@ -35,11 +34,6 @@ final class PlaceDetailViewModel {
     private(set) var isSaved = false
     private var isUpdatingSaved = false
     private var pendingCompletedItineraryAlert = false
-    /// The place in Apple Maps, for Apple's place card (its photos and reviews). `nil` until found.
-    var applePlaceItem: MKMapItem?
-    var isLookingUpApplePlace = false
-    /// Apple Maps has no safe match for this place, so the card should not be offered.
-    var applePlaceUnavailable = false
 
     init(
         place: MapPlace,
@@ -49,7 +43,6 @@ final class PlaceDetailViewModel {
         },
         service: PlaceDetailServicing = PlaceDetailService(),
         pendingRatingStore: PendingRatingStoring? = nil,
-        applePlaceLookup: ApplePlaceLookingUp? = nil,
         savedPlaces: SavedPlacesServicing = SavedPlacesService()
     ) {
         self.place = place
@@ -57,7 +50,6 @@ final class PlaceDetailViewModel {
         self.userCoordinateProvider = userCoordinateProvider
         self.service = service
         self.pendingRatingStore = pendingRatingStore ?? UserDefaultsPendingRatingStore()
-        self.applePlaceLookup = applePlaceLookup ?? ApplePlaceLookupService.shared
         self.savedPlaces = savedPlaces
     }
 
@@ -106,27 +98,6 @@ final class PlaceDetailViewModel {
             }
             return .failed(message: APIError.rateLimitedMessage(for: error)
                 ?? L10n.string("placeDetail.saveButton.failedToast"))
-        }
-    }
-
-    /// Finds the place in Apple Maps so its card can show Apple's photos. Safe to call again: it does nothing
-    /// once the place was found or ruled out, or while a search is running.
-    func loadApplePlace() async {
-        guard applePlaceItem == nil, !applePlaceUnavailable, !isLookingUpApplePlace else { return }
-        isLookingUpApplePlace = true
-        defer { isLookingUpApplePlace = false }
-
-        do {
-            if let item = try await applePlaceLookup.mapItem(for: place) {
-                applePlaceItem = item
-            } else {
-                applePlaceUnavailable = true
-            }
-        } catch is CancellationError {
-            return
-        } catch {
-            // A network failure is not "unavailable": a later call may still find the place.
-            AppLog.placeDetail.error("Apple Maps place lookup failed", error: error)
         }
     }
 

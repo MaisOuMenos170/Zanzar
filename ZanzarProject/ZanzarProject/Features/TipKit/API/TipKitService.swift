@@ -21,7 +21,7 @@ final class TipKitService: TipKitServicing {
             .datastoreLocation(.applicationDefault)
         ])
         
-        // All tips are automatically registered when their TipView/.popoverTip() is shown
+        // All tips are automatically registered when their TipView is shown
         // No need to pre-register them here
     }
     
@@ -32,29 +32,6 @@ final class TipKitService: TipKitServicing {
 }
 
 // MARK: - Tip Definitions
-
-// Welcome Tips
-struct WelcomeCreateAccountTip: Tip {
-    var title: Text { Text("tipkit.welcome.createAccount.title") }
-    var message: Text? { Text("tipkit.welcome.createAccount.message") }
-    var image: Image? { Image(systemName: "person.badge.plus") }
-    var identifier: String { "welcome.createAccount" }
-    var rules: [Rule] {
-        #Rule(Self.$hasSeenWelcome) { $0 == false }
-    }
-    @Parameter static var hasSeenWelcome: Bool = false
-}
-
-struct WelcomeSignInTip: Tip {
-    var title: Text { Text("tipkit.welcome.signIn.title") }
-    var message: Text? { Text("tipkit.welcome.signIn.message") }
-    var image: Image? { Image(systemName: "arrow.right.square") }
-    var identifier: String { "welcome.signIn" }
-    var rules: [Rule] {
-        #Rule(Self.$hasSeenWelcome) { $0 == false }
-    }
-    @Parameter static var hasSeenWelcome: Bool = false
-}
 
 // Discover / Map Tips
 struct DiscoverMapPinsTip: Tip {
@@ -102,17 +79,6 @@ struct DiscoverUserLocationTip: Tip {
 }
 
 // Check-in / Itinerary Tips
-struct CheckInCreateItineraryTip: Tip {
-    var title: Text { Text("tipkit.checkIn.createItinerary.title") }
-    var message: Text? { Text("tipkit.checkIn.createItinerary.message") }
-    var image: Image? { Image(systemName: "plus.circle") }
-    var identifier: String { "checkIn.createItinerary" }
-    var rules: [Rule] {
-        #Rule(Self.$hasCreatedItinerary) { $0 == false }
-    }
-    @Parameter static var hasCreatedItinerary: Bool = false
-}
-
 struct CheckInStartItineraryTip: Tip {
     var title: Text { Text("tipkit.checkIn.startItinerary.title") }
     var message: Text? { Text("tipkit.checkIn.startItinerary.message") }
@@ -123,30 +89,6 @@ struct CheckInStartItineraryTip: Tip {
         #Rule(Self.$hasStartedItinerary) { $0 == false }
     }
     @Parameter static var hasCreatedItinerary: Bool = false
-    @Parameter static var hasStartedItinerary: Bool = false
-}
-
-struct CheckInPlaceTip: Tip {
-    var title: Text { Text("tipkit.checkIn.checkInPlace.title") }
-    var message: Text? { Text("tipkit.checkIn.checkInPlace.message") }
-    var image: Image? { Image(systemName: "checkmark.circle") }
-    var identifier: String { "checkIn.checkInPlace" }
-    var rules: [Rule] {
-        #Rule(Self.$hasStartedItinerary) { $0 == true }
-        #Rule(Self.$hasCheckedIn) { $0 == false }
-    }
-    @Parameter static var hasStartedItinerary: Bool = false
-    @Parameter static var hasCheckedIn: Bool = false
-}
-
-struct CheckInProximityAlertsTip: Tip {
-    var title: Text { Text("tipkit.checkIn.proximityAlerts.title") }
-    var message: Text? { Text("tipkit.checkIn.proximityAlerts.message") }
-    var image: Image? { Image(systemName: "bell.badge") }
-    var identifier: String { "checkIn.proximityAlerts" }
-    var rules: [Rule] {
-        #Rule(Self.$hasStartedItinerary) { $0 == true }
-    }
     @Parameter static var hasStartedItinerary: Bool = false
 }
 
@@ -196,17 +138,6 @@ struct ProfileSettingsTip: Tip {
 }
 
 // Place Detail Tips
-struct PlaceDetailSaveTip: Tip {
-    var title: Text { Text("tipkit.placeDetail.save.title") }
-    var message: Text? { Text("tipkit.placeDetail.save.message") }
-    var image: Image? { Image(systemName: "bookmark") }
-    var identifier: String { "placeDetail.savePlace" }
-    var rules: [Rule] {
-        #Rule(Self.$hasViewedPlaceDetail) { $0 == false }
-    }
-    @Parameter static var hasViewedPlaceDetail: Bool = false
-}
-
 struct PlaceDetailCheckInTip: Tip {
     var title: Text { Text("tipkit.placeDetail.checkIn.title") }
     var message: Text? { Text("tipkit.placeDetail.checkIn.message") }
@@ -223,17 +154,6 @@ struct PlaceDetailAddPhotoTip: Tip {
     var message: Text? { Text("tipkit.placeDetail.addPhoto.message") }
     var image: Image? { Image(systemName: "camera") }
     var identifier: String { "placeDetail.addPhoto" }
-    var rules: [Rule] {
-        #Rule(Self.$hasViewedPlaceDetail) { $0 == false }
-    }
-    @Parameter static var hasViewedPlaceDetail: Bool = false
-}
-
-struct PlaceDetailShareTip: Tip {
-    var title: Text { Text("tipkit.placeDetail.share.title") }
-    var message: Text? { Text("tipkit.placeDetail.share.message") }
-    var image: Image? { Image(systemName: "square.and.arrow.up") }
-    var identifier: String { "placeDetail.share" }
     var rules: [Rule] {
         #Rule(Self.$hasViewedPlaceDetail) { $0 == false }
     }
