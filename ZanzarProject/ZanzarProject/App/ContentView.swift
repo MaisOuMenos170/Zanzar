@@ -29,16 +29,22 @@ struct ContentView: View {
             // While onboarding the coordinator already points at the avatar editor.
             guard !onboarding.isActive else { return }
             coordinator.popToRoot()
-            if isAuthenticated {
-                // Register for remote notifications and send the device token to the backend.
-                Task {
-                    await registerForRemoteNotifications()
-                    await pushTokenManager.sendIfNeeded()
-                }
-            } else {
+            if !isAuthenticated {
                 pushTokenManager.forgetSentToken()
+                // What the app remembers about this account's reviews and pending rating is not the next account's.
+                UserDefaultsUserPhotoStatusStore().clear()
+                UserDefaultsPlaceSuggestionStatusStore().clear()
+                UserDefaultsPendingRatingStore().clear()
                 Task { await ProximityAlertCoordinator.shared.stop() }
             }
+        }
+        // Once the main app is on screen (a fresh sign-in after onboarding, or a session restored at launch):
+        // register for remote notifications and send the device token to the backend. This cannot hang off
+        // `isAuthenticated` above, which flips while the onboarding gate is still active and returns early.
+        .task(id: showsMainApp) {
+            guard showsMainApp else { return }
+            await registerForRemoteNotifications()
+            await pushTokenManager.sendIfNeeded()
         }
         .alert("auth.sessionExpired.title", isPresented: $showsSessionExpiredAlert) {
             Button("auth.sessionExpired.dismissButton.title", role: .cancel) {}
@@ -78,20 +84,11 @@ private extension ContentView {
     func registerForRemoteNotifications() async {
         let center = UNUserNotificationCenter.current()
         let settings = await center.notificationSettings()
-        // Already authorized (including provisionally): just register for the device token.
-        guard settings.authorizationStatus == .notDetermined else {
-            await MainActor.run {
-                UIApplication.shared.registerForRemoteNotifications()
-            }
-            return
-        }
-        do {
-            try await center.requestAuthorization(options: [.alert, .sound, .badge])
-            await MainActor.run {
-                UIApplication.shared.registerForRemoteNotifications()
-            }
-        } catch {
-            AppLog.network.warning("Failed to request remote notification authorization")
+        // Never asks: the onboarding step and the proximity explainer do that, with their own words. A user who
+        // picked "Not now" must not get the system prompt at the next launch.
+        guard settings.authorizationStatus != .notDetermined else { return }
+        await MainActor.run {
+            UIApplication.shared.registerForRemoteNotifications()
         }
     }
 
