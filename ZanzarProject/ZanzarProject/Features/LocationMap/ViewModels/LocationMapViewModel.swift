@@ -17,6 +17,28 @@ final class LocationMapViewModel {
     )
     var isLoading = false
     var errorMessage: String?
+
+    /// Past this error radius (meters) the dot on the map may be a street or two off, so the map says so.
+    /// Check-in keeps its own, looser limit in `CheckInPolicy`.
+    static let accuracyWarningMeters: Double = 50
+
+    /// The user's position is too coarse to trust: no fix accuracy at all (a negative value is Core Location's
+    /// "invalid") or worse than `accuracyWarningMeters`. Unknown accuracy (the Simulator's fixed spot) is fine.
+    var hasLowAccuracy: Bool {
+        guard let accuracy = userCoordinate?.accuracyMeters else { return false }
+        return accuracy < 0 || accuracy > Self.accuracyWarningMeters
+    }
+
+    /// The places loaded and none of them is on the map (the filter hides them all, or there are none around).
+    var showsEmptyState: Bool {
+        !isLoading && errorMessage == nil && userCoordinate != nil && displayItems.isEmpty
+    }
+
+    /// What the banner under the search bar says: a load problem first, otherwise a vague position.
+    var noticeMessage: String? {
+        if let errorMessage { return errorMessage }
+        return hasLowAccuracy ? L10n.string("locationMap.lowAccuracy.message") : nil
+    }
     private(set) var acceptsVisibleRegionUpdates = false
     /// The discover filter: only matching places become pins (and take part in the grouping).
     private(set) var filter = PlaceFilter()

@@ -14,6 +14,8 @@ final class ItineraryDetailViewModel {
     var isLoading = false
     var isPerformingAction = false
     var errorMessage: String?
+    /// The server no longer has this roteiro (removed, or out of season): not a failure to retry.
+    private(set) var isUnavailable = false
     var actionErrorMessage: String?
 
     var showsActionError: Bool {
@@ -46,6 +48,7 @@ final class ItineraryDetailViewModel {
 
         isLoading = true
         errorMessage = nil
+        isUnavailable = false
         defer {
             if generation == loadGeneration {
                 isLoading = false
@@ -66,6 +69,9 @@ final class ItineraryDetailViewModel {
             activeItinerary = loadedActive
         } catch is CancellationError {
             return
+        } catch APIError.httpStatus(404, _) {
+            guard generation == loadGeneration else { return }
+            isUnavailable = true
         } catch {
             guard generation == loadGeneration else { return }
             errorMessage = APIError.rateLimitedMessage(for: error)

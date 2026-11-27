@@ -62,6 +62,15 @@ struct LocationMapView: View {
                     .background(.regularMaterial, in: .rect(cornerRadius: 12))
             }
         }
+        .overlay {
+            if viewModel.showsEmptyState && !searchViewModel.showsResultsPanel {
+                MapEmptyCard(filterIsOn: searchViewModel.filter.isActive) {
+                    searchViewModel.filter = PlaceFilter()
+                }
+                .padding(.horizontal, 24)
+                .transition(.opacity)
+            }
+        }
         .overlay(alignment: .top) {
             discoverControls
         }
@@ -146,8 +155,8 @@ struct LocationMapView: View {
 
             TipView(searchTips.currentTip, arrowEdge: nil)
 
-            if let message = viewModel.errorMessage, !searchViewModel.showsResultsPanel {
-                MapLoadFailureBanner(message: message, isRetrying: viewModel.isLoading) {
+            if let message = viewModel.noticeMessage, !searchViewModel.showsResultsPanel {
+                MapNoticeBanner(message: message, isRetrying: viewModel.isLoading) {
                     Task { await viewModel.load() }
                 }
                 .transition(.opacity)

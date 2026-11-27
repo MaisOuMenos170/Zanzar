@@ -1407,6 +1407,57 @@
         }
       }
     },
+    "itinerary.detail.unavailable.closeButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See other routes"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver outros roteiros"
+          }
+        }
+      }
+    },
+    "itinerary.detail.unavailable.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It isn't available anymore. Pick another route to go on."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ele não está mais disponível. Escolha outro roteiro para continuar."
+          }
+        }
+      }
+    },
+    "itinerary.detail.unavailable.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This route is gone"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esse roteiro saiu de cartaz"
+          }
+        }
+      }
+    },
     "itinerary.detail.viewRoute" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1941,6 +1992,74 @@
         }
       }
     },
+    "locationMap.empty.clearFilterButton" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear filter"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limpar filtro"
+          }
+        }
+      }
+    },
+    "locationMap.empty.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There are no places around you right now. Move the map to look somewhere else."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não tem lugares por perto agora. Mexa o mapa para olhar em outro canto."
+          }
+        }
+      }
+    },
+    "locationMap.empty.messageFiltered" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No place fits the filter here. Take it off to see more."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum lugar combina com o filtro por aqui. Tire o filtro para ver mais."
+          }
+        }
+      }
+    },
+    "locationMap.empty.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing here (yet)"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada por aqui (ainda)"
+          }
+        }
+      }
+    },
     "locationMap.loadingIndicator.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1988,6 +2107,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível obter sua localização. Tente novamente."
+          }
+        }
+      }
+    },
+    "locationMap.lowAccuracy.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We can't find you well. Go somewhere more open and try again. Check-in comes back when the GPS settles."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não achei você direito. Vá para um lugar mais aberto e tente de novo. O check-in volta quando o GPS estabilizar."
           }
         }
       }
@@ -3267,6 +3403,57 @@
         }
       }
     },
+    "pendingCheckIn.refusedToast" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't register your check-in at %@: you were too far from the place."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu pra registrar seu check-in em %@: você estava longe do lugar."
+          }
+        }
+      }
+    },
+    "pendingCheckIn.sentManyToast" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld check-ins were sent!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld check-ins foram enviados!"
+          }
+        }
+      }
+    },
+    "pendingCheckIn.sentToast" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your check-in at %@ was sent!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu check-in em %@ foi enviado!"
+          }
+        }
+      }
+    },
     "placeDetail.accessibility.disclaimer" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3590,6 +3777,74 @@
         }
       }
     },
+    "placeDetail.alreadyCheckedIn.dismissButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Got it"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beleza"
+          }
+        }
+      }
+    },
+    "placeDetail.alreadyCheckedIn.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your check-in at this place is already registered."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu check-in neste lugar já está registrado."
+          }
+        }
+      }
+    },
+    "placeDetail.alreadyCheckedIn.messageWithDate" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checked in on %1$@ at %2$@."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-in feito em %1$@ às %2$@."
+          }
+        }
+      }
+    },
+    "placeDetail.alreadyCheckedIn.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You've already been here"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já passou por aqui"
+          }
+        }
+      }
+    },
     "placeDetail.cellularPrompt.allowButton.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3658,6 +3913,23 @@
         }
       }
     },
+    "placeDetail.checkInButton.doneHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows when you checked in."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra quando você fez o check-in."
+          }
+        }
+      }
+    },
     "placeDetail.checkInButton.doneTitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3671,6 +3943,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Check-in feito"
+          }
+        }
+      }
+    },
+    "placeDetail.checkInButton.pendingHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved on this phone. It will be sent when the internet is back."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardado no celular. Vai ser enviado quando a internet voltar."
+          }
+        }
+      }
+    },
+    "placeDetail.checkInButton.pendingTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-in pending"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-in pendente"
           }
         }
       }
@@ -3794,6 +4100,91 @@
         }
       }
     },
+    "placeDetail.checkInOffline.cancelButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar"
+          }
+        }
+      }
+    },
+    "placeDetail.checkInOffline.keepButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep and send later"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar e enviar depois"
+          }
+        }
+      }
+    },
+    "placeDetail.checkInOffline.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't confirm it right now. We can keep your check-in and send it by itself when the internet is back."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu pra confirmar agora. A gente guarda seu check-in e envia sozinho quando a internet voltar."
+          }
+        }
+      }
+    },
+    "placeDetail.checkInOffline.retryButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentar de novo"
+          }
+        }
+      }
+    },
+    "placeDetail.checkInOffline.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No connection"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sem conexão"
+          }
+        }
+      }
+    },
     "placeDetail.checkInWarning.locationRequired.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3892,6 +4283,125 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você está longe"
+          }
+        }
+      }
+    },
+    "placeDetail.closedBanner.opensOn" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens %1$@ at %2$@."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre %1$@ às %2$@."
+          }
+        }
+      }
+    },
+    "placeDetail.closedBanner.opensToday" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens today at %@."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre hoje às %@."
+          }
+        }
+      }
+    },
+    "placeDetail.closedBanner.opensTomorrow" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens tomorrow at %@."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre amanhã às %@."
+          }
+        }
+      }
+    },
+    "placeDetail.closedBanner.reminderHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sends a notification when the place opens. Tap again to cancel."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manda uma notificação quando o lugar abrir. Toque de novo para cancelar."
+          }
+        }
+      }
+    },
+    "placeDetail.closedBanner.reminderOff" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remind me when it opens"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avisar quando abrir"
+          }
+        }
+      }
+    },
+    "placeDetail.closedBanner.reminderOn" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reminder set"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aviso agendado"
+          }
+        }
+      }
+    },
+    "placeDetail.closedBanner.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Closed right now"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fechado agora"
           }
         }
       }
@@ -4387,6 +4897,74 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "placeDetail.openingReminder.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is open now. Let's go?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O %@ abriu. Bora?"
+          }
+        }
+      }
+    },
+    "placeDetail.openingReminder.cancelledToast" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reminder cancelled"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aviso cancelado"
+          }
+        }
+      }
+    },
+    "placeDetail.openingReminder.deniedToast" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on notifications in Settings to get this reminder."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ative as notificações nos Ajustes para receber esse aviso."
+          }
+        }
+      }
+    },
+    "placeDetail.openingReminder.scheduledToast" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done! We'll let you know when it opens."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pronto! A gente avisa quando abrir."
           }
         }
       }
@@ -6867,6 +7445,57 @@
         }
       }
     },
+    "profile.emptyAlbum.exploreButton" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explore the map"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explorar o mapa"
+          }
+        }
+      }
+    },
+    "profile.emptyAlbum.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready for your first check-in? You earn a seal and start the collection."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bora fazer o primeiro check-in? Você ganha um selo e começa a coleção."
+          }
+        }
+      }
+    },
+    "profile.emptyAlbum.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your album is empty"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu álbum está vazio"
+          }
+        }
+      }
+    },
     "profile.errorState.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6879,7 +7508,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verifique sua conexão e tente novamente."
+            "value" : "Confere sua conexão e tenta de novo."
           }
         }
       }
@@ -6907,13 +7536,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Couldn't load your profile"
+            "value" : "I couldn't fetch your profile"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível carregar seu perfil"
+            "value" : "Não consegui buscar seu perfil"
           }
         }
       }
@@ -7445,6 +8074,23 @@
         }
       }
     },
+    "profile.signOutConfirmation.leaveAnywayButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave anyway"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sair mesmo assim"
+          }
+        }
+      }
+    },
     "profile.signOutConfirmation.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7462,6 +8108,57 @@
         }
       }
     },
+    "profile.signOutConfirmation.pendingMessage.many" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You have %lld check-ins waiting to be sent. Send them before leaving?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você tem %lld check-ins para enviar. Enviar antes de sair?"
+          }
+        }
+      }
+    },
+    "profile.signOutConfirmation.pendingMessage.one" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You have 1 check-in waiting to be sent. Send it before leaving?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você tem 1 check-in para enviar. Enviar antes de sair?"
+          }
+        }
+      }
+    },
+    "profile.signOutConfirmation.sendFirstButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send now"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar agora"
+          }
+        }
+      }
+    },
     "profile.signOutConfirmation.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7475,6 +8172,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sair da conta?"
+          }
+        }
+      }
+    },
+    "profile.signOutPending.failed.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Still no connection. Your check-ins are kept on this phone. Try again with internet, or leave anyway."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda sem conexão. Seus check-ins continuam guardados no celular. Tente de novo com internet ou saia mesmo assim."
+          }
+        }
+      }
+    },
+    "profile.signOutPending.failed.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't send them"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu para enviar"
           }
         }
       }

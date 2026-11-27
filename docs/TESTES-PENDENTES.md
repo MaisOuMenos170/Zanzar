@@ -75,3 +75,9 @@ Já conferido em 2026-11-26 no simulador: passos 1 a 3 (banner no mapa e aviso n
 4. Conceder de novo (`grant`), voltar ao app, "Tentar de novo": os pins voltam.
 5. Sem sinal: permissão concedida e `xcrun simctl location booted clear`; esperado, depois de ~10 s, "Não foi possível obter sua localização. Tente novamente." no mapa.
 6. Em aparelho de verdade, repetir 2 e 3 desligando Ajustes > Privacidade > Serviços de Localização; e testar "precisão aproximada" (esperado o aviso de localização incerta no check-in).
+
+## 8. Aviso "Avisar quando abrir" (disparo) e GPS impreciso
+
+- **Disparo do aviso:** num lugar fechado, toque em "Avisar quando abrir" e deixe o app em segundo plano até o horário de abertura (para ver rápido, escolha um lugar que abre nos próximos minutos). Esperado: notificação "O {lugar} abriu. Bora?"; tocar abre o detalhe do lugar. Cancelar: tocar em "Aviso agendado" ou sair da conta (cancela todos).
+- **GPS impreciso (D2):** em aparelho de verdade, num prédio fechado ou com "Localização precisa" desligada, abrir o mapa: esperado o aviso "Não achei você direito…" sob a busca; ao ir para um lugar aberto e tocar em "Tentar de novo", ele some. No simulador a posição não tem precisão e o aviso não aparece.
+- **Fila offline em aparelho:** ligar o modo avião, fazer check-in, "Guardar e enviar depois", desligar o modo avião e abrir o app: esperado o toast de envio e o carimbo/selo no perfil.

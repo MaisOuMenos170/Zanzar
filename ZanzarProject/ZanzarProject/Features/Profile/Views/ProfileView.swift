@@ -15,6 +15,7 @@ struct ProfileView: View {
     @Environment(AuthSession.self) private var authSession
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(\.presentSheet) private var presentSheet
+    @Environment(\.selectTab) private var selectTab
 
     // Tips
     private let editAvatarTip = ProfileEditAvatarTip()
@@ -47,13 +48,28 @@ struct ProfileView: View {
             // "Cancelar" button, and the system always puts the cancel button last.
             .haptic(.alerta, trigger: viewModel.showsSignOutConfirmation, when: { _, shown in shown })
             .alert("profile.signOutConfirmation.title", isPresented: $viewModel.showsSignOutConfirmation) {
-                Button("profile.signOutConfirmation.confirmButton.title", role: .destructive) {
+                if viewModel.pendingCheckInCount > 0 {
+                    Button("profile.signOutConfirmation.sendFirstButton.title") {
+                        Task { await viewModel.sendPendingThenSignOut(using: authSession, coordinator: coordinator) }
+                    }
+                }
+                Button(
+                    viewModel.pendingCheckInCount > 0
+                        ? "profile.signOutConfirmation.leaveAnywayButton.title"
+                        : "profile.signOutConfirmation.confirmButton.title",
+                    role: .destructive
+                ) {
                     Task { await viewModel.signOut(using: authSession, coordinator: coordinator) }
                 }
                 Button("profile.signOutConfirmation.cancelButton.title", role: .cancel) {}
                     .keyboardShortcut(.defaultAction)
             } message: {
-                Text("profile.signOutConfirmation.message")
+                Text(signOutMessage)
+            }
+            .alert("profile.signOutPending.failed.title", isPresented: $viewModel.sendPendingFailed) {
+                Button("profile.signOutAlert.dismissButton.title", role: .cancel) {}
+            } message: {
+                Text("profile.signOutPending.failed.message")
             }
             .alert("profile.signOutAlert.title", isPresented: $viewModel.signOutFailed) {
                 Button("profile.signOutAlert.dismissButton.title", role: .cancel) {
@@ -106,6 +122,17 @@ struct ProfileView: View {
             }
     }
 
+    /// The usual line, plus how many check-ins would be lost when some are still waiting for a network.
+    private var signOutMessage: String {
+        let count = viewModel.pendingCheckInCount
+        let base = L10n.string("profile.signOutConfirmation.message")
+        guard count > 0 else { return base }
+        let pending = count == 1
+            ? L10n.string("profile.signOutConfirmation.pendingMessage.one")
+            : L10n.string("profile.signOutConfirmation.pendingMessage.many", count)
+        return base + "\n\n" + pending
+    }
+
     private var editMenu: some View {
         Menu {
             Button("profile.menu.editName") {
@@ -135,6 +162,9 @@ struct ProfileView: View {
                         .entrance(contentShown, order: 1)
 
                     switch section {
+                    case .passport where profile.isAlbumEmpty:
+                        emptyAlbum
+                            .entrance(contentShown, order: 2)
                     case .passport:
                         passport(profile)
                             .entrance(contentShown, order: 2)
@@ -161,7 +191,7 @@ struct ProfileView: View {
             .motion(Motion.suave, value: section)
         } else if let errorMessage = viewModel.errorMessage {
             ContentUnavailableView {
-                Label("profile.errorState.title", systemImage: "exclamationmark.triangle")
+                MascotStateLabel(.sad, "profile.errorState.title")
             } description: {
                 Text(errorMessage)
             } actions: {
@@ -176,6 +206,17 @@ struct ProfileView: View {
             }
         } else {
             ProfileSkeleton()
+        }
+    }
+
+    /// No check-ins yet. Saved places stay reachable: they do not need a check-in.
+    private var emptyAlbum: some View {
+        VStack(spacing: 8) {
+            SavedPlacesRow(
+                count: savedPlaces.hasLoaded ? savedPlaces.places.count : nil,
+                onTap: { coordinator.push(.savedPlaces) }
+            )
+            ProfileEmptyAlbumView { selectTab?(.discover) }
         }
     }
 

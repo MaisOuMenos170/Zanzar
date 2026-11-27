@@ -129,6 +129,12 @@ struct MainTabView: View {
             if let notice = await suggestionStatusNotice.checkForChanges() {
                 toastManager.show(notice.message, style: notice.style)
             }
+            await sendPendingCheckIns()
+        }
+        // Check-ins kept while offline go out as soon as the network is back.
+        .onChange(of: PlaceMediaAccessPolicy.shared.isOnline) { _, isOnline in
+            guard isOnline else { return }
+            Task { await sendPendingCheckIns() }
         }
         // The regions watched for proximity alerts follow the places around the user.
         .onChange(of: nearbyPlaces.lastFetchedAt) {
@@ -248,6 +254,19 @@ struct MainTabView: View {
     }
 
     /// Closes the card and tells the user how the suggestion went, in a toast above the tab bar.
+    /// Sends the check-ins that were kept while offline and tells the user which went through.
+    private func sendPendingCheckIns() async {
+        let result = await PendingCheckInQueue.shared.flush()
+        if result.sent.count == 1, let item = result.sent.first {
+            toastManager.show(L10n.string("pendingCheckIn.sentToast", item.placeName), style: .positive)
+        } else if result.sent.count > 1 {
+            toastManager.show(L10n.string("pendingCheckIn.sentManyToast", result.sent.count), style: .positive)
+        }
+        for item in result.refused {
+            toastManager.show(L10n.string("pendingCheckIn.refusedToast", item.placeName), style: .negative)
+        }
+    }
+
     private func finishSuggestion(_ outcome: PlaceSuggestionOutcome) {
         coordinator.dismissSheet()
         toastManager.show(outcome.toastMessage, style: outcome.toastStyle, position: .bottom)
@@ -322,6 +341,7 @@ struct MainTabView: View {
                 ProfileView()
                     .environment(profileCoordinator)
                     .environment(\.presentSheet) { coordinator.present(sheet: $0) }
+                    .environment(\.selectTab) { selectedTab = $0 }
                     .navigationDestination(for: Route.self) { route in
                         profileCoordinator.view(for: route)
                             .environment(profileCoordinator)

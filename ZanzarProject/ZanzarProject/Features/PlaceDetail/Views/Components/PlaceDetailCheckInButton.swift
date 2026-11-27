@@ -4,7 +4,11 @@ struct PlaceDetailCheckInButton: View {
     let titleKey: LocalizedStringKey
     let hasCheckedIn: Bool
     let isLoading: Bool
+    /// Made without a network and waiting to be sent: shown as "pending" until the server has it.
+    let isPending: Bool
     let action: () -> Void
+    /// Tapping the "done" capsule (to see when the check-in was made).
+    let onDoneTap: (() -> Void)?
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     /// The done capsule is quiet when the place was already visited. The press runs only on the flip.
@@ -19,18 +23,38 @@ struct PlaceDetailCheckInButton: View {
         titleKey: LocalizedStringKey = "placeDetail.checkInButton.title",
         hasCheckedIn: Bool,
         isLoading: Bool,
+        isPending: Bool = false,
+        onDoneTap: (() -> Void)? = nil,
         action: @escaping () -> Void
     ) {
         self.titleKey = titleKey
         self.hasCheckedIn = hasCheckedIn
         self.isLoading = isLoading
+        self.isPending = isPending
+        self.onDoneTap = onDoneTap
         self.action = action
         _showsDone = State(initialValue: hasCheckedIn)
     }
 
     var body: some View {
         Group {
-            if showsDone {
+            if isPending && !showsDone {
+                Label("placeDetail.checkInButton.pendingTitle", systemImage: "clock")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Color("PlaceDetailCheckInDoneBackground"), in: .capsule)
+                    .overlay {
+                        Capsule()
+                            .strokeBorder(
+                                Color("PlaceDetailCheckInDoneBorder"),
+                                style: StrokeStyle(lineWidth: 1, dash: [6, 4])
+                            )
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityHint(Text("placeDetail.checkInButton.pendingHint"))
+            } else if showsDone {
                 Text("placeDetail.checkInButton.doneTitle")
                     .font(.body)
                     .foregroundStyle(.secondary)
@@ -44,7 +68,10 @@ struct PlaceDetailCheckInButton: View {
                     }
                     .paperStampPress(phase: phase, role: .sheet, travel: stampTravel)
                     .haptic(.carimboLeve, trigger: landingCount)
-                    .accessibilityAddTraits(.isStaticText)
+                    .contentShape(.capsule)
+                    .onTapGesture { onDoneTap?() }
+                    .accessibilityAddTraits(onDoneTap == nil ? .isStaticText : .isButton)
+                    .accessibilityHint(Text(onDoneTap == nil ? "" : L10n.string("placeDetail.checkInButton.doneHint")))
             } else {
                 Button(action: action) {
                     Text(titleKey)

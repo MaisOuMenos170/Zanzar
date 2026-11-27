@@ -29,14 +29,10 @@ nonisolated enum PhotoUploadError: Error, Equatable, Sendable {
         "storage_unavailable": .unavailable
     ]
 
-    private static let offlineCodes: Set<URLError.Code> = [
-        .notConnectedToInternet, .networkConnectionLost, .timedOut, .cannotConnectToHost
-    ]
-
     init(_ error: Error) {
         if let known = error as? PhotoUploadError {
             self = known
-        } else if let urlError = error as? URLError, Self.offlineCodes.contains(urlError.code) {
+        } else if error.isOffline {
             self = .offline
         } else {
             switch error as? APIError {

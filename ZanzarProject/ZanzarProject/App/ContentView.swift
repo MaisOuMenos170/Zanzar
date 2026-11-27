@@ -35,6 +35,8 @@ struct ContentView: View {
                 UserDefaultsUserPhotoStatusStore().clear()
                 UserDefaultsPlaceSuggestionStatusStore().clear()
                 UserDefaultsPendingRatingStore().clear()
+                // Reminders for places opening belong to the account that asked for them.
+                Task { await UserNotificationOpeningReminderScheduler().cancelAll() }
                 Task { await ProximityAlertCoordinator.shared.stop() }
             }
         }

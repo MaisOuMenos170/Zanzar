@@ -47,6 +47,8 @@ struct ListNoResultsView: View {
 
     var body: some View {
         VStack(spacing: 16) {
+            MascotView(.sleepy)
+
             VStack(spacing: 8) {
                 switch kind {
                 case .empty(let title, let message):

@@ -23,7 +23,7 @@ struct AllItinerariesView: View {
     private var content: some View {
         if let errorMessage = viewModel.errorMessage, viewModel.itineraries.isEmpty {
             ContentUnavailableView {
-                Label("itinerary.errorState.title", systemImage: "exclamationmark.triangle")
+                MascotStateLabel(.sad, "itinerary.errorState.title")
             } description: {
                 Text(errorMessage)
             } actions: {

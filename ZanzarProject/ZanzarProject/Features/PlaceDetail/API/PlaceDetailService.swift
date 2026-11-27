@@ -4,13 +4,24 @@ protocol PlaceDetailServicing: Sendable {
     func fetchPlaceDetail(context: PlaceDetailLoadContext) async throws -> PlaceDetail
     /// `mutationID` stays the same across retries of one check-in: the backend replays the full answer for an id
     /// it already accepted, instead of answering 409 and hiding the earned seal.
-    func checkIn(placeID: String, coordinate: UserCoordinate, mutationID: String) async throws -> CheckInResult
+    /// `datetime` is when the user tapped, not when the request leaves: a check-in kept for later (no network) still
+    /// says when it really happened.
+    func checkIn(
+        placeID: String,
+        coordinate: UserCoordinate,
+        mutationID: String,
+        datetime: Date
+    ) async throws -> CheckInResult
     /// Photos users sent of the place: approved ones, plus the signed-in user's own under review.
     func fetchUserPhotos(placeID: String) async throws -> [PlacePhoto]
 }
 
 extension PlaceDetailServicing {
     func fetchUserPhotos(placeID: String) async throws -> [PlacePhoto] { [] }
+
+    func checkIn(placeID: String, coordinate: UserCoordinate, mutationID: String) async throws -> CheckInResult {
+        try await checkIn(placeID: placeID, coordinate: coordinate, mutationID: mutationID, datetime: Date())
+    }
 }
 
 nonisolated struct PlaceDetailAPIResponse: Decodable, Sendable {
@@ -145,6 +156,16 @@ private struct CheckInCreateRequest: Encodable, Sendable {
 
 private struct CheckInStatusResponse: Decodable, Sendable {
     let placeId: String
+    /// When the check-in was made, as the backend stored it.
+    let datetime: String?
+}
+
+/// Whether the signed-in user already checked in at a place, and when.
+nonisolated struct CheckInStatus: Equatable, Sendable {
+    let hasCheckedIn: Bool
+    let checkedInAt: Date?
+
+    static let notCheckedIn = CheckInStatus(hasCheckedIn: false, checkedInAt: nil)
 }
 
 private struct UserRatingResponse: Decodable, Sendable {
@@ -170,10 +191,20 @@ final class PlaceDetailService: PlaceDetailServicing {
         }
     }
 
-    func checkIn(placeID: String, coordinate: UserCoordinate, mutationID: String) async throws -> CheckInResult {
+    func checkIn(
+        placeID: String,
+        coordinate: UserCoordinate,
+        mutationID: String,
+        datetime: Date
+    ) async throws -> CheckInResult {
         AppLog.placeDetail.info("Checking in placeId=\(placeID)...")
         do {
-            let result = try await sendCheckIn(placeID: placeID, coordinate: coordinate, mutationID: mutationID)
+            let result = try await sendCheckIn(
+                placeID: placeID,
+                coordinate: coordinate,
+                mutationID: mutationID,
+                datetime: datetime
+            )
             AppLog.placeDetail.info("Checked in placeId=\(placeID) successfully (isNewStamp=\(result.isNewStamp))")
             return result
         } catch APIError.httpStatus(409, let message) {
@@ -197,7 +228,7 @@ final class PlaceDetailService: PlaceDetailServicing {
             path: "places/\(context.place.id)"
         )
 
-        async let checkInFromEndpoint = fetchHasCheckedIn(
+        async let checkInFromEndpoint = fetchCheckInStatus(
             placeID: context.place.id,
             userID: context.userID
         )
@@ -206,13 +237,14 @@ final class PlaceDetailService: PlaceDetailServicing {
             userID: context.userID
         )
 
-        let endpointCheckedIn = try await checkInFromEndpoint
-        let hasCheckedIn = placeResponse.userContext?.hasCheckedIn == true || endpointCheckedIn
+        let endpointStatus = try await checkInFromEndpoint
+        let hasCheckedIn = placeResponse.userContext?.hasCheckedIn == true || endpointStatus.hasCheckedIn
 
         return PlaceDetail.make(
             placeResponse: placeResponse,
             mapPlace: context.place,
             hasCheckedIn: hasCheckedIn,
+            checkedInAt: endpointStatus.checkedInAt,
             selectedReactionTag: try await selectedReactionTag,
             userCoordinate: context.userCoordinate
         )
@@ -221,14 +253,15 @@ final class PlaceDetailService: PlaceDetailServicing {
     private func sendCheckIn(
         placeID: String,
         coordinate: UserCoordinate,
-        mutationID: String
+        mutationID: String,
+        datetime: Date
     ) async throws -> CheckInResult {
         let response: CheckInAPIResponse = try await client.send(
             path: "checkIn",
             method: .post,
             body: CheckInCreateRequest(
                 placeId: placeID,
-                datetime: Date().formatted(.iso8601),
+                datetime: datetime.formatted(.iso8601),
                 clientMutationId: mutationID,
                 coordinates: CheckInCoordinates(
                     lat: coordinate.latitude,
@@ -240,25 +273,25 @@ final class PlaceDetailService: PlaceDetailServicing {
         return response.makeCheckInResult()
     }
 
-    private func fetchHasCheckedIn(placeID: String, userID: String?) async throws -> Bool {
-        guard userID != nil else { return false }
+    private func fetchCheckInStatus(placeID: String, userID: String?) async throws -> CheckInStatus {
+        guard userID != nil else { return .notCheckedIn }
 
         do {
-            let _: CheckInStatusResponse = try await client.get(
+            let response: CheckInStatusResponse = try await client.get(
                 path: "checkIn",
                 queryItems: [URLQueryItem(name: "placeId", value: placeID)]
             )
-            return true
+            return CheckInStatus(hasCheckedIn: true, checkedInAt: response.datetime.flatMap(APIDate.parse))
         } catch APIError.httpStatus(404, _) {
-            return false
+            return .notCheckedIn
         } catch APIError.httpStatus(401, _), APIError.httpStatus(403, _) {
-            return false
+            return .notCheckedIn
         } catch is CancellationError {
             throw CancellationError()
         } catch {
             // A side call must not hide the place. A wrong "not checked in" is safe: check-in answers 409.
             AppLog.placeDetail.warning("Check-in status unavailable placeId=\(placeID)")
-            return false
+            return .notCheckedIn
         }
     }
 

@@ -7,6 +7,7 @@ final class ProfileViewModel {
     private let userIDProvider: @Sendable () -> String?
     private let checkInsLimit: Int
     private let now: () -> Date
+    private let pendingCheckIns: PendingCheckInQueue
     private var loadGeneration = 0
     private var lastLoadedAt: Date?
     /// Set when something outside this screen (a check-in) made the loaded profile outdated.
@@ -18,6 +19,8 @@ final class ProfileViewModel {
     var errorMessage: String?
     var showsSignOutConfirmation = false
     var signOutFailed = false
+    /// The check-ins waiting for a network could not be sent before leaving; they are still on the phone.
+    var sendPendingFailed = false
     var showsDeleteAccountConfirmation = false
     var deleteAccountFailed = false
     private(set) var isDeletingAccount = false
@@ -26,12 +29,30 @@ final class ProfileViewModel {
         service: ProfileServicing = ProfileService(),
         userIDProvider: @escaping @Sendable () -> String? = { AuthTokenStore.shared.userID },
         checkInsLimit: Int = 4,
-        now: @escaping () -> Date = { Date() }
+        now: @escaping () -> Date = { Date() },
+        pendingCheckIns: PendingCheckInQueue? = nil
     ) {
         self.service = service
         self.userIDProvider = userIDProvider
         self.checkInsLimit = checkInsLimit
         self.now = now
+        self.pendingCheckIns = pendingCheckIns ?? .shared
+    }
+
+    /// How many check-ins made without a network are still waiting to be sent.
+    var pendingCheckInCount: Int { pendingCheckIns.count }
+
+    /// "Enviar agora": tries to send what is waiting and leaves only if nothing is left. Otherwise it says so and
+    /// stays, so the user decides between trying again and leaving without them.
+    func sendPendingThenSignOut(using authSession: AuthSession, coordinator: AppCoordinator) async {
+        guard !isSigningOut else { return }
+        sendPendingFailed = false
+        let result = await pendingCheckIns.flush()
+        guard result.remaining == 0 else {
+            sendPendingFailed = true
+            return
+        }
+        await signOut(using: authSession, coordinator: coordinator)
     }
 
     /// The next `load()` goes to the server even if the loaded profile is still within its freshness window.
@@ -105,6 +126,7 @@ final class ProfileViewModel {
             return
         }
 
+        pendingCheckIns.discardPending()
         do {
             try authSession.signOut()
             coordinator.popToRoot()
@@ -130,6 +152,8 @@ final class ProfileViewModel {
             AppLog.profile.warning("Continuing with local sign-out after server logout failure")
         }
 
+        // Leaving on purpose (or after sending them) means they do not come back with the next account.
+        pendingCheckIns.discardPending()
         do {
             try authSession.signOut()
             coordinator.popToRoot()

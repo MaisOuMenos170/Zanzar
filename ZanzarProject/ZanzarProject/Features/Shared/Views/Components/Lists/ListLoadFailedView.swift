@@ -8,7 +8,7 @@ struct ListLoadFailedView: View {
 
     var body: some View {
         ContentUnavailableView {
-            Label("list.loadFailed.title", systemImage: "exclamationmark.triangle")
+            MascotStateLabel(.sad, "list.loadFailed.title")
         } description: {
             Text(message)
         } actions: {

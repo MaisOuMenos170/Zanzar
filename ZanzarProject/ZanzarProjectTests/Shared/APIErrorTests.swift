@@ -67,3 +67,17 @@ struct APIErrorDisplayMessageTests {
         #expect(APIError.displayMessage(for: error, fallback: fallback) == error.localizedDescription)
     }
 }
+
+@Suite("URLError offline")
+struct URLErrorOfflineTests {
+    @Test("the errors that mean 'no network now' are offline, the others are not")
+    func offlineCodes() {
+        for code: URLError.Code in [.notConnectedToInternet, .networkConnectionLost, .timedOut, .cannotConnectToHost] {
+            #expect(URLError(code).isOffline)
+            #expect((URLError(code) as Error).isOffline)
+        }
+        #expect(!URLError(.badURL).isOffline)
+        #expect(!URLError(.cancelled).isOffline)
+        #expect(!(APIError.httpStatus(500, message: nil) as Error).isOffline)
+    }
+}
