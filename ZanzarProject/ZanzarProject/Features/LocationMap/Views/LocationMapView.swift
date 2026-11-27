@@ -146,8 +146,8 @@ struct LocationMapView: View {
 
             TipView(searchTips.currentTip, arrowEdge: nil)
 
-            if let message = viewModel.errorMessage, !searchViewModel.showsResultsPanel {
-                MapLoadFailureBanner(message: message, isRetrying: viewModel.isLoading) {
+            if let message = viewModel.noticeMessage, !searchViewModel.showsResultsPanel {
+                MapNoticeBanner(message: message, isRetrying: viewModel.isLoading) {
                     Task { await viewModel.load() }
                 }
                 .transition(.opacity)

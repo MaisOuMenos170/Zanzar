@@ -1992,6 +1992,23 @@
         }
       }
     },
+    "locationMap.lowAccuracy.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We can't find you well. Go somewhere more open and try again. Check-in comes back when the GPS settles."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não achei você direito. Vá para um lugar mais aberto e tente de novo. O check-in volta quando o GPS estabilizar."
+          }
+        }
+      }
+    },
     "locationMap.pin.available.accessibilityValue" : {
       "extractionState" : "manual",
       "localizations" : {

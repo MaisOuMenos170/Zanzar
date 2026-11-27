@@ -1,8 +1,9 @@
 import SwiftUI
 
-/// Stays under the search bar for as long as the map has no fresh places, with a way to try again. A toast would
-/// vanish after a few seconds and leave a map that looks empty for no reason.
-struct MapLoadFailureBanner: View {
+/// Stays under the search bar for as long as something is off with the map (no fresh places, a position that is not
+/// precise enough), with a way to try again. A toast would vanish after a few seconds and leave a map that looks
+/// empty or wrong for no reason.
+struct MapNoticeBanner: View {
     let message: String
     let isRetrying: Bool
     let onRetry: () -> Void
@@ -31,6 +32,6 @@ struct MapLoadFailureBanner: View {
 }
 
 #Preview {
-    MapLoadFailureBanner(message: "Não foi possível carregar os lugares agora.", isRetrying: false) {}
+    MapNoticeBanner(message: "Não foi possível carregar os lugares agora.", isRetrying: false) {}
         .padding()
 }

@@ -44,7 +44,8 @@ final class UserNotificationOpeningReminderScheduler: OpeningReminderScheduling 
         content.body = L10n.string("placeDetail.openingReminder.body", placeName)
         content.userInfo = ["placeID": placeID]
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, date.timeIntervalSinceNow), repeats: false)
-        try await center.add(UNNotificationRequest(identifier: Self.identifier(for: placeID), content: content, trigger: trigger))
+        let request = UNNotificationRequest(identifier: Self.identifier(for: placeID), content: content, trigger: trigger)
+        try await center.add(request)
         return true
     }
 
@@ -53,7 +54,8 @@ final class UserNotificationOpeningReminderScheduler: OpeningReminderScheduling 
     }
 
     func cancelAll() async {
-        let ids = await center.pendingNotificationRequests().map(\.identifier).filter { $0.hasPrefix(Self.identifierPrefix) }
+        let pending = await center.pendingNotificationRequests()
+        let ids = pending.map(\.identifier).filter { $0.hasPrefix(Self.identifierPrefix) }
         center.removePendingNotificationRequests(withIdentifiers: ids)
     }
 
