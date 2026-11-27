@@ -15,6 +15,7 @@ struct ProfileView: View {
     @Environment(AuthSession.self) private var authSession
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(\.presentSheet) private var presentSheet
+    @Environment(\.selectTab) private var selectTab
 
     // Tips
     private let editAvatarTip = ProfileEditAvatarTip()
@@ -161,6 +162,9 @@ struct ProfileView: View {
                         .entrance(contentShown, order: 1)
 
                     switch section {
+                    case .passport where profile.isAlbumEmpty:
+                        emptyAlbum
+                            .entrance(contentShown, order: 2)
                     case .passport:
                         passport(profile)
                             .entrance(contentShown, order: 2)
@@ -187,7 +191,7 @@ struct ProfileView: View {
             .motion(Motion.suave, value: section)
         } else if let errorMessage = viewModel.errorMessage {
             ContentUnavailableView {
-                Label("profile.errorState.title", systemImage: "exclamationmark.triangle")
+                MascotStateLabel(.sad, "profile.errorState.title")
             } description: {
                 Text(errorMessage)
             } actions: {
@@ -202,6 +206,17 @@ struct ProfileView: View {
             }
         } else {
             ProfileSkeleton()
+        }
+    }
+
+    /// No check-ins yet. Saved places stay reachable: they do not need a check-in.
+    private var emptyAlbum: some View {
+        VStack(spacing: 8) {
+            SavedPlacesRow(
+                count: savedPlaces.hasLoaded ? savedPlaces.places.count : nil,
+                onTap: { coordinator.push(.savedPlaces) }
+            )
+            ProfileEmptyAlbumView { selectTab?(.discover) }
         }
     }
 

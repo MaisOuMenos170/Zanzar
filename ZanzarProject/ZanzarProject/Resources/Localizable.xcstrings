@@ -1407,6 +1407,57 @@
         }
       }
     },
+    "itinerary.detail.unavailable.closeButton.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See other routes"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver outros roteiros"
+          }
+        }
+      }
+    },
+    "itinerary.detail.unavailable.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It isn't available anymore. Pick another route to go on."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ele não está mais disponível. Escolha outro roteiro para continuar."
+          }
+        }
+      }
+    },
+    "itinerary.detail.unavailable.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This route is gone"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esse roteiro saiu de cartaz"
+          }
+        }
+      }
+    },
     "itinerary.detail.viewRoute" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1937,6 +1988,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld lugares nesta área"
+          }
+        }
+      }
+    },
+    "locationMap.empty.clearFilterButton" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear filter"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limpar filtro"
+          }
+        }
+      }
+    },
+    "locationMap.empty.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There are no places around you right now. Move the map to look somewhere else."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não tem lugares por perto agora. Mexa o mapa para olhar em outro canto."
+          }
+        }
+      }
+    },
+    "locationMap.empty.messageFiltered" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No place fits the filter here. Take it off to see more."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum lugar combina com o filtro por aqui. Tire o filtro para ver mais."
+          }
+        }
+      }
+    },
+    "locationMap.empty.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing here (yet)"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada por aqui (ainda)"
           }
         }
       }
@@ -7326,6 +7445,57 @@
         }
       }
     },
+    "profile.emptyAlbum.exploreButton" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explore the map"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explorar o mapa"
+          }
+        }
+      }
+    },
+    "profile.emptyAlbum.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready for your first check-in? You earn a seal and start the collection."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bora fazer o primeiro check-in? Você ganha um selo e começa a coleção."
+          }
+        }
+      }
+    },
+    "profile.emptyAlbum.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your album is empty"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu álbum está vazio"
+          }
+        }
+      }
+    },
     "profile.errorState.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7338,7 +7508,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verifique sua conexão e tente novamente."
+            "value" : "Confere sua conexão e tenta de novo."
           }
         }
       }
@@ -7366,13 +7536,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Couldn't load your profile"
+            "value" : "I couldn't fetch your profile"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível carregar seu perfil"
+            "value" : "Não consegui buscar seu perfil"
           }
         }
       }

@@ -44,7 +44,7 @@ struct AllSealsView: View {
     private var content: some View {
         if let errorMessage = viewModel.errorMessage, viewModel.checkIns.isEmpty {
             ContentUnavailableView {
-                Label("profile.errorState.title", systemImage: "exclamationmark.triangle")
+                MascotStateLabel(.sad, "profile.errorState.title")
             } description: {
                 Text(errorMessage)
             } actions: {

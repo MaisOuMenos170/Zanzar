@@ -48,7 +48,7 @@ struct SavedPlacesView: View {
     private func content(visible: [SavedPlace]) -> some View {
         if let errorMessage = viewModel.errorMessage, viewModel.places.isEmpty {
             ContentUnavailableView {
-                Label("profile.errorState.title", systemImage: "exclamationmark.triangle")
+                MascotStateLabel(.sad, "profile.errorState.title")
             } description: {
                 Text(errorMessage)
             } actions: {

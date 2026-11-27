@@ -29,6 +29,11 @@ final class LocationMapViewModel {
         return accuracy < 0 || accuracy > Self.accuracyWarningMeters
     }
 
+    /// The places loaded and none of them is on the map (the filter hides them all, or there are none around).
+    var showsEmptyState: Bool {
+        !isLoading && errorMessage == nil && userCoordinate != nil && displayItems.isEmpty
+    }
+
     /// What the banner under the search bar says: a load problem first, otherwise a vague position.
     var noticeMessage: String? {
         if let errorMessage { return errorMessage }

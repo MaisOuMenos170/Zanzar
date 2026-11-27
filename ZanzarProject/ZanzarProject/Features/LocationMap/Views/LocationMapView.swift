@@ -62,6 +62,15 @@ struct LocationMapView: View {
                     .background(.regularMaterial, in: .rect(cornerRadius: 12))
             }
         }
+        .overlay {
+            if viewModel.showsEmptyState && !searchViewModel.showsResultsPanel {
+                MapEmptyCard(filterIsOn: searchViewModel.filter.isActive) {
+                    searchViewModel.filter = PlaceFilter()
+                }
+                .padding(.horizontal, 24)
+                .transition(.opacity)
+            }
+        }
         .overlay(alignment: .top) {
             discoverControls
         }

@@ -34,7 +34,7 @@ struct PlaceDetailView: View {
                 PlaceDetailSkeleton()
             } else {
                 ContentUnavailableView {
-                    Label("placeDetail.errorState.title", systemImage: "exclamationmark.triangle")
+                    MascotStateLabel(.sad, "placeDetail.errorState.title")
                 } description: {
                     Text(verbatim: viewModel.errorMessage ?? L10n.string("placeDetail.errorState.message"))
                 } actions: {

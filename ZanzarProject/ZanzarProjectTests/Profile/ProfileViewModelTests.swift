@@ -149,6 +149,17 @@ struct ProfileViewModelTests {
         #expect(viewModel.errorMessage != String(localized: "profile.errorState.message"))
     }
 
+    @Test("a profile with no check-ins at all is an empty album")
+    func emptyAlbum() {
+        let none = ProfileSummary(name: "Ana", checkInCount: 0, itineraryCount: 0, sealCount: 0)
+        let one = ProfileSummary(name: "Ana", checkInCount: 1, itineraryCount: 0, sealCount: 1)
+        let empty = Profile(summary: none, recentCheckIns: [])
+        let started = Profile(summary: one, recentCheckIns: [])
+
+        #expect(empty.isAlbumEmpty)
+        #expect(!started.isAlbumEmpty)
+    }
+
     // MARK: - signOut
 
     @Test("signOut revokes the token on the server before ending the local session")

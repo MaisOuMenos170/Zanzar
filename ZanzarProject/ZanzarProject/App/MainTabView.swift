@@ -341,6 +341,7 @@ struct MainTabView: View {
                 ProfileView()
                     .environment(profileCoordinator)
                     .environment(\.presentSheet) { coordinator.present(sheet: $0) }
+                    .environment(\.selectTab) { selectedTab = $0 }
                     .navigationDestination(for: Route.self) { route in
                         profileCoordinator.view(for: route)
                             .environment(profileCoordinator)

@@ -3,6 +3,11 @@ import Foundation
 nonisolated struct Profile: Hashable {
     let summary: ProfileSummary
     let recentCheckIns: [ProfileCheckIn]
+
+    /// No check-in yet: the profile shows the invitation to the first one (Figma "G2 · Perfil vazio").
+    var isAlbumEmpty: Bool {
+        summary.checkInCount == 0 && recentCheckIns.isEmpty
+    }
 }
 
 #if DEBUG

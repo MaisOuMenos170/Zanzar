@@ -11,6 +11,7 @@ struct ItineraryDetailView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(NearbyPlacesStore.self) private var nearbyPlacesStore
     @Environment(\.openURL) private var openURL
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         Group {
@@ -18,9 +19,18 @@ struct ItineraryDetailView: View {
                 detailContent(for: detail)
             } else if viewModel.isLoading {
                 ItineraryDetailSkeleton()
+            } else if viewModel.isUnavailable {
+                // Figma "F5 · Roteiro indisponível": it is gone, so there is nothing to try again.
+                ContentUnavailableView {
+                    MascotStateLabel(.sad, "itinerary.detail.unavailable.title")
+                } description: {
+                    Text("itinerary.detail.unavailable.message")
+                } actions: {
+                    Button("itinerary.detail.unavailable.closeButton.title") { dismiss() }
+                }
             } else {
                 ContentUnavailableView {
-                    Label("itinerary.detail.errorState.title", systemImage: "exclamationmark.triangle")
+                    MascotStateLabel(.sad, "itinerary.detail.errorState.title")
                 } description: {
                     Text(verbatim: viewModel.errorMessage ?? L10n.string("itinerary.detail.errorState.message"))
                 } actions: {
