@@ -40,9 +40,9 @@ struct PlaceDetailClosedBanner: View {
         .padding(.leading, 16)
         .padding(.trailing, 12)
         .padding(.vertical, 4)
-        .background(Color.brandOrange100, in: .rect(cornerRadius: 16))
+        .background(Color.brandNeutral50, in: .rect(cornerRadius: 16))
         .overlay {
-            RoundedRectangle(cornerRadius: 16).strokeBorder(Color.brandOrange300, lineWidth: 1)
+            RoundedRectangle(cornerRadius: 16).strokeBorder(Color.brandNeutral200, lineWidth: 1)
         }
         .accessibilityElement(children: .contain)
     }

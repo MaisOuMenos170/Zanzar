@@ -47,7 +47,7 @@ Precisa de decisão de design/produto ou é maior que um conserto:
   `MyPhotosViewModel.load` (spinner eterno se não houver id de usuário).
 - Cadastro: botão "Criar conta" fica apagado sem dizer por quê com o formulário vazio; o erro de e-mail traz "exemplo@email.com" como link.
 - Legenda de foto lida como "Fer14041978,  · CC BY-SA 3.0" (vírgula e espaço duplo quando não há título).
-- Divergências de design a–k e os casos do catálogo "Fluxo e erros" que não existem (E4, E5, E6, D2, G3): ver a auditoria anterior.
+- Divergências de design a–k: decisão sua (ver a auditoria anterior e a página de comparação com fotos).
 - Fotos de usuário: estado dos avisos continua sem chave por usuário (só é apagado ao sair da conta).
 
 ## Segunda rodada: itens que precisavam de decisão
@@ -77,6 +77,22 @@ Precisa de decisão de design/produto ou é maior que um conserto:
 | Teste de localização negada | Novo argumento de lançamento só de Debug, `-ZANZAR_REAL_LOCATION`, desliga a posição fixa do simulador. Com ele: banner "Acesso à localização negado…" no mapa e "Precisa da localização" no check-in, conferidos ao vivo |
 
 O que ficou para testar à mão está em `docs/TESTES-PENDENTES.md`.
+
+## Quarta rodada: casos do catálogo "Fluxo e erros" do Figma (branch `feat/casos-do-figma`)
+
+As telas desses casos estão na página "Fora de uso" do Figma, com a identidade antiga (laranja). Foram aplicadas como **comportamento e texto**, no visual atual do app.
+
+| Caso | O que o app faz agora | Conferido ao vivo |
+|---|---|---|
+| E5 Fila offline | Sem rede no check-in: "Sem conexão" com **Guardar e enviar depois** / Tentar de novo. Guardado, o botão vira "Check-in pendente" e a fila envia sozinha (volta ao app ou rede de volta) com o **mesmo id e a hora do toque**: o backend não conta duas vezes. Fila por conta; sessão expirada não a apaga | Sim: backend desligado → guardar → religar → toast "Seu check-in em … foi enviado!" e um único `POST /checkIn 201` |
+| G3 Sair com pendente | O alerta de sair avisa "Você tem 1 check-in para enviar" com **Enviar agora** / **Sair mesmo assim** / Cancelar; sem rede, "Não deu para enviar" e continua logado | Sim |
+| E4 Já fez | O backend só aceita 1 check-in por lugar para sempre, então não há "volta amanhã". "Check-in feito" é tocável e mostra "Check-in feito em 27/11/2026 às 14:26" (a data vem de `GET /checkIn`); um 409 abre o mesmo aviso | Sim |
+| E6 Lugar fechado | Faixa "Fechado agora. Abre hoje às 18h." com **Avisar quando abrir** (notificação local que abre o lugar). O check-in continua liberado (o horário do Google pode estar errado) | Faixa e agendamento (toast, estado "Aviso agendado"); o disparo na hora certa está em `docs/TESTES-PENDENTES.md` |
+| D2 GPS impreciso | Erro maior que 50 m (ou inválido): "Não achei você direito…" com **Tentar de novo** sob a busca | Só testes: a posição fixa do simulador não tem precisão |
+| D4 Nada por perto | Cartão "Nada por aqui (ainda)" com **Limpar filtro** | Sim |
+| G2 Perfil vazio | "Seu álbum está vazio" com **Explorar o mapa** (vai à aba Descobrir); Lugares salvos continua acessível | Sim |
+| F5 Roteiro indisponível | 404 mostra "Esse roteiro saiu de cartaz" com "Ver outros roteiros", sem botão de repetir | Só testes |
+| Mascote nos erros/vazios | As carinhas que o app já tem (choro para erro, bocejo para vazio) no lugar do triângulo do sistema, em ~10 telas | Sim |
 
 ## Não verificado
 
