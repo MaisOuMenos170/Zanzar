@@ -220,6 +220,67 @@ struct ProfileViewModelTests {
         #expect(!authSession.isAuthenticated)
     }
 
+    @Test("sending what is waiting first signs out only when nothing is left")
+    func sendPendingThenSignOut() async throws {
+        let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
+        try authSession.signIn(accessToken: "token", refreshToken: "refresh")
+        let checkIns = ScriptedCheckInService(results: [.success(PlaceDetailFixture.checkInResult)])
+        let queue = PendingCheckInQueue(
+            store: InMemoryPendingCheckInStore(items: [Self.pendingCheckIn("a")]),
+            service: checkIns,
+            userIDProvider: { "user-1" }
+        )
+        let viewModel = ProfileViewModel(service: MockProfileService(), pendingCheckIns: queue)
+        #expect(viewModel.pendingCheckInCount == 1)
+
+        await viewModel.sendPendingThenSignOut(using: authSession, coordinator: AppCoordinator())
+
+        #expect(checkIns.calls.count == 1)
+        #expect(!viewModel.sendPendingFailed)
+        #expect(!authSession.isAuthenticated)
+    }
+
+    @Test("when they cannot be sent the user stays signed in and is told")
+    func sendPendingFailsOffline() async throws {
+        let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
+        try authSession.signIn(accessToken: "token", refreshToken: "refresh")
+        let checkIns = ScriptedCheckInService(results: [.failure(URLError(.notConnectedToInternet))])
+        let queue = PendingCheckInQueue(
+            store: InMemoryPendingCheckInStore(items: [Self.pendingCheckIn("a")]),
+            service: checkIns,
+            userIDProvider: { "user-1" }
+        )
+        let viewModel = ProfileViewModel(service: MockProfileService(), pendingCheckIns: queue)
+
+        await viewModel.sendPendingThenSignOut(using: authSession, coordinator: AppCoordinator())
+
+        #expect(viewModel.sendPendingFailed)
+        #expect(authSession.isAuthenticated)
+        #expect(queue.count == 1)
+    }
+
+    @Test("leaving anyway drops the waiting check-ins")
+    func leavingAnywayDiscards() async throws {
+        let authSession = AuthSession(keychain: InMemoryAuthTokenStore())
+        try authSession.signIn(accessToken: "token", refreshToken: "refresh")
+        let store = InMemoryPendingCheckInStore(items: [Self.pendingCheckIn("a")])
+        let queue = PendingCheckInQueue(store: store, service: ScriptedCheckInService(), userIDProvider: { "user-1" })
+        let viewModel = ProfileViewModel(service: MockProfileService(), pendingCheckIns: queue)
+
+        await viewModel.signOut(using: authSession, coordinator: AppCoordinator())
+
+        #expect(!authSession.isAuthenticated)
+        #expect(store.items.isEmpty)
+    }
+
+    private static func pendingCheckIn(_ placeID: String) -> PendingCheckIn {
+        PendingCheckIn(
+            id: "mutation-\(placeID)", userID: "user-1", placeID: placeID, placeName: "Lugar",
+            latitude: -25.4, longitude: -49.2, accuracyMeters: 10,
+            checkedInAt: Date(timeIntervalSince1970: 1_800_000_000)
+        )
+    }
+
     @Test("overlapping signOut calls send a single logout request")
     func overlappingSignOutCallsRunOnce() async throws {
         let authSession = AuthSession(keychain: InMemoryAuthTokenStore())

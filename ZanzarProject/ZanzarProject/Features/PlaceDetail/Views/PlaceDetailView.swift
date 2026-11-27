@@ -129,6 +129,26 @@ struct PlaceDetailView: View {
         } message: {
             Text(checkInWarningMessage)
         }
+        // No network: the check-in can wait on the device and go out by itself later.
+        .alert("placeDetail.checkInOffline.title", isPresented: checkInOfflineIsPresented) {
+            Button("placeDetail.checkInOffline.keepButton.title") {
+                viewModel.keepCheckInForLater()
+            }
+            Button("placeDetail.checkInOffline.retryButton.title") {
+                viewModel.checkInWarning = nil
+                Task { await viewModel.performCheckIn() }
+            }
+            Button("placeDetail.checkInOffline.cancelButton.title", role: .cancel) {
+                viewModel.checkInWarning = nil
+            }
+        } message: {
+            Text("placeDetail.checkInOffline.message")
+        }
+        .alert("placeDetail.alreadyCheckedIn.title", isPresented: $viewModel.showsAlreadyCheckedInAlert) {
+            Button("placeDetail.alreadyCheckedIn.dismissButton.title", role: .cancel) {}
+        } message: {
+            Text(viewModel.alreadyCheckedInMessage)
+        }
         .overlay {
             if let presentation = viewModel.earnedSealPresentation {
                 SealEarnedAlertView(
@@ -171,6 +191,21 @@ struct PlaceDetailView: View {
         .haptic(.selecao, trigger: viewModel.isSaved)
     }
 
+    private func showReminderToast(for outcome: PlaceDetailViewModel.ReminderOutcome?) {
+        switch outcome {
+        case .scheduled:
+            toasts.show(L10n.string("placeDetail.openingReminder.scheduledToast"), style: .positive, position: .bottom)
+        case .cancelled:
+            toasts.show(L10n.string("placeDetail.openingReminder.cancelledToast"), style: .positive, position: .bottom)
+        case .permissionDenied:
+            toasts.show(L10n.string("placeDetail.openingReminder.deniedToast"), style: .negative, position: .bottom)
+        case .failed:
+            toasts.show(L10n.string("error.generic.message"), style: .negative, position: .bottom)
+        case nil:
+            break
+        }
+    }
+
     private func showSaveToast(for outcome: PlaceDetailViewModel.SaveOutcome?) {
         switch outcome {
         case .saved:
@@ -194,9 +229,21 @@ struct PlaceDetailView: View {
 
     private var checkInWarningIsPresented: Binding<Bool> {
         Binding(
-            get: { viewModel.checkInWarning != nil },
+            get: { viewModel.checkInWarning != nil && viewModel.checkInWarning != .offline },
             set: { isPresented in
                 if !isPresented {
+                    viewModel.checkInWarning = nil
+                }
+            }
+        )
+    }
+
+    private var checkInOfflineIsPresented: Binding<Bool> {
+        Binding(
+            get: { viewModel.checkInWarning == .offline },
+            set: { isPresented in
+                // The buttons clear it themselves; a swipe away only closes the alert, the check-in is not kept.
+                if !isPresented, viewModel.checkInWarning == .offline {
                     viewModel.checkInWarning = nil
                 }
             }
@@ -209,7 +256,7 @@ struct PlaceDetailView: View {
             "placeDetail.checkInWarning.tooFar.title"
         case .locationRequired:
             "placeDetail.checkInWarning.locationRequired.title"
-        case .locationUncertain, nil:
+        case .locationUncertain, .offline, nil:
             "placeDetail.checkInWarning.locationUncertain.title"
         }
     }
@@ -220,7 +267,7 @@ struct PlaceDetailView: View {
             "placeDetail.checkInWarning.tooFar.message"
         case .locationRequired:
             "placeDetail.checkInWarning.locationRequired.message"
-        case .locationUncertain, nil:
+        case .locationUncertain, .offline, nil:
             "placeDetail.checkInWarning.locationUncertain.message"
         }
     }
@@ -259,6 +306,13 @@ struct PlaceDetailView: View {
                 .entrance(contentShown, order: 0)
                 .tipAbove(directionsTip)
 
+                if detail.isOpen == false {
+                    PlaceDetailClosedBanner(opensAt: detail.opensAt, hasReminder: viewModel.hasOpeningReminder) {
+                        Task { showReminderToast(for: await viewModel.toggleOpeningReminder()) }
+                    }
+                    .entrance(contentShown, order: 0)
+                }
+
                 PlacePhotoCard(
                     tags: detail.tags.map(\.label),
                     showsPhotos: !viewModel.displayedPhotos.isEmpty,
@@ -284,11 +338,14 @@ struct PlaceDetailView: View {
 
                 PlaceDetailCheckInButton(
                     hasCheckedIn: detail.hasCheckedIn,
-                    isLoading: viewModel.isCheckingIn
-                ) {
-                    Task { await viewModel.requestCheckIn() }
-                    PlaceDetailCheckInTip.hasViewedPlaceDetail = true
-                }
+                    isLoading: viewModel.isCheckingIn,
+                    isPending: viewModel.isCheckInPending,
+                    onDoneTap: { viewModel.showAlreadyCheckedIn() },
+                    action: {
+                        Task { await viewModel.requestCheckIn() }
+                        PlaceDetailCheckInTip.hasViewedPlaceDetail = true
+                    }
+                )
                 .entrance(contentShown, order: 1)
                 .tipAbove(checkInTip)
             }

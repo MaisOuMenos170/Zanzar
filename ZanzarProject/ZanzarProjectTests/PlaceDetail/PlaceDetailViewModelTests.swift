@@ -231,6 +231,7 @@ final class MockPlaceDetailService: PlaceDetailServicing, @unchecked Sendable {
     var checkInResult: Result<CheckInResult, Error>?
     private(set) var lastLoadContext: PlaceDetailLoadContext?
     private(set) var checkInCalls: [(placeID: String, coordinate: UserCoordinate, mutationID: String)] = []
+    private(set) var checkInDates: [Date] = []
 
     init(
         fetchResult: Result<PlaceDetail, Error>,
@@ -245,8 +246,14 @@ final class MockPlaceDetailService: PlaceDetailServicing, @unchecked Sendable {
         return try fetchResult.get()
     }
 
-    func checkIn(placeID: String, coordinate: UserCoordinate, mutationID: String) async throws -> CheckInResult {
+    func checkIn(
+        placeID: String,
+        coordinate: UserCoordinate,
+        mutationID: String,
+        datetime: Date
+    ) async throws -> CheckInResult {
         checkInCalls.append((placeID, coordinate, mutationID))
+        checkInDates.append(datetime)
         guard let checkInResult else {
             fatalError("MockPlaceDetailService.checkInResult not configured")
         }

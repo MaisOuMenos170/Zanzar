@@ -47,13 +47,28 @@ struct ProfileView: View {
             // "Cancelar" button, and the system always puts the cancel button last.
             .haptic(.alerta, trigger: viewModel.showsSignOutConfirmation, when: { _, shown in shown })
             .alert("profile.signOutConfirmation.title", isPresented: $viewModel.showsSignOutConfirmation) {
-                Button("profile.signOutConfirmation.confirmButton.title", role: .destructive) {
+                if viewModel.pendingCheckInCount > 0 {
+                    Button("profile.signOutConfirmation.sendFirstButton.title") {
+                        Task { await viewModel.sendPendingThenSignOut(using: authSession, coordinator: coordinator) }
+                    }
+                }
+                Button(
+                    viewModel.pendingCheckInCount > 0
+                        ? "profile.signOutConfirmation.leaveAnywayButton.title"
+                        : "profile.signOutConfirmation.confirmButton.title",
+                    role: .destructive
+                ) {
                     Task { await viewModel.signOut(using: authSession, coordinator: coordinator) }
                 }
                 Button("profile.signOutConfirmation.cancelButton.title", role: .cancel) {}
                     .keyboardShortcut(.defaultAction)
             } message: {
-                Text("profile.signOutConfirmation.message")
+                Text(signOutMessage)
+            }
+            .alert("profile.signOutPending.failed.title", isPresented: $viewModel.sendPendingFailed) {
+                Button("profile.signOutAlert.dismissButton.title", role: .cancel) {}
+            } message: {
+                Text("profile.signOutPending.failed.message")
             }
             .alert("profile.signOutAlert.title", isPresented: $viewModel.signOutFailed) {
                 Button("profile.signOutAlert.dismissButton.title", role: .cancel) {
@@ -104,6 +119,17 @@ struct ProfileView: View {
             .onReceive(NotificationCenter.default.publisher(for: AppNotification.activeItineraryDidChange)) { _ in
                 viewModel.markStale()
             }
+    }
+
+    /// The usual line, plus how many check-ins would be lost when some are still waiting for a network.
+    private var signOutMessage: String {
+        let count = viewModel.pendingCheckInCount
+        let base = L10n.string("profile.signOutConfirmation.message")
+        guard count > 0 else { return base }
+        let pending = count == 1
+            ? L10n.string("profile.signOutConfirmation.pendingMessage.one")
+            : L10n.string("profile.signOutConfirmation.pendingMessage.many", count)
+        return base + "\n\n" + pending
     }
 
     private var editMenu: some View {

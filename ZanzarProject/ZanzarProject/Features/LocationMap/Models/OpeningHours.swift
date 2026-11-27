@@ -45,6 +45,19 @@ nonisolated struct OpeningHours: Codable, Hashable, Sendable {
         return false
     }
 
+    /// When the place next opens, counting from `date` (a period that starts at this very minute counts as open now,
+    /// so the answer is the one after it). `nil` for a place that never closes or has no periods.
+    func nextOpening(after date: Date, in timeZone: TimeZone = defaultTimeZone) -> Date? {
+        guard !periods.isEmpty, !periods.contains(where: { $0.close == nil }) else { return nil }
+        let now = Self.minuteOfWeek(of: date, in: timeZone)
+        let waits = periods.map { period -> Int in
+            let wait = period.open.minuteOfWeek - now
+            return wait > 0 ? wait : wait + Self.minutesPerWeek
+        }
+        guard let wait = waits.min() else { return nil }
+        return Self.startOfMinute(date, in: timeZone).addingTimeInterval(TimeInterval(wait * 60))
+    }
+
     func status(at date: Date, in timeZone: TimeZone = defaultTimeZone) -> Status {
         let now = Self.minuteOfWeek(of: date, in: timeZone)
         var closesInMinutes: Int?

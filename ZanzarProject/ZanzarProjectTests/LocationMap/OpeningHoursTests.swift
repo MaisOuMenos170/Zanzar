@@ -116,6 +116,45 @@ struct OpeningHoursTests {
 
         #expect(hours.isOpen(at: date(6, 12), in: Self.timeZone))
     }
+
+    // MARK: nextOpening
+
+    @Test("a closed place opens later today, tomorrow or next week, whichever comes first")
+    func nextOpening() throws {
+        let hours = try #require(try hours(museum))
+
+        // Friday 06/11 at 09:00: it opens at 10:00 the same day.
+        #expect(hours.nextOpening(after: date(6, 9), in: Self.timeZone) == date(6, 10))
+        // Friday evening: the next period is Tuesday 10/11.
+        #expect(hours.nextOpening(after: date(6, 18), in: Self.timeZone) == date(10, 10))
+        // Wednesday 11/11: wraps to Friday 13/11.
+        #expect(hours.nextOpening(after: date(11, 12), in: Self.timeZone) == date(13, 10))
+        // Sunday: Tuesday is the next one.
+        #expect(hours.nextOpening(after: date(8, 12), in: Self.timeZone) == date(10, 10))
+    }
+
+    @Test("at the exact opening minute the place is open, so the next opening is the following one")
+    func nextOpeningAtTheBoundary() throws {
+        let hours = try #require(try hours(museum))
+
+        #expect(hours.nextOpening(after: date(6, 10), in: Self.timeZone) == date(10, 10))
+    }
+
+    @Test("a place that never closes has no next opening")
+    func nextOpeningAlwaysOpen() throws {
+        let park = try #require(try hours(#"{ "periods": [ { "open": { "day": 0, "time": "0000" } } ] }"#))
+
+        #expect(park.nextOpening(after: date(6, 12), in: Self.timeZone) == nil)
+    }
+
+    @Test("an overnight period opens on its own opening day, not on its closing day")
+    func nextOpeningOvernight() throws {
+        let bar = try #require(try hours(#"""
+        { "periods": [ { "open": { "day": 5, "time": "1800" }, "close": { "day": 6, "time": "0200" } } ] }
+        """#))
+
+        #expect(bar.nextOpening(after: date(7, 3), in: Self.timeZone) == date(13, 18))
+    }
 }
 
 @Suite("MapPlace opening hours")

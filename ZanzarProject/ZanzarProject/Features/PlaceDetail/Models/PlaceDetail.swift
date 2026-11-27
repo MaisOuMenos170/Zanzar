@@ -23,6 +23,10 @@ nonisolated struct PlaceDetail: Identifiable, Hashable, Sendable {
     var selectedReactionTag: String?
     /// What a source confirms about the place's accessibility. Nil means "not checked yet", not "not accessible".
     var accessibility: PlaceAccessibility?
+    /// When the signed-in user checked in here, if they did and the server said when.
+    var checkedInAt: Date?
+    /// When the place opens next, only while it is closed and the weekly hours say so.
+    var opensAt: Date?
 
     /// The detail shows only the first few photos; each one is a request when it scrolls into view.
     static let maximumPhotoCount = 5
@@ -128,6 +132,7 @@ nonisolated extension PlaceDetail {
         placeResponse: PlaceDetailAPIResponse,
         mapPlace: MapPlace,
         hasCheckedIn: Bool,
+        checkedInAt: Date? = nil,
         selectedReactionTag: String?,
         userCoordinate: UserCoordinate? = nil,
         now: Date = Date()
@@ -192,8 +197,22 @@ nonisolated extension PlaceDetail {
             hasCheckedIn: hasCheckedIn,
             isInActiveItinerary: placeResponse.userContext?.isInActiveItinerary ?? false,
             selectedReactionTag: selectedReactionTag,
-            accessibility: placeResponse.accessibility
+            accessibility: placeResponse.accessibility,
+            checkedInAt: hasCheckedIn ? checkedInAt : nil,
+            opensAt: openingHours.isOpen == false
+                ? nextOpening(from: placeResponse.openingHours, now: now)
+                : nil
         )
+    }
+
+    /// The next time the weekly hours open the place, or `nil` when they are missing or it never closes.
+    @MainActor private static func nextOpening(
+        from openingHours: PlaceDetailOpeningHoursResponse?,
+        now: Date
+    ) -> Date? {
+        guard let periods = openingHours?.periods,
+              let hours = OpeningHours(response: PlaceOpeningHoursAPIResponse(periods: periods)) else { return nil }
+        return hours.nextOpening(after: now)
     }
 
     @MainActor private static func openingHoursText(

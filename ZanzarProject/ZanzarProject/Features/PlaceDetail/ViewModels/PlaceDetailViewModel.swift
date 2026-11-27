@@ -15,9 +15,15 @@ final class PlaceDetailViewModel {
     private let userCoordinateProvider: @Sendable () async throws -> UserCoordinate
     private let pendingRatingStore: PendingRatingStoring
     private let savedPlaces: SavedPlacesServicing
+    private let openingReminders: OpeningReminderScheduling
+    private let pendingCheckIns: PendingCheckInQueue
     private var loadGeneration = 0
     /// One id per place for every try of the check-in, so a retry after a lost answer is a replay, not a 409.
     private let checkInMutationID = UUID().uuidString
+    /// When the user first confirmed this check-in: kept across retries, and sent with it if it has to wait.
+    private var checkInStartedAt: Date?
+    /// The position that was verified when the network failed, so the check-in can be kept as it was.
+    private var offlineCoordinate: UserCoordinate?
 
     var detail: PlaceDetail?
     /// Photos users sent; loaded after the detail and never blocking it.
@@ -28,6 +34,10 @@ final class PlaceDetailViewModel {
     var showsCellularImagesPrompt = false
     var showsCheckInConfirmation = false
     var checkInWarning: CheckInWarning?
+    /// "Você já passou por aqui": tapped on the done button, or the server answered 409.
+    var showsAlreadyCheckedInAlert = false
+    /// A reminder for the moment the place opens is scheduled.
+    private(set) var hasOpeningReminder = false
     var earnedSealPresentation: EarnedSealPresentation?
     var showsCompletedItineraryAlert = false
     /// Whether the user bookmarked this place.
@@ -43,7 +53,9 @@ final class PlaceDetailViewModel {
         },
         service: PlaceDetailServicing = PlaceDetailService(),
         pendingRatingStore: PendingRatingStoring? = nil,
-        savedPlaces: SavedPlacesServicing = SavedPlacesService()
+        savedPlaces: SavedPlacesServicing = SavedPlacesService(),
+        openingReminders: OpeningReminderScheduling? = nil,
+        pendingCheckIns: PendingCheckInQueue? = nil
     ) {
         self.place = place
         self.userIDProvider = userIDProvider
@@ -51,6 +63,64 @@ final class PlaceDetailViewModel {
         self.service = service
         self.pendingRatingStore = pendingRatingStore ?? UserDefaultsPendingRatingStore()
         self.savedPlaces = savedPlaces
+        self.openingReminders = openingReminders ?? UserNotificationOpeningReminderScheduler()
+        self.pendingCheckIns = pendingCheckIns ?? .shared
+    }
+
+    /// Whether this place has a check-in waiting for the network (and the server does not know it yet).
+    var isCheckInPending: Bool {
+        guard let detail else { return false }
+        return !detail.hasCheckedIn && pendingCheckIns.contains(placeID: detail.id)
+    }
+
+    /// "Check-in feito em 26/11/2026 às 14:20." (without the time when the server did not say).
+    var alreadyCheckedInMessage: String {
+        guard let date = detail?.checkedInAt else { return L10n.string("placeDetail.alreadyCheckedIn.message") }
+        return L10n.string(
+            "placeDetail.alreadyCheckedIn.messageWithDate",
+            date.formatted(date: .numeric, time: .omitted),
+            date.formatted(date: .omitted, time: .shortened)
+        )
+    }
+
+    func showAlreadyCheckedIn() {
+        guard detail?.hasCheckedIn == true else { return }
+        showsAlreadyCheckedInAlert = true
+    }
+
+    enum ReminderOutcome: Equatable {
+        case scheduled
+        case cancelled
+        case permissionDenied
+        case failed
+    }
+
+    func loadReminderState() async {
+        guard let detail, detail.opensAt != nil else { return }
+        hasOpeningReminder = await openingReminders.isScheduled(placeID: detail.id)
+    }
+
+    /// Schedules the reminder for the opening time, or cancels it when it is already there.
+    func toggleOpeningReminder() async -> ReminderOutcome? {
+        guard let detail, let opensAt = detail.opensAt else { return nil }
+        if hasOpeningReminder {
+            await openingReminders.cancel(placeID: detail.id)
+            hasOpeningReminder = false
+            return .cancelled
+        }
+        do {
+            let allowed = try await openingReminders.schedule(
+                placeID: detail.id,
+                placeName: detail.displayName,
+                at: opensAt
+            )
+            guard allowed else { return .permissionDenied }
+            hasOpeningReminder = true
+            return .scheduled
+        } catch {
+            AppLog.placeDetail.error("Failed to schedule the opening reminder placeId=\(detail.id)", error: error)
+            return .failed
+        }
     }
 
     /// Whether the place is on the user's saved list. A failure leaves the bookmark empty: it must not hide the place.
@@ -126,6 +196,7 @@ final class PlaceDetailViewModel {
             guard generation == loadGeneration else { return }
             detail = loadedDetail
             await loadUserPhotos()
+            await loadReminderState()
         } catch is CancellationError {
             return
         } catch {
@@ -193,12 +264,15 @@ final class PlaceDetailViewModel {
         defer { isCheckingIn = false }
 
         guard let coordinate = await verifiedCheckInCoordinate(for: currentDetail) else { return }
+        let startedAt = checkInStartedAt ?? Date()
+        checkInStartedAt = startedAt
 
         do {
             let result = try await service.checkIn(
                 placeID: currentDetail.id,
                 coordinate: coordinate,
-                mutationID: checkInMutationID
+                mutationID: checkInMutationID,
+                datetime: startedAt
             )
             applySuccessfulCheckIn(to: &currentDetail, result: result)
             detail = currentDetail
@@ -214,11 +288,33 @@ final class PlaceDetailViewModel {
             detail = currentDetail
             queueRatingPrompt(for: currentDetail, userID: userID)
             NotificationCenter.default.post(name: AppNotification.checkInDidSucceed, object: nil)
+            showsAlreadyCheckedInAlert = true
         } catch APIError.httpStatus(422, _) {
             checkInWarning = .tooFar
+        } catch let error where error.isOffline {
+            offlineCoordinate = coordinate
+            checkInWarning = .offline
         } catch {
             errorMessage = APIError.displayMessage(for: error, fallback: L10n.string("error.generic.message"))
         }
+    }
+
+    /// "Guardar e enviar depois": keeps the check-in, as the user confirmed it, until the network is back.
+    func keepCheckInForLater() {
+        defer { checkInWarning = nil }
+        guard let detail, let userID = userIDProvider(), let coordinate = offlineCoordinate else { return }
+        pendingCheckIns.enqueue(
+            PendingCheckIn(
+                id: checkInMutationID,
+                userID: userID,
+                placeID: detail.id,
+                placeName: detail.displayName,
+                latitude: coordinate.latitude,
+                longitude: coordinate.longitude,
+                accuracyMeters: coordinate.accuracyMeters,
+                checkedInAt: checkInStartedAt ?? Date()
+            )
+        )
     }
 
     /// The user's position when it is precise enough and close enough to check in; otherwise sets

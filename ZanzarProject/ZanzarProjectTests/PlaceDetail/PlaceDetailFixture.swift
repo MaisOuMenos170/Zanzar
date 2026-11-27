@@ -25,7 +25,10 @@ enum PlaceDetailFixture {
     static func detail(
         hasCheckedIn: Bool = false,
         isInActiveItinerary: Bool = false,
-        selectedReactionTag: String? = nil
+        selectedReactionTag: String? = nil,
+        isOpen: Bool? = true,
+        checkedInAt: Date? = nil,
+        opensAt: Date? = nil
     ) -> PlaceDetail {
         PlaceDetail(
             id: place.id,
@@ -36,7 +39,7 @@ enum PlaceDetailFixture {
             distanceText: "1.3 km",
             walkingTimeText: "16 min a pé",
             openingHoursText: "Open now",
-            isOpen: true,
+            isOpen: isOpen,
             tags: [],
             category: .park,
             description: "Description",
@@ -45,7 +48,9 @@ enum PlaceDetailFixture {
             reactions: ImpressionTag.reactions(from: [:], selectedTag: selectedReactionTag),
             hasCheckedIn: hasCheckedIn,
             isInActiveItinerary: isInActiveItinerary,
-            selectedReactionTag: selectedReactionTag
+            selectedReactionTag: selectedReactionTag,
+            checkedInAt: checkedInAt,
+            opensAt: opensAt
         )
     }
 }
